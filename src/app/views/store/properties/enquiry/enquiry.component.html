@@ -1,0 +1,71 @@
+<div>
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="row">
+    <div class="col-md-6 col-lg-6 d-flex">
+      <div class="card setting-card w-100 p-4 mb-4 cursor">
+        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus> 
+          <div *ngIf="params.type!='marketing-automation'">
+            <h3 *ngIf="params.type==='android-app'">Android App</h3>
+            <h3 *ngIf="params.type==='professional-setup'">Professional Setup</h3>
+            <p *ngIf="params.type==='android-app'">Stay Connected With Your Customers & Sell More</p>
+            <p *ngIf="params.type==='professional-setup'">Clean Website Setup by Our Experts</p>
+            <ul *ngIf="params.type==='professional-setup'">
+              <li>Premium Theme</li>
+              <li>Home Page Setup</li>
+              <li>Product Setup</li>
+              <li>Starts at ₹39,000</li>
+            </ul>
+            <ul *ngIf="params.type==='android-app'">
+              <li>Professional App Layout</li>
+              <li>Home Page Optimisation</li>
+              <li>Push Notifications</li>
+              <li>Starts at ₹49,000</li>
+            </ul>
+
+            <div *ngIf="success_msg" class="badge-alert success-badge-alert mb-3">
+              <div class="badge-alert-inner">
+                <i class="material-icons"></i>
+                <span>Our support team will contact shortly to help you with the setup. Please give us upto 24hrs to reach out due to the high volume of requests.</span>
+              </div>
+            </div>
+
+            <div class="domain-select-option mt-3">
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="submit" [ladda]="submit">
+                {{ success_msg? 'Enquiry Submitted': 'Enquire Now' }}
+              </button>              
+            </div>
+          </div>
+          <div *ngIf="params.type==='marketing-automation'">
+            <h3>Marketing Automation</h3>
+            <p>Automate your marketing process with our automated tools and increase traffic to your website</p>
+            <div *ngIf="success_msg" class="badge-alert success-badge-alert mb-3">
+              <div class="badge-alert-inner">
+                <i class="material-icons"></i>
+                <span>Our support team will contact shortly to help you with the setup. Please give us upto 24hrs to reach out due to the high volume of requests.</span>
+              </div>
+            </div>
+
+            <div class="domain-select-option mt-3">
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="submit" [ladda]="submit">
+                {{ success_msg? 'Enquiry Submitted': 'PRE-REGISTER' }}
+              </button>              
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

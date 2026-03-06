@@ -1,0 +1,43 @@
+// button {
+//     position: relative;
+//     transition: all .15s ease-in-out;
+//     &.loading {
+//         padding-left: 36px;
+//     }
+//     .btn-spinner {
+//         position: absolute;
+//         top: 0;
+//         bottom: 0;
+//         margin: auto;
+//         left: 10px;
+//     }
+// }
+
+.pulse-spinner{
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+  border:3px solid black;
+}
+.pulse-spinner::after{
+    content: "";
+    width:30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #E0717B !important;
+    z-index: 1;
+    position: absolute;
+    animation: pulse 1s ease infinite;
+    left: 10px;
+    top: 5px;
+}
+@keyframes pulse {
+    from{
+        transform: scale(1);
+        opacity: 1;
+    }
+    to{
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}

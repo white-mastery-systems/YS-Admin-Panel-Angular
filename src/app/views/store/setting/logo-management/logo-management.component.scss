@@ -1,0 +1,70 @@
+.logo-management{
+
+    .color-span {
+        padding: 15px;
+        margin-left: 5px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid grey;
+    }
+
+    .absolute-icon
+    {
+        position: absolute;
+        top:10px;
+        right:10px;
+    }
+
+    @media screen and (max-width:1024px)
+    {
+        .store-logo{
+            .setting-card img {
+                width: 80px;
+                height:80px;
+                object-fit: contain;
+            }
+        }
+        span.edit-icon {           
+            padding: 6px!important;
+            font-size: 18px!important;           
+        }
+    }
+}
+
+.theme_colorpick{
+    .color-span {
+        padding: 10px!important;
+        width: 32px!important;      
+        height: 32px!important;      
+        border: 0!important;
+    }
+    .radio
+    {
+        padding-left: 0!important;
+        .checkmark
+        {
+            top: 0;
+            left: 0;
+            height: 32px;
+            width: 32px;          
+            border: 3px solid #fff;           
+            -webkit-box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+            -moz-box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+            box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.6);
+        }
+    }
+
+    .radio-success input:checked ~ .checkmark {
+        background-color: transparent !important;
+        border: 3px solid #fff;             
+        -webkit-box-shadow: 0px 0px 10px rgba(236, 132, 141, 1);
+        -moz-box-shadow: 0px 0px 10px rgba(236, 132, 141, 1);
+        box-shadow: 0px 0px 10px rgba(236, 132, 141, 1);
+        &:after
+        {
+            border: none!important;
+            background: transparent;
+        }
+    }
+}

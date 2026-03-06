@@ -1,0 +1,210 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <!-- <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span> -->
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4 align-items-center">
+      <div class="col-md-3 col-12 mb-3">
+        <div class="col-md-12 col-12 card p-2">
+          <h5 class="m-b-0 light-font py-2 px-2">Available Balance &nbsp;&nbsp; <span class="dark-font">{{balance |
+              currency: commonService.store_currency?.country_code}}</span></h5>
+        </div>
+      </div>
+
+      <div class="col-md-9 col-12 mb-3 justify-content-end d-flex">
+        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);"><span
+            class="material-symbols-rounded">filter_alt</span>Filter</button>
+        <button type="button"
+          (click)="orderForm={}; modalService.open(orderModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});"><span
+            class="material-symbols-rounded">add</span> Add Balance</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="list?.length" class="list-horizontal">
+
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-7 col-7 first_col px-0 header-font">
+            <p class="w-40 w-sm-100">Order Number</p>
+            <p class="w-40 w-sm-100 m-b-0">Date</p>
+            <p class="w-20 w-sm-100 m-b-0">Amount</p>
+          </div>
+          <div class="col-md-5 col-5 first_col px-0 header-font">
+            <p class="w-30 w-sm-100">Status</p>
+            <p class="w-40 w-sm-100 m-b-0">Balance</p>
+            <p class="w-30 w-sm-100 m-b-0">Credit/Debit</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card"
+          *ngFor="let x of list | numOrderDesc:'_id' | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+            [ngClass]="x.order_type=='credit'? 'green-band': 'red-band'">
+            {{x.order_type | titlecase}}
+          </div>
+          <div class="col-md-7 col-7 first_col px-0 cursor">
+            <p class="w-40 w-sm-100 dark-font m-b-0">{{x.order_number}}</p>
+            <p class="w-40 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y hh:mm a"}}</p>
+            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.final_price | currency:
+              commonService.store_currency?.country_code}}</p>
+          </div>
+          <div class="col-md-5 col-5 first_col px-0">
+            <!-- <p class="w-50 w-sm-100 m-b-0 light-font text-right" >{{x.order_info}} &nbsp;&nbsp;{{x.balance | currency: commonService.store_currency?.country_code}}</p> -->
+            <p class="w-30 w-sm-100 light-font" [ngClass]="commonService.desktop_device? '': 'text-right'">
+              {{x.order_info}}</p>
+            <p class="w-40 w-sm-100 m-b-0 light-font fw-600" [ngClass]="commonService.desktop_device? '': 'text-right'">
+              {{x.balance | currency: commonService.store_currency?.country_code}}</p>
+            <p *ngIf="commonService.desktop_device" class="w-30 w-sm-100 m-b-0 light-font"
+              [ngClass]="commonService.desktop_device? '': 'text-right'"><span class="badge"
+                [ngClass]="(x.order_type=='credit')? 'badge-green-background': 'badge-red-background'">
+                <span
+                  [ngClass]="(x.order_type=='credit')? 'badge-green-outline-txt': 'badge-red-outline-txt'">{{x.order_type
+                  | titlecase}}</span>
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="col-md-12 mt-3">
+      <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+        maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    </div>
+  </div>
+
+  <div *ngIf="!list?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<ng-template #orderModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onTopup();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">Wallet Top Up</h4>
+      </div>
+
+      <div class="modal-body px-0">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-0">
+              <label>Amount</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="price" class="form-control" min="100" [(ngModel)]="orderForm.price"
+                (input)="orderForm.errorMsg=null;" #name="ngModel" required />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="orderForm.errorMsg">
+          <p class="text-danger">{{ orderForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="orderForm.submit"
+          [ladda]="orderForm.submit">Submit</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- razorpay form -->
+<form #razorpayForm method="POST" action="{{environment.razorpay_payment_url}}">
+  <input type="hidden" name="key_id" value="{{razorpayOptions.key}}">
+  <input type="hidden" name="order_id" value="{{razorpayOptions.razorpay_order_id}}">
+  <input type="hidden" name="name" value="{{razorpayOptions.store_name}}">
+  <input type="hidden" name="description" value="{{razorpayOptions.description}}">
+  <input type="hidden" name="prefill[name]" value="{{razorpayOptions.customer_name}}">
+  <input type="hidden" name="prefill[email]" value="{{razorpayOptions.customer_email}}">
+  <input type="hidden" name="prefill[contact]" value="{{razorpayOptions.customer_mobile}}">
+  <input type="hidden" name="notes[my_order_id]" value="{{razorpayOptions.my_order_id}}">
+  <input type="hidden" name="notes[my_order_type]" value="{{razorpayOptions.my_order_type}}">
+  <input type="hidden" name="callback_url" value="{{environment.razorpay_redirect_url}}">
+  <input type="hidden" name="cancel_url" value="{{environment.base_url+router.url}}">
+</form>
+
+<!-- filter Modal -->
+<ng-template #filterModal let-modal>
+  <form autocomplete="off" ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor"
+          (click)="filterForm=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">Filter</h4>
+      </div>
+      <div class="modal-body filtersec">
+        <div class="row m-0">
+          <div class="carosal w-100">
+            <ul class="px-3">
+              <li>
+                <a class="hz_carosal carosal_button">
+                  By Date
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12 d-flex pb-2 px-0">
+            <!-- from date -->
+            <div class="col-md-6 col-6">
+              <div class="form-group">
+                <input type="text" placeholder="Select Date" class="form-control" name="from_date"
+                  [(ngModel)]="filterForm.from_date" bsDatepicker
+                  [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+              </div>
+            </div>
+            <!-- to date -->
+            <div class="col-md-6 col-6">
+              <div class="form-group">
+                <input type="text" placeholder="Select Date" class="form-control" name="to_date"
+                  [(ngModel)]="filterForm.to_date" bsDatepicker [minDate]="filterForm.from_date"
+                  [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
+        <button type="button" class="btn btn-wide black-outline-btn"
+          (click)="filterForm=tempFilter; modal.dismiss('cancel');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="getList();">
+          <span class="orng-outline-txt">Apply</span>
+        </button>
+      </div>
+
+    </div>
+  </form>
+</ng-template>

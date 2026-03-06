@@ -1,0 +1,13 @@
+<div [hidden]="commonService.secondary_header || router.url=='/product-sections'" class="row" style="margin-left:-25px; margin-top:-20px;">
+  <div class="carosal">
+    <ul class="px-3">
+      <ng-container *ngFor="let x of commonService.product_menu_list; let i=index;">
+        <li (click)="onSelect(i+1);" id="elem_{{i+1}}">
+          <a class="hz_carosal" [routerLink]="x.state" [routerLinkActive]="'carosal_button'">{{ x.name }}</a>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>
+
+<router-outlet (activate)="commonService.onActivate($event)"></router-outlet>

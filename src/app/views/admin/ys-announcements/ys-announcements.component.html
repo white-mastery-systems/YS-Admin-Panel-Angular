@@ -1,0 +1,385 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12 p-0">
+        <div class="row">
+          <div class="col-md-8 d-flex justify-content-end align-items-start flex-column">
+            <h1>Announcements</h1>
+            <ul>
+              <li>View and manage your announcements</li>
+            </ul>
+          </div>
+          <div class="col-md-4 mt-2 d-flex align-items-end justify-content-end mt-sm-15">
+            <button type="button" class="btn btn-primary" (click)="onAdd(announceModal);">
+              Add New
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="separator-breadcrumb border-top"></div>
+
+  <div class="top-filter-sec">
+    <div class="row mb-4">
+      <div class="col-6"></div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc: 'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-7 col-5 first_col px-0">
+            <p class="w-30 w-sm-100 m-b-0 dark-font">{{ x.name }}</p>
+            <p class="w-25 w-sm-100 m-b-0 light-font">{{ x.type | titlecase }}</p>
+            <p class="w-25 w-sm-100 m-b-0 light-font">
+              <span class="badge" [ngClass]="x.status? 'badge-green-background': 'badge-red-background'">
+                {{ x.status? 'Active': 'Inactive' }}
+              </span>
+            </p>
+          </div>
+          <div class="col-md-5 col-7">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded" title="Share">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" (click)="onEdit(x._id, announceModal);">
+                <span class="material-symbols-rounded right_arrow transicon" title="Edit">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION MODAL -->
+<ng-template #announceModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ (proForm.form_type=='add')? 'Add': 'Update' }} Announcement</h4>
+  </div>
+  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-6 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="proForm.name" required />
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label>Rank</label>
+            <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="proForm.rank" min="1"
+            max="{{ (proForm.form_type=='add')? maxRank+1: maxRank }}" appNumberOnly required />
+          </div>
+          <!-- Notification Type -->
+          <div class="col-md-12">
+            <b>Announcement Type</b>
+            <div class="row mt-3">
+              <div class="col-md-4 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="type" [(ngModel)]="proForm.type" value="instant">
+                  <span>Instant</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="type" [(ngModel)]="proForm.type" value="push">
+                  <span>Push</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="type" [(ngModel)]="proForm.type" value="bar">
+                  <span>Bar</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label>Send To</label>
+            <select name="send_to" class="form-control select-arrow" [(ngModel)]="proForm.send_to" required>
+              <option value="all">All Users</option>
+              <option value="inactive">Deactivated Users</option> <!-- both trial and subscribed -->
+              <option value="active">Active Users</option> <!-- both trial and subscribed -->
+
+              <option value="trial">Trial Users</option>
+              <option value="subscribed">Subscribed Users</option>
+              <option value="selected_plan">Selected Plan</option>
+
+              <option value="trial_expires_in">Trial Expires in</option>
+              <option value="subscription_expires_in">Subscription Expires in</option>
+
+              <option value="logo">Logo Upload Pending</option>
+              <option value="products">Product Upload Pending</option>
+              <option value="payments">Payment Setup Pending</option>
+              <option value="shipping">Shipping Setup Pending</option>
+              <option value="domain">Domain not linked</option>
+            </select>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <ng-container *ngIf="proForm.send_to=='selected_plan'">
+              <label>Select plan</label>
+              <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="proForm.send_to_type" required>
+                <ng-container *ngFor="let x of commonService.admin_packages | numOrderAsc: 'rank';">
+                  <option [value]="x._id">{{x.name}} Plan</option>
+                </ng-container>
+              </select>
+            </ng-container>
+            <ng-container *ngIf="proForm.send_to=='trial' || proForm.send_to=='subscribed' || proForm.send_to=='inactive'">
+              <label>Select Category</label>
+              <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="proForm.send_to_type" required>
+                <option value="all">All</option>
+                <option *ngIf="proForm.send_to=='inactive'" value="trial">Trial</option>
+                <option value="genie">Genie</option>
+                <option value="order_based">Pro - B2C</option>
+                <option value="quot_based">Pro - B2B</option>
+                <option value="service_based">Pro - Service</option>
+                <option value="multi_vendor">Pro - Multi-Vendor</option>
+              </select>
+            </ng-container>
+            <ng-container *ngIf="proForm.send_to=='trial_expires_in' || proForm.send_to=='subscription_expires_in'">
+              <label>Select days</label>
+              <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="proForm.send_to_type" required>
+                <option value="1">1 Day</option>
+                <option value="2">2 Days</option>
+                <option value="3">3 Days</option>
+                <option value="4">4 Days</option>
+                <option value="5">5 Days</option>
+              </select>
+            </ng-container>
+          </div>
+          <!-- announcement content -->
+          <div class="col-md-12 mb-2">
+            <b><u>Announcement Content</u></b>
+          </div>
+          <ng-container *ngIf="proForm.type!='bar'">
+            <ng-container *ngIf="proForm.type=='push'">
+              <div class="col-6 form-group mb-3">
+                <label>Scheduled Date</label>
+                <input type="text" class="form-control" name="notify_date" autocomplete="off" [(ngModel)]="proForm.notify_date"
+                bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>Scheduled Time</label>
+                <input type="text" name="notify_time" class="form-control" [(ngModel)]='proForm.notify_time' (click)="timePicker('notify_time');" required readonly />
+              </div>
+            </ng-container>
+            <div class="col-md-12 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="title" class="form-control" [(ngModel)]="proForm.content.title" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Body</label>
+              <textarea name="body" [(ngModel)]="proForm.content.body" class="form-control"></textarea>
+            </div>
+            <!-- Image -->
+            <div class="col-md-12 mb-3" align="center">
+              <div *ngIf="proForm.content?.image">
+                <span (click)="proForm.content.img_change=null; proForm.content.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
+                <img *ngIf="proForm.content.img_change" [src]="proForm.content.image" height="100px;" width="auto;">
+                <img *ngIf="!proForm.content.img_change" [src]="imgBaseUrl+proForm.content.image" height="100px;" width="auto;">
+              </div>
+              <div *ngIf="!proForm.content?.image">
+                <label>
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                  <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png" />
+                </label>
+              </div>
+            </div>
+            <!-- primary btn -->
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="pb_status" (change)="proForm.content.pri_btn = { link_type: 'internal' };" [(ngModel)]="proForm.content.pb_status">
+                <span>Enable Primary Button</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="proForm.content.pb_status">
+              <div class="col-md-12 form-group mb-3">
+                <label>Button Name</label>
+                <input type="text" name="pb_name" class="form-control" [(ngModel)]="proForm.content.pri_btn.name" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="pb_link_type" [(ngModel)]="proForm.content.pri_btn.link_type" value="internal">
+                  <span>Link to Internal Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="pb_link_type" [(ngModel)]="proForm.content.pri_btn.link_type" value="external">
+                  <span>Link to External Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="proForm.content.pri_btn?.link_type=='internal' || proForm.content.pri_btn?.link_type=='external'" class="col-md-12 form-group mb-3">
+                <label *ngIf="proForm.content.pri_btn?.link_type=='internal'">{{baseUrl}}{{proForm.content.pri_btn?.link}}</label>
+                <label *ngIf="proForm.content.pri_btn?.link_type=='external'">External Link</label>
+                <input type="text" name="pb_link" class="form-control" [(ngModel)]="proForm.content.pri_btn.link" required />
+              </div>
+              <!-- secondaty btn -->
+              <div class="col-md-12 mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="sb_status" (change)="proForm.content.sec_btn = { link_type: 'internal' };" [(ngModel)]="proForm.content.sb_status">
+                  <span>Enable Secondary Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="proForm.content.sb_status">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Button Name</label>
+                  <input type="text" name="sb_name" class="form-control" [(ngModel)]="proForm.content.sec_btn.name" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label class="radio radio-primary">
+                    <input type="radio" name="sb_link_type" [(ngModel)]="proForm.content.sec_btn.link_type" value="internal">
+                    <span>Link to Internal Link</span>
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label class="radio radio-primary">
+                    <input type="radio" name="sb_link_type" [(ngModel)]="proForm.content.sec_btn.link_type" value="external">
+                    <span>Link to External Link</span>
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div *ngIf="proForm.content.sec_btn?.link_type=='internal' || proForm.content.sec_btn?.link_type=='external'" class="col-md-12 form-group mb-3">
+                  <label *ngIf="proForm.content.sec_btn?.link_type=='internal'">{{baseUrl}}{{proForm.content.sec_btn?.link}}</label>
+                  <label *ngIf="proForm.content.sec_btn?.link_type=='external'">External Link</label>
+                  <input type="text" name="sb_link" class="form-control" [(ngModel)]="proForm.content.sec_btn.link" required />
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="proForm.type=='bar'">
+            <div class="col-md-12 form-group mb-3">
+              <label>Content</label>
+              <textarea name="content" [(ngModel)]="proForm.bar_config.content" class="form-control"></textarea>
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="link_status" (change)="proForm.bar_config.link_type='internal'" [(ngModel)]="proForm.bar_config.link_status">
+                <span>Enable Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="proForm.bar_config?.link_status">
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="sb_link_type" [(ngModel)]="proForm.bar_config.link_type" value="internal">
+                  <span>Link to Internal Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" name="sb_link_type" [(ngModel)]="proForm.bar_config.link_type" value="external">
+                  <span>Link to External Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label *ngIf="proForm.bar_config?.link_type=='internal'">{{baseUrl}}{{proForm.bar_config?.link}}</label>
+                <label *ngIf="proForm.bar_config?.link_type=='external'">External Link</label>
+                <input type="text" name="sb_link" class="form-control" [(ngModel)]="proForm.bar_config.link" required />
+              </div>
+            </ng-container>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="date_range" [(ngModel)]="proForm.bar_config.date_range">
+                <span>Enable date range to display</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="proForm.bar_config.date_range">
+              <div class="col-6 form-group mb-3">
+                <label>Start Date</label>
+                <input type="text" class="form-control" name="start_date" autocomplete="off" [(ngModel)]="proForm.start_date"
+                bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>Start Time</label>
+                <input type="text" name="start_time" class="form-control" [(ngModel)]='proForm.start_time' (click)="timePicker('start_time');" required readonly />
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>End Date</label>
+                <input type="text" class="form-control" name="end_date" autocomplete="off" [(ngModel)]="proForm.end_date"
+                bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>End Time</label>
+                <input type="text" name="end_time" class="form-control" [(ngModel)]='proForm.end_time' (click)="timePicker('end_time');" required readonly />
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="proForm.errorMsg">
+        <p class="text-danger">{{ proForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-wide black-outline-btn" id="closeModal"
+        (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="proForm.submit" [ladda]="proForm.submit">
+        {{ (proForm?.form_type == 'add')? 'Add' : 'Update' }}
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to permanently delete the <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> notification?</strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">Yes</button>
+  </div>
+</ng-template>

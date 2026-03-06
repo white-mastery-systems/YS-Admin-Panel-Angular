@@ -1,0 +1,177 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="main-header" *ngIf="!commonService.desktop_device">
+  <h2>Catalog & Products</h2>
+  <div class="header-part-right d-flex">
+    <div class="help_but mr-3" routerLink="/support/navigation/product-categories">
+      <img src="assets/icons/help.svg" title="help">
+    </div>
+    <div class="add_but mr-3" (click)="exportAsXLSX();">
+      <span class="material-symbols-rounded">file_upload</span>
+    </div>
+    <div class="add_but mr-3" routerLink="/product-sections/catalogs/import">
+      <span class="material-symbols-rounded">file_download</span>
+    </div>
+    <div class="add_but" routerLink="/product-sections/catalogs/add">
+      <span class="material-symbols-rounded">add</span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+<!-- <ng-container *ngIf="commonService.desktop_device">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>Catalog & Products</h1>        
+      </div>
+    </div>
+  </div>
+</ng-container> -->
+
+  <div class="top-filter-sec list-button mt-2">
+    <div class="row mb-4">
+      <div class="col-md-6 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device"> 
+        <button class="help-button mr-3" routerLink="/support/navigation/product-categories">
+          <span class="material-symbols-rounded mb-0">help</span>Need Help?
+        </button>      
+        <button type="button" (click)="exportAsXLSX();" class="mr-3">
+          <span class="material-symbols-rounded">file_upload</span> Export
+        </button>
+        <button type="button" routerLink="/product-sections/catalogs/import" class="mr-3">
+          <span class="material-symbols-rounded">file_download</span> Import
+        </button>
+        <button type="button" class="highbutton" routerLink="/product-sections/catalogs/add">
+          <span class="material-symbols-rounded">add</span>Add Catalog
+        </button>
+        <!-- <button type="button" class="mr-3" (click)="openpage()">
+          <span class="material-symbols-rounded">add</span>Add Product
+        </button> -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-7 col-5 first_col px-0 header-font">
+            <p class="w-50 w-sm-100 m-b-0">Catalog Name</p>
+            <p class="w-50 w-sm-100 m-b-0">Product Count</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div *ngIf="x.isPrimary" class="ribbon-band blue-band">Primary</div>
+          <div class="col-md-7 col-5 first_col px-0">
+            <p class="w-50 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+            <p class="w-50 w-sm-100 m-b-0 light-font">{{x.product_count}} {{ (x.product_count>1)? 'products': 'product' }}</p>
+          </div>
+          <div class="col-md-5 col-7">
+            <div *ngIf="!x._id" class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="socialShare('all-products', x.listIndex);">
+                <span class="material-symbols-rounded" title="Share">share</span> {{commonService.desktop_device? 'share': ''}}
+              </button>
+              <button *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)==-1" [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="/product-sections/products">
+                <span class="material-symbols-rounded right_arrow transicon" title="view products">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+              </button>
+              <div *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)!=-1" class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                <button [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'" ngbDropdownToggle>
+                  {{commonService.desktop_device? 'Action': ''}}
+                  <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
+                    {{commonService.desktop_device? 'expand_more': 'more_vert'}}
+                  </span>
+                </button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button class="dropdown-item d-flex" routerLink="/product-sections/products">
+                    <span class="material-symbols-rounded" title="edit">edit</span> View Products
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="x._id" class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="socialShare('category/'+x.seo_details?.page_url, x.listIndex);">
+                <span class="material-symbols-rounded" title="Share">share</span> {{commonService.desktop_device? 'share': ''}}
+              </button>
+              <ng-container *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)==-1">
+                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" routerLink="/product-sections/catalogs/{{x._id}}">
+                  <span class="material-symbols-rounded" title="edit">edit</span> {{commonService.desktop_device? 'Edit': ''}}
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="commonService.selected_catalog=x._id;" routerLink="/product-sections/products">
+                  <span class="material-symbols-rounded right_arrow transicon" title="view products">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                </button>
+              </ng-container>
+              <div *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)!=-1" class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                <button [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'" ngbDropdownToggle>
+                  {{commonService.desktop_device? 'Action': ''}}
+                  <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
+                    {{commonService.desktop_device? 'expand_more': 'more_vert'}}
+                  </span>
+                </button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button class="dropdown-item d-flex" routerLink="/product-sections/catalogs/{{x._id}}">
+                    <span class="material-symbols-rounded" title="edit">edit</span> Edit
+                  </button>
+                  <button class="dropdown-item d-flex" (click)="commonService.selected_catalog=x._id;"  routerLink="/product-sections/products">
+                    <span class="material-symbols-rounded" title="edit">category</span> View Products
+                  </button>
+                  <button class="dropdown-item d-flex" routerLink="/product-sections/catalogs/section/{{x._id}}">
+                    <span class="material-symbols-rounded" title="edit">image</span> Highlighted Sections
+                  </button>
+                  <button class="dropdown-item d-flex" routerLink="/product-sections/catalogs/navigation/{{x._id}}">
+                    <span class="material-symbols-rounded" title="edit">image</span> Banner Navigations
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 shared" *ngIf="x.share">
+            <div class="bubble_head"></div>
+            <div class="bubble_body"> 
+              <span (click)="x.redirect = x._id? 'category/'+x.seo_details?.page_url: 'all-products'; commonService.onShare('facebook', x.redirect); x.share=false;">
+                <img src="assets/images/facebook.svg" alt="facebook">
+                <p>Facebook</p>
+              </span>
+              <span (click)="x.redirect = x._id? 'category/'+x.seo_details?.page_url: 'all-products'; commonService.onShare('whatsapp', x.redirect); x.share=false;">
+                <img src="assets/images/whatsapp.svg" alt="whatsapp">
+                <p>whatsapp</p>
+              </span>
+              <span (click)="x.redirect = x._id? 'category/'+x.seo_details?.page_url: 'all-products'; commonService.onShare('twitter', x.redirect); x.share=false;">
+                <img src="assets/images/twitter.svg" alt="twitter">
+              <p>Twitter</p>
+              </span>
+              <span (click)="x.redirect = x._id? 'category/'+x.seo_details?.page_url: 'all-products'; commonService.onShare('copy_link', x.redirect);">
+                <img src="assets/images/link.svg" alt="link">
+                <p>{{ (commonService.copyLink)? 'Copied': 'Copy Link' }}</p>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>

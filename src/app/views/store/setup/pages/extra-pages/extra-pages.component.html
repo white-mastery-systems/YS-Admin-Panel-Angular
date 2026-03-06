@@ -1,0 +1,215 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="help_mobile_button mr-3" routerLink="/support/design-website/create-new-page">
+    <img src="assets/icons/help.svg" title="help">
+  </div>
+  <div class="add_but" (click)="addForm={seo_details: {}, type: 'content'}; modalService.open(addModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end">
+          <button class="help-button" routerLink="/support/design-website/create-new-page">
+            <span class="material-symbols-rounded mb-0">help</span>Need Help?
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div class="col-md-6 col12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button class="highbutton" type="button" (click)="addForm={seo_details: {}, type: 'content'}; modalService.open(addModal);">
+          <span class="material-symbols-rounded">add</span>Add New Page
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-8 col-6 first_col px-0 header-font">
+            <p class="w-30 w-sm-100">Name</p>
+            <p class="w-30 w-sm-100">Type</p>
+            <p class="w-40 w-sm-100 m-b-0">Customizations</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-8 col-8 first_col px-0">
+            <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
+            <p class="w-30 w-sm-100 dark-font">{{x.type}}</p>
+            <p class="w-40 w-sm-100 m-b-0 light-font" style="word-break: break-word;">{{commonService.store_details?.base_url}}/pages/{{x.page_url}}</p>
+          </div>
+          <div class="col-md-4 col-4">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">             
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':''}}
+              </button>  
+              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="/setup/pages/extra-pages/modify/{{x._id}}">
+                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility':
+                  'chevron_right'}} </span> {{commonService.desktop_device? 'View': ''}}
+              </button>       
+            </div>            
+          </div>
+        </div>
+      </div>      
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<ng-template #addModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onAdd();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">Add New</h4>  
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3" [ngClass]="(commonService.ys_features.indexOf('adv_extra_pages')!=-1)? 'col-md-6': 'col-md-12'">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="addForm.name" (input)="onChangeTitle();" required />
+            </div>
+            <div *ngIf="commonService.ys_features.indexOf('adv_extra_pages')!=-1" class="col-md-6 form-group mb-3">
+              <label>Type</label>
+              <select name="Pagetype" class="form-control select-arrow" [(ngModel)]="addForm.type" #Pagetype="ngModel"
+                required>
+                <option value="" >-- Select --</option>
+                <option Value="content">Content</option>
+                <option Value="segment">Segment</option>
+              </select>
+            </div>
+            <div class="data-list-card-inner">
+              <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center mb-3">
+                <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                  <span class="light-font mt-3 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other search engines</span>
+                </p>
+                <ng-container *ngIf="addForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+                  <span *ngIf="!addForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+                  (click)="addForm.seo_disp=true" aria-hidden="true">edit</span>
+                  <span *ngIf="addForm.seo_disp && addForm.page_url && addForm.seo_details.h1_tag && addForm.seo_details.page_title && addForm.seo_details.meta_desc"
+                  (click)="addForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+                </ng-container>
+              </div>
+      
+              <div class="col-12" *ngIf="!addForm.seo_disp">
+                <p *ngIf="!addForm.name" class="light-font font-10">
+                  Add a Title And Description To See How This Page Might Appear In A Search Engine Listing
+                </p>
+                <ng-container *ngIf="addForm.name">
+                  <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/pages/{{addForm.page_url}}</p>
+                  <h6 class="sec-desc mb-1 mt-2 seo-color">{{addForm.seo_details.page_title}}</h6>
+                  <p class="light-font font-10">{{addForm.seo_details.meta_desc}}</p>
+                </ng-container>
+              </div>
+      
+              <ng-container *ngIf="addForm.seo_disp">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page URL - {{commonService.store_details?.base_url}}/pages/{{addForm?.page_url}}</label>
+                  <input type="text" name="page_url" class="form-control" [(ngModel)]="addForm.page_url" appNoSplChar required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>H1 Tag</label>
+                  <span *ngIf="addForm.seo_details?.h1_tag?.length" class="label_hint">
+                    {{addForm.seo_details?.h1_tag.length}} of 70 characters used
+                  </span>
+                  <input type="text" name="h1_tag" class="form-control" [(ngModel)]="addForm.seo_details.h1_tag" maxlength="70" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page Title</label>
+                  <span *ngIf="addForm.seo_details?.page_title?.length" class="label_hint">
+                    {{addForm.seo_details.page_title.length}} of 70 characters used
+                  </span>
+                  <input type="text" name="page_title" class="form-control" [(ngModel)]="addForm.seo_details.page_title" maxlength="70" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Description</label>
+                  <span *ngIf="addForm.seo_details?.meta_desc?.length" class="label_hint">
+                    {{addForm.seo_details.meta_desc.length}} of 320 characters used</span>
+                  <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="addForm.seo_details.meta_desc" maxlength="320" required></textarea>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Keywords</label>
+                  <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="addForm.seo_details.meta_keyword_list" placeholder=""
+                  [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                  <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+                </div>
+              </ng-container>
+            </div>
+            <div *ngIf="addForm.err_msg" class="col-12 mt-3 text-danger">
+              {{addForm.err_msg}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="addForm.submit"
+        [ladda]="addForm.submit">Add</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to remove
+        <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> page?
+      </strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

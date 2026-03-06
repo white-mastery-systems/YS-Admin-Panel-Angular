@@ -1,0 +1,668 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="add_but" (click)="onEditSeo(editSeoModal);">
+    <span class="material-symbols-rounded">edit</span>
+  </div>
+  <div class="add_but ml-3" (click)="onAddNewSegment(addModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="formData.type=='content'" class="row">
+    <div class="col-md-12">
+      <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+        <div class="row">
+          <div class="col-md-8 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="formData.name" required />
+          </div>
+          <div class="col-md-8 form-group mb-3 quill-mb-5">
+            <label>Content</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.content" [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+        </div>
+        <!-- SEO -->
+        <div class="data-list-card-wrapper p-0 col-md-8 col-12">
+          <div class="data-list-card-inner p-3">
+            <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+              <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                <span class="light-font mt-0 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other search engines</span>
+              </p>
+              <ng-container *ngIf="formData.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+                <span *ngIf="!formData.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+                (click)="formData.seo_disp=true" aria-hidden="true">edit</span>
+                <span *ngIf="formData.seo_disp && formData.page_url && formData.seo_details.h1_tag && formData.seo_details.page_title && formData.seo_details.meta_desc"
+                (click)="formData.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+              </ng-container>
+            </div>
+    
+            <ng-container *ngIf="!formData.seo_disp">
+              <p *ngIf="!formData.name" class="light-font font-10">
+                Add a Title And Description To See How This Page Might Appear In A Search Engine Listing
+              </p>
+              <ng-container *ngIf="formData.name">
+                <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/pages/{{formData.page_url}}</p>
+                <h6 class="sec-desc mb-1 mt-2 seo-color">{{formData.seo_details.page_title}}</h6>
+                <p class="light-font font-10">{{formData.seo_details.meta_desc}}</p>
+              </ng-container>
+            </ng-container>
+    
+            <ng-container *ngIf="formData.seo_disp">
+              <div class="col-md-12 form-group mb-3">
+                <label>Page URL - {{commonService.store_details?.base_url}}/pages/{{formData.page_url}}</label>
+                <input type="text" name="page_url" class="form-control" [(ngModel)]="formData.page_url" appNoSplChar required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>H1 Tag</label>
+                <span *ngIf="formData.seo_details?.h1_tag?.length" class="label_hint">
+                  {{formData.seo_details.h1_tag.length}} of 70 characters used
+                </span>
+                <input type="text" name="h1_tag" class="form-control" [(ngModel)]="formData.seo_details.h1_tag" maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Page Title</label>
+                <span *ngIf="formData.seo_details?.page_title?.length" class="label_hint">
+                  {{formData.seo_details.page_title.length}} of 70 characters used
+                </span>
+                <input type="text" name="page_title" class="form-control" [(ngModel)]="formData.seo_details.page_title" maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Description</label>
+                <span *ngIf="formData.seo_details?.meta_desc?.length" class="label_hint">
+                  {{formData.seo_details.meta_desc.length}} of 320 characters used</span>
+                <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="formData.seo_details.meta_desc" maxlength="320" required></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Keywords</label>
+                <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="formData.seo_details.meta_keyword_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="separator-breadcrumb border-top mt-5"></div>
+        <div class="row">
+          <div class="col-md-12 mt-3 mb-3" *ngIf="formData.errorMsg">
+            <p class="text-danger" align="center">{{ formData.errorMsg }}</p>
+          </div>
+          <div align="center" class="col-md-12 z-i-0">
+            <button type="button" routerLink="/setup/pages/extra-pages" class="btn btn-wide black-outline-btn">
+            <span class="black-outline-txt">Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-wide btn-primary ladda-button ml-3 m-1" [disabled]="formData.submit" [ladda]="formData.submit">
+              {{ (params.id)? 'Update': 'Add' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Segment -->
+  <div *ngIf="formData.type=='segment'" class="row">
+    <div class="col-md-12">
+      <div class="top-filter-sec list-button">
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <div class="form-group search_bar m-0">
+              <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+              <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+            </div>
+          </div>
+          <div class="col-md-6 d-flex justify-content-end" *ngIf="commonService.desktop_device">
+            <button class="highbutton" type="button" (click)="onEditSeo(editSeoModal);">
+              <span class="material-symbols-rounded">edit</span>Edit Page SEO
+            </button>
+            <button class="highbutton ml-3" type="button" (click)="onAddNewSegment(addModal);">
+              <span class="material-symbols-rounded">add</span>Add Segment
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <!-- DATA LIST -->
+      <div *ngIf="(formData.segments | fieldSearch:'name':search_bar)?.length" class="list-horizontal mt-2">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+              <div class="col-md-10 col-10 first_col px-0 header-font">
+                <p class="w-30 w-sm-100 m-b-0">Name</p>
+                <p class="w-30 w-sm-100 m-b-0">Type</p>
+                <p class="w-20 w-sm-100 m-b-0">Tiles</p>
+                <p class="w-20 w-sm-100 m-b-0">Status</p>
+              </div>
+            </div>
+            <div class="list-item data-list-card"
+              *ngFor="let x of formData.segments | numOrderAsc:'rank' |fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+              [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+              <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+                [ngClass]="x.active_status? 'green-band': 'red-band'">
+                {{x.active_status? 'Enabled': 'Disabled'}}
+              </div>
+              <div class="col-md-10 col-10 first_col px-0">
+                <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+                <p class="w-30 w-sm-100 light-font m-b-0">{{ findType(x.type) }}</p>
+                <p class="w-20 w-sm-100 light-font m-b-0">
+                  <ng-container *ngIf="x.type=='multi_grid_featured_section'">{{ x.multigrid_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='multiple_featured_product'">{{ x.multitab_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product'].indexOf(x.type)==-1">
+                    {{ x.image_list?.length }} Tiles
+                  </ng-container>
+                </p>
+                <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
+                  <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
+                    {{x.active_status? 'Enabled': 'Disabled'}}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-2 col-2">
+                <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                  <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                    placement="bottom-start bottom-end top-start top-end">
+                    <button [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'"
+                      ngbDropdownToggle>{{commonService.desktop_device? 'Edit': ''}} <span class="material-symbols-rounded"
+                        [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
+                        {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
+                    <div class="dropdown-menu" ngbDropdownMenu>
+                      <button *ngIf="x.type!='primary_slider'" class="dropdown-item d-flex" (click)="onEditDetails(x._id, editModal);">
+                        <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
+                          'visibility'}}</span> Details
+                      </button>
+                      <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'flexible', 'instagram', 'multi_grid_featured_section'].indexOf(x.type)==-1"
+                        class="dropdown-item d-flex" routerLink="/setup/pages/extra-pages/modify/{{this.params.id}}/{{x._id}}">
+                        <span class="material-symbols-rounded mr-2">image</span> Images 
+                      </button>
+                      <button *ngIf="x.type=='multi_grid_featured_section'" class="dropdown-item d-flex" routerLink="/setup/layouts/home/grid/{{x._id}}">
+                        <span class="material-symbols-rounded mr-2">grid_view</span> List
+                      </button>
+                      <button *ngIf="x.type!='primary_slider'" class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                        <span class="material-symbols-rounded mr-2">delete</span> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+              maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    
+      <div *ngIf="!(formData.segments | fieldSearch:'name':search_bar)?.length" class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD MODAL -->
+<ng-template #addModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onAdd()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Add Segment</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Type</label>
+              <select name="type" class="form-control select-arrow" [(ngModel)]="addForm.type"
+                (change)="onChangeType(addForm.type);" required>
+                <option Value="">-- Select --</option>
+                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1:20;">{{x.name}}</option>
+              </select>
+            </div>
+            <div *ngIf="addForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
+              <label *ngFor="let x of addForm.grid_list | fieldSearch:'status':'enabled'; let i=index;" class="radio radio-primary display-inline-b mr-5 mb-3">
+                <input type="radio" name="grid_type" [value]="x.type" [checked]="x.type==addForm.grid_type"
+                (change)="addForm.grid_type=x.type; addForm.grid_count=x.count;">
+                <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="form-group mb-3" [ngClass]="(addForm.type=='highlights')? 'col-md-12': 'col-md-6'">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="addForm.name" #name="ngModel" required />
+            </div>
+            <div *ngIf="addForm.type!='highlights'" class="col-md-6 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addForm.rank" #rank="ngModel" min="1"
+                max="{{maxRank+1}}" appNumberOnly required />
+            </div>
+            <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+              <label>Link to Catalog</label>
+              <select name="featured_category_id" class="form-control select-arrow"
+                [(ngModel)]="addForm.featured_category_id" required>
+                <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                <option value="all_products">/all-products</option>
+                <option value="new_arrivals">/new-arrivals</option>
+                <option value="on_sale">/on-sale</option>
+                <option value="featured_products">/featured-products</option>
+              </select>
+            </div>
+            <ng-container *ngIf="addForm.type=='instagram' && addForm.insta_config">
+              <div class="col-md-12 form-group mb-3">
+                <label>Token</label>
+                <input type="text" name="insta_token" class="form-control" [(ngModel)]="addForm.insta_config.token"
+                  required />
+              </div>
+              <div class="col-md-12 mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="allow_desc"
+                    [(ngModel)]="addForm.insta_config.allow_desc">
+                  <span>Display Description</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </ng-container>
+            <ng-container
+              *ngIf="addForm.type!='primary_slider' && addForm.type!='slider' && addForm.type!='flexible' && addForm.type!='secondary' && addForm.type!='highlights'">
+              <div *ngIf="addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="addForm.blogs_type"
+                  (change)="(addForm.type=='blogs' || addForm.type=='instagram')? addForm.grid_type=gridList[0].type: '';"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div class="form-group mb-3"
+                [ngClass]="(addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading"
+                  #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="addForm.type=='scrolling_text'" class="col-md-12 form-group mb-3">
+                <tag-input class="w-100" name="options" id="options" [(ngModel)]="addForm.options" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div *ngIf="configData.hunan==commonService.store_details._id && addForm.type=='highlighted_section'"
+                class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="content"
+                  [(ngModel)]="addForm.content"></textarea>
+              </div>
+              <div *ngIf="gridList.length && addForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+                <div>
+                  <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
+                    <label class="radio radio-primary display-inline-b mr-5 mb-3">
+                      <input type="radio" name="grid_type" [value]="x.type"
+                        [checked]="x.type==addForm.grid_type" (change)="addForm.grid_type=x.type;">
+                      <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+            <!-- flexible -->
+            <div *ngIf="addForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
+              <label>Content</label>
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
+                [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+          </div>
+          <!-- multiple_featured_product -->
+          <ng-container *ngIf="addForm.type=='multiple_featured_product'">
+            <div class="row">
+              <div class="col-md-12">
+                <p align="center"><b class="add-another">TAB LIST</b></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card w-100 p-3 mb-3" *ngFor="let x of addForm.multitab_list; let i=index;">
+                  <div class="row">
+                    <span *ngIf="addForm.multitab_list.length>1" (click)="addForm.multitab_list.splice(i, 1);"
+                      class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                      <label>Type</label>
+                      <select name="type{{i}}" class="form-control select-arrow" [(ngModel)]="x.type" #type="ngModel"
+                        required>
+                        <option [ngValue]="x.type" *ngFor="let x of multiTabOptions">{{x.disp_name}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                      <label>Name</label>
+                      <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel"
+                        required />
+                    </div>
+                    <div *ngIf="x.type=='category'" class="col-md-4 form-group mb-3">
+                      <label>Link to Catalog</label>
+                      <select name="category_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.category_id"
+                        #category_id="ngModel" required>
+                        <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="addForm.multitab_list?.length<3" class="row">
+              <div class="col-md-12">
+                <p (click)="addForm.multitab_list.push({});"><b class="add-another">ADD NEW</b></p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="addForm.errorMsg">
+          <p class="text-danger">{{ addForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeAddModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="addForm.submit"
+          [ladda]="addForm.submit">Add</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- EDIT MODAL -->
+<ng-template #editModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdate()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Update Segment</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div *ngIf="editForm.type!='primary_slider'" class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="active_status"
+                  [(ngModel)]="editForm.active_status">
+                <span>Enable</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="form-group mb-3"
+              [ngClass]="(editForm.grid_type)? 'col-md-6': 'col-md-12'">
+              <label>Type</label>
+              <input type="text" name="dup_type" class="form-control" [(ngModel)]="editForm.dup_type" readonly />
+            </div>
+            <div *ngIf="editForm.grid_type" class="col-md-6 form-group mb-3">
+              <label>Grid Type</label>
+              <input type="text" name="dup_grid_type" class="form-control" [(ngModel)]="editForm.dup_grid_type" readonly />
+            </div>
+            <div class="form-group mb-3"
+              [ngClass]="(editForm.type=='highlights' || editForm.type=='primary_slider')? 'col-md-12': 'col-md-6'">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel"
+                required />
+            </div>
+            <div *ngIf="editForm.type!='primary_slider' && editForm.type!='highlights'"
+              class="col-md-6 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
+                max="{{maxRank}}" appNumberOnly required />
+            </div>
+            <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+              <label>Link to Catalog</label>
+              <select name="featured_category_id" class="form-control select-arrow"
+                [(ngModel)]="editForm.featured_category_id" #featured_category_id="ngModel" required>
+                <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                <option value="all_products">/all-products</option>
+                <option value="new_arrivals">/new-arrivals</option>
+                <option value="on_sale">/on-sale</option>
+                <option value="featured_products">/featured-products</option>
+              </select>
+            </div>
+            <ng-container *ngIf="editForm.type=='instagram' && editForm.insta_config">
+              <div *ngIf="commonService.master_token" class="col-md-12 form-group mb-3">
+                <label>Token</label>
+                <input type="text" name="insta_token" class="form-control" [(ngModel)]="editForm.insta_config.token"
+                  readonly required />
+              </div>
+              <div class="col-md-12 mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="allow_desc"
+                    [(ngModel)]="editForm.insta_config.allow_desc">
+                  <span>Display Description</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </ng-container>
+            <ng-container
+              *ngIf="editForm.type!='primary_slider' && editForm.type!='slider' && editForm.type!='flexible' && editForm.type!='secondary' && editForm.type!='highlights'">
+              <div *ngIf="editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="editForm.blogs_type"
+                  (change)="(editForm.type=='blogs' || editForm.type=='instagram')? editForm.grid_type=gridList[0].type: '';"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div class="form-group mb-3"
+                [ngClass]="(editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
+                  #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="editForm.type=='scrolling_text'" class="col-md-12 form-group mb-3">
+                <tag-input class="w-100" name="options" id="options" [(ngModel)]="editForm.options" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div *ngIf="configData.hunan==commonService.store_details._id && editForm.type=='highlighted_section'"
+                class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="content"
+                  [(ngModel)]="editForm.content"></textarea>
+              </div>
+              <div *ngIf="gridList.length && editForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+                <div>
+                  <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
+                    <label class="radio radio-primary display-inline-b mr-5 mb-3">
+                      <input type="radio" name="grid_type" [value]="x.type"
+                        [checked]="x.type==editForm.grid_type" (change)="editForm.grid_type=x.type;">
+                      <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+            <!-- flexible -->
+            <div *ngIf="editForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
+              <label>content</label>
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
+                [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+          </div>
+          <!-- multiple_featured_product -->
+          <ng-container *ngIf="editForm.type=='multiple_featured_product'">
+            <div class="row">
+              <div class="col-md-12">
+                <p align="center"><b class="add-another">TAB LIST</b></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card w-100 p-3 mb-3" *ngFor="let x of editForm.multitab_list; let i=index;">
+                  <div class="row">
+                    <span *ngIf="editForm.multitab_list.length>1" (click)="editForm.multitab_list.splice(i, 1);"
+                      class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                      <label>Type</label>
+                      <select name="type{{i}}" class="form-control select-arrow" [(ngModel)]="x.type" #type="ngModel"
+                        required>
+                        <option [ngValue]="x.type" *ngFor="let x of multiTabOptions">{{x.disp_name}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                      <label>Name</label>
+                      <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel"
+                        required />
+                    </div>
+                    <div *ngIf="x.type=='category'" class="col-md-4 form-group mb-3">
+                      <label>Link to Catalog</label>
+                      <select name="category_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.category_id"
+                        #category_id="ngModel" required>
+                        <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="editForm.multitab_list?.length<3" class="row">
+              <div class="col-md-12">
+                <p (click)="editForm.multitab_list.push({});"><b class="add-another">ADD NEW</b></p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit"
+          [ladda]="editForm.submit">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
+        segment?</strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+      [disabled]="deleteForm?.btnLoader" [ladda]="deleteForm?.btnLoader">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- Edit SEO MODAL -->
+<ng-template #editSeoModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateSeo();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">SEO Details</h4>  
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Page URL - {{commonService.store_details?.base_url}}/pages/{{editForm?.page_url}}</label>
+            <input type="text" name="page_url" class="form-control" [(ngModel)]="editForm.page_url" appNoSplChar required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>H1 Tag</label>
+            <span *ngIf="editForm.seo_details?.h1_tag?.length" class="label_hint">
+              {{editForm.seo_details?.h1_tag.length}} of 70 characters used
+            </span>
+            <input type="text" name="h1_tag" class="form-control" [(ngModel)]="editForm.seo_details.h1_tag" maxlength="70" required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Page Title</label>
+            <span *ngIf="editForm.seo_details?.page_title?.length" class="label_hint">
+              {{editForm.seo_details.page_title.length}} of 70 characters used
+            </span>
+            <input type="text" name="page_title" class="form-control" [(ngModel)]="editForm.seo_details.page_title" maxlength="70" required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Meta Description</label>
+            <span *ngIf="editForm.seo_details?.meta_desc?.length" class="label_hint">
+              {{editForm.seo_details.meta_desc.length}} of 320 characters used</span>
+            <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="editForm.seo_details.meta_desc" maxlength="320" required></textarea>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Meta Keywords</label>
+            <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="editForm.seo_details.meta_keyword_list" placeholder=""
+            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+          </div>
+          <div *ngIf="editForm.err_msg" class="col-12 mt-3 text-danger">
+            {{editForm.err_msg}}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit"
+        [ladda]="editForm.submit">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,98 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>{{commonService.secondary_header}}</h1>          
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 form-group mb-3">
+      <div class="card card-in-card p-4 mb-3">
+        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+          <div class="row">            
+            <!-- {{app_setting.chat_status}} -->
+            <div *ngIf="app_setting.chat_config" class="form-group mb-3 col-6 col-md-6">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="only_on_home"
+                  [(ngModel)]="app_setting.chat_config.only_on_home" #only_on_home="ngModel">
+                <span>Display only on landing page</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="form-group mb-3 col-md-6 d-flex align-items-center justify-content-end">
+              Enable Chat <label class="switch"><input type="checkbox" name="chat_status" [(ngModel)]="app_setting.chat_status"
+                 #chat_status="ngModel" /><div></div>
+              </label>
+            </div>
+            
+            <!-- <div class="form-group mb-3 col-6">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="chat_status" [(ngModel)]="app_setting.chat_status"
+                  (change)="!app_setting.chat_config? app_setting.chat_config={}: '';" #chat_status="ngModel">
+                <span>Enable Chat</span>
+                <span class="checkmark"></span>
+              </label>
+            </div> -->
+            
+            <!-- <ng-container *ngIf="app_setting.chat_config"> -->
+              <div *ngIf="app_setting.chat_config.type=='whatsapp'" class="col-md-12">
+                <p><b class="add-another">Note:</b> Please enter mobile no with country code</p>
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>Type</label>
+                <select name="host_type" class="form-control select-arrow" [(ngModel)]="app_setting.chat_config.type"
+                  required>
+                  <option *ngIf="commonService.ys_features.indexOf('whatsapp_chat')!=-1" value="whatsapp">WhatsApp
+                  </option>
+                  <option *ngIf="commonService.ys_features.indexOf('messenger')!=-1" value="third_party">Third Party
+                  </option>
+                </select>
+              </div>
+              <ng-container *ngIf="app_setting.chat_config.type=='whatsapp'">
+                <div class="col-6 form-group mb-3">
+                  <label>Mobile</label>
+                  <div class="fixed-unit-wrapper">
+                    <input type="tel" name="whatsapp_mob" class="form-control"
+                      [(ngModel)]="app_setting.chat_config.mobile" #whatsapp_mob="ngModel" required appNumberOnly />
+                    <span class="fixed-unit-text">+</span>
+                  </div>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Message</label>
+                  <input type="text" name="whatsapp_msg" class="form-control"
+                    [(ngModel)]="app_setting.chat_config.message" #whatsapp_msg="ngModel" />
+                </div>
+                <!-- <div class="col-md-12 form-group mb-3">
+                  <label class="checkbox checkbox-primary">
+                    <input class="form-check-input" type="checkbox" name="product_enquiry" [(ngModel)]="app_setting.chat_config.product_enquiry">
+                    <span>Enable product enquiry</span>
+                    <span class="checkmark"></span>
+                  </label>
+                </div> -->
+              </ng-container>
+              <div *ngIf="app_setting.chat_config.type=='third_party'" class="col-md-12 form-group mb-3">
+                <label>URL</label>
+                <input type="text" name="url" class="form-control" [(ngModel)]="app_setting.chat_config.url"
+                  #url="ngModel" required />
+              </div>
+            <!-- </ng-container> -->
+            <div align="center" class="col-md-12 z-i-0" *ngIf="app_setting.errorMsg">
+              <p class="text-danger">{{ app_setting.errorMsg }}</p>
+            </div>
+            <div align="center" class="col-md-12 z-i-0">
+              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
+                Update
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

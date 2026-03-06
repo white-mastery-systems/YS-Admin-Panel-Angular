@@ -1,0 +1,40 @@
+.inner-dots
+{
+    margin-top: 30px !important;
+}
+
+.ios-topheader
+{
+  border:1px solid #ffffff !important; 
+  background: #ffffff !important;
+  height:50px !important;
+  position: fixed !important;
+  width: 100% !important; z-index: 99 !important;
+}
+.main-header, .page-header-wrapper
+{
+    padding: 20px !important;
+    margin-top: 30px !important;
+    box-shadow :0 3px  6.7px rgb(0 0 0 / 4%) !important;
+}
+
+.topborder{
+    border-bottom: 1px solid transparent !important;
+  }  
+  
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  ::-webkit-scrollbar {
+    display: none !important; /* make scrollbar transparent */
+    }   
+    
+    .padding{
+      padding-top: 25px !important;
+    }
+
+    .modal-header{
+      margin-top: 27px !important;
+      box-shadow: 0 3px 6.7px rgb(0 0 0 / 4%) !important
+    }

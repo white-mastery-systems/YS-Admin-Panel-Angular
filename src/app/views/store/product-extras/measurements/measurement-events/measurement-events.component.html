@@ -1,0 +1,179 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+​
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+​
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="row m-0">
+      <!-- banner image -->
+       <div class="col-md-12 d-flex justify-content-center">
+          <div class="col-md-6" > 
+              <h6 class="mb-3 dark-font text-center">MEASUREMENT IMAGE</h6>
+              <p class="text-center light-font">Image Resolution: 180x180</p>
+                <div class="mb-4 card p-2" align="center">
+                
+                    <div *ngIf="mmForm.image" class="poss-rel">
+                        <span (click)="mmForm.img_change=null; mmForm.image=null" class="material-icons round-img-icon ab-item-close" aria-hidden="true">close</span>
+                        <img *ngIf="mmForm.img_change" [src]="mmForm.image" height="150px;" width="auto;">
+                        <img *ngIf="!mmForm.img_change" [src]="imgBaseUrl+mmForm.image" height="150px;" width="auto;">
+                    </div>
+                
+                    <div *ngIf="!mmForm.image">
+                      <label>
+                        <div>
+                          <i class="material-icons add-img"> add_photo_alternate</i>
+                          <p class="light-font">Click to upload image</p>
+                        </div>
+                        <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event)" accept="image/jpeg, image/png, image/webp"
+                        />
+                      </label>
+                    </div>
+            </div>
+      
+          </div>
+
+       </div>
+      <div class="col-md-12">
+        <div class=" form-group mb-3">
+          <label class="light-font fw-500">Measurement Set Title</label>
+          <input type="text" name="name" class="form-control" [(ngModel)]="mmForm.name" #name="ngModel" required />
+        </div>
+        <div class=" form-group mb-4">
+          <label class="light-font fw-500">Rank</label>
+          <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="mmForm.rank" #rank="ngModel" min="1" max="{{maxRank}}"
+            appNumberOnly required />
+        </div>
+​
+        <!-- units -->
+        <h6  class="mb-3 dark-font ">MEASUREMENT UNITS</h6>
+       <div class="mb-1">
+          <div class="row">
+            <div class="col-md-6 mb-2" *ngFor="let x of mmForm.units; let i=index;">
+              <div class="card card-in-card p-3">
+                <div *ngIf="mmForm.units?.length>1">
+                  <span (click)="mmForm.units.splice(i, 1); mmForm.list=[{conditions: []}];" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true"
+                    aria-hidden="true">close</span>
+                </div>
+                <label class="light-font fw-500">Unit {{i+1}}</label>
+                <select name="unit{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" (change)="mmForm.list=[{conditions: []}];"
+                  required>
+                  <option *ngFor="let x of commonService.default_units;" [ngValue]="x.value">{{x.name}}</option>
+                </select>
+                <label class="mt-2 light-font fw-500" >Max Measurement Value</label>
+                <input type="tel" name="max_value{{i}}" class="form-control" [(ngModel)]="x.max_value" #max_value="ngModel" appNumberOnly
+                  required />
+              </div>
+            </div>
+            <div *ngIf="mmForm.units?.length<commonService.default_units.length" class="ml-1 col-md-12" [ngClass]="mmForm.units.length? 'mt-3': ''">
+              <button class="light-button" type="button" (click)="mmForm.units.push({}); mmForm.list=[{conditions: []}];">
+                  <span class="material-symbols-rounded"
+                   >add</span> ADD UNIT
+              </button>
+              <!-- <span class="black-outline-btn x-close" (click)="mmForm.units.push({}); mmForm.list=[{conditions: []}];">
+                <b>ADD UNIT</b>
+              </span> -->
+            </div>
+          </div>
+        </div>
+​
+        <!-- measurement-sets -->
+        <h6 class="mb-3 pt-3 dark-font">MEASUREMENT SETS</h6>
+        <div class="row">
+          <div class="col-md-6" *ngFor="let x of mmForm.list; let i=index;">
+            <div class="mx-3 mb-2">
+              <div class="row">
+                <ng-container *ngIf="mmForm.list.length > 1">
+                  <span (click)="mmForm.list.splice(i, 1);"  class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                </ng-container>
+                <div class="col-md-12 px-0">
+                  <div class="form-group">
+                    <label class="light-font mb-1 fw-500">Measurement {{i+1}}</label>
+                    <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" required />
+                  </div>
+                </div>
+                <!-- conditions -->
+                <div class="col-md-12" *ngFor="let y of x.conditions; let j=index;">
+                  <label class="light-font">Condition {{j+1}}</label>
+                  <div class="card card-in-card p-3 mb-3">
+                    <span (click)="x.conditions.splice(j, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                    <ng-container *ngIf="y?.list?.length">
+                      <div class="row" *ngFor="let z of y.list; let k=index;">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label class="light-font">From ({{z.unit}})</label>
+                            <input type="tel" name="mm_from{{i+1}}{{j+1}}{{k+1}}" class="form-control" [(ngModel)]="z.mm_from" #mm_from="ngModel" appNumberOnly
+                              required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label class="light-font">To ({{z.unit}})</label>
+                            <input type="tel" name="mm_to{{i+1}}{{j+1}}{{k+1}}" class="form-control" [(ngModel)]="z.mm_to" #mm_to="ngModel" appNumberOnly
+                              required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label class="light-font fw-500">Extra Stock Requirement</label>
+                            <input type="tel" name="additional_qty{{i+1}}{{j+1}}{{k+1}}" class="form-control" [(ngModel)]="z.additional_qty" #additional_qty="ngModel"
+                              appNumberOnly required />
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div *ngIf="commonService.store_details?.additional_features?.measurements_condition" class="col-md-12">
+                  <button class="dark-button" (click)="onAddCondition(x);">
+                      <span class="material-symbols-rounded"
+                       >add</span>
+                      {{ (x?.conditions?.length)? 'ADD CONDITION': 'ADD CONDITION' }}
+                  </button>
+                  <!-- <span class="add-another x-close" (click)="onAddCondition(x);">
+                    <b>{{ (x?.conditions?.length)? 'ADD CONDITION': 'ADD CONDITION' }}</b>
+                  </span> -->
+                </div>
+                <!-- ## conditions ## -->
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 form-group mt-2">
+            <button type="button" class="light-button" (click)="mmForm.list.push({ conditions: [] });">
+                <span class="material-symbols-rounded">add</span> ADD MEASUREMENT
+            </button>
+            <!-- <span class="black-outline-btn x-close" (click)="mmForm.list.push({ conditions: [] });">
+              <b>ADD MEASUREMENT</b>
+            </span> -->
+          </div>
+        </div>
+         
+      </div>
+      <div *ngIf="mmForm.errorMsg">
+          <p class="text-danger">{{ mmForm.errorMsg }}</p>
+        </div>
+    </div>
+    <div class="page_fixedfooter">
+      <button type="button" class="btn btn-wide black-outline-btn mr-2" routerLink="/product-extras/measurement-sets">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="mmForm.submit" [ladda]="mmForm.submit">
+        {{ (mmForm?.form_type=='add')? 'Add': 'Update' }}
+      </button>
+    </div>
+​
+  </form>
+​
+</div>

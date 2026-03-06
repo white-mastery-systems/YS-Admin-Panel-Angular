@@ -1,0 +1,738 @@
+<ng-container *ngIf="commonService.dispAnnouncement">
+  <div *ngIf="commonService.desktop_device || router.url=='/dashboard'" class="announceBar row m-0">
+    <div class="col-md-7 col-8 d-flex align-items-center justify-content-end px-0">
+      <p>
+        <!-- Get 90% off on your Yourstore Plan for a limited time! -->
+        Get 90% off on your Yourstore Plan. Offer ends on <b>{{commonService.store_details?.package_details.trial_expiry | date: "dd MMM YYYY"}}.</b>
+      </p>
+    </div>
+    <div class="col-md-5 col-4 d-flex align-items-center justify-content-start px-0">
+      <a class="enquire-btn" routerLink="/deployment/plans">
+        <span class="shimmer">Claim Offer</span>
+      </a>
+    </div>
+  </div>
+</ng-container>
+
+<div class="app-admin-wrap layout-sidebar-large">
+  <div *ngIf="commonService.ios && keep_login" class="ios-topheader" ></div>
+  <!-- Main Header -->
+  <div *ngIf="!commonService.secondary_header || commonService.desktop_device">
+    <!-- <div *ngIf="navService.sidePanelList?.length && commonService.desktop_device" class="menu-toggle">
+      <img src="assets/icons/sidebar/sidebar-icon.svg">
+    </div> -->    
+
+    <div class="main-header" [ngClass]="{
+      't-35': commonService.dispAnnouncement && commonService.desktop_device || commonService.dispAnnouncement && router.url=='/dashboard'
+    }">   
+      <!-- store logo -->
+      <div *ngIf="commonService.store_details?.login_type=='vendor' && !commonService.desktop_device" routerLink="/vendor-dashboard" class="cursor logo">
+        <img [src]="imgBaseUrl+'uploads/'+commonService.store_details?._id+'/logo.png?v='+commonService.verNum"
+          style="height: 50px !important; width: auto;" alt="yourstore-logo">
+      </div>
+      <!-- yourstore logo -->
+      <div *ngIf="commonService.store_details?.login_type!='vendor' && !commonService.desktop_device" (click)="gotoDashboard();" class="cursor logo">
+        <img *ngIf="!commonService.dark_theme" src="assets/images/yourstore_logo.svg" alt="yourstore-logo">
+        <img *ngIf="commonService.dark_theme" src="assets/images/yourstore_logo_white.svg" alt="yourstore-logo">
+      </div>
+      <div style="margin: auto; margin-left: 0px;"></div>
+      <div class="header-part-right">
+        <div class="user col d-flex">
+          <ng-container *ngIf="commonService.store_details?.status=='active' && commonService.store_details?.login_type=='admin'">
+            <!-- upgrade -->
+            <ng-container *ngIf="commonService.lastPackages.indexOf(commonService.store_details?.package_details?.package_id)==-1">
+              <button *ngIf="commonService.desktop_device" routerLink="/deployment/plans" class="btn-upgrade">
+                <img src="assets/images/rocket.svg" alt="upgrade">
+                {{ (commonService.store_details?.package_details?.billing_status)? 'Upgrade': 'Select Plan' }}
+              </button>
+              <button *ngIf="!commonService.desktop_device" routerLink="/deployment/plans" class="icon-image x-close account-circle user-account">
+                <img src="assets/images/rocket-pink.svg" alt="upgrade">
+              </button>
+            </ng-container>
+            <!-- feedback -->
+            <div (click)="feedForm = { severity: '', image_list: [] };" class="x-close account-circle user-account openFeedbackBar icon-image">
+              <img src="assets/images/feedback.svg" title="feedback">
+            </div>
+            <!-- notification -->
+            <div (click)="notifyType='notification';" class="x-close account-circle user-account openNotifyBar icon-image">
+              <img src="assets/images/notifications.svg" title="notification">
+              <div *ngIf="(commonService.notifyCount + commonService.annouceCount) > 0" class="item-badge">
+                <span>{{ commonService.notifyCount + commonService.annouceCount }}</span>
+              </div>
+            </div>
+          </ng-container>
+          <!-- account -->
+          <div [routerLink]="(commonService.store_details?.login_type!='vendor')? '/account': '/vendor-account'" class="x-close account-circle user-account">
+            <img src="assets/icons/sidebar/account_2.svg" title="My Account">
+            <!-- <span class="material-symbols-rounded">account_circle</span> -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- #Header -->
+  </div>
+
+  <!-- Secondary Header -->
+  <section *ngIf="commonService.secondary_header && !commonService.desktop_device" class="page-header-wrapper">
+    <div class="row h-100" [ngClass]="commonService.ios && keep_login? '': 'px-3'">
+      <div class="col-1 pr-0 d-flex align-items-center" (click)="pageBack();">
+        <span class="material-symbols-rounded back_arrow">arrow_back</span>
+      </div>
+      <div class="col-11 d-flex align-items-center">
+        <div (click)="pageBack();" class="page-header-inner-headings">
+          <h4 class="page-header-heading">{{commonService.secondary_header}}</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sidebar -->
+  <div class="side-content-wrap" *ngIf="navService.sidebarState.sidenavOpen && commonService.desktop_device">    
+    <div [ngClass]="{ open: navService.sidebarState.sidenavOpen, 't-35': commonService.dispAnnouncement }" class="sidebar-left">
+      <div class="logo-wrapper d-flex align-items-center">      
+          <!-- store logo -->
+          <div *ngIf="commonService.store_details?.login_type=='vendor'" routerLink="/vendor-dashboard" class="cursor logo">
+            <img [src]="imgBaseUrl+'uploads/'+commonService.store_details?._id+'/logo.png?v='+commonService.verNum"
+              style="height: 50px !important; width: auto;" alt="yourstore-logo">
+          </div>
+          <!-- yourstore logo -->
+          <div *ngIf="commonService.store_details?.login_type!='vendor'" routerLink="/dashboard" class="cursor logo">
+            <img *ngIf="!commonService.dark_theme" src="assets/images/yourstore_logo.svg" alt="yourstore-logo">
+            <img *ngIf="commonService.dark_theme" src="assets/images/yourstore_logo_white.svg" alt="yourstore-logo">
+          </div>
+      </div>      
+
+      <div class="accordion menu-scroll" id="accordionContainer">
+        <ng-container *ngFor="let item of navService.sidePanelList; let i=index;">
+          <!-- [ngClass]="(item.type==='dropDown' && item.expand)? 'dropdown_bg': ''" -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="'heading'+i" class="list">
+              <a class="accordion-button" *ngIf="item.type=='link'" [routerLink]="item.state" [ngClass]="{ 'active': item.active }" type="button" data-bs-toggle="collapse" aria-expanded="false" [attr.data-bs-target]="'#collapse'+i" [attr.aria-controls]="'collapse'+i">
+                <div class="spacing">
+                  <span><img src="{{item.icon}}"> </span>
+                  <span class="pl-2 menu-txt">{{item.name}}</span>              
+                </div>
+              </a>
+              <a class="accordion-button" *ngIf="item.type==='dropDown'" (click)="item.expand=!item.expand" style="background-color: transparent;" [ngClass]="{ 'active': item.active }" type="button" data-bs-toggle="collapse" aria-expanded="false" [attr.data-bs-target]="'#collapse'+i" [attr.aria-controls]="'collapse'+i">
+                <div class="spacing">               
+                  <span><img src="{{item.icon}}"> </span>
+                  <span class="pl-2 menu-txt">{{item.name}}</span>
+                </div>
+                <i class="material-icons-two-tone" *ngIf="item.type==='dropDown'">expand_more</i>
+              </a>
+            </h2>
+            <div [id]="'collapse'+i" class="accordion-collapse collapse" [ngClass]="{ 'show': item.active }" attr.aria-labelledby="'heading'+i" data-bs-parent="#accordionContainer">
+              <div class="accordion-body">
+                <ul *ngFor="let subitem of item.sub">
+                  <li> 
+                    <div class="list_two">
+                      <div class="spacing">                      
+                        <a [routerLink]="subitem.state" routerLinkActive="active">
+                          <span class="dot"></span> {{subitem.name}}
+                        </a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+    <!-- #Sidebar -->
+  </div>
+
+  <div class="main-content-wrap d-flex flex-column" [ngClass]="{
+    'sidenav-open': navService.sidebarState.sidenavOpen,
+    'top_space': commonService.secondary_header,
+    'main-content-wrap-small' : !navService.sidebarState.sidenavOpen && commonService.desktop_device,
+    'mt-115': commonService.dispAnnouncement && commonService.desktop_device || commonService.dispAnnouncement && router.url=='/dashboard'
+  }">
+
+    <router-outlet (activate)="commonService.onActivate($event)"></router-outlet>
+
+    <div class="flex-grow-1"></div>
+
+    <!-- Footer -->
+    <div *ngIf="commonService.desktop_device" class="app-footer">
+      <div class="footer-bottom border-top pt-3 d-flex flex-column flex-sm-row align-items-center">
+        <span class="flex-grow-1"></span>
+        <div class="footer-logo d-flex align-items-center">
+          <a *ngIf="commonService.store_details?.login_type=='vendor'" href="https://yourstore.io"
+            class="yourstore-text d-flex align-items-center" target="_blank">
+            <span class="px-0 float-left band-txt">Powered by</span>
+            <span class="px-0 float-right">
+              <img width="100%" height="100%" src="assets/images/yourstore_logo.svg" class="yourstore-logo"
+                alt="yourstore-logo">
+            </span>
+          </a>
+          <img *ngIf="commonService.store_details?.login_type!='vendor'" class="mb-3 mb-md-0" style="width: 100px;"
+            alt="yourstore-logo"
+            src="{{(commonService.dark_theme)? 'assets/images/yourstore_logo_white.svg': 'assets/images/yourstore_logo.svg'}}">
+          <div class="ml-md-3">
+            <p class="m-0">&copy; {{currentYear}} All Rights Reserved.
+              {{(commonService.store_details?.login_type=='vendor')? commonService.store_details.company_details?.name:
+              'Estore Mastery Systems Pvt. Ltd.' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Mobile Footer -->
+<div *ngIf="!commonService.secondary_header && !commonService.desktop_device && commonService.store_details?.status=='active'" class="row footer" [ngClass]="(commonService.gsh>commonService.screen_height)? 'hide-footer': ''">
+  <div class="col-md-12 px-3">
+    <!-- store -->
+    <ul *ngIf="commonService.store_details.login_type!='vendor'">
+      <li><a routerLink="/dashboard" [routerLinkActive]="'footer_active'">
+        <span class="svg-icon svg-icon-primary svg-icon-2x">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" viewBox="0 0 24 24" version="1.1">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <rect x="0" y="0" width="24" height="24"/>
+              <rect class="rect-dash" fill="#9F9F9F" x="4" y="4" width="7" height="7" rx="1.5"/>
+              <path d="M5.5,13 L9.5,13 C10.3284271,13 11,13.6715729 11,14.5 L11,18.5 C11,19.3284271 10.3284271,20 9.5,20 L5.5,20 C4.67157288,20 4,19.3284271 4,18.5 L4,14.5 C4,13.6715729 4.67157288,13 5.5,13 Z M14.5,4 L18.5,4 C19.3284271,4 20,4.67157288 20,5.5 L20,9.5 C20,10.3284271 19.3284271,11 18.5,11 L14.5,11 C13.6715729,11 13,10.3284271 13,9.5 L13,5.5 C13,4.67157288 13.6715729,4 14.5,4 Z M14.5,13 L18.5,13 C19.3284271,13 20,13.6715729 20,14.5 L20,18.5 C20,19.3284271 19.3284271,20 18.5,20 L14.5,20 C13.6715729,20 13,19.3284271 13,18.5 L13,14.5 C13,13.6715729 13.6715729,13 14.5,13 Z" fill="#9F9F9F" opacity="0.3"/>
+          </g>
+        </svg>
+      </span>
+      <span>Home</span>
+      </a></li>
+      <li><a routerLink="/product-sections" [routerLinkActive]="'footer_active'">
+        <span class="svg-icon svg-icon-primary svg-icon-2x">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" fill="red"  viewBox="0 0 24 24" version="1.1">
+            <g stroke="" stroke-width="1" fill="none" fill-rule="">
+            <rect x="0" y="0" width="24" height="24" />
+              <path d="M4,9.67471899 L10.880262,13.6470401 C10.9543486,13.689814 11.0320333,13.7207107 11.1111111,13.740321 L11.1111111,21.4444444 L4.49070127,17.526473 C4.18655139,17.3464765 4,17.0193034 4,16.6658832 L4,9.67471899 Z M20,9.56911707 L20,16.6658832 C20,17.0193034 19.8134486,17.3464765 19.5092987,17.526473 L12.8888889,21.4444444 L12.8888889,13.6728275 C12.9050191,13.6647696 12.9210067,13.6561758 12.9368301,13.6470401 L20,9.56911707 Z" fill="#9F9F9F"/>
+              <path d="M4.21611835,7.74669402 C4.30015839,7.64056877 4.40623188,7.55087574 4.5299008,7.48500698 L11.5299008,3.75665466 C11.8237589,3.60013944 12.1762411,3.60013944 12.4700992,3.75665466 L19.4700992,7.48500698 C19.5654307,7.53578262 19.6503066,7.60071528 19.7226939,7.67641889 L12.0479413,12.1074394 C11.9974761,12.1365754 11.9509488,12.1699127 11.9085461,12.2067543 C11.8661433,12.1699127 11.819616,12.1365754 11.7691509,12.1074394 L4.21611835,7.74669402 Z" fill="#9F9F9F" opacity="0.3"/>
+            </g>
+          </svg>
+        </span>
+        <span>Products</span>
+      </a>
+      </li>
+      <!-- orders -->
+      <li *ngIf="commonService.store_details?.type!='quot_based' || commonService.store_details?.sub_type!='enquiry'">
+        <a routerLink="/orders" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28px" height="28px" viewBox="0 0 24 24" version="1.1">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <rect x="0" y="0" width="24" height="24"/>
+                <path d="M12,4.56204994 L7.76822128,9.6401844 C7.4146572,10.0644613 6.7840925,10.1217854 6.3598156,9.76822128 C5.9355387,9.4146572 5.87821464,8.7840925 6.23177872,8.3598156 L11.2317787,2.3598156 C11.6315738,1.88006147 12.3684262,1.88006147 12.7682213,2.3598156 L17.7682213,8.3598156 C18.1217854,8.7840925 18.0644613,9.4146572 17.6401844,9.76822128 C17.2159075,10.1217854 16.5853428,10.0644613 16.2317787,9.6401844 L12,4.56204994 Z" fill="#9F9F9F" fill-rule="nonzero" opacity="0.3"/>
+                <path d="M3.28077641,9 L20.7192236,9 C21.2715083,9 21.7192236,9.44771525 21.7192236,10 C21.7192236,10.0817618 21.7091962,10.163215 21.6893661,10.2425356 L19.5680983,18.7276069 C19.234223,20.0631079 18.0342737,21 16.6576708,21 L7.34232922,21 C5.96572629,21 4.76577697,20.0631079 4.43190172,18.7276069 L2.31063391,10.2425356 C2.17668518,9.70674072 2.50244587,9.16380623 3.03824078,9.0298575 C3.11756139,9.01002735 3.1990146,9 3.28077641,9 Z M12,12 C11.4477153,12 11,12.4477153 11,13 L11,17 C11,17.5522847 11.4477153,18 12,18 C12.5522847,18 13,17.5522847 13,17 L13,13 C13,12.4477153 12.5522847,12 12,12 Z M6.96472382,12.1362967 C6.43125772,12.2792385 6.11467523,12.8275755 6.25761704,13.3610416 L7.29289322,17.2247449 C7.43583503,17.758211 7.98417199,18.0747935 8.51763809,17.9318517 C9.05110419,17.7889098 9.36768668,17.2405729 9.22474487,16.7071068 L8.18946869,12.8434035 C8.04652688,12.3099374 7.49818992,11.9933549 6.96472382,12.1362967 Z M17.0352762,12.1362967 C16.5018101,11.9933549 15.9534731,12.3099374 15.8105313,12.8434035 L14.7752551,16.7071068 C14.6323133,17.2405729 14.9488958,17.7889098 15.4823619,17.9318517 C16.015828,18.0747935 16.564165,17.758211 16.7071068,17.2247449 L17.742383,13.3610416 C17.8853248,12.8275755 17.5687423,12.2792385 17.0352762,12.1362967 Z" fill="#9F9F9F"/>
+              </g>
+            </svg>
+          </span>
+          <span>{{ (commonService.store_details?.type=='quot_based')? 'Quotes': 'Orders' }}</span>
+        </a>
+      </li>
+      <!-- enquiry -->
+      <li *ngIf="commonService.store_details?.type=='quot_based' && commonService.store_details?.sub_type=='enquiry'">
+        <a routerLink="/enquiries" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#9F9F9F" width="28px" height="28px" viewBox="0 -960 960 960" version="1.1">
+              <path d="M180-820v295-4 389-680 186-186Zm99 400h168q12-17 26.5-32t31.5-28H279v60Zm0 170h123q-2-15-1.5-30t2.5-30H279v60ZM180-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h361l219 219v155q-14-7-29-11.5t-31-7.5v-109H511v-186H180v680h260q11 17 24 32t28 28H180Zm475-389q80.51 0 137.255 56.745Q849-355.51 849-275q0 80.51-56.745 137.255Q735.51-81 655-81q-80.51 0-137.255-56.745Q461-194.49 461-275q0-80.51 56.745-137.255Q574.49-469 655-469Zm1.108 318Q668-151 676-159.108t8-20Q684-191 675.892-199t-20-8Q644-207 636-198.892t-8 20Q628-167 636.108-159t20 8ZM636-233h40v-10.952Q676-256 682.5-266q6.5-10 15.227-18.4Q713-297 722.5-309.5 732-322 732-342q0-31.719-21.297-50.859Q689.407-412 655.78-412 630-412 609-397.5t-29 39.986L616-342q2-14 13.5-23.5t26.948-9.5q16.552 0 26.052 8.25T692-342q0 11-7 19.5T670-306q-8 7-15.5 14T642-277q-4 7-5 13.3-1 6.3-1 14.7v16Z"/>
+            </svg>
+          </span>
+          <span>Enquiries</span>
+        </a>
+      </li>
+      <li><a routerLink="/setup" [routerLinkActive]="'footer_active'">
+        <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg width="28px" height="28px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor"/>
+          <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor"/>
+          </svg>
+        </span><span>Website</span>
+      </a></li>
+      <li><a routerLink="/setting" [ngClass]="(commonService.curr_route.indexOf('/setting')!=-1 || commonService.curr_route.indexOf('/vendors/')!=-1)? 'footer_active': null">
+        <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path opacity="0.3" d="M22.1 11.5V12.6C22.1 13.2 21.7 13.6 21.2 13.7L19.9 13.9C19.7 14.7 19.4 15.5 18.9 16.2L19.7 17.2999C20 17.6999 20 18.3999 19.6 18.7999L18.8 19.6C18.4 20 17.8 20 17.3 19.7L16.2 18.9C15.5 19.3 14.7 19.7 13.9 19.9L13.7 21.2C13.6 21.7 13.1 22.1 12.6 22.1H11.5C10.9 22.1 10.5 21.7 10.4 21.2L10.2 19.9C9.4 19.7 8.6 19.4 7.9 18.9L6.8 19.7C6.4 20 5.7 20 5.3 19.6L4.5 18.7999C4.1 18.3999 4.1 17.7999 4.4 17.2999L5.2 16.2C4.8 15.5 4.4 14.7 4.2 13.9L2.9 13.7C2.4 13.6 2 13.1 2 12.6V11.5C2 10.9 2.4 10.5 2.9 10.4L4.2 10.2C4.4 9.39995 4.7 8.60002 5.2 7.90002L4.4 6.79993C4.1 6.39993 4.1 5.69993 4.5 5.29993L5.3 4.5C5.7 4.1 6.3 4.10002 6.8 4.40002L7.9 5.19995C8.6 4.79995 9.4 4.39995 10.2 4.19995L10.4 2.90002C10.5 2.40002 11 2 11.5 2H12.6C13.2 2 13.6 2.40002 13.7 2.90002L13.9 4.19995C14.7 4.39995 15.5 4.69995 16.2 5.19995L17.3 4.40002C17.7 4.10002 18.4 4.1 18.8 4.5L19.6 5.29993C20 5.69993 20 6.29993 19.7 6.79993L18.9 7.90002C19.3 8.60002 19.7 9.39995 19.9 10.2L21.2 10.4C21.7 10.5 22.1 11 22.1 11.5ZM12.1 8.59998C10.2 8.59998 8.6 10.2 8.6 12.1C8.6 14 10.2 15.6 12.1 15.6C14 15.6 15.6 14 15.6 12.1C15.6 10.2 14 8.59998 12.1 8.59998Z" fill="currentColor"/>
+              <path d="M17.1 12.1C17.1 14.9 14.9 17.1 12.1 17.1C9.30001 17.1 7.10001 14.9 7.10001 12.1C7.10001 9.29998 9.30001 7.09998 12.1 7.09998C14.9 7.09998 17.1 9.29998 17.1 12.1ZM12.1 10.1C11 10.1 10.1 11 10.1 12.1C10.1 13.2 11 14.1 12.1 14.1C13.2 14.1 14.1 13.2 14.1 12.1C14.1 11 13.2 10.1 12.1 10.1Z" fill="currentColor"/>
+              </svg>
+              </span>
+              <span>Settings</span>
+      </a></li>
+    </ul>
+    <!-- vendor -->
+    <ul *ngIf="commonService.store_details.login_type=='vendor'">
+      <li>
+        <a routerLink="/vendor-dashboard" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px"
+              viewBox="0 0 24 24" version="1.1">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <rect x="0" y="0" width="24" height="24" />
+                <rect class="rect-dash" fill="#9F9F9F" x="4" y="4" width="7" height="7" rx="1.5" />
+                <path
+                  d="M5.5,13 L9.5,13 C10.3284271,13 11,13.6715729 11,14.5 L11,18.5 C11,19.3284271 10.3284271,20 9.5,20 L5.5,20 C4.67157288,20 4,19.3284271 4,18.5 L4,14.5 C4,13.6715729 4.67157288,13 5.5,13 Z M14.5,4 L18.5,4 C19.3284271,4 20,4.67157288 20,5.5 L20,9.5 C20,10.3284271 19.3284271,11 18.5,11 L14.5,11 C13.6715729,11 13,10.3284271 13,9.5 L13,5.5 C13,4.67157288 13.6715729,4 14.5,4 Z M14.5,13 L18.5,13 C19.3284271,13 20,13.6715729 20,14.5 L20,18.5 C20,19.3284271 19.3284271,20 18.5,20 L14.5,20 C13.6715729,20 13,19.3284271 13,18.5 L13,14.5 C13,13.6715729 13.6715729,13 14.5,13 Z"
+                  fill="#9F9F9F" opacity="0.3" />
+              </g>
+            </svg>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/product-sections/products" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px"
+              fill="red" viewBox="0 0 24 24" version="1.1">
+              <g stroke="" stroke-width="1" fill="none" fill-rule="">
+                <rect x="0" y="0" width="24" height="24" />
+                <path
+                  d="M4,9.67471899 L10.880262,13.6470401 C10.9543486,13.689814 11.0320333,13.7207107 11.1111111,13.740321 L11.1111111,21.4444444 L4.49070127,17.526473 C4.18655139,17.3464765 4,17.0193034 4,16.6658832 L4,9.67471899 Z M20,9.56911707 L20,16.6658832 C20,17.0193034 19.8134486,17.3464765 19.5092987,17.526473 L12.8888889,21.4444444 L12.8888889,13.6728275 C12.9050191,13.6647696 12.9210067,13.6561758 12.9368301,13.6470401 L20,9.56911707 Z"
+                  fill="#9F9F9F" />
+                <path
+                  d="M4.21611835,7.74669402 C4.30015839,7.64056877 4.40623188,7.55087574 4.5299008,7.48500698 L11.5299008,3.75665466 C11.8237589,3.60013944 12.1762411,3.60013944 12.4700992,3.75665466 L19.4700992,7.48500698 C19.5654307,7.53578262 19.6503066,7.60071528 19.7226939,7.67641889 L12.0479413,12.1074394 C11.9974761,12.1365754 11.9509488,12.1699127 11.9085461,12.2067543 C11.8661433,12.1699127 11.819616,12.1365754 11.7691509,12.1074394 L4.21611835,7.74669402 Z"
+                  fill="#9F9F9F" opacity="0.3" />
+              </g>
+            </svg>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/orders" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28px" height="28px"
+              viewBox="0 0 24 24" version="1.1">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <rect x="0" y="0" width="24" height="24" />
+                <path
+                  d="M12,4.56204994 L7.76822128,9.6401844 C7.4146572,10.0644613 6.7840925,10.1217854 6.3598156,9.76822128 C5.9355387,9.4146572 5.87821464,8.7840925 6.23177872,8.3598156 L11.2317787,2.3598156 C11.6315738,1.88006147 12.3684262,1.88006147 12.7682213,2.3598156 L17.7682213,8.3598156 C18.1217854,8.7840925 18.0644613,9.4146572 17.6401844,9.76822128 C17.2159075,10.1217854 16.5853428,10.0644613 16.2317787,9.6401844 L12,4.56204994 Z"
+                  fill="#9F9F9F" fill-rule="nonzero" opacity="0.3" />
+                <path
+                  d="M3.28077641,9 L20.7192236,9 C21.2715083,9 21.7192236,9.44771525 21.7192236,10 C21.7192236,10.0817618 21.7091962,10.163215 21.6893661,10.2425356 L19.5680983,18.7276069 C19.234223,20.0631079 18.0342737,21 16.6576708,21 L7.34232922,21 C5.96572629,21 4.76577697,20.0631079 4.43190172,18.7276069 L2.31063391,10.2425356 C2.17668518,9.70674072 2.50244587,9.16380623 3.03824078,9.0298575 C3.11756139,9.01002735 3.1990146,9 3.28077641,9 Z M12,12 C11.4477153,12 11,12.4477153 11,13 L11,17 C11,17.5522847 11.4477153,18 12,18 C12.5522847,18 13,17.5522847 13,17 L13,13 C13,12.4477153 12.5522847,12 12,12 Z M6.96472382,12.1362967 C6.43125772,12.2792385 6.11467523,12.8275755 6.25761704,13.3610416 L7.29289322,17.2247449 C7.43583503,17.758211 7.98417199,18.0747935 8.51763809,17.9318517 C9.05110419,17.7889098 9.36768668,17.2405729 9.22474487,16.7071068 L8.18946869,12.8434035 C8.04652688,12.3099374 7.49818992,11.9933549 6.96472382,12.1362967 Z M17.0352762,12.1362967 C16.5018101,11.9933549 15.9534731,12.3099374 15.8105313,12.8434035 L14.7752551,16.7071068 C14.6323133,17.2405729 14.9488958,17.7889098 15.4823619,17.9318517 C16.015828,18.0747935 16.564165,17.758211 16.7071068,17.2247449 L17.742383,13.3610416 C17.8853248,12.8275755 17.5687423,12.2792385 17.0352762,12.1362967 Z"
+                  fill="#9F9F9F" />
+              </g>
+            </svg>
+          </span>
+        </a>
+      </li>
+      <li *ngIf="commonService.route_permission_list.indexOf('ad_management')!=-1">
+        <a routerLink="/features/ad-management" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg width="28px" height="28px" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path opacity="0.3"
+                d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z"
+                fill="currentColor" />
+              <path
+                d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z"
+                fill="currentColor" />
+            </svg>
+          </span>
+        </a>
+      </li>
+      <li><a routerLink="/vendors/settlement" [routerLinkActive]="'footer_active'">
+          <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path opacity="0.3"
+                d="M22.1 11.5V12.6C22.1 13.2 21.7 13.6 21.2 13.7L19.9 13.9C19.7 14.7 19.4 15.5 18.9 16.2L19.7 17.2999C20 17.6999 20 18.3999 19.6 18.7999L18.8 19.6C18.4 20 17.8 20 17.3 19.7L16.2 18.9C15.5 19.3 14.7 19.7 13.9 19.9L13.7 21.2C13.6 21.7 13.1 22.1 12.6 22.1H11.5C10.9 22.1 10.5 21.7 10.4 21.2L10.2 19.9C9.4 19.7 8.6 19.4 7.9 18.9L6.8 19.7C6.4 20 5.7 20 5.3 19.6L4.5 18.7999C4.1 18.3999 4.1 17.7999 4.4 17.2999L5.2 16.2C4.8 15.5 4.4 14.7 4.2 13.9L2.9 13.7C2.4 13.6 2 13.1 2 12.6V11.5C2 10.9 2.4 10.5 2.9 10.4L4.2 10.2C4.4 9.39995 4.7 8.60002 5.2 7.90002L4.4 6.79993C4.1 6.39993 4.1 5.69993 4.5 5.29993L5.3 4.5C5.7 4.1 6.3 4.10002 6.8 4.40002L7.9 5.19995C8.6 4.79995 9.4 4.39995 10.2 4.19995L10.4 2.90002C10.5 2.40002 11 2 11.5 2H12.6C13.2 2 13.6 2.40002 13.7 2.90002L13.9 4.19995C14.7 4.39995 15.5 4.69995 16.2 5.19995L17.3 4.40002C17.7 4.10002 18.4 4.1 18.8 4.5L19.6 5.29993C20 5.69993 20 6.29993 19.7 6.79993L18.9 7.90002C19.3 8.60002 19.7 9.39995 19.9 10.2L21.2 10.4C21.7 10.5 22.1 11 22.1 11.5ZM12.1 8.59998C10.2 8.59998 8.6 10.2 8.6 12.1C8.6 14 10.2 15.6 12.1 15.6C14 15.6 15.6 14 15.6 12.1C15.6 10.2 14 8.59998 12.1 8.59998Z"
+                fill="currentColor" />
+              <path
+                d="M17.1 12.1C17.1 14.9 14.9 17.1 12.1 17.1C9.30001 17.1 7.10001 14.9 7.10001 12.1C7.10001 9.29998 9.30001 7.09998 12.1 7.09998C14.9 7.09998 17.1 9.29998 17.1 12.1ZM12.1 10.1C11 10.1 10.1 11 10.1 12.1C10.1 13.2 11 14.1 12.1 14.1C13.2 14.1 14.1 13.2 14.1 12.1C14.1 11 13.2 10.1 12.1 10.1Z"
+                fill="currentColor" />
+            </svg>
+          </span>
+        </a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="store-overlay" style="display:none"></div>
+
+<!-- notifications -->
+<div class="notify-bar">
+  <div class="notify-container">
+    <div class="row py-2 align-items-center justify-content-center d-flex px-0 mx-2">
+      <div class="col-11 mb-0 justify-content-between carosal-type2 px-2">
+        <ul class="justify-content-start">
+          <li>
+            <a class="cursor" (click)="notifyType='notification';" [ngClass]="(notifyType=='notification')? 'carosal_button_active': null">
+              Notifications ({{commonService.notifyCount}})
+            </a>
+          </li>
+          <li>
+            <a class="cursor" (click)="notifyType='announcement';" [ngClass]="(notifyType=='announcement')? 'carosal_button_active': null">
+              Announcements ({{commonService.annouceCount}})
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-1 px-0">
+        <a class="d-flex justify-content-end cursor closebtn">&times;</a>
+      </div>
+    </div>
+    <div class="tab-content col-12">
+      <!-- notifications -->
+      <div *ngIf="notifyType=='notification'" id="tab-content-div">
+        <ng-container *ngFor="let x of commonService.notifications | numOrderDesc:'created_on';">
+          <div (click)="openNotify(x, 'notification');" class="p-3 notify-card" [ngClass]="(!x.viewed)? 'actived': null" style="border-bottom: 1px solid #eee;">
+            <div class="d-flex">
+              <div class="px-0" [ngClass]="x.viewed? 'col-12': 'col-10'">
+                <h4 class="mb-0">
+                  <span class="material-icons">fiber_manual_record</span>
+                  {{x.title}}
+                </h4>
+              </div>
+              <div *ngIf="!x.viewed" class="col-2 px-0 new">
+                <p>NEW</p>
+              </div>
+            </div>
+            <div *ngIf="x.image" class="image">
+              <img [src]="imgBaseUrl+x.image" alt="image">
+            </div>
+            <div>
+              <p>{{x.body}}</p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <!-- announcements -->
+      <div *ngIf="notifyType=='announcement'" id="tab-content-div">
+        <ng-container *ngFor="let x of commonService.announcements | numOrderDesc:'created_on';">
+          <div (click)="openNotify(x, 'announcement');" class="p-3 notify-card" [ngClass]="(!x.viewed)? 'actived': null" style="border-bottom: 1px solid #eee;">
+            <div class="d-flex">
+              <div class="px-0" [ngClass]="x.viewed? 'col-12': 'col-10'">
+                <h4 class="mb-0">
+                  <span class="material-icons">fiber_manual_record</span>
+                  {{x.title}}
+                </h4>
+              </div>
+              <div *ngIf="!x.viewed" class="col-2 px-0 new">
+                <p>NEW</p>
+              </div>
+            </div>
+            <div *ngIf="x.image" class="image">
+              <img [src]="imgBaseUrl+x.image" alt="image">
+            </div>
+            <div [ngClass]="(x.pri_btn || x.sec_btn)? 'pb-2': ''">
+              <p>{{x.body}}</p>
+            </div>
+            <div class="button" *ngIf="x.pri_btn || x.sec_btn">
+              <button *ngIf="x.pri_btn" (click)="btnRedirect(x.pri_btn);" class="btn btn-wide btn-primary ladda-button">
+                {{x.pri_btn.name}}
+              </button>
+              <button *ngIf="x.sec_btn" (click)="btnRedirect(x.sec_btn);" class="btn btn-primary-light ml-2">
+                {{x.sec_btn.name}}
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- feedback -->
+<div class="feedback-bar">
+  <div class="feedback-container">
+    <div class="row align-items-center justify-content-center d-flex px-0 mx-2" style="border-bottom: 1px solid #eee;">
+      <div class="col-10 pr-0">
+        <h4 class="mb-1">Help us Improve</h4>
+        <h6 class="mb-0">Give us feedback</h6>
+      </div>
+      <div class="col-2 pr-1">
+        <a class="cursor closebtn">&times;</a>
+      </div>
+    </div>
+    <div class="p-3 feedback-scroll">
+      <!-- before submit -->
+      <form *ngIf="!feedForm.success" autocomplete="off" (ngSubmit)="onSubmitFeedback();" ngNativeValidate ngbAutofocus>
+        <div>
+          <div class="form-group mb-3">
+            <label>Subject</label>
+            <input type="text" name="title" class="form-control" [(ngModel)]="feedForm.title" required />
+          </div>
+          <div class="form-group mb-3">
+            <label>Severity</label>
+            <select class="form-control" name="severity" [(ngModel)]="feedForm.severity" required>
+              <option value="">-- Select --</option>
+              <option value="Critical">Critical</option>
+              <option value="Minor">Minor</option>
+              <option value="To improve">To improve</option>
+              <option value="Feature request">Feature request</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label>Description</label>
+            <textarea class="form-control" name="description" [(ngModel)]="feedForm.description"></textarea>
+          </div>
+          <div class="mb-4 p-1">
+            <div *ngIf="feedForm.image_list?.length" class="row px-2">
+              <div align="center" class="card col-12 form-group mb-3">
+                <div *ngFor="let x of feedForm.image_list; let i=index;">
+                  <div class=" p-1 mt-2 mb-2 d-flex"
+                    style="flex-direction: row;justify-content: space-between;background-color: #fff1f2;border-radius: 4px;">
+                    <p style="text-align: left; padding: 0px; margin: unset;padding-left:10px;">{{x.image.name}} </p>
+                    <span (click)="feedForm.image_list.splice(i, 1);" class="material-icons"
+                      style="cursor: pointer;font-size: 15px;padding: 3px;" aria-hidden="true">close</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="feedForm.image_list?.length<5" class="col-12 p-3 card bg-pink" align="center" style="border: 1.5px dashed #EC848B;">
+              <label>
+                <div class="image-update cursor">
+                  <img class="add-img p-3" src="assets/images/gal-image.png" alt="">
+                  <p><span class="material-symbols-rounded">add</span>Upload Images</p>
+                </div>
+                <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png" multiple />
+              </label>
+            </div>
+          </div>
+          <div *ngIf="feedForm.errorMsg" class="col-md-12">
+            <p class="text-danger">{{feedForm.errorMsg}}</p>
+          </div>
+          <div class="feedback-footer px-0">
+            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1"
+            [disabled]="feedForm.submit" [ladda]="feedForm.submit">Submit</button>
+          </div>
+        </div>
+      </form>
+      <!-- after submit -->
+      <div *ngIf="feedForm.success" class="submit-page">
+        <div class="row">
+          <div class="col-12">
+            <div class="submit-mgs">
+              <i class="material-icons-outlined checked mb-3"> done </i>
+              <h2 class="mb-3">Thank you!</h2>
+              <p>We have received your feedback. We will get back to you on {{ commonService.store_details?.email }} at the earliest.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chat -->
+<div class="chat-container" *ngIf="commonService.dispChatBody">
+  <div class="chat-header">
+    <div class="head-sms">
+      <span class="material-symbols-rounded">forum</span>
+    </div>
+    <div>
+      <p>Chat Support</p>
+    </div>
+    <a (click)="commonService.dispChatBody=false;" class="close-chat">
+      <span class="material-symbols-rounded">close</span>
+    </a>
+  </div>
+  <div class="chat-msg-body">
+    <div id="msg_area">
+      <div class="loading" *ngIf="msgLoader">
+        <div class="spinner"></div>
+      </div>
+      <ng-container *ngIf="!msgLoader">
+        <ng-container *ngFor="let gData of groupList;">
+          <div class="d-flex justify-content-center align-items-center">
+            <p class="chat-date">
+              {{ (gData.date==todayDate)? 'Today': (gData.date==yesterDate)? 'Yesterday': gData.date }}
+            </p>
+          </div>
+          <ng-container *ngFor="let x of gData.msg_list;">
+            <div *ngIf="x.sender_id!=commonService.store_details?.login_id" class="incoming_msg_parent">
+              <div class="incoming_msg">
+                <div class="d-flex align-items-start">
+                  <div class="circle">
+                    <img src="assets/images/ys-chat.svg">
+                  </div>
+                  <div>
+                    <p>Yourstore</p>
+                  </div>
+                </div> 
+              </div>
+              <div class="received_msg">
+                <div class="rm_container">
+                  <div *ngIf="x.image">
+                    <img [src]="imgBaseUrl+x.image" alt="img">
+                  </div>
+                  <p *ngIf="x.content" [innerHtml]="x.content"></p>
+                  <span class="chat_time">{{x.createdAt | date: "hh:mm a"}}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="x.sender_id==commonService.store_details?.login_id" class="outgoing_msg">
+              <div class="send_by_you">
+                <p>You</p>
+                <div class="circle">
+                  <span class="material-symbols-rounded">person</span>
+                </div>
+              </div>
+              <div class="sent_msg">
+                <div class="sm_container">
+                  <div *ngIf="x.image">
+                    <img [src]="imgBaseUrl+x.image" alt="img">
+                  </div>
+                  <p *ngIf="x.content" [innerHtml]="x.content"></p>
+                  <span class="chat_time">{{x.createdAt | date: "hh:mm a"}}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>         
+  </div>
+  <div>
+    <div class="send-msg-form">
+      <form>
+        <div class="typing">
+          <div class="text-content">
+            <textarea placeholder="Write a message..." aria-label="Write a message..." style="resize: none;"
+              class="msgarea siq-message-textarea" id="msgarea" (keydown.enter)="onChatEnter($event);"></textarea>
+          </div>
+          <div class="attach">
+            <label>
+              <input class="d-none" id="inputImg" type="file" (change)="chatFileChangeListener($event);"
+                accept="image/jpeg, image/png, image/webp">
+              <span class="material-symbols-rounded">attach_file</span>
+            </label>
+          </div>
+          <button type="button" (click)="onSendMsg();" class="list-inline chat-submit">
+            <span class="material-symbols-rounded">send</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- chat icon -->
+<div (click)="openChat();" id="openChat" class="fab-parent" *ngIf="commonService.dispChatIcon && !commonService.dispChatBody"
+  [ngClass]="(!commonService.secondary_header && !commonService.desktop_device && commonService.store_details?.status=='active')? 'fab-parent-mob': ''">
+  <span class="fab material-symbols-rounded"></span>
+  <div *ngIf="chatCount" class="inner">
+    <span>{{chatCount}}</span>
+  </div>
+</div>
+
+<!-- New Order Modal -->
+<div id="openNewOrderModal" (click)="modalService.open(newOrderModal, { centered: true });"></div>
+<ng-template #newOrderModal let-modal>
+  <div id="newOrderModalContent" class="modal-body">
+    <p><strong>You have a new order</strong></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-wide black-outline-btn" (click)="stopAudio(); modal.dismiss('Cross click');">
+      <span class="black-outline-txt">Ignore</span>
+    </button>
+    <button (click)="stopAudio(); modal.dismiss('Cross click');" routerLink="/orders/product/live/all" type="button"
+      class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Go to live order</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- Deploy Alert Modal -->
+<div id="openDeployAlertModal" (click)="modalService.open(deployAlertModal, { centered: true });"></div>
+<ng-template #deployAlertModal let-modal>
+  <div class="modal-body">
+    <p><strong>{{commonService.alert_popup_content?.content}}</strong></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">Close</span>
+    </button>
+    <button type="button" (click)="modal.dismiss('Cross click');"
+      routerLink="{{commonService.alert_popup_content?.btn_link}}" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">{{commonService.alert_popup_content?.btn_name}}</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- Upgrade Modal -->
+<div id="openCommonUpgradeModal" (click)="modalService.open(commonUpgradeModal, { centered: true });"></div>
+<ng-template #commonUpgradeModal let-modal>
+  <div class="modal-body pb-0">
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <p><b>Upgrade plan to use this feature</b></p>
+      </div>
+      <div class="col-md-6">
+        <div>
+          <p>Essential plan includes</p>
+        </div>
+        <div>
+          <ul class="check-highlighted-points">
+            <li>Lower Transaction Fee at 2%</li>
+            <li>Link Custom Domain</li>
+            <li>Unlimited Products & Reviews</li>
+            <li>Customer Portal</li>
+            <li>Online Payments with Payment Gateway</li>
+          </ul>
+          <ul class="check-highlighted-points2">
+            <li>and more<a (click)="modal.dismiss('Cross click');" routerLink="/deployment/plans">&nbsp;View All</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div>
+          <p>Professional plan includes</p>
+        </div>
+        <div>
+          <ul class="check-highlighted-points">
+            <li>Lower Transaction Fee at 1.5%</li>
+            <li>Link Existing Domain</li>
+            <li>Google & Facebook Integrations</li>
+            <li>SEO Editor</li>
+            <li>Staff Account</li><br>
+          </ul>
+          <ul class="check-highlighted-points2">
+            <li>and more<a (click)="modal.dismiss('Cross click');" routerLink="/deployment/plans">&nbsp;View All</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="modal.dismiss('Cross click');" routerLink="/deployment/plans"
+      class="btn btn-primary">
+      <span class="orng-outline-txt">Upgrade Plan</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- Chat Image Modal -->
+<div id="openImageModal" (click)="modalService.open(chatImgModal, { centered: true });"></div>
+<ng-template #chatImgModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="clearInput(); modal.dismiss('Cross click');">arrow_back</span>
+      <span class="popup_text">Send Image</span>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="!imgForm.error" class="row">
+      <div class="col-md-12">
+        <div align="center">
+          <img [src]="imgForm.temp_img" height="100px;" width="80%;" style="object-fit: contain;" alt="img">
+        </div>
+      </div>
+      <div class="col-md-12 mt-3">
+        <textarea name="message" class="form-control" [(ngModel)]="imgForm.message" (keydown.enter)="onChatEnter($event);"></textarea>
+      </div>
+    </div>
+    <div *ngIf="imgForm.error" class="row">
+      <div class="col-md-12">
+        <p class="mb-0 error-msg">Accept file size upto 1 MB</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="clearInput(); modal.dismiss('Cross click');">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button *ngIf="imgForm.temp_img" type="button" (click)="onSendImg()" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="imgForm.submit" [ladda]="imgForm.submit">Send</button>
+  </div>
+</ng-template>

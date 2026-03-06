@@ -1,0 +1,197 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="inner-dots" *ngIf="!commonService.desktop_device">  
+  <div class="add_but mr-3">
+    <button type="button" (click)="onOpenFilterModal(filterModal);"><span class="material-symbols-rounded">filter_alt</span></button>
+  </div>
+  <div class="add_but" *ngIf="commonService.store_details.login_type=='admin'">
+    <button type="button" (click)="exportAsXLSX();" [disabled]="commonService.store_details?.package_details?.package_id==configData.free_package_id || exportLoader"><span class="material-symbols-rounded">file_upload</span></button>
+</div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="row mb-3" *ngIf="commonService.desktop_device">
+    <div class="col-md-12 d-flex justify-content-end">
+      <p class="m-0 fw-500">
+        Total {{ totalCount }} customer<ng-container *ngIf="totalCount > 1">s</ng-container>
+      </p>
+    </div>
+  </div>
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div *ngIf="!commonService.desktop_device" class="col-md-12 d-flex justify-content-end mb-3">
+        <p class="m-0 fw-500">
+          Total {{ totalCount }} customer<ng-container *ngIf="totalCount > 1">s</ng-container>
+        </p>
+      </div>
+      <div class="col-md-6 col-12">
+        <form autocomplete="off" (ngSubmit)="ngOnInit();" ngNativeValidate ngbAutofocus>
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="filterForm.search" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal)">
+          <span class="material-symbols-rounded">filter_alt</span> Filter
+        </button>
+        <button *ngIf="commonService.store_details.login_type=='admin'" type="button" (click)="exportAsXLSX();" [disabled]="commonService.store_details?.package_details?.package_id==configData.free_package_id || exportLoader">
+          <span class="material-symbols-rounded">file_upload</span> Export
+        </button>
+      </div>
+      <!-- search box -->
+     
+    </div>
+  </div>
+
+  <div *ngIf="list?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-10 col-9 first_col px-0 header-font">
+              <p class="w-30 w-sm-100 m-b-0">Email</p>
+              <p class="w-25 w-sm-100">Name</p>
+              <p class="w-25 w-sm-100 m-b-0">Mobile</p>
+              <p class="w-20 w-sm-100 m-b-0">Orders Placed</p>
+            </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-10 col-9 first_col px-0">
+            <p class="w-30 w-sm-100 dark-font">{{x.email}}</p>
+            <p class="w-25 w-sm-100 m-b-0 light-font">{{x.name}}</p>
+            <p class="w-25 w-sm-100 m-b-0 light-font extra_text">{{x.mobile}}</p>
+            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.order_count}}</p>
+          </div>
+          <div class="col-md-2 col-3 px-0 justify-content-end d-flex text-right">
+            <div class="row justify-content-end m-0" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <div class="product-btn-group btn-group text-right">
+                <div *ngIf="commonService.store_details?.type=='order_based' || commonService.store_details?.type=='restaurant_based' || commonService.store_details?.type=='multi_vendor'" class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                  <button [ngClass]="commonService.desktop_device? 'light-button2  mr-3': 'iconbutton'" ngbDropdownToggle>{{commonService.desktop_device? 'View': ''}} <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''"> 
+                    {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
+                    <div class="dropdown-menu" ngbDropdownMenu>
+                      <button (click)="catchPageData();" class="dropdown-item" routerLink="/setting/customers/guest-user/{{x._id}}">
+                        <span class="material-symbols-rounded dropdown_icon">info</span> Details
+                      </button>
+                      <button class="dropdown-item" (click)="goOrdersPage(x, 'live')"><span class="material-symbols-rounded dropdown_icon">shopping_cart</span> Live Orders</button>
+                      <button class="dropdown-item" (click)="goOrdersPage(x, 'delivered')"><span class="material-symbols-rounded dropdown_icon">done</span> Completed Orders</button>
+                      <button class="dropdown-item" (click)="goOrdersPage(x, 'cancelled')"><span class="material-symbols-rounded dropdown_icon">close</span> Cancelled Orders</button>
+                    </div>
+                </div>
+                <div *ngIf="commonService.store_details?.type=='quot_based'" class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                  <button [ngClass]="commonService.desktop_device? 'light-button2  mr-3': 'iconbutton'" ngbDropdownToggle>{{commonService.desktop_device? 'View': ''}} <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''"> 
+                    {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
+                    <div class="dropdown-menu" ngbDropdownMenu>
+                      <button (click)="catchPageData();" class="dropdown-item" routerLink="/setting/customers/guest-user/{{x._id}}">
+                        <span class="material-symbols-rounded dropdown_icon">info</span> Details
+                      </button>
+                      <button class="dropdown-item" (click)="goQuotPage(x, 'live')"><span class="material-symbols-rounded dropdown_icon">shopping_cart</span> Live Quotes</button>
+                      <button class="dropdown-item" (click)="goQuotPage(x, 'confirmed')"><span class="material-symbols-rounded dropdown_icon">done</span> Confirmed Quotes</button>
+                      <button class="dropdown-item" (click)="goQuotPage(x, 'cancelled')"><span class="material-symbols-rounded dropdown_icon">close</span> Cancelled Quotes</button>
+                    </div>
+                </div>
+              </div> 
+            </div>         
+          </div>          
+        </div>
+      </div>      
+    </div> 
+ 
+    <!-- PAGINATION CONTROL -->
+    <div *ngIf="list.length" class="row mt-4">
+      <div class="col-md-12 product-pagination-wrapper">
+        <ul role="navigation" class="ngx-pagination responsive product-pagination" aria-label="Pagination">
+          <li class="pagination-previous mr-3">
+            <a (click)="(page>1)? onChangePage('prev'): ''" [ngClass]="(page>1)? 'cursor': 'disabled'" aria-label="page">
+              <span class="cursor show-for-sr"></span>
+            </a>
+          </li>
+          <li *ngIf="commonService.desktop_device" class="current">
+            <span>{{page}}</span>
+          </li>
+          <li *ngIf="!commonService.desktop_device" class="small-screen">
+            {{page}} / {{totalPages}}
+          </li>
+          <li class="pagination-next ml-3">
+            <a (click)="(page<totalPages)? onChangePage('next'): ''" [ngClass]="(page<totalPages)? 'cursor': 'disabled'" aria-label="page">
+              <span class="cursor show-for-sr"></span>
+            </a>
+          </li>
+        </ul>
+        <div class="page-count-pagination">
+          <b class="mr-2">Go to page</b>
+          <select name="select_page" style="width: 70px; display: inline;" class="form-control select-arrow" [(ngModel)]="page" (change)="commonService.pageTop(0); onLoadData();">
+            <option [ngValue]="i+1" *ngFor="let num of pagesList; let i=index;">{{i+1}}</option>
+          </select>
+          <!-- <b class="ml-2">page</b> -->
+        </div>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <div *ngIf="!list?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- filter Modal -->
+<ng-template #filterModal let-modal>
+  <form autocomplete="off" ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Filter</span>
+        </h4>
+      </div>
+      <div class="modal-body filtersec">
+        <div class="row m-0">
+          <div class="carosal w-100">
+            <ul class="px-3">
+              <li>
+                <a class="hz_carosal" [ngClass]="{ carosal_button: selectedItem == 'bytype' }" (click)="selectedItem = 'bytype'">
+                  By Order
+                </a>
+              </li>
+              <li>
+                <a class="hz_carosal" [ngClass]="{ carosal_button: selectedItem == 'bysort' }" (click)="selectedItem = 'bysort'">
+                  Sort
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row m-0 p-3" *ngIf="selectedItem === 'bytype'">
+          <div class="col-md-12">
+            <label>Placed orders more than or equal to</label>
+            <input type="number" (wheel)="commonService.handleWheel($event)" name="orders" class="form-control" [(ngModel)]="filterForm.orders" min="0" required />
+          </div>
+        </div>
+        <div class="row m-0 p-3" *ngIf="selectedItem === 'bysort'">
+          <div class="modal-card col-md-12">
+            <div *ngFor="let x of sortList" class="radio_buttons col-12">
+              <input type="radio" id="{{ x.value }}" [value]="x.value" name="sort_by"
+                [(ngModel)]="filterForm.sort_by" />
+              <label for="{{ x.value }}">{{ x.name }}</label>
+            </div>
+            <div class="col-md-12 border-top"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit()">
+          <span class="orng-outline-txt">Apply</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>

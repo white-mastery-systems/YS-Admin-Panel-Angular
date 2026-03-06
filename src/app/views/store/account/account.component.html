@@ -1,0 +1,68 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+<ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-9">
+          <h1>My Account <ng-container *ngIf="commonService.store_details?.login_type=='admin'">- {{commonService.store_details?.name}}</ng-container></h1>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+<!-- <div class="breadcrumb with-back-btn">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>My Account</h1>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="separator-breadcrumb border-top"></div> -->
+
+<div class="list-horizontal">
+  <div class="data-list-card-wrapper">
+    <div class="data-list-card-inner">
+      <div class="list-item data-list-card" *ngFor="let x of commonService.account_menu_list; let i=index;">
+        <div class="col-md-10 col-10 first_col px-0 cursor" routerLink="{{x.state}}">
+          <p class="w-100 w-sm-100 m-b-0 font-weight-bold d-flex align-items-center">
+            <span class="material-symbols-rounded" style="font-size: 20px; margin-right:15px;">{{x.icon}}</span> {{x.name}}
+          </p>
+        </div>
+        <div class="col-md-2 col-2 cursor" routerLink="{{x.state}}">
+          <div class="row more_icons justify-content-end cursor">
+            <span class="material-symbols-rounded">navigate_next</span>
+          </div>
+        </div>
+      </div>
+      <div class="list-item data-list-card" (click)="modalService.open(logoutModal, { centered: true });">
+        <div class="col-md-9 col-6 first_col px-0 cursor">
+          <p class="w-30 w-sm-100 m-b-0 font-weight-bold d-flex align-items-center">
+            <span class="material-symbols-rounded" style="font-size: 20px; margin-right:15px;">logout</span> Logout
+          </p>
+        </div>
+        <div class="col-md-3 col-6 cursor">
+          <div class="row more_icons justify-content-end cursor">
+            <span class="material-symbols-rounded">navigate_next</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<ng-template #logoutModal let-modal>
+  <div class="modal-body">
+    <p><strong>Are you sure, you want to logout?</strong></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="modal.dismiss('Cross click'); signOut();" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

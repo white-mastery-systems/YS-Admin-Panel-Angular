@@ -1,0 +1,252 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device && commonService.store_details?.login_type!='vendor'">
+  <div class="add_but mr-3" routerLink="/features/ad-management/orders">
+    <span class="material-symbols-rounded">shopping_basket</span>
+  </div>
+  <div class="add_but mr-3" (click)="onGetSettingDetails(adSettingModal);">
+    <span class="material-symbols-rounded">settings</span>
+  </div>
+  <div class="add_but" (click)="onAddSegment();">
+    <span class="material-symbols-rounded"> add</span>
+  </div>
+</div>
+
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>{{commonService.secondary_header}}</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-3">
+      <div class="col-md-6 col-12 mt-sm-15">
+        <div class="form-group search_bar">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div *ngIf="commonService.desktop_device"
+        class="d-flex col-md-6 justify-content-end">
+        <button type="button" class="mr-3" routerLink="/features/ad-management/orders"><span
+          class="material-symbols-rounded">shopping_basket</span>Manage Orders</button>
+        <button *ngIf="commonService.store_details?.login_type!='vendor'" type="button" class="mr-3" (click)="onGetSettingDetails(adSettingModal);"><span
+            class="material-symbols-rounded">settings</span>Ad Setting</button>
+        <button *ngIf="commonService.store_details?.login_type!='vendor'" type="button" (click)="onAddSegment();"><span
+            class="material-symbols-rounded">add</span>Add
+          Segment</button>
+          
+      </div>
+
+      <!-- <div *ngIf="commonService.desktop_device"
+        class="d-flex col-md-6 justify-content-end">        
+        <button type="button" routerLink="/features/ad-management/orders"><span
+            class="material-symbols-rounded">visibility</span>Manage Orders</button>
+      </div> -->
+
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="list?.length" class="list-horizontal">
+
+    <div class="data-list-card-wrapper mb-3">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-2 col-4 first_col px-0 cursor header-font">
+            <p class="w-35 w-sm-100 m-b-0">Ad Layout</p>
+          </div>
+          <div class="col-md-5 col-6 px-2 first_col align-items-center header-font">
+            <p class="w-40 w-sm-100 m-b-0">{{commonService.store_details.login_type!='vendor'?'Ad Position':'Ad Name'}}</p>
+            <p class="w-30 w-sm-100 m-b-0" *ngIf="commonService.store_details?.login_type!='vendor'">Ad Name</p>
+            <p class="w-30 w-sm-100 m-b-0">Price</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card"
+          *ngFor="let x of list | fieldSearch:'ad_name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-2 col-2 first_col px-0 cursor">
+            <div class="list-thumb d-flex align-self-center">
+              <img [src]="imgBaseUrl+x.ad_config.image" alt="">
+            </div>
+          </div>
+          <div class="col-md-5 col-4 px-2 first_col align-items-center">
+            <p *ngIf="commonService.store_details?.login_type!='vendor'" class="w-40 w-sm-100 m-b-0 dark-font">
+              {{x.name}}</p>
+            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.ad_config.name}}</p>
+            <p class="w-30 w-sm-100 m-b-0 light-font">Starts @
+              {{x.ad_config.normal_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+          </div>
+          <div class="col-md-5 col-6">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <ng-container *ngIf="commonService.store_details?.login_type!='vendor'">
+                <button *ngIf="!(x.ad_status=='active')"
+                  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"
+                  (click)="deleteForm=x; modalService.open(statusModal, { centered: true });">
+                  <span class="material-symbols-rounded">visibility</span> {{commonService.desktop_device? 'Enable':''}}
+                </button>
+                <button *ngIf="x.ad_status=='active'"
+                  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"
+                  (click)="deleteForm=x; modalService.open(statusModal, { centered: true });">
+                  <span class="material-symbols-rounded">visibility_off</span> {{commonService.desktop_device?
+                  'Disable':''}}
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                  (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                  <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                </button>
+
+                <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                  routerLink="/features/ad-management/{{x._id}}">
+                  <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                    'visibility':
+                    'chevron_right'}}</span>
+                  {{commonService.desktop_device? 'View': ''}}
+                </button>
+              </ng-container>
+              <button *ngIf="commonService.store_details?.login_type=='vendor'"
+                [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                routerLink="{{'/features/ad-management/book/'+x._id}}">
+                <span class="material-symbols-rounded">payments</span> {{commonService.desktop_device? 'Book Now': ''}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!list?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- AD SETTING MODAL -->
+<ng-template #adSettingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateSetting()" ngNativeValidate>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Ad Setting</span>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-6 col-6 mb-3">
+              <div class="mb-3">
+                <b>Normal Traffic Days</b>
+              </div>
+              <div class=" form-group mb-3" *ngFor="let x of settingForm.normal_days; let i=index;">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="normal_active{{i+1}}" [(ngModel)]="x.active"
+                    (change)="onDaySelect(settingForm.peak_days, x.code);">
+                  <span>{{x.day}}</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6 col-6 mb-3">
+              <div class="mb-3">
+                <b>High Traffic Days</b>
+              </div>
+              <div class="form-group mb-3" *ngFor="let x of settingForm.peak_days; let i=index;">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="peak_active{{i+1}}" [(ngModel)]="x.active"
+                    (change)="onDaySelect(settingForm.normal_days, x.code);">
+                  <span>{{x.day}}</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Start Time</label>
+              <input type="text" name="start_time" class="form-control" [(ngModel)]='settingForm.start_time'
+                (click)="timePicker('start_time');" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>End Time</label>
+              <input type="text" name="end_time" class="form-control" [(ngModel)]="settingForm.end_time"
+                (click)="timePicker('end_time');" required />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="settingForm.errorMsg">
+          <p class="text-danger">{{ settingForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="settingForm.submit"
+          [ladda]="settingForm.submit">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- STATUS MODAL -->
+<ng-template #statusModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to {{ (deleteForm.ad_status=='active')? 'disable': 'enable' }} the
+        <span class="text-danger">"{{deleteForm.name}}"</span> segment?
+      </strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onUpdateStatus();" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- DELETE AD MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to delete the <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
+        segment?</strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

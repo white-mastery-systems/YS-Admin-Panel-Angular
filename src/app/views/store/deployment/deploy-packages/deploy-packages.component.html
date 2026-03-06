@@ -1,0 +1,674 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb with-back-btn">
+    <div class="row m-0" [ngClass]="(commonService.desktop_device)? null: 'mx-2 pb-3'">
+      <div *ngIf="commonService.desktop_device" class="col-md-9 pl-0">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+      <!-- toggle -->
+      <div *ngIf="commonService.store_details?.package_info?.category=='genie'" [ngClass]="(commonService.desktop_device)? 'col-md-3': 'col-12'">
+        <div class="row plan-change">
+          <div class="px-0 ml-0 d-flex align-items-center justify-content-center" [ngClass]="(commonService.desktop_device)? 'col-md-3 col-6': 'col-3'">
+            <div class="plan-pra">
+              <p>Upgrade to</p><p><b>PRO</b> plan</p>
+            </div>
+          </div>
+          <div class="px-0" [ngClass]="(commonService.desktop_device)? 'col-md-9 col-6': 'col-9'">
+            <div class="white-preview d-flex">
+              <input type="radio" id="toggle-on" class="toggle toggle-left" (change)="onChangeType();" name="packType" [(ngModel)]="packType" value="genie">
+              <label for="toggle-on" [ngClass]="(packType=='genie')? 'yellow show': ''" class="btnn">
+               <span><img src="assets/images/crown.svg" alt=""></span>Genie<br>plan
+              </label>
+              <input type="radio" id="toggle-off" class="toggle toggle-right" (change)="onChangeType();" name="packType" [(ngModel)]="packType" value="pro">
+              <label for="toggle-off" [ngClass]="(packType=='pro')? 'pink show': ''" class="btnn">
+                <span><img src="assets/images/diamond.svg" alt=""></span>PRO<br>plan
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-md-12 justify-content-center align-items-center d-flex">
+      <h2>Yourstore {{ packType | titlecase }} Plan</h2>
+    </div>
+  </div>
+
+  <!-- desktop -->
+  <section *ngIf="commonService.desktop_device" class="pricing-section-wrapper desktop-pricing-table">
+    <!-- months -->
+    <div *ngIf="packType=='genie'" class="row py-3">
+      <div class="col-md-12" align="center">
+        <div class="row justify-content-center align-items-center d-flex">
+          <div class="d-flex align-items-center justify-content-center mr-5 off-plan">
+            <button class="off-btn">27% Off</button>
+            <img src="assets/images/union.png" alt="" width="100px">
+          </div>
+        </div>
+        <div class="row justify-content-center offer-btn">
+          <div class="event-btn">
+            <ng-container *ngFor="let mon of genieMonths;">
+              <button class="btn tab-btn" [ngClass]="(subscribeMonth==mon)? 'active': ''" (click)="subscribeMonth=mon;">
+                {{mon}} Months
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- pricing -->
+    <div class="card0 container pricing-table-card-wrapper p-3 mt-4">
+
+      <div class="row justify-content-center" style="position: relative !important;">
+        <div class="active-border_col{{packageList.length}}"></div>
+        <div class="active-border_col_div{{packageList.length}}"> 
+          <p class="mb-0">Most Popular</p>
+        </div>
+        <div class="px-0" style="justify-content: space-between; flex-direction: column;display: flex;" [ngClass]="{
+          'col-md-6': packageList.length===1,
+          'col-md-4': packageList.length===2,
+          'col-md-3': packageList.length===3
+        }">
+          <p class="option-name m-0 pr-1">Have questions?<br> Need help or something special?
+            <a href="mailto:support@yourstore.io">Get in touch!</a>
+          </p>
+          <h5 class="pink-cor">All Features</h5>
+        </div>
+
+        <div *ngFor="let x of packageList; let p=index;" class="d-flex pricing-col px-0" [ngClass]="{
+          'col-md-6': packageList.length===1,
+          'col-md-4 pricing-col_21': packageList.length===2,
+          'col-md-3 pricing-col_31': packageList.length===3
+        }">
+          <div class="pricing-col-inner w-100 d-flex justify-content-space-between" [ngClass]="(p===0)? 'right-left': ''">
+            <div class="w-100 d-flex flex-column">
+              <div class="plan-card d-flex flex-column">
+                <h2 class="text-center">{{x.disp_name}}</h2>
+                <p class="text-center" [innerHTML]="x.description" style="flex: 1 0 auto;"></p>
+              </div>
+            </div>
+            <!-- Platform Fee -->
+            <div class="pt-3 w-100">
+              <div class="price-div">
+                <h4 class="m-0 price-h4">
+                  <span class="complete-strike" *ngIf="x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount != x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount">
+                    {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+                  </span>
+                  {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+                </h4>
+              </div>
+            </div>
+
+            <div class="pt-3 px-4 w-100">
+              <div *ngFor="let y of top_features; let j=index;">
+                <div class="plan-list p-2">
+                  <div class="icon">
+                    <i class="material-icons-outlined checked">done</i>
+                  </div>
+                  <div>
+                    <p class="m-0">{{y[x.keyword]}}</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="plan-list p-2">
+                  <div class="icon">
+                    <i class="material-icons-outlined checked">done</i>
+                  </div>
+                  <div>
+                    <p class="m-0">
+                      {{x.transaction_fees}}% transaction fee
+                      <ng-container *ngIf="x.currency_types[commonService.store_currency?.country_code]?.transaction_limit>0">
+                        above {{x.currency_types[commonService.store_currency?.country_code]?.transaction_limit | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}/month
+                      </ng-container>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3">
+              <div class="col-12" *ngIf="!commonService.store_details?.package_details?.billing_status && !commonService.store_details?.package_details?.expiry_date">
+                <button class="btn btn-primary-blue" (click)="onSelectPlan(x, subscriptionModal);">Select Plan</button>
+              </div>
+              <div class="col-12" *ngIf="commonService.store_details?.package_details?.billing_status && commonService.store_details?.package_details?.expiry_date">
+                <button *ngIf="x._id===commonService.store_details?.package_details?.package_id" class="btn btn-primary-blue" disabled>
+                  Current Plan
+                </button>
+                <button *ngIf="x._id!=commonService.store_details?.package_details?.package_id" class="btn btn-primary-blue" (click)="onChangePlan(x, upgradeModal);">
+                  Select Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngFor="let x of all_features; let f=index;">
+          <div class="pl-0 pb-3" [ngClass]="{
+            'col-md-6': packageList.length===1,
+            'col-md-4': packageList.length===2,
+            'col-md-3': packageList.length===3
+          }">
+            <p class="option-name m-0 pr-1">
+              {{x.name}} <span>{{x.help_content}}</span>
+            </p>
+          </div>
+          <div *ngFor="let y of packageList;" class="d-flex pricing-col p-0" [ngClass]="{
+            'col-md-6': packageList.length===1,
+            'col-md-4': packageList.length===2,
+            'col-md-3': packageList.length===3
+          }">
+            <div class="pricing-col-inner2 w-100 p-2">
+              <div>
+                <p class="m-0">
+                  <i class="material-icons-outlined" [ngClass]="(x[y.keyword])? 'checked': 'canceled'">
+                    {{ (x[y.keyword])? 'done': 'close' }}
+                  </i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngFor="let x of support_service; let f=index;">
+          <div class="pl-0 pb-3" [ngClass]="{
+            'col-md-6': packageList.length===1,
+            'col-md-4': packageList.length===2,
+            'col-md-3': packageList.length===3
+          }">
+            <p class="option-name m-0 pr-1">
+              {{x.name}}<span>{{x.help_content}}</span>
+            </p>
+          </div>
+          <div *ngFor="let y of packageList;" class="d-flex pricing-col p-0" [ngClass]="{
+            'col-md-6': packageList.length===1,
+            'col-md-4 pricing-col_2': packageList.length===2,
+            'col-md-3 pricing-col_3': packageList.length===3
+          }">
+            <div class="pricing-col-inner2 w-100 p-2">
+              <div>
+                <p class="m-0">
+                  <i class="material-icons-outlined" [ngClass]="(x[y.keyword])? 'checked': 'canceled'">
+                    {{ (x[y.keyword])? 'done': 'close' }}
+                  </i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </section>
+
+  <!-- mobile -->
+  <section *ngIf="!commonService.desktop_device" class="pricing-section-wrapper mobile-pricing-table">
+    <!-- months -->
+    <div *ngIf="packType=='genie'" class="row py-3">
+      <div class="col-12 px-5" align="center">
+        <div class="row justify-content-center offer-btn">
+          <div class="d-flex align-items-center justify-content-center mr-5 off-plan">
+            <button class="off-btn">27% Off</button>
+            <img src="assets/images/union.png" alt="" width="100px">
+          </div>
+          <div class="event-btn">
+            <ng-container *ngFor="let mon of genieMonths;">
+              <button class="btn tab-btn" [ngClass]="(subscribeMonth==mon)? 'active': ''" (click)="subscribeMonth=mon;">
+                {{mon}} Months
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- pricing -->
+    <div class="card0 pricing-table-card-wrapper p-3 px-sm-0">
+      <div class="row justify-content-center px-sm-3">
+        <div class="col-md-12 px-0">
+          <div class="row plan-row m-0">
+            <div *ngFor="let x of packageList; let ind=index;" class="d-flex pricing-col my-3 px-0" [ngClass]="{
+              'col-md-6': packageList.length===1,
+              'col-md-4': packageList.length===2,
+              'col-md-3': packageList.length===3
+            }">
+              <div class="pricing-col-inner w-100">
+                <div *ngIf="ind === (packageList.length-1)" class="active-border_col2_mob">
+                  <div>
+                    <p>Most Popular</p>
+                  </div>
+                </div>
+                <div>
+                  <div class="plan-card mt-0" [ngClass]="ind === (packageList.length-1)? 'pt-5': ''">
+                    <h2 class="text-center">{{x.disp_name}}</h2>
+                    <p class="text-center" [innerHTML]="x.description"></p>
+                  </div>
+
+                  <!-- Platform Fee -->
+                  <div class="pt-3">
+                    <div class="price-div">
+                      <h4 class="m-0 price-h4">
+                        <span class="complete-strike" *ngIf="x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount != x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount">
+                          {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+                        </span>
+                        {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+                      </h4>
+                    </div>
+                  </div>
+                  <!-- Top features -->
+                  <div class="pt-3 px-4">
+                    <div *ngFor="let y of top_features; let j=index;">
+                      <div class="plan-list p-2">
+                        <div class="icon">
+                          <i class="material-icons-outlined checked">done</i>
+                        </div>
+                        <div>
+                          <p class="m-0">{{y[x.keyword]}}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="plan-list p-2">
+                        <div class="icon">
+                          <i class="material-icons-outlined checked">done</i>
+                        </div>
+                        <div>
+                          <p class="m-0">
+                            {{x.transaction_fees}}% transaction fee
+                            <ng-container *ngIf="x.currency_types[commonService.store_currency?.country_code]?.transaction_limit>0">
+                              above {{x.currency_types[commonService.store_currency?.country_code]?.transaction_limit | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}/month
+                            </ng-container>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-3">
+                  <div *ngIf="!commonService.store_details?.package_details?.billing_status && !commonService.store_details?.package_details?.expiry_date">
+                    <button class="btn btn-primary-blue" (click)="onSelectPlan(x, subscriptionModal);">
+                      Select Plan
+                    </button>
+                  </div>
+                  <div *ngIf="commonService.store_details?.package_details?.billing_status && commonService.store_details?.package_details?.expiry_date">
+                    <button *ngIf="x._id===commonService.store_details?.package_details?.package_id" class="btn btn-primary-blue" disabled>
+                      Current Plan
+                    </button>
+                    <button *ngIf="x._id!=commonService.store_details?.package_details?.package_id" (click)="onChangePlan(x, upgradeModal);" class="btn btn-primary-blue">
+                      Select Plan
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs sticky-pricing-nav d-flex justify-content-center">
+        <li *ngFor="let x of packageList; let i=index;" class="nav-item" [ngStyle]="{'width.%': (packageList.length===1)? '100':(packageList.length===2)? '50': '33.33'}">
+          <a class="nav-link text-center" (click)="selectedIndex=i;" [ngClass]="i===selectedIndex? 'active': ''">
+            {{x.disp_name}}
+          </a>
+          <h4 class="m-0 price-h4">
+            <span class="complete-strike" *ngIf="x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount != x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount">
+              {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.selling_amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+            </span>
+            {{ x.currency_types[commonService.store_currency?.country_code]?.[subscribeMonth]?.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+          </h4>
+          <div *ngIf="!commonService.store_details?.package_details?.billing_status && !commonService.store_details?.package_details?.expiry_date" class="div-btn">
+            <button class="btn btn-primary-blue" (click)="onSelectPlan(x, subscriptionModal);">Select Plan</button>
+          </div>
+          <div *ngIf="commonService.store_details?.package_details?.billing_status && commonService.store_details?.package_details?.expiry_date" class="div-btn">
+            <button *ngIf="x._id===commonService.store_details?.package_details?.package_id" class="btn btn-primary-blue" disabled>
+              Current Plan
+            </button>
+            <button *ngIf="x._id!=commonService.store_details?.package_details?.package_id" (click)="onChangePlan(x, upgradeModal);" class="btn btn-primary-blue">
+              Select Plan
+            </button>
+          </div>
+        </li>
+      </ul>
+      <div class="row" *ngFor="let x of all_features;">
+        <div class="col-md-3 px-0 pb-3 pt-4">
+          <p class="px-3 option-name m-0 pr-1">{{x.name}}
+            <span>{{x.help_content}}</span>
+          </p>
+        </div>
+        <div class="col-md-9 px-0 mb-2">
+          <div class="row mx-5 py-2 h-100" style="border-bottom:0.5px solid rgb(0 0 0 / 20%)">
+            <div *ngFor="let y of packageList;" class="d-flex pricing-col p-0" [ngClass]="{
+              'col-12': packageList.length===1,
+              'col-6': packageList.length===2,
+              'col-4': packageList.length===3
+            }">
+              <div class="pricing-col-inner2 w-100 p-2 hr-border">
+                <div>
+                  <p class="m-0 d-flex flex-wrap">
+                    <i class="material-icons-outlined" [ngClass]="(x[y.keyword])? 'checked': 'canceled'">
+                      {{ (x[y.keyword])? 'done': 'close' }}
+                    </i>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row py-3 mx-5" *ngFor="let x of support_service;">
+        <div class="col-md-3 pl-0">
+          <p class="option-name m-0">
+            {{x.name}}<span>{{x.help_content}}</span>
+          </p>
+        </div>
+        <div class="col-md-9 px-0">
+          <div class="row py-2 h-100 " style="border-bottom:0.5px solid rgb(0 0 0 / 20%)">
+            <div *ngFor="let y of packageList;" class="d-flex pricing-col p-0" [ngClass]="{
+              'col-12': packageList.length===1,
+              'col-6': packageList.length===2,
+              'col-4': packageList.length===3
+            }">
+              <div class="pricing-col-inner2 hr-border w-100 p-2">
+                <div>
+                  <p class="m-0">
+                    <i class="material-icons-outlined" [ngClass]="(x[y.keyword])? 'checked': 'canceled'">
+                      {{ (x[y.keyword])? 'done': 'close' }}
+                    </i>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Subscription Modal -->
+<ng-template #subscriptionModal let-modal>
+  <div *ngIf="freePlan!=packageForm._id" class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+      <span class="popup_text">{{packageForm.disp_name}} Plan</span>
+    </h4>    
+
+    <div class="d-flex">
+      <i class="material-icons" (click)="modal.dismiss('Cross click');">close</i>
+    </div>
+  </div>
+  <div class="modal-body">
+    <!-- for paid -->
+    <div *ngIf="freePlan!=packageForm._id" class="form-group">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card apps-card w-100 py-3 mb-4">
+            <div class="row m-0">
+              <div class="col-8">
+                <p class="mb-0">Subscription Charges</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">
+                  {{paymentData.package_details?.price | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}
+                </p>
+              </div>
+            </div>
+            <ng-container *ngIf="paymentData?.discount">
+              <div class="row m-0">
+                <div class="col-md-12"><hr class="my-2"></div>
+                <div class="col-8">
+                  <p class="mb-0">Discount - Signup Offer({{paymentData.disc_percent}}%)</p>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <p class="mb-0">{{paymentData.discount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+                </div>
+              </div>
+              <div class="row m-0">
+                <div class="col-md-12"><hr class="my-2"></div>
+                <div class="col-8">
+                  <p class="mb-0">Sub Total</p>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <p class="mb-0">{{ (paymentData.package_details?.price - paymentData.discount) | currency:commonService.store_currency?.country_code:'symbol':'1.0' }}</p>
+                </div>
+              </div>
+            </ng-container>
+            <div *ngIf="paymentData.tds" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">TDS</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">- ({{paymentData.tds_percent}}%) {{ paymentData.tds | currency:commonService.store_currency?.country_code:'symbol':'1.0' }}</p>
+              </div>
+            </div>
+            <!-- CGST & SGST -->
+            <div class="row m-0" *ngIf="paymentData.cgst && paymentData.sgst">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.cgst.percentage+paymentData.sgst.percentage}}%) {{(paymentData.cgst.amount+paymentData.sgst.amount) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <!-- IGST -->
+            <div class="row m-0" *ngIf="paymentData.igst">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0" >GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.igst.percentage}}%) {{paymentData.igst.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>  
+            <div class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Payable amount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0 font-weight-bold">{{paymentData.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- for free -->
+    <p *ngIf="freePlan==packageForm._id">
+      <strong>You have selected the free plan</strong>
+    </p>
+    <div *ngIf="packageForm.errorMsg">
+      <p class="text-danger">{{ packageForm.errorMsg }}</p>
+    </div>
+  </div>
+  <!-- for paid -->
+  <div *ngIf="freePlan!=packageForm._id" class="modal-footer">
+    <button type="button" *ngFor="let x of paymentTypes;" (click)="onSubscribe(x);" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="packageForm.submit" [ladda]="packageForm.submit">{{x.btn_name}}</button>
+  </div>
+  <!-- for free -->
+  <div *ngIf="freePlan==packageForm._id" class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="packageForm.submit"
+    [ladda]="packageForm.submit" (click)="onSubscribeDefaultPlan(packageForm);">Confirm</button>
+  </div>
+</ng-template>
+
+<!-- Upgrade Modal -->
+<ng-template #upgradeModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+      <span class="popup_text">{{upgradeData.package_details?.disp_name}} Plan</span>
+    </h4>    
+    <div class="d-flex">
+      <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i>
+    </div>
+  </div>
+  <div class="modal-body pb-0">
+    <div class="form-group mb-0">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card apps-card w-100 py-3 mb-4">
+            <!-- Subscription Charges -->
+            <div class="row m-0">
+              <div class="col-8">
+                <p class="mb-0">Subscription Charges</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{upgradeData.subscription_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <!-- App Charges -->
+            <div *ngIf="upgradeData.app_charges" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">App Charges</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{upgradeData.app_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <!-- Transaction Charges -->
+            <div *ngIf="upgradeData.transaction_charges" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Transaction Charges</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{upgradeData.transaction_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div *ngIf="upgradeData.discount" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Discount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{upgradeData.discount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>  
+            <div *ngIf="upgradeData.credit" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Credit</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{upgradeData.credit | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Sub Total</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{ (upgradeData.total - (upgradeData.discount + upgradeData.credit)) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div *ngIf="paymentData.tds" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">TDS</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">- ({{paymentData.tds_percent}}%) {{ paymentData.tds | currency:commonService.store_currency?.country_code:'symbol':'1.0' }}</p>
+              </div>
+            </div>
+            <!-- CGST & SGST -->
+            <div *ngIf="paymentData.cgst && paymentData.sgst" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.cgst.percentage+paymentData.sgst.percentage}}%) {{(paymentData.cgst.amount+paymentData.sgst.amount) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <!-- IGST -->
+            <div *ngIf="paymentData.igst" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0" >GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.igst.percentage}}%) {{paymentData.igst.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>  
+            <div class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Payable amount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0 font-weight-bold">{{paymentData.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>              
+          </div>        
+        </div>
+        <div *ngIf="upgradeData.upgrade_apps?.length" class="col-md-12">
+          <p><b>Paid Apps</b></p>
+        </div>
+        <div *ngFor="let x of upgradeData.upgrade_apps; let i=index;" class="col-md-6 d-flex">
+          <div class="card apps-card w-100 p-3 mb-4">
+            <span (click)="upgradeData.upgrade_apps.splice(i, 1); calcAppCharges();" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+            <div class="app-image">
+              <span *ngIf="!x.image_list.length" class="material-icons-outlined text-light">widgets</span>
+              <img *ngIf="x.image_list.length" [src]="imgBaseUrl+x.image_list[0].image" alt="app-icons" style="width:32px;height:auto;padding:2px">
+            </div>
+            <div class="app-content">
+              <h5 class="mb-0 light-font font-14">{{x.name}}</h5>
+              <div class="app-description">
+                <p class="two-line-txt-ellipsis" [innerHTML]="x.description"></p>
+              </div>
+              <p class="mb-0">{{x.price | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              <!-- <p class="mb-0 d-flex align-items-center">
+                <span class="material-icons-outlined pr-2" style="color:red">highlight_off</span>Not compatible with this plan
+              </p> -->
+            </div>
+          </div>
+        </div>      
+      </div>
+    </div>
+    <div *ngIf="upgradeData.errorMsg">
+      <p class="text-danger">{{ upgradeData.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <ng-container *ngIf="paymentData.amount > 0">
+      <button type="button" *ngFor="let x of paymentTypes;" (click)="onUpgrade(x);" class="btn btn-wide btn-primary ladda-button m-1"
+      [disabled]="upgradeData.submit" [ladda]="upgradeData.submit">{{x.btn_name}}</button>
+    </ng-container>
+    <button *ngIf="paymentData.amount===0" type="button" (click)="onUpgrade({ name: '' });" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="upgradeData.submit" [ladda]="upgradeData.submit">Submit</button>
+  </div>
+</ng-template>
+
+<!-- razorpay form -->
+<form #razorpayForm method="POST" action="{{environment.razorpay_payment_url}}">
+  <input type="hidden" name="key_id" value="{{razorpayOptions.key}}">
+  <input type="hidden" name="order_id" value="{{razorpayOptions.razorpay_order_id}}">
+  <input type="hidden" name="name" value="{{razorpayOptions.store_name}}">
+  <input type="hidden" name="description" value="{{razorpayOptions.description}}">
+  <input type="hidden" name="prefill[name]" value="{{razorpayOptions.customer_name}}">
+  <input type="hidden" name="prefill[email]" value="{{razorpayOptions.customer_email}}">
+  <input type="hidden" name="prefill[contact]" value="{{razorpayOptions.customer_mobile}}">
+  <input type="hidden" name="notes[my_order_id]" value="{{razorpayOptions.my_order_id}}">
+  <input type="hidden" name="notes[my_order_type]" value="{{razorpayOptions.my_order_type}}">
+  <input type="hidden" name="callback_url" value="{{environment.razorpay_redirect_url}}">
+  <input type="hidden" name="cancel_url" value="{{environment.base_url+router.url}}">
+</form>

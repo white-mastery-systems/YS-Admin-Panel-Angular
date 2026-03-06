@@ -1,0 +1,28 @@
+<div class="main-header" *ngIf="!commonService.desktop_device">
+  <h2>Product Extras</h2>
+</div>
+
+<!-- <ng-container *ngIf="commonService.desktop_device">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Product Extras</h1>
+        <ul>
+          <li>Manage your product setting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="separator-breadcrumb border-top"></div>
+</ng-container> -->
+
+<div class="row d-flex px-0 margin-minus10">
+  <div class="col-6 col-md-4 px-2 mb-3" *ngFor="let y of commonService.product_extras_list">
+    <div class="card p-3 d-flex justify-content-start align-items-center flex-row" [routerLink]="y.state">
+      <div class="icons mb-0">
+        <span class="material-symbols-rounded">{{y.icon}}</span>
+      </div>
+      <label class="text-title cursor pl-3">{{y.name}}</label>
+    </div>
+  </div>
+</div>

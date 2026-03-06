@@ -1,0 +1,1071 @@
+
+<div class="help-content">
+    <div class="help-section">
+        <h2>Steps using CSV/XLSX files to import products</h2>
+        <p> In order to upload your products to your online store using Yourstore 
+            account, you can use a CSV/XLSX file. For the purpose of this 
+            documentation, we will use CSV in all other instances. Both CSV & XLSX 
+            are similar and work the same way. With CSV files, you can import multiple
+            products at once. This is useful when importing products from another 
+            platform or uploading a large number of products at once.</p>
+
+
+
+            <h2>Download the sample Product Upload file</h2>
+            <p> An example product CSV file is provided below.</p>
+
+            <ol>
+             
+                <ul>
+                    <li>
+                        <h3>Products without Variants</h3>
+                        <ul>
+                            <li>
+                                If your products do not have any variants, such as colour or size, use this template to
+                                upload them.
+
+                            </li>
+                                <p class="note" >
+                                  <a href="assets/Yourstore Bulk Upload Template - Without Variant.csv" download>Download CSV/XLSX</a>
+                                </p>
+                         
+    
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>Products with Variants</h3>
+                        <ul>
+                            <li>
+                                Use this template for uploading products that have variants, such as colours, sizes, 
+                                etc.
+
+                            </li>
+                                <p class="note" >
+                                  <a href="assets/Yourstore Bulk Upload Template - With Variant.csv" download>Download CSV/XLSX</a>
+                                </p>                   
+    
+                        </ul>
+                    </li>          
+               
+                </ul>
+            </ol>
+        
+
+            <h2>Formatting the Product Upload file</h2>
+            <p> As shown in the Supported Fields table below & the sample CSV file downloaded, you need 
+                to place the column headers on the first line of your product upload file to ensure it functions 
+                correctly. The values in these fields are case sensitive and please use as given in the 
+                sample file.</p>
+
+
+                <h2>Data Dependencies</h2>
+                <p class="note" >
+                    It is possible to bulk upload data directly, but some options must already be set up in 
+Yourstore's backend before you can add them. In the Yourstore backend, create catalogs, 
+tags, footnotes, tax and taxonomy options before you can upload them to the Product 
+Upload file.CSV (See the Supported Fields table below and the Support Documents 
+available at <a routerLink="/support/products">https://yourstore.io/login/support/products</a>)
+                 </p>
+
+                  <p>Some columns depend on other columns for their data.</p>
+
+
+                 <p> Example: In order to update the data in a column related to variants, such as Variant Name 
+                    and Variant Value, it is necessary to include variant_1_name and variant_1_value as well.</p>
+
+
+
+                  <p>Before you remove or exclude any other columns, verify that the data in those other columns
+                    depends on the data in the columns you want to remove or exclude. If you import your 
+                    product CSV file without the mandatory or dependent columns, your product data will be 
+                    uploaded with errors or missing information.</p>
+
+
+            <h1>Supported Fields in the CSV/XLSX table for products without 
+                variants</h1>        
+
+<p><b>• Required</b> field are to be filled</p>
+<p><b>• Optional</b>  fields can be left blank if you do not have a purpose to use them</p>
+
+
+
+<div class="container table-responsive py-5"> 
+  <table class="table table-bordered table-hover">
+    <thead scope="row">
+      <tr>
+        <th scope="col">Fields/Columns</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="row">Catalogs</td>
+         <td><h5>Required</h5>
+           <p>This column should contain the name of the
+               product's catalog/category. The name in this
+               column should match the name created 
+               under the catalog in Yourstore Backend. 
+               You can tag a product to multiple catalogs.</p>
+   
+               <p class="note" >Be sure to add the necessary catalogs to 
+                   yourstore backend (<a routerLink="/product-sections/catalogs">Products → Catalog & 
+                       Products</a> ) before adding them to the CSV 
+                   file.</p>
+         </td>
+       </tr>
+      
+       <tr>
+      
+         <td scope="row">  Name</td>
+         <td><h5>Required</h5>
+           <p>This field must contain the name of your 
+               product. No special characters are allowed 
+               except the hyphen (-).</p>
+           <p>Example: Red Party Wear Striped Shirt</p></td>
+       </tr>
+       <tr>
+   
+        <td scope="row"> Unit</td>
+        <td><h5>Required</h5>
+          <p>Pcs - For all single-unit products or ready-
+            made products</p>
+          <p>Mts - For custom-length fabrics & items</p>
+          <p>Kgs - For grocery items, vegetables, etc. 
+            that you want customers to select the 
+            quantity.</p>
+          <p>Example: Put Pcs in the Units column if you
+            are selling a readymade shirt</p>
+        </td>
+      </tr>
+      <tr>
+   
+        <td scope="row"> Brand</td>
+        <td><h5>Optional</h5>
+          <p>It is optional to enter the brand name of the 
+            product. You can leave it blank if you are selling 
+            your own branded products.</p>
+          <p>Example: Adidas</p>
+          
+        </td>
+      </tr>
+
+      <tr>
+        <td> taxonomy</td>
+        <td><h5>Optional</h5>
+          <p>This helps with getting your product listed on 
+            Google merchant center and Facebook catalog. 
+            The name present in this column should match 
+            exactly the name created under the product 
+            taxonomy.</p>
+            <p class="note" >Be sure to add the necessary taxonomy 
+                data for your products under <a routerLink="/product-extras/product-taxonomy">Products → Product Extras → Product 
+                    Taxonomy</a> before adding to the CSV file
+                file.</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> Description</td>
+        <td><h5>Recommend</h5>
+          <p>A well-written description of your product 
+            will increase sales.</p>
+          <p>Example: This red micro ditsy printed 
+            opaque casual shirt features a spread 
+            collar, button placket, one patch pocket, 
+            long regular sleeves, and a curved hem</p>
+        </td>
+      </tr>
+
+
+      
+
+      <tr>
+        <td scope="row"> Discount</td>
+        <td><h5>Recommend</h5>
+          <p>Enter Yes if your product has a discount, 
+            and No if it does not have a discount</p>
+         
+        </td>
+      </tr>
+
+
+       <tr>
+        <td scope="row"> hsn_code</td>
+        <td><h5>Optional</h5>
+          <p>The HSN code is a 6-digit uniform code that
+            classifies over 5000 products and is 
+            accepted worldwide for cross-border 
+            shipping. The HSN code stands for 
+            "Harmonized System of Nomenclature".</p>
+         
+        </td>
+      </tr>
+      
+
+      <tr>
+        <td scope="row"> search_keywords</td>
+        <td><h5>Optional</h5>
+          <p>Enter relevant and possible search 
+            keywords separated by commas (,) for the 
+            product to help improve its discovery when 
+            a user searches for it on the website.</p>
+         <p>Example: 
+            Product Name “Red Party Wear Striped 
+            Shirt”
+            Possible search Keywords “Party Wear 
+            Shirt, Striped Shirt, Red Shirt, Striped Shirt, 
+            Red Party Wear Shirt”</p>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> featured_product</td>
+        <td><h5>Required</h5>
+          <p>Enter Yes if you want to feature this product
+            on the homepage's featured product 
+            segment, and No if you don't.</p>
+         
+        </td>
+      </tr>
+
+
+      <tr >
+        <td scope="row"> allow_cod</td>
+        <td><h5>Required</h5>
+          <p>If you want to allow COD for a product, 
+            enter Yes. If you don't want COD, enter No.</p>
+         
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> product_image_1</td>
+        <td><h5>Required</h5>
+            <p class="note" >Upload all the images required for this CSV 
+                file under <a routerLink="/product-extras/image-gallery">Products → Product Extras → Image 
+                    Gallery</a>. </p>
+          <p>Click on the <b>“+ Folder”</b> button on the top 
+            right, name the folder and you can select 
+            and add up to 50 images at a time, each 
+            image should not exceed 3MB, Click on 
+            upload. If you want to add more images to 
+            the same folder click on “view” to open the 
+            folder and click on <b>“+ Images”</b> button 
+            inside the folder to add more images to the 
+            same folder and repeat the same process 
+            for adding additional images. Once you are 
+            done adding the required images for this 
+            CSV file. Click on the “Export” button to get 
+            the data. The exported file will have the 
+            image URL’s Copy-Paste the URLs of the 
+            image in the product_image_1 column.</p>
+            <p style="word-break: break-all;">Example: 
+                uploads/5d0ca4c89f21de03xxx3232/produc
+                ts/cloths/IMG92932A.jpg</p>
+         
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> product_image_2</td>
+        <td><h5>Optional</h5>
+        
+          <p>If your product has more than 1 image, 
+            enter the other image URLs in the 
+            respective columns <b>product_image_2, 
+                product_image_3, product_image_4, etc..</b> You
+            can add up to 10 images per product.  To 
+            add more images you can add additional 
+            column and name the column 
+            <b>product_images_5, product_images_6, 
+                etc..</b></p>
+            <p style="word-break: break-all;">Example: 
+               <b> Product_image_2</b> column
+                uploads/5d0ca4c89f21de03xxx3232/
+                products/cloths/IMG92932B.jpg</p>
+                <p style="word-break: break-all;"><b>Product_image_3</b> column
+                    uploads/5d0ca4c89f21de03xxx3232/
+                    products/cloths/IMG92932C.jpg</p>
+         
+        </td>
+      </tr>
+      <tr >
+        <td scope="row">  sku</td>
+        <td><h5>Required</h5>
+          <p>In this field, enter the SKU number for each 
+            product. SKU values must be unique for 
+            each product.</p>
+         
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> selling_price</td>
+        <td><h5>Required</h5>
+          <p>Enter the selling price (MRP) of the product 
+            in this column.</p>
+            <p>Example: 1500</p>
+         
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> discounted_price</td>
+        <td><h5>Required</h5>
+          <p>Input the discounted price of the product in 
+            this field. If there is no discount provided, 
+            enter the selling price of the product again 
+            in this field.</p>
+            <p>Example:
+                Selling Price - 1500
+                If Discount is there - 1200
+                If No Discount - 1500</p>
+         
+        </td>
+      </tr>
+
+      <tr scope="row">
+        <td> stock</td>
+        <td><h5>Required</h5>
+          <p>Enter the amount of inventory or stock 
+            available for the product.</p>
+            <p>Example: 10</p>
+         
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> shipping_weight</td>
+        <td><h5>Required</h5>
+          <p>Enter the exact weight of the product, including 
+            packaging.</p>
+            <p>Example: 500 grams = 0.5, 250 grams = 0.25, 
+                50 grams = 0.05</p>
+         
+        </td>
+      </tr>
+
+
+
+      <tr>
+        <td scope="row"> tax_percentage</td>
+        <td><h5>Optional</h5>
+            <p class="note" >The TAX percentage should be entered if 
+                you are collecting TAX on the orders. You 
+                must first create the TAX percentages 
+                required under <a routerLink="/setting/tax-rates">Settings →Tax Rates.</a> Only 
+                the percentages created under TAX Rates 
+                can be inputted in this column.</p>
+            <p>Example: 
+                If you have set up 12% TAX in Tax Rates 
+                input 12 in this column</p>
+         
+        </td>
+      </tr>
+
+
+
+      <tr>
+        <td scope="row"> add_ons</td>
+        <td><h5>Optional</h5>
+            <p>If you have addons for your product 
+                created. Include the addons name over 
+                here. For products with multiple addons 
+                input the options separated by commas (,)</p>
+            <p class="note" >Make sure all the necessary addons are 
+                created before adding the addon name to 
+                the CSV file <a routerLink="/product-extras/addons">Products → Product Extras → Addons</a></p>
+            <p>Example: Shirt Customisation, Suite 
+                Customisation</p>
+         
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> addon_mandatory</td>
+        <td><h5>Optional</h5>
+            <p>If the addons for the product are mandatory,
+                enter Yes, if they are not mandatory and 
+                optional, enter No.</p>
+          
+        </td>
+      </tr>
+
+
+
+      <tr>
+        <td scope="row"> size_chart</td>
+        <td><h5>Optional</h5>
+            <p>Enter the name of the size chart created 
+                over here if your products have one.</p>
+            <p class="note" >Make sure the necessary size charts are 
+                    created before adding them to the CSV file
+                    <a routerLink="/product-extras/size-chart">Products → Product Extras → Size Chart</a></p>
+            <p>Example: Shirt</p>
+        </td>
+      </tr>
+
+
+      <tr >
+        <td scope="row"> image_tags</td>
+        <td><h5>Optional</h5>
+            <p>You can add tags to your product images 
+                here.</p>
+           
+            <p class="note" >Make sure the necessary image tags are 
+                created before adding them to the CSV file <a routerLink="/product-extras/image-tags">Products → Product Extras → Image Tags</a></p>
+            <p>Example: Trending, Bestseller</p>
+        </td>
+      </tr>
+
+      
+      <tr>
+        <td scope="row"> tag_1_name</td>
+        <td><h5>Optional</h5>
+            <p>Tags are filters on the website that allow 
+                customers to easily locate products. Enter 
+                the name of the tag created in this column 
+                of the CSV file.</p>
+          
+            <p class="note" >Make sure the necessary tags are created 
+                before adding them to the CSV file  <a routerLink="/product-extras/product-tags">Products
+                    → Product Extras → Product Tags</a></p>
+            <p>Example: Colour</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td scope="row"> tag_1_value</td>
+        <td><h5>Optional</h5>
+            <p>Tag values relevant to <b>tag_1_name</b> are listed 
+                here. There can be multiple tag values 
+                associated with <b>tag_1_name</b>.</p>
+          
+            <p class="note" >To add values to a tag created, click on 
+                View button next to the created tag under  <a routerLink="/product-extras/product-tags">Products → Product Extras → Product Tags</a> and add the options/values to it</p>
+            <p>Example: Red, Greeen</p>
+        </td>
+      </tr>
+      
+
+      <tr>
+        <td scope="row"> tag_2_name, tag_3_name</td>
+        <td><h5>Optional</h5>
+            <p>For products with only one tag, leave 
+                <b>tag_2_name and tag_3_name</b> cells blank. 
+                If there are more tags, create extra columns
+                <b>tag_4_name and tag_5_name.</b></p>
+          
+            
+        </td>
+      </tr>
+      <tr>
+        <td scope="row"> tag_2_value, tag_3_value</td>
+        <td><h5>Optional</h5>
+            <p>As with <b>tag_1_value</b>, you can create extra 
+                columns <b>tag_4_value, tag_5_value,</b> etc. if 
+                additional tags are needed. If there is only 
+                one tag per product, leave <b>tags_2_value </b>
+                and <b>tag_3_value</b> blank.</p>
+          
+            
+        </td>
+      </tr>
+      
+
+      <tr>
+        <td scope="row"> footnote_1_name</td>
+        <td><h5>Optional</h5>
+            <p>The footnotes are additional short 
+                descriptions that can be added to the 
+                products so that the customer can easily 
+                see what they are buying.</p>
+          
+            <p class="note" >Footnotes can be created under  <a routerLink="/product-extras/footnote">Products 
+                → Product Extras → Footnote</a> </p>
+            <p>Example: Sleeve Length</p>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> footnote_1_value</td>
+        <td><h5>Optional</h5>
+            <p>Footnote values relevant to <b>footnote_1_name</b> 
+                are listed here. There can be only one 
+                footnote value associated with 
+                <b>footnote_1_name</b>.</p>
+          
+            <p class="note" >To add values to a footnote created, click 
+                on the View button next to the created 
+                footnote  under  <a routerLink="/product-extras/footnote">Products → Product Extras
+                    → Footnote</a> and add the options/values to 
+                    it.</p>
+            <p>Example: Full Sleeve</p>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> footnote_2_name, footnote_3_name</td>
+        <td><h5>Optional</h5>
+            <p>For products with only one footnote, leave 
+                <b>footnote_2_name</b> and <b>footnote_3_name</b> 
+                cells blank. If there are more tags, create 
+                extra columns <b>footnote_4_name</b> and 
+                <b>footnote_5_name</b>.</p>
+          
+            
+        </td>
+      </tr>
+
+
+      <tr>
+        <td scope="row"> footnote_2_value, footnote_3_value</td>
+        <td><h5>Optional</h5>
+            <p>As with <b>footnote_1_value</b>, you can create 
+                extra columns <b>footnote_4_value, 
+                footnote_5_value,</b> etc. if additional tags 
+                are needed. If there is only one tag per 
+                product, leave <b>footnote_2_value</b> and 
+                <b>footnote_3_value</b> blank.</p>
+          
+            
+        </td>
+      </tr>
+    
+    </tbody>
+  </table>
+  </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <h1>Supported Fields in th CSV table for products with variants</h1>        
+
+<p><b>• Required</b> field are to be filled</p>
+<p><b>• Optional</b>  fields can be left blank if you do not have a purpose to use them</p> 
+<p>• Maximum <b>3 types</b> of variants can be added</p>
+
+<div class="container table-responsive py-5"> 
+  <table class="table table-bordered table-hover">
+    <thead scope="row">
+      <tr>
+
+        <th scope="col">Fields/Columns</th>
+        <th scope="col">Description</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="row">Catalogs</td>
+         <td><h5>Required</h5>
+           <p>This column should contain the name of the
+               product's catalog/category. The name in this
+               column should match the name created 
+               under the catalog in Yourstore Backend. 
+               You can tag a product to multiple catalogs.</p>
+   
+               <p class="note" >Be sure to add the necessary catalogs to 
+                   yourstore backend (<a routerLink="/product-sections/catalogs">Products → Catalog & 
+                       Products</a> ) before adding them to the CSV 
+                       file.</p>
+         </td>
+       </tr>
+      
+       <tr>
+      
+         <td scope="row"> Name</td>
+         <td><h5>Required</h5>
+           <p>This field must contain the name of your 
+               product. No special characters are allowed 
+               except the hyphen (-).</p>
+           <p>Example: Red Party Wear Striped Shirt</p></td>
+       </tr>
+   
+       <tr>
+      
+           <td scope="row"> Unit</td>
+           <td><h5>Required</h5>
+             <p>Pcs - For all single-unit products or ready-
+               made products</p>
+             <p>Mts - For custom-length fabrics & items</p>
+             <p>Kgs - For grocery items, vegetables, etc. 
+               that you want customers to select the 
+               quantity.</p>
+             <p>Example: Put Pcs in the Units column if you
+               are selling a readymade shirt</p>
+           </td>
+         </tr>
+         <tr>
+      
+           <td scope="row"> Brand</td>
+           <td><h5>Optional</h5>
+             <p>It is optional to enter the brand name of the 
+               product. You can leave it blank if you are selling 
+               your own branded products.</p>
+             <p>Example: Adidas</p>
+             
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> Taxonomy</td>
+           <td><h5>Optional</h5>
+             <p>This helps with getting your product listed on 
+               Google merchant center and Facebook catalog. 
+               The name present in this column should match 
+               exactly the name created under the product 
+               taxonomy.</p>
+               <p class="note" >Be sure to add the necessary taxonomy 
+                   data for your products under <a routerLink="/product-extras/product-taxonomy">Products → Product Extras → Product 
+                       Taxonomy </a> before adding to the CSV file
+                   file.</p>
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> Description</td>
+           <td><h5>Recommend</h5>
+             <p>A well-written description of your product 
+               will increase sales.</p>
+             <p>Example: This red micro ditsy printed 
+               opaque casual shirt features a spread 
+               collar, button placket, one patch pocket, 
+               long regular sleeves, and a curved hem</p>
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> Discount</td>
+           <td><h5>Recommend</h5>
+             <p>Enter Yes if your product has a discount, 
+               and No if it does not have a discount</p>
+            
+           </td>
+         </tr>
+   
+   
+          <tr>
+           <td> hsn_code</td>
+           <td><h5>Optional</h5>
+             <p>The HSN code is a 6-digit uniform code that
+               classifies over 5000 products and is 
+               accepted worldwide for cross-border 
+               shipping. The HSN code stands for 
+               "Harmonized System of Nomenclature".</p>
+            
+           </td>
+         </tr>
+         
+   
+         <tr>
+           <td scope="row"> search_keywords</td>
+           <td><h5>Optional</h5>
+             <p>Enter relevant and possible search 
+               keywords separated by commas (,) for the 
+               product to help improve its discovery when 
+               a user searches for it on the website.</p>
+            <p>Example: 
+               Product Name “Red Party Wear Striped 
+               Shirt”
+               Possible search Keywords “Party Wear 
+               Shirt, Striped Shirt, Red Shirt, Striped Shirt, 
+               Red Party Wear Shirt”</p>
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> featured_product</td>
+           <td><h5>Required</h5>
+             <p>Enter Yes if you want to feature this product
+               on the homepage's featured product 
+               segment, and No if you don't.</p>
+            
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> allow_cod</td>
+           <td><h5>Required</h5>
+             <p>If you want to allow COD for a product, 
+               enter Yes. If you don't want COD, enter No.</p>
+            
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> product_image_1</td>
+           <td><h5>Required</h5>
+               <p class="note" >Upload all the images required for this CSV 
+                   file under <a routerLink="/product-extras/image-gallery">Products → Product Extras → Image 
+                       Gallery</a>. </p>
+             <p>Click on the <b>“+ Folder”</b> button on the top 
+               right, name the folder and you can select 
+               and add up to 50 images at a time, each 
+               image should not exceed 3MB, Click on 
+               upload. If you want to add more images to 
+               the same folder click on “view” to open the 
+               folder and click on <b>“+ Images”</b> button 
+               inside the folder to add more images to the 
+               same folder and repeat the same process 
+               for adding additional images. Once you are 
+               done adding the required images for this 
+               CSV file. Click on the “Export” button to get 
+               the data. The exported file will have the 
+               image URL’s Copy-Paste the URLs of the 
+               image in the product_image_1 column.</p>
+               <p style="word-break: break-all;">Example: 
+                   uploads/5d0ca4c89f21de03xxx3232/produc
+                   ts/cloths/IMG92932A.jpg</p>
+            
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> product_image_2</td>
+           <td><h5>Optional</h5>
+           
+             <p>If your product has more than 1 image, 
+               enter the other image URLs in the 
+               respective columns <b>product_image_2, 
+                   product_image_3, product_image_4,</b> etc.. You
+               can add up to 10 images per product.  To 
+               add more images you can add additional 
+               column and name the column 
+               <b>product_images_5, product_images_6, 
+                   etc..</b></p>
+                   <p style="word-break: break-all;">Example: 
+                    <b>Product_image_2</b> column
+                    uploads/5d0ca4c89f21de03xxx3232/
+                    products/cloths/IMG92932B.jpg
+                   <b> Product_image_3</b> column
+                    uploads/5d0ca4c89f21de03xxx3232/
+                    products/cloths/IMG92932C.jpg</p>
+             
+            
+           </td>
+         </tr>
+         <tr>
+           <td scope="row"> variant_1_name</td>
+           <td><h5>Required</h5>
+             <p>Specify the name of your variant.</p>
+             <p>Example: Size</p>
+            
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> variant_1_value</td>
+           <td><h5>Required</h5>
+             <p>Specify the variant value.</p>
+               <p>Example: S</p>
+            
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> Variant_2_name, variant_3_name</td>
+           <td><h5>Optional</h5>
+             <p>Fill in these fields if you have more than one
+               variant option for a product. If there is only 
+               one variant, leave this field blank.</p>
+               <p>Example: Colour, Pattern</p>
+            
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> Variant_2_value, variant_3_value</td>
+           <td><h5>Optional</h5>
+             <p>Fill in these fields if you have other variant 
+               options. Leave these fields blank if there is 
+               only one variant for the product.</p>
+               <p>Example: Red, Checked</p>
+            
+           </td>
+         </tr>
+   
+         <tr>
+           <td  scope="row"> variant_images_1</td>
+           <td><h5>Optional</h5>
+             <p>Follow the same steps as in 
+               product_image_1 field if your variants have 
+               images (this feature is dependent on your 
+               plan or available as a separate plugin). 
+               If you want to add more images, create 
+               additional columns <b>variant_images_5, 
+                   variant_images_6, etc..</b></p>
+           </td>
+         </tr>
+   
+   
+   
+         <tr>
+           <td scope="row"> sku</td>
+           <td><h5>Required</h5>
+               
+               <p>In this field, enter the SKU number for each 
+                   product. SKU values must be unique for 
+                   each product.</p>
+            
+           </td>
+         </tr>
+   
+   
+   
+         <tr>
+           <td scope="row"> selling_price</td>
+           <td><h5>Required</h5>
+               <p>Enter the selling price (MRP) of the product 
+                   in this column.</p>
+              
+               <p>Example: 1500</p>
+            
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> discounted_price</td>
+           <td><h5>Required</h5>
+               <p>Input the discounted price of the product in 
+                   this field. If there is no discount provided, 
+                   enter the selling price of the product again 
+                   in this field.</p>
+             <p>Example:
+               Selling Price - 1500
+               If Discount is there - 1200
+               If No Discount - 1500</p>
+           </td>
+         </tr>
+   
+   
+   
+         <tr>
+           <td scope="row"> stock</td>
+           <td><h5>Required</h5>
+               <p>Enter the amount of inventory or stock 
+                   available for the product.</p>
+             <p>Example: 10</p>
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> shipping_weight</td>
+           <td><h5>Required</h5>
+               <p>Enter the exact weight of the product, including 
+                   packaging.</p>
+               <p>Example: 500 grams = 0.5, 250 grams = 0.25, 
+                   50 grams = 0.05</p>
+           </td>
+         </tr>
+   
+         
+         <tr>
+           <td scope="row"> tax_percentage</td>
+           <td><h5>Optional</h5>
+             
+             
+               <p class="note" >The TAX percentage should be entered if 
+                   you are collecting TAX on the orders. You 
+                   must first create the TAX percentages 
+                   required under <a routerLink="/setting/tax-rates">Settings →Tax Rates.</a> Only 
+                   the percentages created under TAX Rates 
+                   can be inputted in this column.</p>
+               <p>Example: 
+                   If you have set up 12% TAX in Tax Rates 
+                   input 12 in this column</p>
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> add_ons</td>
+           <td><h5>Optional</h5>
+               <p>If you have addons for your product 
+                   created. Include the addons name over 
+                   here. For products with multiple addons 
+                   input the options separated by commas (,)</p>
+             
+               <p class="note" >Make sure all the necessary addons are 
+                   created before adding the addon name to 
+                   the CSV file  <a routerLink="/product-extras/addons">Products → Product Extras → Addons</a></p>
+               <p>Example: Shirt Customisation, Suite 
+                   Customisation</p>
+           </td>
+         </tr>
+         
+   
+         <tr>
+           <td scope="row"> addon_mandatory</td>
+           <td><h5>Optional</h5>
+               <p>If the addons for the product are mandatory,
+                   enter Yes, if they are not mandatory and 
+                   optional, enter No.</p>
+             
+               
+           </td>
+         </tr>
+         <tr>
+           <td scope="row"> size_chart</td>
+           <td><h5>Optional</h5>
+               <p>Enter the name of the size chart created 
+                   over here if your products have one.</p>
+                   <p class="note" >Make sure the necessary size charts are 
+                       created before adding them to the CSV file <a routerLink="/product-extras/size-chart">Products → Product Extras → Size Chart</a> </p>
+               <p>Example: Shirt</p>
+           </td>
+         </tr>
+         
+   
+         <tr>
+           <td scope="row"> image_tags</td>
+           <td><h5>Optional</h5>
+               <p>You can add tags to your product images 
+                   here.</p>
+             
+               <p class="note" >Make sure the necessary image tags are 
+                   created before adding them to the CSV file<a routerLink="/product-extras/image-tags">Products → Product Extras → Image Tags</a> </p>
+               <p>Example: Trending, Bestseller</p>
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> tag_1_name</td>
+           <td><h5>Optional</h5>
+               <p>Tags are filters on the website that allow 
+                   customers to easily locate products. Enter 
+                   the name of the tag created in this column 
+                   of the CSV file.</p>
+             
+               <p class="note" >Make sure the necessary tags are created 
+                   before adding them to the CSV file <a routerLink="/product-extras/product-tags">Products
+                       → Product Extras → Product Tags</a> </p>
+               <p>Example: Colour</p>
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> tag_1_value</td>
+           <td><h5>Optional</h5>
+               <p>Tag values relevant to <b>tag_1_name</b> are listed 
+                   here. There can be multiple tag values 
+                   associated with <b>tag_1_name</b>.</p>
+                   <p class="note" >To add values to a tag created, click on 
+                       View button next to the created tag under <a routerLink="/product-extras/product-tags">Products → Product Extras → Product Tags</a> and add the options/values to it</p>
+                   <p>Example: Red, Greeen</p>
+               
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> tag_2_name, tag_3_name</td>
+           <td><h5>Optional</h5>
+               <p>For products with only one tag, leave 
+                   <b>tag_2_name</b> and <b>tag_3_name</b> cells blank. 
+                   If there are more tags, create extra columns
+                   <b>tag_4_name</b> and <b>tag_5_name</b></p>
+                   
+               
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> tag_2_value, tag_3_value</td>
+           <td><h5>Optional</h5>
+               <p>As with <b>tag_1_value</b>, you can create extra 
+                   columns <b>tag_4_value, tag_5_value,</b> etc. if 
+                   additional tags are needed. If there is only 
+                   one tag per product, leave <b>tags_2_value 
+                       and tag_3_value</b> blank.</p>
+                   
+               
+           </td>
+         </tr>
+         <tr>
+           <td scope="row"> footnote_1_name</td>
+           <td><h5>Optional</h5>
+               <p>The footnotes are additional short 
+                   descriptions that can be added to the 
+                   products so that the customer can easily 
+                   see what they are buying.</p>
+                   <p class="note" >Footnotes can be created under <a routerLink="/product-extras/footnote">Products 
+                       → Product Extras → Footnote </a></p>
+                   <p>Example: Sleeve Length</p>
+               
+           </td>
+         </tr>
+   
+   
+         <tr>
+           <td scope="row"> footnote_1_value</td>
+           <td><h5>Optional</h5>
+               <p>Footnote values relevant to <b>footnote_1_name</b> 
+                   are listed here. There can be only one 
+                   footnote value associated with 
+                   <b>footnote_1_name</b>.</p>
+                   <p class="note" >To add values to a footnote created, click 
+                       on the View button next to the created 
+                       footnote  under <a routerLink="/product-extras/footnote">Products → Product Extras
+                           → Footnote </a> and add the options/values to 
+                           it.</p>
+                   <p>Example: Full Sleeve</p>
+               
+           </td>
+         </tr>
+   
+         <tr>
+           <td scope="row"> footnote_2_name, footnote_3_name</td>
+           <td><h5>Optional</h5>
+               <p>For products with only one footnote, leave 
+                   <b>footnote_2_name</b> and <b>footnote_3_name</b> 
+                   cells blank. If there are more tags, create 
+                   extra columns <b>footnote_4_name and 
+                       footnote_5_name</b></p>
+             
+               
+           </td>
+         </tr>
+         <tr>
+           <td scope="row"> footnote_2_value, footnote_3_value</td>
+           <td><h5>Optional</h5>
+               <p>As with footnote_1_value, you can create 
+                   extra columns <b>footnote_4_value</b>, 
+                   <b>footnote_5_value</b>, etc. if additional tags 
+                   are needed. If there is only one tag per 
+                   product, leave <b>footnote_2_value</b> and 
+                   <b>footnote_3_value</b> blank.</p>
+             
+               
+           </td>
+         </tr>
+    </tbody>
+  </table>
+  </div>
+    </div>
+</div>
+
+
+
+
+

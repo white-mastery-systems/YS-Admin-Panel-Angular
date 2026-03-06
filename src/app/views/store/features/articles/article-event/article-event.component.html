@@ -1,0 +1,276 @@
+<div *ngIf="pageLoader" class="row">
+    <app-spinner></app-spinner>
+  </div>
+  
+  <div *ngIf="!pageLoader">
+    <ng-container *ngIf="commonService.desktop_device">
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+           </div>
+          </div>  
+        </div>
+      </div>
+    </ng-container>
+  
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      <div class="row flex-xs-column-reverse">
+        <div class="col-md-12 col-12">
+          <div class="row justify-content-center">
+            <p>Photo Resolution: 900x600</p>
+            <div class="col-md-12 col-12 mb-4" align="center">
+               <div class="col-md-6">
+                <div class="card p-3">
+                  <div *ngIf="articleForm.image">
+                    <span (click)="articleForm.img_change=null; articleForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                    <img *ngIf="articleForm.img_change" [src]="articleForm.image" height="100px;" width="auto;">
+                    <img *ngIf="!articleForm.img_change" [src]="imgBaseUrl+articleForm.image" height="100px;" width="auto;">
+                    <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
+                      <label>Image Alt Name</label>
+                      <input type="text" name="img_alt" class="form-control" [(ngModel)]="articleForm.img_alt" #img_alt="ngModel" />
+                    </div>
+                  </div>
+                  <div *ngIf="!articleForm.image">
+                    <label>
+                      <div>
+                        <i class="material-icons add-img">add_photo_alternate</i>
+                        <p>Click to upload image</p>
+                      </div>
+                      <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                    </label>
+                  </div>
+                </div>
+               </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 col-12">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Author</label>
+              <input type="text" name="author" class="form-control" [(ngModel)]="articleForm.author" #author="ngModel" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Created On</label>
+              <input type="text" placeholder="Select Date" class="form-control" name="created_on" autocomplete="off"
+                [maxDate]="currentDate" [(ngModel)]="articleForm.created_on" bsDatepicker
+                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="articleForm.name" (input)="onChangeTitle();" #name="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3 quill-mb-5">
+              <label>Description</label>
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="articleForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- link -->
+      <div class="col-md-12 form-group mb-3">
+        <label class="checkbox checkbox-primary">
+          <input class="form-check-input" type="checkbox" name="link_status" [(ngModel)]="articleForm.link_status" (change)="articleForm.link_type='category';">
+          <span>Enable Link</span>
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <ng-container *ngIf="articleForm.link_status">
+        <div class="col-md-6 form-group mb-3">
+          <label class="radio radio-primary">
+            <input type="radio" name="link_type" [(ngModel)]="articleForm.link_type" value="category">
+            <span>Link to Catalog</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label class="radio radio-primary">
+            <input type="radio" name="link_type" [(ngModel)]="articleForm.link_type" value="product">
+            <span>Link to Product</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label class="radio radio-primary">
+            <input type="radio" name="link_type" [(ngModel)]="articleForm.link_type" value="internal">
+            <span>Link to Internal Link</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label class="radio radio-primary">
+            <input type="radio" name="link_type" [(ngModel)]="articleForm.link_type" value="external">
+            <span>Link to External Link</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div *ngIf="articleForm.link_type=='category' || articleForm.link_type=='product'" class="col-md-12 form-group mb-3">
+          <label>{{articleForm.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
+          <select name="category_id" class="form-control select-arrow" [(ngModel)]="articleForm.category_id" required>
+            <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">
+              {{x.name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="articleForm.link_type=='product'" class="col-md-12 form-group mb-3">
+          <label>Link to Product</label>
+          <select [disabled]="!articleForm.category_id" name="product_id" class="form-control select-arrow" [(ngModel)]="articleForm.product_id" required>
+            <option [ngValue]="x._id" *ngFor="let x of productList | productFilter:'category_id':articleForm.category_id;">
+              {{x.name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="articleForm.link_type=='internal' || articleForm.link_type=='external'" class="col-md-12 form-group mb-3">
+          <label *ngIf="articleForm.link_type=='internal'">{{commonService.store_details?.base_url}}{{articleForm.link}}</label>
+          <label *ngIf="articleForm.link_type=='external'">External Link</label>
+          <input type="text" name="link" class="form-control" [(ngModel)]="articleForm.link" required />
+        </div>
+      </ng-container>
+  
+      <!-- categories -->
+      <ng-container *ngIf="categoryList.length">
+        <div class="p-0 col-12 mt-3">
+          <label><b>Article Catalogs</b> <span style="font-size:12px;opacity:0.8;"> (Click on the catalog to select)</span></label>
+        </div>
+        <div class="data-list-card-wrapper p-0 col-md-8 col-12 col-md-12">
+          <div class="card card-in-card px-3 pt-3 pb-0">     
+            <div class="prod-scroll px-2">
+              <div class="row pt-3">
+                <div *ngFor="let x of categoryList; let i=index;" class="form-group mb-3 px-2 checking">
+                  <label class="checkbox checkbox-primary pl-0">
+                    <input class="form-check-input" type="checkbox" name="selected" [(ngModel)]="x.selected" [checked]="x.selected" [ngModelOptions]="{standalone: true}">
+                    <span [ngClass]="x.selected? 'active': 'inactive'">
+                      <span>{{x.name}}</span>
+                      <span *ngIf="x.selected" class="material-icons p-0 cursor-poiter">close</span>
+                    </span>                 
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+  
+      <!-- SEO -->
+      <div class="data-list-card-wrapper mt-3 p-0 col-md-8 col-12 col-md-12">
+        <div class="data-list-card-inner p-3">
+          <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+            <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+              <span class="light-font mt-0 font-10 d-block">This is how your article looks on Google, Bing, Yahoo and other search engines</span>
+            </p>
+            <ng-container *ngIf="articleForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+              <span *ngIf="!articleForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+              (click)="articleForm.seo_disp=true" aria-hidden="true">edit</span>
+              <span *ngIf="articleForm.seo_disp && articleForm.seo_details.page_url && articleForm.seo_details.h1_tag && articleForm.seo_details.page_title && articleForm.seo_details.meta_desc"
+              (click)="articleForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+            </ng-container>
+          </div>
+  
+          <ng-container *ngIf="!articleForm.seo_disp">
+            <p *ngIf="!articleForm.name" class="light-font font-10">
+              Add a Title And Description To See How This Article Might Appear In A Search Engine Listing
+            </p>
+            <ng-container *ngIf="articleForm.name">
+              <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/articles/{{articleForm.seo_details?.page_url}}</p>
+              <h6 class="sec-desc mb-1 mt-2 seo-color">{{articleForm.seo_details.page_title}}</h6>
+              <p class="light-font font-10">{{articleForm.seo_details.meta_desc}}</p>
+            </ng-container>
+          </ng-container>
+  
+          <ng-container *ngIf="articleForm.seo_disp">
+            <div class="col-md-12 form-group mb-3">
+              <label>Page URL</label>
+              <input type="text" name="page_url" class="form-control" [(ngModel)]="articleForm.seo_details.page_url" appNoSplChar required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>H1 Tag</label>
+              <span *ngIf="articleForm.seo_details?.h1_tag?.length" class="label_hint">
+                {{articleForm.seo_details.h1_tag.length}} of 70 characters used
+              </span>
+              <input type="text" name="h1_tag" class="form-control" [(ngModel)]="articleForm.seo_details.h1_tag" maxlength="70" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Page Title</label>
+              <span *ngIf="articleForm.seo_details?.page_title?.length" class="label_hint">
+                {{articleForm.seo_details.page_title.length}} of 70 characters used
+              </span>
+              <input type="text" name="page_title" class="form-control" [(ngModel)]="articleForm.seo_details.page_title" maxlength="70" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Meta Description</label>
+              <span *ngIf="articleForm.seo_details?.meta_desc?.length" class="label_hint">
+                {{articleForm.seo_details.meta_desc.length}} of 320 characters used</span>
+              <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="articleForm.seo_details.meta_desc" maxlength="320" required></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Meta Keywords</label>
+              <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="articleForm.seo_details.meta_keyword_list" placeholder=""
+              [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+              <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+  
+      <!-- FAQ -->
+      <div class="col-md-12 form-group mb-3 mt-3">
+        <label class="checkbox checkbox-primary">
+          <input class="form-check-input" type="checkbox" name="faq_status" [(ngModel)]="articleForm.faq_status" (change)="articleForm.faq_status ? articleForm.faqs=[{}] : articleForm.faqs=[] + articleForm.faq_title='';" #faq_status="ngModel">
+          <span>Enable FAQ</span>
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <ng-container *ngIf="articleForm.faq_status">
+        <div class="col-md-6 form-group mb-3">
+          <label>Title</label>
+          <input type="text" name="faq_title" class="form-control" [(ngModel)]="articleForm.faq_title" required />
+        </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3" *ngFor="let x of articleForm.faqs; let i=index;">
+              <div class="card p-3">
+                <div class="row poss-rel">
+                  <span (click)="articleForm.faqs.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Question</label>
+                    <input type="text" name="ques{{i}}" class="form-control" [(ngModel)]="x.ques" #ques="ngModel" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Answer</label>
+                    <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer" #answer="ngModel" required></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-12 mb-3">
+          <button class="light-button" (click)="articleForm.faqs.push({});" type="button">
+            <span class="material-symbols-rounded ">add</span>NEW FAQ
+          </button>
+        </div>
+      </ng-container>
+  
+      <div class="separator-breadcrumb border-top mt-5"></div>
+      <div class="row">
+        <div class="col-md-12 mt-3 mb-3" *ngIf="articleForm.errorMsg">
+          <p class="text-danger" align="center">{{ articleForm.errorMsg }}</p>
+        </div>
+        <div align="center" class="col-md-12 z-i-0">
+          <button type="button" routerLink="/setting/articles" class="btn btn-wide black-outline-btn">
+           <span class="black-outline-txt">Cancel</span>
+          </button>&nbsp; &nbsp; &nbsp;
+          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="articleForm.submit" [ladda]="articleForm.submit">
+            {{ (articleForm?.form_type=='add')? 'Add': 'Update' }}
+          </button>
+        </div>
+      </div>
+  
+    </form>
+  
+  </div>

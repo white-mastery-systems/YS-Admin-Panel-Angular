@@ -1,0 +1,54 @@
+.data-loaderr {
+  width: 100%;
+  min-height: 120px !important;
+  margin: 50px 0px 0px 0px;
+
+}
+
+/*.................... CUSTOM PRELOADER .........................*/
+
+.loader-circle {
+  border-radius: 50%;
+}
+
+.loader-circle .content {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
+  img {
+    width: 30px;
+  }
+}
+
+.loader-line-mask {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 80px;
+  margin-left: -40px;
+  margin-top: -40px;
+  overflow: hidden;
+  -webkit-transform-origin: 40px 40px;
+  -ms-transform-origin: 40px 40px;
+  transform-origin: 40px 40px;
+  -webkit-mask-image: -webkit-linear-gradient(top, #000000, rgba(0, 0, 0, 0));
+  mask-image: -webkit-linear-gradient(top, #000000, rgba(0, 0, 0, 0));
+  -webkit-animation: spin 1.2s infinite linear;
+  animation: spin 1.2s infinite linear;
+}
+
+.loader-line-mask .loader-line {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  -webkit-box-shadow: inset 0 0 0 1px #ec848b;
+  -moz-box-shadow: inset 0 0 0 1px #ec848b;
+  box-shadow: inset 0 0 0 1px #ec848b;
+}
+
+/*.................... CUSTOM PRELOADER END.........................*/

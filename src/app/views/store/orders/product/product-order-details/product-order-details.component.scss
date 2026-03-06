@@ -1,0 +1,64 @@
+.ship {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+
+  button {
+    border: none;
+    background: none;
+  }
+
+  .ship-abs {
+    text-align: end;
+    font-size: 16px;
+    padding: 5px;
+    height: 25px;
+    width: 25px;
+    background: rgba(224, 113, 123, 0.15);
+    color: #ec848b;
+    border-radius: 50%;
+  }
+}
+
+.shipping-edit {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  text-align: end;
+  font-size: 16px;
+  padding: 5px;
+  height: 25px;
+  width: 25px;
+  background: rgba(224, 113, 123, 0.15);
+  color: #ec848b;
+  border-radius: 50%;
+
+  .material-symbols-rounded {
+    font-size: 16px;
+    display: flex;
+  }
+}
+
+.list-thumb {
+  img {
+    height: 90px;
+    width: 90px;
+    object-fit: cover;
+    object-position: top center;
+  }
+}
+
+.tooltip {
+  color: #ffffff !important;
+}
+.strike {
+  text-decoration: line-through;
+}
+.color {
+  color: #ec848b;
+}
+.pay-info {
+  font-size: 16px;
+  color: #EC848B;
+  padding-left: 5px;
+}

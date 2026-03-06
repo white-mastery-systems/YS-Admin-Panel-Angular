@@ -1,0 +1,220 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="add_but mr-3" (click)="openSettingModal(settingModal);">
+    <span class="material-symbols-rounded">settings</span>
+  </div>
+  <div class="add_but" (click)="onAdd();">
+      <span class="material-symbols-rounded">add</span>
+  </div>  
+</div>
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>{{ isAdvanced? 'Advanced Blogs': 'Blogs' }}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div class="col-md-5 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-7 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button *ngIf="commonService.ys_features.indexOf('blog_catalogs')!=-1" type="button" class="mr-3" routerLink="/setting/blogs/catalogs">
+          <span class="material-symbols-rounded">visibility</span> View Catalogs
+        </button>
+        <button type="button" class="mr-3" (click)="open_website()">
+          <span class="material-symbols-rounded">visibility</span>View Page
+        </button>
+        <button type="button" class="mr-3" (click)="openSettingModal(settingModal);"><span class="material-symbols-rounded">settings</span> SEO Setting</button>
+        <button class="highbutton" type="button" (click)="onAdd();"><span class="material-symbols-rounded">add</span>Create Blog</button>        
+      </div> 
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div class="list-horizontal" *ngIf="(list | fieldSearch:'name':search_bar)?.length">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-2 col-3 first_col px-0 header-font">
+            <p class="w-30 w-sm-100">Image</p>
+          </div>
+          <div class="col-md-5 col-4 first_col cursor px-2 header-font">
+              <p class="w-30 w-sm-100 m-b-0">Title</p>
+              <p class="w-30 w-sm-100 m-b-0">Author</p>
+              <p class="w-30 w-sm-100 m-b-0">Date</p>
+            </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | numOrderDesc:'created_on' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-2 col-2 first_col px-0 cursor">            
+            <div class="list-thumb d-flex align-self-center">
+              <div class="col-md-12 col-12 col-xxl-12 px-0">
+                <img *ngIf="x.image" [src]="imgBaseUrl+x.image" alt=""> 
+                <img *ngIf="!x.image" src="assets/images/default.png" alt=""> 
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5 col-4 first_col cursor px-2">
+              <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
+              <p class="w-30 w-sm-100 m-b-0 light-font">{{x.author}}</p>
+              <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y"}}</p>
+              <!-- <p class="w-30 w-sm-100 m-b-0 ">{{x.created_on | date: "dd MMM y"}}</p> -->
+          </div>
+          <div class="col-md-5 col-6">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button *ngIf="isAdvanced" routerLink="/setting/advanced-blogs/segments/{{x._id}}" [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'">
+                <span class="material-symbols-rounded">format_image_left</span> {{commonService.desktop_device? 'Segments':''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" *ngIf="x.status!='enabled'" (click)="onChangeStatus(x, 'enable', statusModal);">
+                <span class="material-symbols-rounded">visibility</span> {{commonService.desktop_device? 'Enable':''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" *ngIf="x.status=='enabled'" (click)="onChangeStatus(x, 'disable', statusModal);">
+                <span class="material-symbols-rounded">visibility_off</span> {{commonService.desktop_device? 'Disable':''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':
+                ''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onView(x);">
+                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility':
+                  'chevron_right'}} </span> {{commonService.desktop_device? 'View': ''}}
+              </button>
+            </div>            
+          </div>
+        </div>
+      </div>      
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3" *ngIf="(list | fieldSearch:'name':search_bar)?.length">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>    
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No. data to display.</p>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
+        blog?</strong></p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+      <span class="black-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- STATUS MODAL -->
+<ng-template #statusModal let-modal>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to {{blogForm.change_status}} the <span
+      class="txt-grdint-highlight">"{{blogForm.name}}"</span> blog?</strong></p>
+    <div *ngIf="blogForm.errorMsg">
+      <p class="text-danger">{{ blogForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onUpdateStatus();" class="btn btn-wide btn-primary">Yes</button>
+  </div>
+</ng-template>
+
+<!-- SETTING MODAL -->
+<ng-template #settingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateSetting();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">SEO Setting</span>
+         </h4>    
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="form-group mb-3 col-md-12 d-flex justify-content-end align-items-center">
+              Enable <label class="switch"><input type="checkbox" name="status" [(ngModel)]="seoForm.status" #status="ngModel" /><div></div>
+              </label>
+            </div>
+            <!-- <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="status" [(ngModel)]="seoForm.status" #status="ngModel">
+                <span>Enable</span>
+                <span class="checkmark"></span>
+              </label>
+            </div> -->
+            <ng-container>
+              <div class="col-md-12 form-group mb-3">
+                <label>H1 Tag</label>
+                <span *ngIf="seoForm?.h1_tag?.length" class="label_hint">{{seoForm?.h1_tag?.length}} of 70 characters used</span>
+                <input type="text" name="h1_tag" class="form-control" [(ngModel)]="seoForm.h1_tag" #h1_tag="ngModel"
+                  maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Page Title</label>
+                <span *ngIf="seoForm?.page_title?.length" class="label_hint">{{seoForm?.page_title?.length}} of 70 characters used</span>
+                <input type="text" name="page_title" class="form-control" [(ngModel)]="seoForm.page_title" #page_title="ngModel"
+                  maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Description</label>
+                <span *ngIf="seoForm?.meta_desc?.length" class="label_hint">{{seoForm?.meta_desc?.length}} of 320 characters used</span>
+                <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="seoForm.meta_desc" #meta_desc="ngModel" maxlength="320" required></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Keywords</label>
+                <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="seoForm.meta_keyword_list" #meta_keyword_list="ngModel" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="seoForm.errorMsg">
+          <p class="text-danger">{{ seoForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

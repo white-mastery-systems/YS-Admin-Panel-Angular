@@ -1,0 +1,264 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-10">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" (click)="commonService.goBack();">arrow_back</span>
+          <h1>{{params.id? 'Update': 'Add'}} Notification</h1>
+        </div>
+      </div>
+      <div *ngIf="notForm.trigger_type!='instant'" class="col-md-2 d-flex justify-content-end">
+        <label class="switch"><input type="checkbox" name="status" [(ngModel)]="notForm.status" />
+          <div></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="row">
+      <div class="col-md-6 form-group mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" [(ngModel)]="notForm.name" required />
+      </div>
+      <!-- Notification Type -->
+      <div class="col-md-12 form-group mb-3">
+        <b>Notification Type</b>
+        <div class="row mt-3">
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="notify_type" [(ngModel)]="notForm.notify_type" value="push">
+              <span>Push</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="notify_type" [(ngModel)]="notForm.notify_type" value="in_app">
+              <span>In App</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- Trigger Type -->
+      <div class="col-md-12 form-group mb-3">
+        <b>Trigger Type</b>
+        <div class="row mt-3">
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="trigger_type" [(ngModel)]="notForm.trigger_type" (change)="changeType();" value="instant">
+              <span>Instant</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="trigger_type" [(ngModel)]="notForm.trigger_type" (change)="changeType();" value="auto">
+              <span>Auto</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="trigger_type" [(ngModel)]="notForm.trigger_type" (change)="changeType();" value="scheduled">
+              <span>Scheduled</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="radio radio-primary">
+              <input type="radio" name="trigger_type" [(ngModel)]="notForm.trigger_type" (change)="changeType();" value="recurring">
+              <span>Recurring</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 form-group mb-3">
+        <label>Send To</label>
+        <select name="send_to" class="form-control select-arrow" [(ngModel)]="notForm.send_to" required>
+          <option value="">-- Select --</option>
+          <ng-container *ngIf="notForm.trigger_type=='auto'">
+            <option value="new_order">New Order</option>
+            <option value="trial_expires_in">Trial Expires in</option>
+            <option value="subscription_expires_in">Subscription Expires in</option>
+            <option value="trial_expired">Trial Expired Users</option>
+            <option value="subscription_expired">Subscription Expired Users</option>
+          </ng-container>
+          <ng-container *ngIf="notForm.trigger_type!='auto'">
+            <option value="all">All Users</option>
+            <option value="inactive">Deactivated Users</option> <!-- both trial and subscribed -->
+            <option value="active">Active Users</option> <!-- both trial and subscribed -->
+
+            <option value="trial">Trial Users</option>
+            <option value="subscribed">Subscribed Users</option>
+            <option value="selected_plan">Selected Plan</option>
+
+            <option value="trial_expires_in">Trial Expires in</option>
+            <option value="subscription_expires_in">Subscription Expires in</option>
+
+            <option value="logo">Logo Upload Pending</option>
+            <option value="products">Product Upload Pending</option>
+            <option value="payments">Payment Setup Pending</option>
+            <option value="shipping">Shipping Setup Pending</option>
+            <option value="domain">Domain not linked</option>
+          </ng-container>
+        </select>
+      </div>
+      <div class="col-md-6 form-group mb-3">
+        <ng-container *ngIf="notForm.send_to=='selected_plan'">
+          <label>Select plan</label>
+          <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="notForm.send_to_type" required>
+            <ng-container *ngFor="let x of commonService.admin_packages | numOrderAsc: 'rank';">
+              <option [value]="x._id">{{x.name}} Plan</option>
+            </ng-container>
+          </select>
+        </ng-container>
+        <ng-container *ngIf="notForm.send_to=='trial' || notForm.send_to=='subscribed' || notForm.send_to=='inactive'">
+          <label>Select Category</label>
+          <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="notForm.send_to_type" required>
+            <option value="all">All</option>
+            <option *ngIf="notForm.send_to=='inactive'" value="trial">Trial</option>
+            <option value="genie">Genie</option>
+            <option value="order_based">Pro - B2C</option>
+            <option value="quot_based">Pro - B2B</option>
+            <option value="service_based">Pro - Service</option>
+            <option value="multi_vendor">Pro - Multi-Vendor</option>
+          </select>
+        </ng-container>
+        <ng-container *ngIf="notForm.send_to=='trial_expires_in' || notForm.send_to=='subscription_expires_in'">
+          <label>Select days</label>
+          <select name="send_to_type" class="form-control select-arrow" [(ngModel)]="notForm.send_to_type" required>
+            <option value="1">1 Day</option>
+            <option value="2">2 Days</option>
+            <option value="3">3 Days</option>
+            <option value="4">4 Days</option>
+            <option value="5">5 Days</option>
+          </select>
+        </ng-container>
+      </div>
+      <!-- recurring -->
+      <ng-container *ngIf="notForm.trigger_type=='recurring'">
+        <div class="col-6 form-group mb-3">
+          <label>Recurring By</label>
+          <select name="recurring_by" class="form-control select-arrow" [(ngModel)]="notForm.recurring_by" required>
+            <option value="hour">Hour</option>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+        <div class="col-6 form-group mb-3">
+          <label>Every {{notForm.recurring_by | titlecase }}s</label>
+          <input type="tel" name="recur_duration" class="form-control" [(ngModel)]="notForm.recur_duration" required />
+        </div>
+      </ng-container>
+        
+      <!-- for scheduled || recurring -->
+      <ng-container *ngIf="notForm.trigger_type=='scheduled' || notForm.trigger_type=='recurring'">
+        <div class="col-6 form-group mb-3">
+          <label>{{ (notForm.trigger_type=='scheduled')? 'Scheduled': 'Next Notify' }} Date</label>
+          <input type="text" class="form-control" name="notify_date" autocomplete="off" [(ngModel)]="notForm.notify_date"
+          bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+        </div>
+        <div class="col-6 form-group mb-3">
+          <label>{{ (notForm.trigger_type=='scheduled')? 'Scheduled': 'Next Notify' }} Time</label>
+          <input type="text" name="notify_time" class="form-control" [(ngModel)]='notForm.notify_time' (click)="timePicker('notify_time');" required readonly />
+        </div>
+      </ng-container>
+      <!-- for recurring -->
+      <ng-container *ngIf="notForm.trigger_type=='recurring'">
+        <div class="col-md-12 mb-3">
+          <label class="checkbox checkbox-primary">
+            <input class="form-check-input" type="checkbox" name="end_status" [(ngModel)]="notForm.end_status">
+            <span>Enable End Date</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <ng-container *ngIf="notForm.end_status">
+          <div class="col-6 form-group mb-3">
+            <label>End Date</label>
+            <input type="text" class="form-control" name="end_date" autocomplete="off" [(ngModel)]="notForm.end_date"
+            bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+          </div>
+          <div class="col-6 form-group mb-3">
+            <label>End Time</label>
+            <input type="text" name="end_time" class="form-control" [(ngModel)]='notForm.end_time' (click)="timePicker('end_time');" required readonly />
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- notification payload -->
+    <div class="row">
+      <div class="col-md-12 mb-1">
+        <b><u>Notification Payloads</u></b>
+      </div>
+      <div class="col-md-6" *ngFor="let x of notForm.payload_list; let i=index;">
+        <div class="card card-in-card mb-3 p-3" [ngClass]="(notForm.payload_list.length>1 && i===notForm.next_pl_id)? 'card-hl': ''">
+          <span *ngIf="notForm.payload_list.length>1" (click)="notForm.payload_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <div class="row">
+            <div *ngIf="notForm.trigger_type=='recurring'" class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="alert{{i}}" [(ngModel)]="x.alert">
+                <span>Enable alert when triggered</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="title{{i}}" class="form-control" [(ngModel)]="x.title" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Body</label>
+              <textarea name="body{{i}}" [(ngModel)]="x.body" class="form-control" required></textarea>
+            </div>
+            <div class="col-md-12 mb-3" align="center">
+              <div *ngIf="x.image">
+                <span (click)="x.img_change=null; x.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
+                <img *ngIf="x.img_change" [src]="x.image" height="100px;" width="auto;">
+                <img *ngIf="!x.img_change" [src]="imgBaseUrl+x.image" height="100px;" width="auto;">
+              </div>
+              <div *ngIf="!x.image">
+                <label>
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                  <input type="file" name="image{{i}}" style="display: none;" (change)="fileChangeListener($event, i);" accept="image/jpeg, image/png" />
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Redirect To {{baseUrl+x.url}}</label>
+              <input type="text" name="url{{i}}" class="form-control" [(ngModel)]="x.url" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="notForm.trigger_type=='recurring'" class="col-md-12 mb-1">
+        <button type="button" class="light-button" (click)="notForm.payload_list.push({ url: '' });">
+          <span class="material-symbols-rounded">ADD</span>NEW
+        </button>
+      </div>
+    </div>
+
+    <div class="separator-breadcrumb border-top mt-5"></div>
+    <div class="row">
+      <div align="center" class="col-md-12">
+        <button type="button" routerLink="/admin/notifications" class="btn btn-wide btn-outline-secondary">Cancel</button>
+        &nbsp; &nbsp; &nbsp;
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="notForm.submit" [ladda]="notForm.submit">
+          {{ (notForm.trigger_type=='instant')? 'Send': (params?.id)? 'Update': 'Add' }}
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>

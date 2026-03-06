@@ -1,0 +1,85 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
+  <div class="row">
+    
+    <!-- details -->
+    <div *ngIf="!editForm?.heading" class="col-md-10 col-12">
+    
+      <div class="card p-3">
+        <div class="row ">
+          <div class="col-md-6 col-6">
+            <h5 class="mt-2">{{ formData?.heading }}</h5>
+            <p *ngIf="formData.sub_heading">{{ formData?.sub_heading }}</p>
+          </div>
+          <div class="col-md-6 col-6 justify-content-end d-flex align-items-center">
+            <!-- <button class="light-button" (click)="onEdit();" type="button">
+              <span class="material-symbols-rounded ">edit</span>
+            </button> -->
+            <span (click)="onEdit();" class="material-icons edit-icon float-right ab-item-close right15">
+              edit
+            </span>
+          </div>
+          </div>
+       
+        
+        <p class="mt-3" style="line-height: 5px;" *ngIf="formData.address" [innerHtml]="formData.address"></p>
+      </div>
+    </div>
+
+    
+    <!-- form -->
+    <div *ngIf="editForm?.heading" class="col-md-10 col-12">
+      <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate>
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Heading</label>
+            <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading" #heading="ngModel" required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Sub Heading</label>
+            <input type="text" name="sub_heading" class="form-control" [(ngModel)]="editForm.sub_heading" #sub_heading="ngModel" required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Embed Iframe Map URL</label>
+            <input type="text" name="map_url" class="form-control" [(ngModel)]="editForm.map_url" #map_url="ngModel" />
+          </div>
+          <div class="col-md-12 form-group mb-3 quill-mb-5">
+            <label>Contact Info</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.address" [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+        </div>
+        <div class="separator-breadcrumb border-top mt-5"></div>
+        <div class="row">
+          <div class="col-md-12 mt-3 mb-3" *ngIf="editForm.errorMsg">
+            <p class="text-danger" align="center">{{ editForm.errorMsg }}</p>
+          </div>
+          <div align="center" class="col-md-12 z-i-0">
+            <button type="button" (click)="cancel();" class="btn btn-wide black-outline-btn">
+            <span class="black-outline-txt">Cancel</span>
+            </button>&nbsp; &nbsp; &nbsp;
+            <button type="submit" class="btn btn-wide btn-primary">Update</button>
+          </div>
+        </div>
+      </form>
+    </div>
+   
+  </div>
+
+</div>

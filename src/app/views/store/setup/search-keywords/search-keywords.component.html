@@ -1,0 +1,39 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>{{commonService.secondary_header}}</h1>          
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 form-group mb-3">
+      <div class="card card-in-card p-4 mb-3">
+        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Search Keywords</label>
+              <tag-input class="w-100" name="search_keyword_list" [(ngModel)]="app_setting.search_keyword_list"
+                #search_keyword_list="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
+                [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+            </div>
+            <div align="center" class="col-md-12 z-i-0" *ngIf="app_setting.errorMsg">
+              <p class="text-danger">{{ app_setting.errorMsg }}</p>
+            </div>
+            <div align="center" class="col-md-12 z-i-0">
+              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
+                Update
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

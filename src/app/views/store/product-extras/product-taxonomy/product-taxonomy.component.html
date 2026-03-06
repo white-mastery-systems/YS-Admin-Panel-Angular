@@ -1,0 +1,172 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="add_but mr-3" (click)="exportAsXLSX();">
+    <span class="material-symbols-rounded">file_upload</span>
+</div>
+  <div class="add_but" (click)="taxonomyForm = { form_type: 'add' }; !list.length? taxonomyForm.primary=true: ''; modalService.open(taxonomyModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+       </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div class="col-md-6 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button type="button" (click)="exportAsXLSX();" class="mr-3">
+          <span class="material-symbols-rounded">file_upload</span> Export
+        </button>
+        <button type="button" class="highbutton" (click)="taxonomyForm = { form_type: 'add' }; !list.length? taxonomyForm.primary=true: ''; modalService.open(taxonomyModal);">
+          <span class="material-symbols-rounded">add</span>Add New
+        </button>
+      </div>
+      <!-- search box -->
+
+    </div>
+  </div>
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-8 col-6 first_col px-0 header-font">
+            <p class="w-50 w-sm-100">Name</p>
+            <p class="w-50 w-sm-100 m-b-0">ID</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div *ngIf="x.primary" class="ribbon-band blue-band">Primary</div>
+          <div class="col-md-8 col-6 first_col px-0">
+            <p class="w-50 w-sm-100 dark-font">
+              <span class="d-block">{{x.name}}</span>
+            </p>
+            <p class="w-50 w-sm-100 m-b-0 light-font">
+              {{x.category_id}}
+            </p>
+          </div>
+          <div class="col-md-4 col-6">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">              
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"  (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':''}}
+              </button>  
+              <button (click)="onEdit(x, taxonomyModal);" [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'">
+                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                  'visibility': 'chevron_right'}} </span> {{commonService.desktop_device? 'View': ''}}
+              </button>       
+            </div>            
+          </div>
+        </div>
+      </div>      
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAXONOMY MODAL -->
+<ng-template #taxonomyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{taxonomyForm.form_type=='add'? 'Add New': 'Update'}}
+    </h4>
+  </div>
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="row">
+          <div [hidden]="taxonomyForm.form_type!='add' && taxonomyForm.existing_primary" class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="primary" [(ngModel)]="taxonomyForm.primary" [disabled]="!list.length">
+              <span>Mark as primary</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="taxonomyForm.name" #name="ngModel"
+              required />
+          </div>
+          <div class="col-md-12 form-group">
+            <label>category ID</label>
+            <input type="text" name="category_id" class="form-control" [(ngModel)]="taxonomyForm.category_id"
+              #category_id="ngModel" required />
+          </div>
+          <div class="col-md-12">
+            <p>
+              <b>Note:</b> Refer this link to find your product category ID
+              <a href="https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt" target="_blank"
+                style="position: relative; top: 8px;">
+                <i class="material-icons">link</i>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="taxonomyForm.errorMsg">
+        <p class="text-danger">{{ taxonomyForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+        (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary">{{taxonomyForm.form_type=='add'? 'Add': 'Update'}}</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>?</strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

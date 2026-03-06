@@ -1,0 +1,227 @@
+/* Sticky Columns Styles for Abandoned Customers Component */
+
+@media only screen and (min-width: 1024px) {
+    .data-list-card {
+      padding:0;
+    }
+    .data-list-card-body{
+      p{
+        padding:16px 12px!important;
+      }
+    }
+
+/* Shadow overlays */
+.scroll-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.scroll-shadow.left {
+  left: 250px;
+  // background: linear-gradient(to right, rgba(0,0,0,0.15), transparent);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.01) 0%, rgba(0, 0, 0, 0.04) 0%, transparent 100%);
+  z-index: 12;
+  margin-bottom: 76px;
+}
+
+.scroll-shadow.right {
+  right: 250px;
+  // background: linear-gradient(to left, rgba(0,0,0,0.15), transparent);
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.01) 0%, rgba(0, 0, 0, 0.04) 0%, transparent 100%);
+  z-index: 12;
+  margin-bottom: 76px;
+}
+
+.scroll-shadow.show {
+  opacity: 1;
+}
+
+
+.scroll-div {
+  overflow-x: auto;
+  position: relative;
+  cursor: grab;
+  padding: 0;
+  
+  /* When actively dragging */
+  &.dragging {
+    cursor: grabbing;
+    user-select: none;
+    
+    /* Disable text selection while dragging */
+    * {
+      user-select: none;
+      pointer-events: none;
+    }
+    
+    /* Keep action buttons functional */
+    .col-md-3 * {
+      pointer-events: auto;
+    }
+  }
+  
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    height: 0px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  } 
+}
+
+.scroll-inner {
+  min-width: 1600px; /* Adjust based on your content width */
+  position: relative;
+}
+
+.list-item.data-list-card {
+  display: flex;
+  position: relative;
+  
+  .first_col {
+    display: flex;
+    position: relative;
+    
+    p {
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      // white-space: nowrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      min-height: 60px;
+      
+      /* Sticky left column - Name only */
+      &:nth-child(1) { /* Name */
+        position: sticky;
+        left: 0;
+        background: white;
+        z-index: 10;
+        min-width: 250px;
+        &::before{
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 1px; /* thickness */
+          background: linear-gradient(
+            to left,
+            #fff 0%,
+            #fff 1.5%,
+            #f1f1f1 1.5%,
+            #f1f1f1 50%,
+            #f1f1f1 98.5%,
+            #fff 98.5%,
+            #fff 100%
+          );
+        }
+      }
+      
+      /* Scrollable middle columns */
+      &:nth-child(2), /* Date */
+      &:nth-child(3), /* Date */
+      &:nth-child(4), /* Item */
+      &:nth-child(5), /* Price */
+      &:nth-child(6), /* City */
+      &:nth-child(7), /* Country */
+      &:nth-child(8), /* Local Time */
+      &:nth-child(9) { /* Reach Out */
+        min-width: 120px;
+        background: white;
+      }
+    }
+  }
+  
+  /* Actions column - sticky right */
+  .col-md-3 {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 10;
+    min-width: 200px;
+    p{
+      display: flex;
+    min-height: 60px;
+    justify-content: center;
+    align-items: center;
+    }
+    
+    .d-flex {
+      justify-content: flex-end;
+      align-items: center;
+      height: 100%;
+      padding: 0 15px;
+    }
+  }
+}
+
+/* Header row specific styles */
+.list-item.data-list-card:first-child {
+  .first_col p {
+    font-weight: 600;
+    background: #f8f9fa !important;
+    
+    &:nth-child(1) {
+      background: #f8f9fa !important;
+    }
+  }
+  
+  .col-md-3 {
+    background: #f8f9fa !important;
+  }
+}
+
+
+/* Additional utility classes for better spacing */
+.sticky-table-container {
+  .breakword {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Ensure proper z-index layering */
+.list-horizontal {
+  position: relative;
+  z-index: 1;
+}
+
+/* Fix for dropdown menus in sticky columns */
+.dropdown-menu {
+  z-index: 2000 !important;
+  top: 0!important;
+  right: 160px!important;
+  left:unset!important;
+  transform:none!important;
+}
+
+/* Smooth transitions for sticky elements */
+.list-item.data-list-card .first_col p:nth-child(1),
+.list-item.data-list-card .col-md-3 {
+  transition: background-color 0.2s ease-in-out;
+}
+
+}

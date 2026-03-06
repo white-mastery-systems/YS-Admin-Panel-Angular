@@ -1,0 +1,137 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form autocomplete="off" (ngSubmit)="onBook();" ngNativeValidate>
+    <div class="row">
+      <div class="col-md-6 col-12 card h-100 mb-3">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3 mt-3" align="center">
+            <div class="p-2">
+              <div class="text-center">
+                <img [src]="imgBaseUrl+adConfigDetails.image" style="height: 220px;">
+              </div>
+            </div>
+            <p class="w-100 w-sm-100 m-b-0 light-font">{{adConfigDetails.description}}</p>
+          </div>
+        </div>
+
+        <div class="col-md-12 col-12 px-0 ">
+          <div class="card mb-3 p-4">
+            <p class="w-100 w-sm-100 mb-2 dark-font">Normal Traffic Days</p>
+            <div class="d-flex justify-content-between mb-2">
+              <p class="w-100 w-sm-100 m-b-0 light-font">{{ dispNormDay.join(', ') }}</p>
+              <p class="w-40 w-sm-100 m-b-0 light-font">
+                {{adConfigDetails.normal_price | currency:commonService.store_currency?.country_code}}
+              </p>
+            </div>
+            <p class="w-100 w-sm-100 mb-2 dark-font">High Traffic Days</p>
+            <div class="d-flex justify-content-between mb-2">
+              <p class="w-100 w-sm-100 m-b-0 light-font">{{ dispPeakDay.join(', ') }}</p>
+              <p class="w-40 w-sm-100 m-b-0 light-font">
+                {{adConfigDetails.peak_price | currency:commonService.store_currency?.country_code}}
+              </p>
+            </div>
+            <p class="w-100 w-sm-100 mb-2 dark-font ">Note</p>
+            <div class="d-flex justify-content-between mb-2">
+              <p class="w-100 w-sm-100 m-b-0 light-font">{{adConfigDetails.input_remarks}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-12 mb-3">
+        <div class="card p-3 mb-3 h-100">
+          <div class="row">
+            <div class="col-md-12 col-12 mb-3 mt-3" align="center">
+              <div class="card p-3">
+                <div *ngIf="adForm.image">
+                  <span (click)="adForm.img_change=null; adForm.image=null;" aria-hidden="true"
+                  class="material-icons round-img-icon ab-item-close float-right minus15">close</span>
+                  <img *ngIf="adForm.img_change" [src]="adForm.image" height="150px;" width="auto;">
+                  <img *ngIf="!adForm.img_change" [src]="imgBaseUrl+adForm.image" height="150px;" width="auto;">
+                </div>
+                <div *ngIf="!adForm.image">
+                  <div class="desktop-banner" align="center">
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                  </div>
+                  <div class="h-100 d-flex align-items-end">
+                    <div class="custom-file mt-2">
+                      <input type="file" name="image" class="custom-file-input" required
+                        (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp">
+                      <label class="custom-file-label">Choose file</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label>From date</label>
+              <input type="text" class="form-control" name="from_date" autocomplete="off" [(ngModel)]="adForm.from_date"
+                placement="top" (ngModelChange)="changeDate();" [minDate]="currDate"
+                [maxDate]="maxDate" bsDatepicker [datesDisabled]="disabledDates"
+                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>To date</label>
+              <input type="text" class="form-control" name="to_date" autocomplete="off" [(ngModel)]="adForm.to_date"
+                placement="top" (ngModelChange)="changeDate();" bsDatepicker
+                [minDate]="adForm.from_date" [maxDate]="maxDate" [datesDisabled]="disabledDates"
+                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Notes</label>
+              <textarea type="text" name="notes" class="form-control" [(ngModel)]="adForm.notes"></textarea>
+            </div>
+            <div *ngIf="adForm.total_price" class="col-md-12 mt-3">
+              <div *ngIf="adForm.from_date && adForm.temp_to_date">
+                <b>From & To Dates (GMT)</b>
+                <p class="light-font mt-2">
+                  {{adForm.from_date | date: "dd MMM y"}} {{adSetting.start_time}} to
+                  {{adForm.temp_to_date | date: "dd MMM y"}} {{adSetting.end_time}}
+                </p>
+              </div>
+              <b>Total Cost</b>
+              <p class="light-font mt-2">
+                {{adForm.total_price | currency:commonService.store_currency?.country_code}}
+              </p>
+            </div>
+
+            <div class="col-md-12 mt-3" *ngIf="adForm.errorMsg">
+              <p class="text-danger" align="center">{{ adForm.errorMsg }}</p>
+            </div>
+
+            <div *ngIf="!adForm.total_price" class="col-12 mt-3" align="center">
+              <button type="submit" class="btn btn-wide btn-primary ladda-button">
+                Calculate
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div align="center" class="col-md-12 mt-4">
+        <button type="button" routerLink="/features/ad-management" class="btn btn-wide black-outline-btn mr-3">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button *ngIf="adForm.total_price" type="submit" class="btn btn-wide btn-primary ladda-button"
+          [disabled]="adForm.submit" [ladda]="adForm.submit">Book Your Ad</button>
+      </div>
+    </div>
+  </form>
+
+</div>

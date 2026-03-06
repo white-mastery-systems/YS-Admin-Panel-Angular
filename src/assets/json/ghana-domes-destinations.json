@@ -1,0 +1,2354 @@
+[
+  {
+    "destination_id": "3",
+    "destination_name": "31ST DEC. MKT ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "45",
+    "destination_name": "ABEKA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "92",
+    "destination_name": "ABETIFI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "248",
+    "destination_name": "ABOABO CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "22",
+    "destination_name": "ABOKOBI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "368",
+    "destination_name": "ABOR",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "204",
+    "destination_name": "ABOSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "47",
+    "destination_name": "ABOSSEY OKAI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "167",
+    "destination_name": "ABURA DUNKWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "408",
+    "destination_name": "ABURI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "69",
+    "destination_name": "ABURI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "30",
+    "destination_name": "ACCRA NEW TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "26",
+    "destination_name": "ACCRA NORTH ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "123",
+    "destination_name": "ACHIASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "37",
+    "destination_name": "ACHIMOTA MARKET ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "31",
+    "destination_name": "ACHIMOTA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "62",
+    "destination_name": "ADA FOAH ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "5",
+    "destination_name": "ADABRAKA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "361",
+    "destination_name": "ADAWSO (ER)",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "110",
+    "destination_name": "ADEISO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "40",
+    "destination_name": "ADENTA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "152",
+    "destination_name": "ADIDOME ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "157",
+    "destination_name": "ADISADEL ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "115",
+    "destination_name": "ADOAGYIRI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "75",
+    "destination_name": "ADUKROM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "71",
+    "destination_name": "AFIDWASE ER",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "153",
+    "destination_name": "AFLAO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "148",
+    "destination_name": "AGBOSOME ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "257",
+    "destination_name": "AGOGO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "272",
+    "destination_name": "AGONA-ASHANTI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "375",
+    "destination_name": "AGONA AHANTA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "182",
+    "destination_name": "AGONA DUAKWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "130",
+    "destination_name": "AGOTIME-KPETOE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "243",
+    "destination_name": "AHENSAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "399",
+    "destination_name": "AIRPORT KUMASI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "19",
+    "destination_name": "AIRPORT TRANSHIPMENT",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "192",
+    "destination_name": "AIYINASI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "177",
+    "destination_name": "AJUMAKO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "150",
+    "destination_name": "AKATSI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "121",
+    "destination_name": "AKIM MANSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "118",
+    "destination_name": "AKIM SWEDRU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "68",
+    "destination_name": "AKOSOMBO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "269",
+    "destination_name": "AKROFUOM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "267",
+    "destination_name": "AKROKERI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "70",
+    "destination_name": "AKROPONG AKWAPIM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "268",
+    "destination_name": "AKROPONG BEKWAI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "242",
+    "destination_name": "AKROPONG KUMASI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "223",
+    "destination_name": "AKROPONG WASSAW",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "120",
+    "destination_name": "AKROSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "230",
+    "destination_name": "AKUMADAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "78",
+    "destination_name": "AKUSE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "117",
+    "destination_name": "AKWATIA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "297",
+    "destination_name": "AKYERENSUA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "32",
+    "destination_name": "ALAJO CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "33",
+    "destination_name": "AMASAMAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "128",
+    "destination_name": "AMEDZOFE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "143",
+    "destination_name": "ANFOEGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "411",
+    "destination_name": "ANKAFUL",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "183",
+    "destination_name": "ANKAMU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "250",
+    "destination_name": "ANLOGA CONTAINER KUMASI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "156",
+    "destination_name": "ANLOGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "166",
+    "destination_name": "ANOMABU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "79",
+    "destination_name": "ANUM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "89",
+    "destination_name": "ANYINAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "178",
+    "destination_name": "APAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "112",
+    "destination_name": "APEDWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "86",
+    "destination_name": "APEGUSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "369",
+    "destination_name": "APESOKUBI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "213",
+    "destination_name": "APOWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "2",
+    "destination_name": "ARTS CENTRE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "351",
+    "destination_name": "ASAMANG-ASHANTI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "102",
+    "destination_name": "ASAMANKESE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "219",
+    "destination_name": "ASANKRAGWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "254",
+    "destination_name": "ASAWASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "72",
+    "destination_name": "ASESEWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "247",
+    "destination_name": "ASHANTI NEW TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "60",
+    "destination_name": "ASHIAMAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "107",
+    "destination_name": "ASIAKWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "365",
+    "destination_name": "ASOKORE (ASH)",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "87",
+    "destination_name": "ASOKORE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "160",
+    "destination_name": "ASSIN-FOSU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "122",
+    "destination_name": "ASUOM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "241",
+    "destination_name": "ASUOYEBOA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "301",
+    "destination_name": "ATEBUBU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "225",
+    "destination_name": "ATIEKU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "222",
+    "destination_name": "AWASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "193",
+    "destination_name": "AXIM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "197",
+    "destination_name": "AXIM ROAD ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "333",
+    "destination_name": "BABILE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "396",
+    "destination_name": "BAMAHU",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "235",
+    "destination_name": "BANTAMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "171",
+    "destination_name": "BAWJIASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "318",
+    "destination_name": "BAWKU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "290",
+    "destination_name": "BECHEM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "100",
+    "destination_name": "BEGORO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "264",
+    "destination_name": "BEKWAI ASHANTI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "282",
+    "destination_name": "BEREKUM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "207",
+    "destination_name": "BEYIN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "215",
+    "destination_name": "BIBIANI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "340",
+    "destination_name": "BIG ADA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "312",
+    "destination_name": "BIMBILLA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "378",
+    "destination_name": "BISCO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "179",
+    "destination_name": "BISEASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "359",
+    "destination_name": "BOAMANG ASH",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "220",
+    "destination_name": "BOGOSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "236",
+    "destination_name": "BOHYEN-AMPABAME ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "313",
+    "destination_name": "BOLE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "317",
+    "destination_name": "BOLGATANGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "262",
+    "destination_name": "BOMFA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "260",
+    "destination_name": "BOMPATA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "325",
+    "destination_name": "BONGO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "275",
+    "destination_name": "BONWIRE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "209",
+    "destination_name": "BONYERE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "105",
+    "destination_name": "BOSUSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "172",
+    "destination_name": "BREMAN ESIKUMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "376",
+    "destination_name": "BUIPE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "407",
+    "destination_name": "BULK MAIL ACCRA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "114",
+    "destination_name": "BUNSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "20",
+    "destination_name": "BURMA CAMP ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "27",
+    "destination_name": "CANTONMENTS ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "165",
+    "destination_name": "CAPE COAST ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "12",
+    "destination_name": "CASTLE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "384",
+    "destination_name": "CENTRAL UNIVERSITY-MIOTSO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "82",
+    "destination_name": "CHARLIE JUNCTION ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "287",
+    "destination_name": "CHIRAA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "251",
+    "destination_name": "CHIRAPATRE CONT. ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "212",
+    "destination_name": "DABOASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "381",
+    "destination_name": "DAMBAI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "310",
+    "destination_name": "DAMONGO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "44",
+    "destination_name": "DANSOMAN COMMUNITY ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "42",
+    "destination_name": "DANSOMAN ESTATE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "48",
+    "destination_name": "DARKUMAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "406",
+    "destination_name": "DAWHENYA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "149",
+    "destination_name": "DENU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "145",
+    "destination_name": "DODI-PAPASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "23",
+    "destination_name": "DODOWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "337",
+    "destination_name": "DOME-KWABENYA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "401",
+    "destination_name": "DOMPOASE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "91",
+    "destination_name": "DONKOKROM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "286",
+    "destination_name": "DORMAA AHENKRO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "285",
+    "destination_name": "DROBO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "296",
+    "destination_name": "DUAYAW NKWANTA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "158",
+    "destination_name": "DUNKWA-ON-OFFIN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "387",
+    "destination_name": "DWENASE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "126",
+    "destination_name": "DZODZE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "308",
+    "destination_name": "EDUCATION RIDGE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "198",
+    "destination_name": "EFFIA NKWANTA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "199",
+    "destination_name": "EFFIAKUMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "278",
+    "destination_name": "EFFIDUASI (ASH)",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "258",
+    "destination_name": "EJISU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "274",
+    "destination_name": "EJURA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "159",
+    "destination_name": "ELMINA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "200",
+    "destination_name": "ELUBO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "216",
+    "destination_name": "ENCHI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "180",
+    "destination_name": "ESIAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "206",
+    "destination_name": "ESIAMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "4",
+    "destination_name": "EXAM COUNCIL ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "229",
+    "destination_name": "FANTI NEW TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "335",
+    "destination_name": "FIELMUO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "266",
+    "destination_name": "FOMENA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "334",
+    "destination_name": "FUNSI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "314",
+    "destination_name": "GAMBAGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "324",
+    "destination_name": "GARU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "1",
+    "destination_name": "GENERAL POST OFFICE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "383",
+    "destination_name": "KOFORIDUA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "293",
+    "destination_name": "GOASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "146",
+    "destination_name": "GOLOKWATI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "386",
+    "destination_name": "GOMOA AFRANSI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "342",
+    "destination_name": "GOMOA ESHIEM",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "343",
+    "destination_name": "GOMOA ODINA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "390",
+    "destination_name": "GWOLLU",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "284",
+    "destination_name": "GYAPEKROM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "194",
+    "destination_name": "HALF ASSINI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "331",
+    "destination_name": "HAMILE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "347",
+    "destination_name": "HEAD-QUARTERS",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "124",
+    "destination_name": "HO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "398",
+    "destination_name": "HO STADIUM",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "136",
+    "destination_name": "HOHOE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "224",
+    "destination_name": "HUNI VALLEY ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "292",
+    "destination_name": "HWIDIEM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "270",
+    "destination_name": "JACHI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "273",
+    "destination_name": "JAMASI-ASHANTI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "6",
+    "destination_name": "JAMES TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "141",
+    "destination_name": "JASIKAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "306",
+    "destination_name": "JEMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "329",
+    "destination_name": "JIRAPA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "279",
+    "destination_name": "JUABEN-ASHANTI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "226",
+    "destination_name": "JUABESO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "259",
+    "destination_name": "JUANSA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "131",
+    "destination_name": "JUAPONG ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "261",
+    "destination_name": "JUASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "80",
+    "destination_name": "JUMAPO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "404",
+    "destination_name": "JUMIA GHANA OFFICE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "119",
+    "destination_name": "KADE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "142",
+    "destination_name": "KADJEBI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "39",
+    "destination_name": "KANDA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "41",
+    "destination_name": "KANESHIE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "174",
+    "destination_name": "KASOA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "228",
+    "destination_name": "KAJETIA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "295",
+    "destination_name": "KENYASI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "151",
+    "destination_name": "KETA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "201",
+    "destination_name": "KETAN CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "137",
+    "destination_name": "KETE-KRACHI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "106",
+    "destination_name": "KIBI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "300",
+    "destination_name": "KINTAMPO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "67",
+    "destination_name": "KOFORIDUA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "176",
+    "destination_name": "KOJO BEEDU, WINNEBA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "202",
+    "destination_name": "KOJOKROM CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "372",
+    "destination_name": "KOKOFU",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "168",
+    "destination_name": "KOMENDA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "256",
+    "destination_name": "KONONGO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "43",
+    "destination_name": "KORLE- BU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "38",
+    "destination_name": "KOTOBABI CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "18",
+    "destination_name": "KOTOKA INTER. AIRPORT ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "161",
+    "destination_name": "KOTOKURABA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "338",
+    "destination_name": "KPANDAI POST OFFICE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "135",
+    "destination_name": "KPANDO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "133",
+    "destination_name": "KPEDZE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "134",
+    "destination_name": "KPEVE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "341",
+    "destination_name": "KPONE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "113",
+    "destination_name": "KRABOA COALTAR ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "294",
+    "destination_name": "KUKUOM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "104",
+    "destination_name": "KUKURANTUMI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "227",
+    "destination_name": "KUMASI GENERAL ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "277",
+    "destination_name": "KUMAWU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "95",
+    "destination_name": "KWABENG ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "238",
+    "destination_name": "KWADASO ACADEMY ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "237",
+    "destination_name": "KWADASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "96",
+    "destination_name": "KWAHU PRASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "97",
+    "destination_name": "KWAHU TAFO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "353",
+    "destination_name": "KWAMANG-ASHANTI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "181",
+    "destination_name": "KWANYAKU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "208",
+    "destination_name": "KWESIMINTSIM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "13",
+    "destination_name": "LA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "196",
+    "destination_name": "LAGOON ROAD ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "52",
+    "destination_name": "LARTEBIOKORSHIE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "77",
+    "destination_name": "LARTEH ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "327",
+    "destination_name": "LAWRA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "28",
+    "destination_name": "LEGON ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "21",
+    "destination_name": "MADINA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "339",
+    "destination_name": "MADINA REDCO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "46",
+    "destination_name": "MALLAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "76",
+    "destination_name": "MAMFE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "73",
+    "destination_name": "MAMPONG -AKWAPIM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "271",
+    "destination_name": "MAMPONG-ASHANTI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "8",
+    "destination_name": "MAMPROBI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "81",
+    "destination_name": "MANGOASE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "162",
+    "destination_name": "MANKESSIM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "249",
+    "destination_name": "MANPONTEN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "363",
+    "destination_name": "MANYA KPONGUNOR",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "175",
+    "destination_name": "MARKET AVENUE\/SWEDRU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "195",
+    "destination_name": "MARKET CIRCLE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "125",
+    "destination_name": "MAWULI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "108",
+    "destination_name": "MEPOM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "35",
+    "destination_name": "MILE 7 CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "291",
+    "destination_name": "MIM-AHAFO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "9",
+    "destination_name": "MINISTRIES ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "88",
+    "destination_name": "MPRAESO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "330",
+    "destination_name": "NADOWLI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "332",
+    "destination_name": "NANDOM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "319",
+    "destination_name": "NAVRONGO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "99",
+    "destination_name": "NEW ABIREM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "85",
+    "destination_name": "NEW AKRADE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "280",
+    "destination_name": "NEW EDUBIASE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "346",
+    "destination_name": "NEW ODUMAN",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "253",
+    "destination_name": "NEW TAFO ASH",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "103",
+    "destination_name": "NEW TAFO AKIM",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "53",
+    "destination_name": "NII BOI TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "29",
+    "destination_name": "NIMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "239",
+    "destination_name": "NKAWIE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "90",
+    "destination_name": "NKAWKAW ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "240",
+    "destination_name": "NKENKASU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "138",
+    "destination_name": "NKONYA-AHENKRO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "299",
+    "destination_name": "NKORANZA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "211",
+    "destination_name": "NKROFUL ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "147",
+    "destination_name": "NKWANTA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "93",
+    "destination_name": "NKWATIA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "380",
+    "destination_name": "NORTH KANESHIE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "187",
+    "destination_name": "NSABA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "111",
+    "destination_name": "NSAWAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "283",
+    "destination_name": "NSOATRE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "374",
+    "destination_name": "NSUAEM",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "205",
+    "destination_name": "NSUTA WASSAW ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "276",
+    "destination_name": "NSUTA-ASH. ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "24",
+    "destination_name": "NUNGUA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "188",
+    "destination_name": "NYAKROM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "358",
+    "destination_name": "NYINAHIN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "94",
+    "destination_name": "OBO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "265",
+    "destination_name": "OBUASI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "116",
+    "destination_name": "ODA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "185",
+    "destination_name": "ODOBEN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "50",
+    "destination_name": "ODORKOR CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "83",
+    "destination_name": "ODUMASI KROBO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "263",
+    "destination_name": "ODUMASI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "189",
+    "destination_name": "ODUPONG KPEHE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "34",
+    "destination_name": "OFANKOR ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "231",
+    "destination_name": "OFFINSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "109",
+    "destination_name": "OLD TAFO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "402",
+    "destination_name": "ONLINE SALES",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "362",
+    "destination_name": "OSIEM",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "98",
+    "destination_name": "OSINO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "14",
+    "destination_name": "OSU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "395",
+    "destination_name": "OYIBI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "84",
+    "destination_name": "OYOKO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "320",
+    "destination_name": "PAGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "127",
+    "destination_name": "PEKI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "385",
+    "destination_name": "PINANKO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "184",
+    "destination_name": "PINANKO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "63",
+    "destination_name": "PRAMPRAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "302",
+    "destination_name": "PRANG ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "360",
+    "destination_name": "PREMPEH COLLEGE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "218",
+    "destination_name": "PRESTEA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "322",
+    "destination_name": "PUSIGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "233",
+    "destination_name": "RAILWAYS CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "49",
+    "destination_name": "S.T.C. CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "59",
+    "destination_name": "SAKUMONO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "311",
+    "destination_name": "SALAGA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "169",
+    "destination_name": "SALTPOND ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "288",
+    "destination_name": "SAMPA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "221",
+    "destination_name": "SAMREBOI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "321",
+    "destination_name": "SANDEMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "234",
+    "destination_name": "SANTASI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "316",
+    "destination_name": "SAVULUGU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "388",
+    "destination_name": "SAWLA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "217",
+    "destination_name": "SEFWI BEKWAI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "214",
+    "destination_name": "SEFWI WIAWSO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "210",
+    "destination_name": "SEKONDI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "355",
+    "destination_name": "SEKYEDUMASE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "186",
+    "destination_name": "SENYA BEREKU",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "255",
+    "destination_name": "SEPE APAMPINAM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "203",
+    "destination_name": "SHAMA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "154",
+    "destination_name": "SOGAKOFE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "74",
+    "destination_name": "SOMANYA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "64",
+    "destination_name": "SPINTEX ROAD",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "10",
+    "destination_name": "SPORTS STADIUM ACCRA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "245",
+    "destination_name": "SPORTS STADIUM KUMASI",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "25",
+    "destination_name": "STATE HOUSE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "244",
+    "destination_name": "SUAME ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "101",
+    "destination_name": "SUHUM ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "281",
+    "destination_name": "SUNYANI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "170",
+    "destination_name": "SWEDRU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "252",
+    "destination_name": "TAFO ASANTE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "36",
+    "destination_name": "TAIFA CONTAINER ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "336",
+    "destination_name": "TAIFA-BURKINA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "373",
+    "destination_name": "TAKORADI POLY",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "190",
+    "destination_name": "TAKORADI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "307",
+    "destination_name": "TAMALE GEN. ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "191",
+    "destination_name": "TARKWA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "303",
+    "destination_name": "TECHIMAN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "298",
+    "destination_name": "TECHIMENTIA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "55",
+    "destination_name": "TEMA COM 1",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "58",
+    "destination_name": "TEMA COMM. 11 ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "56",
+    "destination_name": "TEMA COMM. 2 ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "57",
+    "destination_name": "TEMA COMM. 7 ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "65",
+    "destination_name": "TEMA NEW TOWN ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "66",
+    "destination_name": "TEMA SHOPPING CENTRE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "232",
+    "destination_name": "TEPA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "15",
+    "destination_name": "TESHIE NUNGUA ESTATE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "16",
+    "destination_name": "TESHIE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "366",
+    "destination_name": "TONGO",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "17",
+    "destination_name": "TRADE FAIR ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "409",
+    "destination_name": "TEST1",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "410",
+    "destination_name": "TEST2",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "129",
+    "destination_name": "TSITO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "7",
+    "destination_name": "TUC ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "328",
+    "destination_name": "TUMU ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "389",
+    "destination_name": "TUNA",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "163",
+    "destination_name": "TWIFO-PRASO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "367",
+    "destination_name": "WA (UDS)",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "377",
+    "destination_name": "TAMALE-UDS",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "397",
+    "destination_name": "UEW-K",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "345",
+    "destination_name": "UNIVERSITY (CAPE COAST)",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "246",
+    "destination_name": "KNUST",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "139",
+    "destination_name": "VAKPO ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "61",
+    "destination_name": "VALCO FLATS ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "412",
+    "destination_name": "VALENTINE ON WHEELS",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "11",
+    "destination_name": "VALLEY VIEW ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "132",
+    "destination_name": "VANE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "393",
+    "destination_name": "A",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "326",
+    "destination_name": "WA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "315",
+    "destination_name": "WALEWALE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "289",
+    "destination_name": "WAMFIE ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "391",
+    "destination_name": "WECHAU",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "51",
+    "destination_name": "WEIJA GICEL ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "304",
+    "destination_name": "WENCHI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "392",
+    "destination_name": "WEST AFRICAN SHS",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "356",
+    "destination_name": "WIAMOASE",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "173",
+    "destination_name": "WINNEBA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "140",
+    "destination_name": "WORAWORA ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "305",
+    "destination_name": "YEJI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "309",
+    "destination_name": "YENDI ",
+    "destination_town": "",
+    "destination_type": "local"
+  },
+  {
+    "destination_id": "323",
+    "destination_name": "ZEBILLA ",
+    "destination_town": "",
+    "destination_type": "local"
+  }
+]

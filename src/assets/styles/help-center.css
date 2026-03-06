@@ -1,0 +1,495 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: 'Jost', sans-serif;
+    font-weight: 700;
+    font-display: swap
+}
+
+* {
+    font-family: 'Jost', sans-serif, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 400;
+    letter-spacing: .5px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+.currency {
+    font-family: 'Jost', sans-serif;
+    font-weight: 700
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    color: #444
+}
+*,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    
+    font-family: 'Jost', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 500;
+}
+
+hr.dark {
+    border-color: rgba(0, 0, 0, .3)
+}
+
+a,
+a:active,
+a:link,
+a:visited {
+    cursor: pointer;
+    text-decoration: none;
+    color: #EC848B;
+}
+a:hover,
+a:active:hover,
+a:link:hover,
+a:visited:hover {
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+}
+a.muted,
+a:active.muted,
+a:link.muted,
+a:visited.muted {
+    color: #738aa5;
+    font-style: italic
+}
+
+a.strong,
+a:active.strong,
+a:link.strong,
+a:visited.strong {
+    font-weight: 500
+}
+
+._deiz_action {
+    cursor: pointer
+}
+
+a * {
+    cursor: pointer
+}
+
+button {
+    cursor: pointer
+}
+
+
+p {
+    line-height: 175%;
+    margin: 5px 0;
+    color: #444
+}
+
+p small {
+    line-height: 120%
+}
+
+p h1,
+p h2,
+p h3,
+p h4,
+p h5,
+p h6 {
+    color: #000
+}
+
+p b,
+p strong {
+    font-weight: 700
+}
+
+p+p {
+    margin-top: 10px
+}
+
+ul li {
+    line-height: 175%;
+    color: inherit
+}
+
+ul li b,
+ul li strong {
+    font-weight: 700
+}
+
+p.xs {
+    font-size: 16px;
+    line-height: 30px
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    /* margin: 0; */
+    color: #000;
+    padding-bottom:.5rem;
+}
+
+h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 * {
+    letter-spacing: inherit;
+    font-weight: inherit
+}
+
+h1,
+h2,
+h3 {
+    letter-spacing: -.5px
+}
+
+h4,
+h5,
+h6 {
+    letter-spacing: -.2px
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0
+}
+
+table td,
+table th {
+    border: 1px solid #0e143a;
+    padding: 10px;
+    font-size: .875rem
+}
+
+table th {
+    background: #1440b2;
+    color: #fff;
+    text-align: left;
+    padding: 10px
+}
+
+table tr:nth-child(even) {
+    background: #fbf6f1
+}
+
+
+figure {
+    margin-left: 0
+}
+
+img {
+    pointer-events: none;
+    max-width: 100%
+}
+
+.content {
+    height: 100%;
+    transition: all .3s
+}
+
+.mobile-only {
+    display: none !important
+}
+
+.breadcrumbs {
+    list-style: none;
+    /* margin: 0; */
+    padding: 0 15px
+}
+
+.breadcrumbs li {
+    display: inline-block
+}
+
+.breadcrumbs li+li:before {
+    padding: 5px;
+    color: #000;
+    content: "/\00a0"
+}
+
+.breadcrumbs li a {
+    color:#EC848B
+}
+
+.help-center {
+    padding: 20px 0;
+    display: flex
+}
+
+.help-center.padded {
+    padding-top: 80px
+}
+
+.help-center .help-nav {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 80px;
+    background-color: #ec848b15;
+    width: 350px;
+    flex-shrink: 0;
+    height: 60vh;
+    overflow-y: scroll !important;
+    padding-top: 20px;
+    border-radius: 0.675rem;
+}
+
+.help-center .help-nav .help-groups {
+    list-style: none;
+    /* .is-active {
+        color: #EC848B !important;
+    } */
+}
+
+.help-center .help-nav .help-groups .help-group-item {
+    margin-bottom: 20px
+}
+
+.help-center .help-nav .help-groups .help-items {
+    list-style: none;
+    padding: 0 0 0 20px;
+    margin-top: 5px
+}
+
+.help-center .help-nav .help-groups .help-items .help-item {
+    margin: 5px 0
+}
+
+.help-center .help-nav .help-groups .help-items .help-item.active {
+    border-left: 4px solid #1440b2;
+    padding-left: 5px
+}
+
+.help-center .help-nav .help-groups .help-items .help-item.active a {
+    color: #1440b2;
+    font-weight: 500
+}
+
+.help-center .help-nav .help-groups .help-items .help-item a {
+    font-size: .875rem;
+    color: rgba(0, 0, 0, .6)
+}
+
+.help-center .help-content {
+    flex-grow: 1;
+    padding: 0 20px
+}
+
+.help-center .help-content .search {
+    border: none;
+    height: 70px;
+    width: 100%;
+    padding: 0 45px 0 20px;
+    background-color: #fbf6f1;
+    font-size: 1.125rem;
+    outline: 0
+}
+
+.help-center .help-content .help-cards .help-card {
+    background-color: #fff;   
+    -webkit-box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    -moz-box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    padding: 20px;
+    height: 100%
+}
+
+.help-center .help-content .help-cards .help-card.compact {
+    display: flex;
+    align-items: center
+}
+
+.help-center .help-content .help-cards .help-card.compact .icon {
+    margin-bottom: 0;
+    margin-right: 10px
+}
+
+.help-center .help-content .help-cards .help-card.colored {
+    background-color: #1440b2;
+    color: #fff
+}
+
+.help-center .help-content .help-cards .help-card.colored .icon {
+    background-color: #fff;
+    color: #1440b2
+}
+
+.help-center .help-content .help-cards .help-card.colored .desc {
+    color: #fff
+}
+
+.help-center .help-content .help-cards .help-card .icon {
+    margin-bottom: 20px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #1440b2;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center
+}
+
+.help-center .help-content .help-cards .help-card .title {
+    font-weight: 300
+}
+
+.help-center .help-content .help-cards .help-card .desc {
+    font-size: .75rem
+}
+
+.help-center .help-content .help-section {
+    margin: 20px
+}
+
+.help-center .help-content .help-section hr {
+    margin-top: 20px
+}
+
+.help-center .help-content .help-section .missing {
+    color: #e41948;
+    font-size: 1.875rem
+}
+
+.note {
+    background-color: #fee140 !important;
+    margin: 20px 0 !important;
+    padding: 15px !important;
+    border-left: 4px solid #a26b25 !important;
+    font-size: .75rem  !important;
+
+}
+
+
+.help-center .help-content .help-section ol li,
+.help-center .help-content .help-section ul li {
+    font-size: .875rem;
+    line-height: 175%;
+    margin: 5px 0
+}
+
+.help-center .help-content .help-section img {  
+    -webkit-box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    -moz-box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .1);
+    margin: 20px 0
+}
+
+
+
+@media (min-width:768px) and (max-height:600px) {
+
+    .body,
+    .content,
+    .keee {
+        height: auto
+    }
+
+}
+
+@media (max-width:1024px) {
+    .keee.offset {
+        padding: 0
+    }
+
+    a.offset {
+        margin-bottom: 10px
+    }
+
+    .mobile-only {
+        display: flex !important
+    }
+
+    .help-center {
+        flex-direction: column
+    }
+
+    .help-center.padded {
+        padding-top: 40px
+    }
+
+    .help-center .help-content .breadcrumbs {
+        /* margin-top: 20px; */
+        font-size: small
+    }
+
+    .help-center .help-content .help-section {
+        margin: 10px
+    }
+
+    .help-center .help-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap
+    }
+
+    .help-center .help-nav {
+        width: auto;
+        position: static;
+        margin-top: 15px;
+        transition-duration: 5s;
+        animation-duration: 10s;
+    }
+
+    .help-center .help-nav-collapsed {
+        display: flex !important;
+        background-color: #ec848b15;
+        border-radius: .675rem;
+        padding: 20px;
+        justify-content: space-between;
+        align-items: center
+    }
+    #close_button{
+        font-size: 16px !important;
+        padding-right: 0px;
+        cursor: pointer;
+    }
+    #open_button{
+        cursor: pointer;
+    }
+    .container{
+        padding: 0px !important;
+    }
+    .padded{
+        display: none;
+    }
+    h1{
+        font-size: 32px !important;
+    }
+    h2{
+        font-size: 24px !important;
+    }
+    h3{
+        font-size: 16px !important;
+    }
+    .note {
+        background-color: #fee140 !important;
+        margin: 20px 0 !important;
+        padding: 15px !important;
+        border-left: 4px solid #a26b25 !important;
+        font-size: .75rem  !important;
+    
+    }
+
+}
+

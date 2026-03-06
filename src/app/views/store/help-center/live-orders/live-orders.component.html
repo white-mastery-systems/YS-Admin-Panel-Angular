@@ -1,0 +1,37 @@
+<div class="help-content">
+    <div class="help-section">
+        <h2>Live Orders</h2>
+        <h3>Manage newly received or in process orders under live orders.
+        </h3>
+        <ol *ngIf="this.commonService.store_details.login_type!='vendor'">
+            <li>
+                Go to your <a routerLink="/dashboard">Yourstore Dashboard</a> and Go
+                to <a routerLink="/orders/product/live/all">Orders → Live Orders</a>
+            </li>
+            <li>Here you can find the list of all your orders.</li>
+            <li>COD orders are marked as “Pending”, orders that are paid online are marked “Paid”.</li>
+            <li>New orders will have the status as “Placed”.</li>
+            <li>Click to open the order and you can find Status on the top right, click on it and mark the orders as confirmed, dispatched and delivered as and when you process the order in stages.</li>
+            <li>Orders that are marked delivered are moved to Completed Orders</li>
+            <li>To cancel an order you can open the order and click on the cancel order button under more options in the top right to cancel the order and the order gets moved to the cancelled order.</li>
+        </ol>
+
+
+        <ol *ngIf="this.commonService.store_details.login_type=='vendor'">
+            <li>Go to <a routerLink="/orders/product/live/all">Orders → Live Orders</a></li>
+
+<li>Here you can find the list of all your orders.</li>
+
+<li>COD orders are marked as "Pending", orders that are paid online are marked "Paid".</li>
+
+<li>New orders will have the status as "Placed".</li>
+
+<li>Click to open the order and you can find Status on the top right, click on it and mark the orders as confirmed, dispatched and delivered as and when you process the order in stages.</li>
+
+<li>Orders that are marked delivered are moved to Completed Orders</li>
+
+<li>To cancel an order you can open the order and click on the cancel order button under more options in the top right to request for a cancellation of the order.</li>
+        </ol>
+        
+    </div>
+</div>

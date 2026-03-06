@@ -1,0 +1,557 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+
+  <div class="row order-details">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center" *ngIf="commonService.desktop_device">
+      <div class="d-flex align-items-center with-back-btn">
+        <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+        <h3 class="font-16 dark-font m-b-0">{{ commonService.secondary_header }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <!-- more options -->
+  <ng-container *ngIf="commonService.store_details?.login_type=='admin' || settlement_info?.settled_on">
+    <div *ngIf="settlement_info?.status!='cancelled'" class="row m-0">
+      <div class="col-12 col-md-9 d-flex px-0 justify-content-end align-items-center mb-3 status-split">
+        <div class="d-flex justify-content-end align-items-center">
+          <div ngbDropdown role="group" aria-label="Select all">
+            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end"  [ngClass]="commonService.desktop_device?'':'more_icons'">
+              <button ngbDropdownToggle type="button" [ngClass]="commonService.desktop_device?'white-button ml-3':'iconbutton'">
+                <span class="material-symbols-rounded mr-1">more_vert</span>{{commonService.desktop_device?'More Options':''}}
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <ng-container *ngIf="settlement_info?.status=='pending' && commonService.store_details?.login_type=='admin'">
+                  <button (click)="statusForm = { status: 'paid' }; modalService.open(statusModal, { centered: true });" class="dropdown-item d-flex">
+                    <span class="material-symbols-rounded mr-2">payments</span>Mark as Paid
+                  </button>
+                  <button (click)="statusForm = { status: 'cancelled' }; modalService.open(statusModal, { centered: true });" class="dropdown-item d-flex">
+                    <span class="material-symbols-rounded mr-2">cancel</span>Mark as Cancelled
+                  </button>
+                </ng-container>
+                <a *ngIf="settlement_info?.settled_on" href="https://yourstore.io/invoice/settlement/{{commonService.store_details?._id}}/{{settlement_info._id}}" target="_blank" class="dropdown-item d-flex">
+                  <span class="material-symbols-rounded mr-2">receipt</span>View Invoice
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- list card -->
+  <div class="row m-0 order-details">
+    <div class="col-md-9 col-12" [ngClass]="commonService.desktop_device?'':'px-0'">
+      <div class="row m-0">
+        <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pl-0':'px-0'">
+          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+            <div class="icons mb-0">
+              <span class="material-symbols-rounded">sell</span>
+            </div>
+            <div class="order-details-cardcontent">
+              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order ID</label>
+              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                #{{ vendorOrderDetails.order_number }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pr-0':'px-0'">
+          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+            <div class="icons mb-0">
+              <span class="material-symbols-rounded">payments</span>
+            </div>
+            <div class="order-details-cardcontent">
+              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Settlement Status</label>
+              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                {{ settlement_info.status | titlecase }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pl-0':'px-0'">
+          <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+            <div class="icons mb-0">
+              <span class="material-symbols-rounded">calendar_month</span>
+            </div>
+            <div class="order-details-cardcontent">
+              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                Settlement Date
+              </label>
+              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                {{ settlement_info?.settlement_on | date: "dd MMM y"}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pr-0':'px-0'">
+          <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+            <div class="icons mb-0">
+              <span class="material-symbols-rounded">account_balance</span>
+            </div>
+            <div class="order-details-cardcontent">
+              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                Settlement Amount
+              </label>
+              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                {{ settlement_info?.settlement_amt | currency: commonService.store_currency?.country_code }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-list-card-wrapper mb-4">
+        <div class="data-list-card-inner">
+          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-2 col-5 first_col px-0 cursor header-font">
+              <p class="w-100 w-sm-100 m-b-0">Image</p>
+            </div>
+            <div class="col-md-10 col-6 first_col align-items-center header-font"
+              [ngClass]="commonService.desktop_device?'pl-md-3 pl-3 px-0':''">
+              <p class="w-40 w-sm-100 m-b-0">Name</p>
+              <p class="w-20 w-sm-100 m-b-0">SKU</p>
+              <p class="w-20 w-sm-100 m-b-0 text-right">QTY</p>
+              <p class="w-20 w-sm-100 m-b-0 text-right">Price</p>
+            </div>
+          </div>
+          <div class="list-item data-list-card flex-grow" style="flex-direction:column"
+            *ngFor="let x of itemList; let i=index;">
+            <div *ngIf="x.item_status" class="p-0 m-0 col-md-12 cancel-info">
+              <span *ngIf="x.item_status=='c_requested'">Cancellation Requested
+                <i (click)="itemInfo=x; modalService.open(cancelItemInfoModal, { centered: true });"
+                  class="material-icons-outlined" [ngClass]="commonService.desktop_device? 'pl-1': ''">info</i>
+              </span>
+              <span *ngIf="x.item_status=='c_confirmed'">Cancelled
+                <i (click)="itemInfo=x; modalService.open(cancelItemInfoModal, { centered: true });"
+                  class="material-icons-outlined" [ngClass]="commonService.desktop_device? 'pl-1': ''">info</i>
+              </span>
+              <span *ngIf="x.item_status=='c_declined'">Cancellation Request Declined
+                <i (click)="itemInfo=x; modalService.open(cancelItemInfoModal, { centered: true });"
+                  class="material-icons-outlined" [ngClass]="commonService.desktop_device? 'pl-1': ''">info</i>
+              </span>
+            </div>
+            <div class="row m-0 w-100">
+              <div class="col-md-2 col-3 first_col px-0 cursor">
+                <div *ngIf="x.image" class="list-thumb d-flex align-self-center">
+                  <img [src]="imgBaseUrl+x.image" alt="">
+                </div>
+              </div>
+              <div class="col-md-10 col-9 first_col align-items-center" [ngClass]="commonService.desktop_device?'pl-md-3 pl-3 px-0':''">
+                <p class="w-40 w-sm-100 m-b-0 dark-font">
+                  {{x.name}}
+                  <ng-container *ngIf="x.variant_status">
+                    <ng-container *ngFor="let y of x.variant_types;">
+                      <p class="w-35 w-sm-100 m-b-0 light-font">
+                        {{y.name}}: <span>{{y.value}}</span>
+                      </p>
+                    </ng-container>
+                  </ng-container>
+                </p>
+                <p *ngIf="x.addon_status && x.selected_addon">
+                  <b>Addon: </b><span class="w-20">{{x.selected_addon?.name}}</span>
+                </p>
+                <p class="w-20 w-sm-100 m-b-0 light-font">{{x.sku}}</p>
+                <p class="w-20 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device?'text-right':''">
+                  {{x.quantity}} {{x.unit? x.unit: 'Qty'}}
+                </p>
+                <p class="w-20 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device?'text-right':''">
+                  {{ x.item_price | currency: commonService.store_currency?.country_code }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="data-list-card">
+            <div class="col-md-10 col-8  cursor px-0  single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Item Total</p>
+            </div>
+            <div class="col-md-2 col-4  d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{vendorOrderDetails?.sub_total | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+          <div class="data-list-card" *ngIf="vendorOrderDetails?.gift_wrapper > 0">
+            <div class="col-md-10 col-8  cursor px-0 single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Gift Wrapping</p>
+            </div>
+            <div class="col-md-2 col-4 d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{vendorOrderDetails.gift_wrapper | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+          <div class="data-list-card">
+            <div class="col-md-10 col-8  cursor px-0 single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Shipping</p>
+            </div>
+            <div class="col-md-2 col-4 d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{vendorOrderDetails.shipping_cost | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+          <!-- <div class="data-list-card" *ngIf="vendorOrderDetails?.cod_charges > 0">
+            <div class="col-md-10 col-8  cursor px-0 single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">COD Charges</p>
+            </div>
+            <div class="col-md-2 col-4 d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{vendorOrderDetails.cod_charges | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div> -->
+          <div class="data-list-card" *ngIf="vendorOrderDetails?.discount_amount > 0">
+            <div class="col-md-10 col-8  cursor px-0 single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Discount</p>
+            </div>
+            <div class="col-md-2 col-4 d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                -{{vendorOrderDetails.discount_amount | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+          <div class="data-list-card" *ngIf="vendorOrderDetails?.shipping_discount > 0">
+            <div class="col-md-10 col-8  cursor px-0 single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Shipping Discount</p>
+            </div>
+            <div class="col-md-2 col-4 d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                -{{vendorOrderDetails.shipping_discount | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+          <div class="data-list-card">
+            <div class="col-md-10 col-8  cursor px-0  single-line-text-ellipsis d-flex justify-content-end">
+              <p class=" w-sm-80 m-b-0 font-12 light-font">Grand Total</p>
+            </div>
+            <div class="col-md-2 col-4  d-flex px-0 justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{settlement_info?.order_total | currency: commonService.store_currency?.country_code}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- activity -->
+      <div class="col-md-8 col-12  mt-4">
+        <h5 class="mb-2 dark-font">Activity</h5>
+      </div>
+      <!-- desktop -->
+      <div class="data-list-card-wrapper" *ngIf="commonService.desktop_device">
+        <div class="data-list-card-inner">
+          <div class="list-item d-flex type5-card align-items-center">
+            <div class="activity-content  mx-2 ">
+              <p class="m-b-0 dark-font font-14 medium-font">Placed</p>
+              <span class="font-12 medium-font">{{ vendorOrderDetails.created_on | date: "dd MMM y hh:mm a"}}</span>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.confirmed_on" class="d-flex align-items-center">
+              <div class="activity-border"></div>
+              <div class="activity-border-dot conform-bg-dot"></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Confirmed</p>
+                <span class="font-12 medium-font">
+                  {{vendorOrderDetails.confirmed_on | date: "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.dispatched_on" class="d-flex align-items-center">
+              <div class="activity-border"></div>
+              <div class="activity-border-dot dispatch-bg-dot"></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Dispatched</p>
+                <span class="font-12 medium-font">
+                  {{ vendorOrderDetails.dispatched_on | date: "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.delivered_on" class="d-flex align-items-center">
+              <div class="activity-border"></div>
+              <div class="d-flex"><span class="material-symbols-rounded icons delivered-bg-dot">check_circle</span>
+              </div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Delivered</p>
+                <span class="font-12 medium-font">
+                  {{ vendorOrderDetails.delivered_on | date: "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="settlement_info.cancelled_on" class="d-flex align-items-center">
+              <div class="activity-border"></div>
+              <div class="d-flex"><span class="material-symbols-rounded icons cancel-bg-dot">cancel</span></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Cancelled</p>
+                <span class="font-12 medium-font">
+                  {{ settlement_info.cancelled_on | date: "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="settlement_info?.status!='cancelled'" class="d-flex align-items-center" [ngClass]="{ 'desktop_active': !settlement_info.settled_on }">
+              <div class="activity-border"></div>
+              <div class="d-flex" *ngIf="settlement_info.settled_on"><span
+                  class="settle-bg-dot material-symbols-rounded icons ">account_balance</span></div>
+              <div class="activity-border-dot" *ngIf="!settlement_info.settled_on"></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Settled</p>
+                <span *ngIf="settlement_info.settled_on" class="font-12 medium-font">
+                  {{ settlement_info.settled_on | date: "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- mobile -->
+      <div class="mobile-view-activity mb-4" *ngIf="!commonService.desktop_device">
+        <div class="timeline">
+          <div class="events">
+            <div class="event">
+              <div class="knob"><span class="place-bg-dot knob-dot"></span></div>
+              <div class="date">
+                <h2 class="dark-font">Placed</h2>
+              </div>
+              <div class="description">
+                <p>{{ settlement_info.created_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.confirmed_on" class="event"
+              [ngClass]="{ 'active': !vendorOrderDetails.confirmed_on }">
+              <div class="knob"><span class="conform-bg-dot knob-dot"></span></div>
+              <div class="date">
+                <h2 class="dark-font">Confirmed</h2>
+              </div>
+              <div *ngIf="vendorOrderDetails.confirmed_on" class="description">
+                <p>{{ vendorOrderDetails.confirmed_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.dispatched_on" class="event"
+              [ngClass]="{ 'active': !vendorOrderDetails.dispatched_on }">
+              <div class="knob"><span class="dispatch-bg-dot knob-dot"></span></div>
+              <div class="date">
+                <h2 class="dark-font">Dispached</h2>
+              </div>
+              <div *ngIf="vendorOrderDetails.dispatched_on" class="description">
+                <p>{{ vendorOrderDetails.dispatched_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="vendorOrderDetails.delivered_on" class="event"
+              [ngClass]="{ 'active': !vendorOrderDetails.delivered_on }">
+              <div class="knob" *ngIf="!vendorOrderDetails.delivered_on"><span class="knob-dot"></span></div>
+              <div class="knob" *ngIf="vendorOrderDetails.delivered_on"><span
+                  class="material-symbols-rounded  icons delivered-bg-dot ml-0" style="top:0px;">check_circle</span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Delivered</h2>
+              </div>
+              <div *ngIf="vendorOrderDetails.delivered_on" class="description">
+                <p>{{ vendorOrderDetails.delivered_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="settlement_info.cancelled_on" class="event">
+              <div class="knob">
+                <span class=" material-symbols-rounded icons cancel-bg-dot ml-0" style="top:0px;">cancel</span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Cancelled</h2>
+              </div>
+              <div class="description">
+                <p>{{ settlement_info.cancelled_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="settlement_info?.status!='cancelled'" class="event" [ngClass]="{ 'active': !settlement_info.settled_on }">
+              <div class="knob" *ngIf="!settlement_info.settled_on"><span class="knob-dot"></span></div>
+              <div class="knob" *ngIf="settlement_info.settled_on"><span
+                  class="material-symbols-rounded icons settle-bg-dot ml-0" style="top:0px;">account_balance</span></div>
+              <div class="date">
+                <h2 class="dark-font">Settled</h2>
+              </div>
+              <div *ngIf="settlement_info.settled_on" class="description">
+                <p>{{settlement_info.settled_on | date: "dd MMM y hh:mm a" }}</p>
+              </div>
+            </div>
+
+            <div class="line"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- right-side -->
+    <div class="col-md-3 col-12" [ngClass]="commonService.desktop_device?'':'px-0'">
+      <h5 class="mb-3 dark-font">Order Summary</h5>
+      <div class="order-details-card">
+        <ng-container *ngIf="commonService.store_details?.login_type!='vendor'">
+          <div class="address-head d-flex justify-content-between">
+            <h5 class="dark-font font-14 m-b-0">Vendor Details</h5>
+          </div>
+          <div class="order-details-cardinner d-flex">
+            <span class="material-symbols-rounded">person</span>
+            <p class="light-font medium-font m-b-0 pl-2">
+              {{ vendorInfo?.company_details?.brand }}
+            </p>
+          </div>
+          <div class="order-details-cardinner d-flex">
+            <span class="material-symbols-rounded">mail</span>
+            <p class="light-font medium-font m-b-0 pl-2">
+              {{ vendorInfo?.email }}
+            </p>
+          </div>
+          <div class="order-details-cardinner d-flex">
+            <span class="material-symbols-rounded">call</span>
+            <p class="light-font medium-font m-b-0 pl-2">
+              {{ vendorInfo?.mobile }}
+            </p>
+          </div>
+          <div class="address-head d-flex justify-content-between">
+            <h5 class="dark-font font-14 m-b-0 mt-2">Charges</h5>
+            <span *ngIf="commonService.store_details?.login_type!='vendor' && settlement_info.status=='pending'"
+            (click)="editForm={ dp_charges: settlement_info.dp_charges }; modalService.open(pricingModal, { windowClass: 'scroll-modal-xl', scrollable : true });" class="material-symbols-rounded">edit</span>
+          </div>
+        </ng-container>
+
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">Payment Gateway Charges ({{settlement_info?.pg_in_pct}}%)</p>
+          <p class="light-font medium-font m-b-0 manage-width">
+            {{settlement_info.pg_charges | currency: commonService.store_currency?.country_code}}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">Actual Shipping</p>
+          <p class="light-font medium-font m-b-0 manage-width">
+            {{settlement_info.dp_charges | currency: commonService.store_currency?.country_code}}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">Commision on Items</p>
+          <p class="light-font medium-font manage-width m-b-0">
+            {{settlement_info?.items_cmsn | currency: commonService.store_currency?.country_code}}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">Tax on Commission ({{settlement_info.tax_in_pct}}%)</p>
+          <p class="light-font medium-font m-b-0 manage-width">
+            {{settlement_info.cmsn_tax | currency: commonService.store_currency?.country_code}}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">Total Charges</p>
+          <p class="light-font medium-font m-b-0 manage-width">
+            {{settlement_info.total_cmsn | currency: commonService.store_currency?.country_code}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Cancel Item Info -->
+<ng-template #cancelItemInfoModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+      <span class="popup_text">{{itemInfo.name}}</span>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <h6 class="mt-2">Price</h6>
+    <div class="pl-2">
+      <p [ngClass]="itemInfo.disc_amount? 'mb-1': ''">
+        <b *ngIf="itemInfo.disc_amount">Original Price:</b> {{ itemInfo.item_price | currency: commonService.store_currency?.country_code:'symbol':commonService.cFormat }}
+      </p>
+      <p *ngIf="itemInfo.disc_amount">
+        <b>Discounted Price:</b> {{ (itemInfo.item_price - itemInfo.disc_amount) | currency: commonService.store_currency?.country_code:'symbol':commonService.cFormat }}
+      </p>
+    </div>
+    <ng-container *ngIf="itemInfo?.cancel_info?.title">
+      <h6 class="mt-2">Reason</h6>
+      <p class="pl-2">{{itemInfo.cancel_info.title}}</p>
+    </ng-container>
+    <ng-container *ngIf="itemInfo?.cancel_info?.description">
+      <h6>Description</h6>
+      <p class="pl-2">{{itemInfo.cancel_info.description}}</p>
+    </ng-container>
+    <hr class="my-3">
+    <p *ngIf="itemInfo?.cancel_info?.request_on">
+      <b>Requested on:</b> {{itemInfo.cancel_info.request_on | date: "dd MMM y hh:mm a"}}
+    </p>
+    <p *ngIf="itemInfo?.cancel_info?.cancelled_on">
+      <b>Cancelled on:</b> {{itemInfo.cancel_info.cancelled_on | date: "dd MMM y hh:mm a"}}
+    </p>
+    <p *ngIf="itemInfo?.cancel_info?.declined_on && !itemInfo?.cancel_info?.cancelled_on">
+      <b>Declined on:</b> {{itemInfo.cancel_info.declined_on | date: "dd MMM y hh:mm a"}}
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="modal.dismiss('cancel')" class="btn btn-wide btn-primary">Close</button>
+  </div>
+</ng-template>
+
+<!-- Order Status -->
+<ng-template #statusModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to mark this order as {{ statusForm.status | uppercase }}
+        <span class="text-danger">"#{{settlement_info.order_number}}"</span>?
+      </strong>
+    </p>
+    <div *ngIf="statusForm.errorMsg">
+      <p class="text-danger">{{ statusForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="onChangeStatus();" class="btn btn-wide btn-primary ladda-button" [disabled]="statusForm.submit"
+      [ladda]="statusForm.submit">Confirm</button>
+  </div>
+</ng-template>
+
+<!-- DP Charges -->
+<ng-template #pricingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdatePrice();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Update</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Actual Shipping</label>
+            <input type="text" name="dp_charges" class="form-control" [(ngModel)]="editForm.dp_charges" required />
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');"> <span
+            class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit" [ladda]="editForm.submit">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,388 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="help_mobile_button mr-3" routerLink="/support/setup-shipping">
+    <img src="assets/icons/help.svg" title="help">
+  </div>
+  <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+    <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+      <button ngbDropdownToggle>
+        <span class="material-symbols-rounded">more_vert</span>
+      </button>
+      <div class="dropdown-menu" ngbDropdownMenu>
+        <button class="dropdown-item" *ngIf="commonService.store_details?.type!='multi_vendor' && list?.length"
+          (click)="calcForm={ shipping_price: null }; modalService.open(calculatorModal);">
+          <span class="material-symbols-rounded">calculate</span> Calculator
+        </button>
+        <button class="dropdown-item" (click)="shippingForm={ shipping_type: 'Domestic', name: 'Domestic Shipping', delivery_time: '2 to 5 days', formType: 'add' }; modalService.open(shippingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded mr-2">add</span> Add New</button>
+        <button *ngIf="commonService.ys_features.indexOf('pincode_service')!=-1" class="dropdown-item" routerLink="/setting/shipping-methods/pincodes">
+          <span class="material-symbols-rounded mr-2">pin_drop</span> Pincodes
+        </button>
+        <button class="dropdown-item" routerLink="/setting/shipping-methods/courier-partners"><span class="material-symbols-rounded mr-2">local_shipping</span> Shipping Integration</button>        
+      </div>
+    </div>
+  </div>
+  <!-- <div class="add_but mr-3" routerLink="/setting/shipping-methods/pincodes">
+      <span class="material-symbols-rounded">pin_drop</span>
+  </div>
+  <div class="add_but mr-3" routerLink="/setting/shipping-methods/courier-partners">
+    <span class="material-symbols-rounded">local_shipping</span>
+</div>
+  <div class="add_but" (click)="shippingForm={ shipping_type: 'Domestic', name: 'Domestic Shipping', delivery_time: '2 to 5 days', formType: 'add' }; modalService.open(shippingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+    <span class="material-symbols-rounded">add</span>
+</div> -->
+</div>
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end">
+          <button class="help-button" routerLink="/support/setup-shipping">
+            <span class="material-symbols-rounded mb-0">help</span>Need Help?
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div *ngIf="!parentList.length" class="col-md-4 col-12" >
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="list-button d-flex justify-content-end" *ngIf="commonService.desktop_device" [ngClass]="!parentList.length? 'col-md-8': 'col-md-12'">
+        <button class="mr-3" *ngIf="commonService.store_details?.type!='multi_vendor' && list?.length"
+          (click)="calcForm={ shipping_price: null }; modalService.open(calculatorModal);">
+          <span class="material-symbols-rounded">calculate</span> Calculator
+        </button>
+        <button class="mr-3" *ngIf="commonService.ys_features.indexOf('pincode_service')!=-1" routerLink="/setting/shipping-methods/pincodes">
+          <span class="material-symbols-rounded">pin_drop</span> Pincodes
+        </button>
+        <button class="mr-3" routerLink="/setting/shipping-methods/courier-partners"><span class="material-symbols-rounded">local_shipping</span> Shipping Integration</button>
+        <button class="highbutton" type="button" (click)="shippingForm={ shipping_type: 'Domestic', name: 'Domestic Shipping', delivery_time: '2 to 5 days', formType: 'add' }; modalService.open(shippingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded">add</span> Add New</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="list?.length || parentList.length" class="list-horizontal">
+    <!-- Vendor List -->
+    <div *ngFor="let vendor of parentList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+      class="p-2 mb-3">
+      <div class="row">
+        <div class="col-12">
+          <h4>{{vendor.name}}</h4>
+        </div>
+      </div>
+      <div class="row m-0">
+        <div class="col-md-12 p-0">
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              <ng-container *ngIf="vendor?.shipping_list?.length">
+                <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+                  <div class="col-md-7 col-6 first_col px-0">
+                    <p class="w-25 w-sm-100 dark-font font-12 ">Name</p>
+                    <p class="w-25 w-sm-100 m-b-0 font-12 dark-font">Type</p>
+                    <p class="w-50 w-sm-100 m-b-0 font-12 dark-font">Link</p>
+                  </div>
+                </div>
+                <div class="list-item data-list-card" *ngFor="let x of vendor.shipping_list; let j=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  <div class="col-md-7 col-6 first_col px-0">
+                    <p class="w-25 w-sm-100 light-font fw-600 font-12">{{x.name}}</p>
+                    <p class="w-25 w-sm-100 m-b-0 font-12 light-font">{{x.shipping_type}}</p>
+                    <p class="w-50 w-sm-100 m-b-0 font-12 light-font breakword">{{x.tracking_link}}</p>
+                  </div>
+                  <div class="col-md-5 col-6">
+                    <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                        <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device?
+                        'delete': ''}}
+                      </button>
+                      <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; deleteForm.exist_status=x.status; modalService.open(statusModal, { centered: true });">
+                        <span class="material-symbols-rounded">{{ (x.status=='active')? 'visibility_off': 'visibility'
+                          }}
+                        </span>
+                        <ng-container *ngIf="commonService.desktop_device">
+                          {{(x.status=='active')? 'Disable': 'Enable' }}
+                        </ng-container>
+                      </button>
+                      <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x._id, shippingModal)">
+                        <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                          'visibility': 'chevron_right'}}
+                        </span> {{commonService.desktop_device? 'View': ''}}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <div *ngIf="!vendor?.shipping_list?.length" class="col-md-12">
+                <div class="card card-in-card mt-3 mb-4 d-flex flex-row">
+                  <div class="flex-grow-1 pl-2 d-flex">
+                    <div class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
+                      <p class="w-100 w-sm-100 m-b-0" align="center">No shipping methods found.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping List -->
+    <ng-container *ngIf="(list | gridSearch: { name: search_bar, tracking_link: search_bar })?.length">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-7 col-6 first_col px-0">
+              <p class="w-25 w-sm-100 dark-font font-12 ">Name</p>
+              <p class="w-25 w-sm-100 m-b-0 font-12 dark-font">Type</p>
+              <p class="w-50 w-sm-100 m-b-0 font-12 dark-font">Link</p>
+            </div>
+          </div>
+          <div class="list-item data-list-card" *ngFor="let x of list | gridSearch: { name: search_bar, tracking_link: search_bar } | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+            [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+            <div class="col-md-7 col-6 first_col px-0">
+              <p class="w-25 w-sm-100 light-font fw-600 font-12">{{x.name}}</p>
+              <p class="w-25 w-sm-100 m-b-0 font-12 light-font">{{x.shipping_type}}</p>
+              <p class="w-50 w-sm-100 m-b-0 font-12 light-font">{{x.tracking_link}}</p>
+            </div>
+            <div class="col-md-5 col-6">
+              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                  <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'delete':
+                  ''}}
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; deleteForm.exist_status=x.status; modalService.open(statusModal, { centered: true });">
+                  <span class="material-symbols-rounded">{{ (x.status=='active')? 'visibility_off': 'visibility'
+                    }}
+                  </span>
+                  <ng-container *ngIf="commonService.desktop_device">
+                    {{(x.status=='active')? 'Disable': 'Enable' }}
+                  </ng-container>
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x._id, shippingModal)">
+                  <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                    'visibility': 'chevron_right'}}
+                  </span> {{commonService.desktop_device? 'View': ''}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGINATION CONTROL -->
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div *ngIf="!(list | gridSearch: { name: search_bar, tracking_link: search_bar })?.length && !parentList.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR MODAL -->
+<ng-template #calculatorModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onCalculate();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">Shipping Calculator</h4>        
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label>Shipping Methods</label>
+              <select name="shipping_method" class="form-control select-arrow" [(ngModel)]="calcForm.shipping_method" (change)="calcForm.shipping_price=null;" required>
+                <option *ngFor="let x of list" [ngValue]="x">
+                  {{x.name}} ({{x.shipping_type}})
+                </option>
+              </select>
+            </div>
+            <div *ngIf="calcForm.shipping_method?.shipping_type=='International'" class="col-md-12 mb-3">
+              <label>Country</label>
+              <select name="country" class="form-control select-arrow" [(ngModel)]="calcForm.country" (change)="calcForm.shipping_price=null;" required>
+                <ng-container *ngFor="let x of commonService.country_list | orderAsc: 'name';">
+                  <option *ngIf="x.name!=commonService.store_details.country" [ngValue]="x.name">{{x.name}}</option>
+                </ng-container>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Shipping Weight</label>
+              <input type="number" name="weight" class="form-control" [(ngModel)]="calcForm.weight" (input)="calcForm.shipping_price=null;" appNumberOnly required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Order Amount ({{commonService.store_currency?.country_code}})</label>
+              <input type="number" name="amount" class="form-control" [(ngModel)]="calcForm.amount" (input)="calcForm.shipping_price=null;" appNumberOnly required />
+            </div>
+            <div *ngIf="calcForm.shipping_price!=null" class="col-md-12 mt-3">
+              <h5>Shipping Cost: <b>{{calcForm.shipping_price | currency: commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</b></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+          <span class="black-outline-txt">Close</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">calculate</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- SHIPPING MODAL -->
+<ng-template #shippingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">{{ shippingForm.formType | titlecase }} Shipping Details</h4>        
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <ng-container *ngIf="commonService.store_details?.login_type!='vendor' && parentList.length">
+              <div class="col-md-6 form-group mb-3">
+                <label>{{ (commonService.ys_features.indexOf('branch_stock')!=-1)? 'Branch': 'Vendor' }}</label>
+                <select name="vendor_id" class="form-control" [(ngModel)]="shippingForm.vendor_id" [disabled]="shippingForm.formType!='add'" required>
+                  <option *ngFor="let x of parentList;" [ngValue]="x._id">{{x.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3"></div>
+            </ng-container>
+            <div class="col-md-6 mb-3">
+              <label>Shipping Type</label>
+              <select name="shipping_type" class="form-control select-arrow" [(ngModel)]="shippingForm.shipping_type" required [disabled]="shippingForm.formType!='add'">
+                <option value="Domestic">Domestic</option>
+                <option *ngIf="commonService.ys_features.indexOf('domestic_shipping')==-1" value="International">International</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Carrier Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="shippingForm.name" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Tracking Link</label>
+              <input type="text" name="tracking_link" class="form-control" [(ngModel)]="shippingForm.tracking_link" required />
+            </div>
+            <ng-container *ngIf="!shippingForm.domes_zone_status && !shippingForm.inter_zone_status">
+              <div class="col-md-6 form-group mb-3">
+                <label>Delivery Time</label>
+                <select name="delivery_time" class="form-control" [(ngModel)]="shippingForm.delivery_time" required>
+                  <option value="Same day">Same day</option>
+                  <option value="Next day">Next day</option>
+                  <option value="1 to 2 days">1 to 2 days</option>
+                  <option value="2 to 5 days">2 to 5 days</option>
+                  <option value="More than 5 days">More than 5 days</option>
+                  <option value="15 to 25 days">15 to 25 days</option>
+                </select>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Shipping Charge</label>
+                <input type="tel" name="shipping_price" class="form-control" [(ngModel)]="shippingForm.shipping_price" appNumberOnly required />
+              </div>
+            </ng-container>
+            <div class="col-md-3 mt-4 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="free_shipping" [(ngModel)]="shippingForm.free_shipping">
+                <span>Free Shipping</span><span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="shippingForm.free_shipping">
+              <div class="col-md-3 form-group mt-4 mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="alert_status" [(ngModel)]="shippingForm.alert_status">
+                  <span>Enable Alert</span><span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Order above</label>
+                <input type="tel" name="minimum_price" class="form-control" [(ngModel)]="shippingForm.minimum_price" appNumberOnly />
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="shippingForm.errorMsg">
+          <p class="text-danger">{{ shippingForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="shippingForm.submit"
+        [ladda]="shippingForm.submit">{{ shippingForm.formType | titlecase }}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- STATUS MODAL -->
+<ng-template #statusModal let-modal>
+  <div class="modal-body">
+    <p class="mt-3">
+      <strong>Are you sure you want to {{ (deleteForm.exist_status=='active')? 'disable': 'enable' }} the
+        <span class="text-danger">"{{deleteForm.name}}"</span> carrier?
+      </strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onUpdateStatus();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p class="mt-3">
+      <strong>Are you sure you want to permanently delete the
+        <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> carrier?
+      </strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

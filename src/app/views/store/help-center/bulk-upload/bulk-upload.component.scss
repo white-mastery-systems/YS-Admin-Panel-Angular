@@ -1,0 +1,56 @@
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+td,
+th {
+  border: 1px solid #252424 !important;
+  text-align: left;
+  padding: 8px;
+  //  width: 50%;
+}
+
+
+th {
+  font-size: 16px;
+  font-weight: bold;
+  background: #fdf5f5;
+}
+
+td:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  color: #000;
+  width: 30%;
+}
+
+td:last-child {
+  width: 70%;
+}
+
+td:last-child h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+
+
+}
+
+tr {
+  td {
+    p {
+      b {
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.table-hover tbody tr:hover {
+  background: none !important;
+}

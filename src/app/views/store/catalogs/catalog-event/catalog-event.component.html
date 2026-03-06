@@ -1,0 +1,398 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+<div class="inner-dots" *ngIf="!commonService.desktop_device && catForm.form_type!='add'">
+  <div class="add_but" (click)="modalService.open(deleteModal, { centered: true });">
+      <span class="material-symbols-rounded">delete</span>
+  </div>
+</div>
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate>
+    <div class="row">
+      <div *ngIf="catForm.form_type!='add' && commonService.desktop_device" class="col-md-12 list-button d-flex justify-content-end">
+        <button (click)="modalService.open(deleteModal, { centered: true });" type="button"><span class="material-symbols-rounded">delete</span>Remove</button>    
+      </div>
+      
+      <div class="col-md-2"></div>
+      <!-- banner image -->
+      <div *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)!=-1" class="col-md-4" align="center">
+        <div>
+          <label class="fw-600">Banner Image</label>
+          <p>1440 x 150 pixels @72ppi</p>
+          <div class="mb-3" align="center">
+            <div class="card">
+              <div *ngIf="catForm.banner_image" class="py-4">
+                <span (click)="catForm.b_img_change=true; catForm.banner_image=null;" class="material-icons float-right round-img-icon ab-item-close top5"
+                  aria-hidden="true">close</span>
+                <img *ngIf="catForm.b_img_change" [src]="catForm.banner_image" height="100px;" width="auto;">
+                <img *ngIf="!catForm.b_img_change" [src]="imgBaseUrl+catForm.banner_image" height="100px;" width="auto;">
+              </div>
+              <div *ngIf="!catForm.banner_image" class="py-4">
+                <label>
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                  <input type="file" name="banner_image" style="display: none;" (change)="fileChangeListener('banner', $event)" accept="image/jpeg, image/png, image/webp"
+                  />
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- image -->
+      <div [ngClass]="(configData.catalog_image.indexOf(commonService.store_details?._id)!=-1)? 'col-md-4': 'col-md-8'" align="center">
+        <div>
+          <label class="fw-600">Image</label>
+          <p>1440 x 150 pixels @72ppi</p>
+          <div class=" mb-3  " align="center">
+            <div class="card">
+
+              <div *ngIf="catForm.image" class="py-4">
+                <span (click)="catForm.img_change=true; catForm.image=null;" class="material-icons float-right round-img-icon ab-item-close top5"
+                  aria-hidden="true">close</span>
+                <img *ngIf="catForm.img_change" [src]="catForm.image" height="100px;" width="auto;">
+                <img *ngIf="!catForm.img_change" [src]="imgBaseUrl+catForm.image" height="100px;" width="auto;">
+              </div>
+              <div *ngIf="!catForm.image" class="py-4">
+                <label>
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                  <input type="file" name="image" style="display: none;" (change)="fileChangeListener('image', $event)" accept="image/jpeg, image/png, image/webp"
+                  />
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-12 mb-3">
+
+        <div class="row mt-3">
+          <div class="col-md-6 form-group mb-3 quill-mb-5">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="catForm.name" (input)="onChangeTitle();" required />
+          </div>
+          <div class="col-md-6 form-group mb-3 quill-mb-5" style="margin-top: 2rem !important;">
+            <label *ngIf="configData.primary_catalog.indexOf(commonService.store_details?._id)!=-1" class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="isPrimary" [(ngModel)]="catForm.isPrimary">
+              <span><b>Mark as Primary</b></span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-12 form-group mb-3 quill-mb-5">
+            <label>Description</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+          <ng-container *ngIf="configData.primary_catalog.indexOf(commonService.store_details?._id)!=-1">
+            <div class="mt-3 col-md-12">
+              <label><b>Sub Catalogs</b> <span style="font-size:12px;opacity:0.8;"> (Click on the catalog to select)</span></label>
+            </div>
+            <div class="col-md-12 mb-3">
+              <div class="card card-in-card px-3 pt-3 pb-0">
+                <div class="prod-scroll px-2">
+                  <div class="row pt-3">
+                    <div *ngFor="let x of commonService.catalog_list; let i=index;" class="form-group mb-3 px-2 checking">
+                      <label *ngIf="catForm._id!=x._id && !x.isPrimary" class="checkbox checkbox-primary pl-0">
+                        <input class="form-check-input" type="checkbox" name="selected" [(ngModel)]="x.selected" [checked]="x.selected" [ngModelOptions]="{standalone: true}">
+                        <span [ngClass]="x.selected? 'active': 'inactive'">
+                          <span>{{x.name}}</span>
+                          <span *ngIf="x.selected" class="material-icons p-0 cursor-poiter">close</span>
+                        </span>                 
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>         
+          </ng-container>
+          <!-- page content -->
+          <ng-container *ngIf="commonService.ys_features.indexOf('catalog_page_content')!=-1">
+            <!-- HEADER -->
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="hc_status" [(ngModel)]="catForm.hc_status">
+                <span>Enable Header Content</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div *ngIf="catForm.hc_status" class="col-md-12 form-group mb-3 quill-mb-5">
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.header_content" [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <!-- FOOTER -->
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="fc_status" [(ngModel)]="catForm.fc_status">
+                <span>Enable Footer Content</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div *ngIf="catForm.fc_status" class="col-md-12 form-group mb-3 quill-mb-5">
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.footer_content" [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <!-- PROFILE -->
+            <ng-container *ngIf="configData.catalog_navigations.indexOf(commonService.store_details?._id)!=-1">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="profile_status" (change)="!catForm.profile_details? catForm.profile_details={}: null" [(ngModel)]="catForm.profile_status">
+                  <span>Enable Profile</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="catForm.profile_status">
+                <div class="col-md-4"></div>
+                <div class="col-md-4" align="center">
+                  <div>
+                    <label class="fw-600">Profile Image</label>
+                    <p>300 x 300 pixels @72ppi</p>
+                    <div class="mb-3" align="center">
+                      <div class="card">
+                        <div *ngIf="catForm.profile_details?.image" class="py-4">
+                          <span (click)="catForm.p_img_change=true; catForm.profile_details.image=null;" class="material-icons float-right round-img-icon ab-item-close top5"
+                            aria-hidden="true">close</span>
+                          <img *ngIf="catForm.p_img_change" [src]="catForm.profile_details.image" height="100px;" width="auto;">
+                          <img *ngIf="!catForm.p_img_change" [src]="imgBaseUrl+catForm.profile_details.image" height="100px;" width="auto;">
+                        </div>
+                        <div *ngIf="!catForm.profile_details.image" class="py-4">
+                          <label>
+                            <div>
+                              <i class="material-icons add-img">add_photo_alternate</i>
+                              <p>Click to upload image</p>
+                            </div>
+                            <input type="file" name="profile_image" style="display: none;" (change)="fileChangeListener('profile', $event)" accept="image/jpeg, image/png, image/webp" />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 form-group mb-3 quill-mb-5">
+                  <label>Name</label>
+                  <input type="text" name="profile_name" class="form-control" [(ngModel)]="catForm.profile_details.name" required />
+                </div>
+                <div class="col-md-6 form-group mb-3 quill-mb-5">
+                  <label>Designation</label>
+                  <input type="text" name="profile_designation" class="form-control" [(ngModel)]="catForm.profile_details.designation" required />
+                </div>
+                <div class="col-md-12 form-group mb-3 quill-mb-5">
+                  <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.profile_details.description" [ngModelOptions]="{standalone: true}"></quill-editor>
+                </div>
+              </ng-container>
+            </ng-container>
+            <!-- PRODUCT LIST -->
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="prod_list_status" [(ngModel)]="catForm.prod_list_status">
+                <span>Enable Product Price List</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </ng-container>
+
+          <!-- social media links -->
+          <ng-container *ngIf="commonService.ys_features.indexOf('catalog_social_links')!=-1">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="social_media_status" [(ngModel)]="catForm.social_media_status" #social_media_status="ngModel">
+                <span>Enable Social Media Links</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="catForm.social_media_status">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of catForm.social_media_links; let i=index;">
+                    <div class=" card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="catForm.social_media_links.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15"
+                          aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Type</label>
+                          <select name="type{{i}}" class="form-control" [(ngModel)]="x.type" #type="ngModel" required>
+                            <option [ngValue]="x" *ngFor="let x of commonService.socialTypes;">{{x | titlecase}}</option>
+                          </select>
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Link</label>
+                          <input type="text" name="url{{i}}" class="form-control" [(ngModel)]="x.url" #url="ngModel" required />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="catForm.social_media_links.push({});" type="button">
+                  <span class="material-symbols-rounded ">add</span>NEW
+                </button>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- SEO -->
+        <div class="data-list-card-wrapper p-0 col-md-12 col-12">
+          <div class="data-list-card-inner p-3">
+            <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+              <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                <span class="light-font mt-0 font-10 d-block">This is how your catalog looks on Google, Bing, Yahoo and other search engines</span>
+              </p>
+              <ng-container *ngIf="catForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+                <span *ngIf="!catForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+                (click)="catForm.seo_disp=true" aria-hidden="true">edit</span>
+                <span *ngIf="catForm.seo_disp && catForm.seo_details.page_url && catForm.seo_details.h1_tag && catForm.seo_details.page_title && catForm.seo_details.meta_desc"
+                (click)="catForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+              </ng-container>
+            </div>
+            <ng-container *ngIf="!catForm.seo_disp">
+              <p *ngIf="!catForm.name" class="light-font font-10">
+                Add a Title And Description To See How This Catalog Might Appear In A Search Engine Listing
+              </p>
+              <ng-container *ngIf="catForm.name">
+                <p class="light-font font-10 mb-1">
+                  {{commonService.store_details?.base_url}}/category/{{catForm.seo_details?.page_url}}</p>
+                <h6 class="sec-desc mb-1 mt-2 seo-color">{{catForm.seo_details.page_title}}</h6>
+                <p class="light-font font-10">{{catForm.seo_details.meta_desc}}</p>
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="catForm.seo_disp">
+              <div class="col-md-12 form-group mb-3">
+                <label>Page URL</label>
+                <input type="text" name="page_url" class="form-control" [(ngModel)]="catForm.seo_details.page_url" appNoSplChar required
+                />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>H1 Tag</label>
+                <span *ngIf="catForm.seo_details?.h1_tag?.length" class="label_hint">
+                  {{catForm.seo_details.h1_tag.length}} of 70 characters used
+                </span>
+                <input type="text" name="h1_tag" class="form-control" [(ngModel)]="catForm.seo_details.h1_tag" maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Page Title</label>
+                <span *ngIf="catForm.seo_details?.page_title?.length" class="label_hint">
+                  {{catForm.seo_details.page_title.length}} of 70 characters used
+                </span>
+                <input type="text" name="page_title" class="form-control" [(ngModel)]="catForm.seo_details.page_title" maxlength="70" required
+                />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Description</label>
+                <span *ngIf="catForm.seo_details?.meta_desc?.length" class="label_hint">
+                  {{catForm.seo_details.meta_desc.length}} of 320 characters used</span>
+                <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="catForm.seo_details.meta_desc" maxlength="320"
+                  required></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Keywords</label>
+                <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="catForm.seo_details.meta_keyword_list" placeholder="" [secondaryPlaceholder]="'Enter options'"
+                  [separatorKeyCodes]="[188]"></tag-input>
+                  <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="col-md-12 form-group mb-3 mt-3">
+          <label class="checkbox checkbox-primary">
+            <input class="form-check-input" type="checkbox" name="faq_status" [(ngModel)]="catForm.faq_status" (change)="catForm.faq_status ? catForm.faqs=[{}] : catForm.faqs=[] + catForm.faq_title='';" #faq_status="ngModel">
+            <span>Enable FAQ</span>
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <ng-container *ngIf="catForm.faq_status">
+          <div class="col-md-6 form-group mb-3">
+            <label>Title</label>
+            <input type="text" name="faq_title" class="form-control" [(ngModel)]="catForm.faq_title" required />
+          </div>
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-6 form-group mb-3" *ngFor="let x of catForm.faqs; let i=index;">
+                <div class="card p-3">
+                  <div class="row poss-rel">
+                    <span (click)="catForm.faqs.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Question</label>
+                      <input type="text" name="ques{{i}}" class="form-control" [(ngModel)]="x.ques" #ques="ngModel" required />
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Answer</label>
+                      <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer" #answer="ngModel" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <button class="light-button" (click)="catForm.faqs.push({});" type="button">
+              <span class="material-symbols-rounded ">add</span>NEW FAQ
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+
+
+    </div>
+
+
+
+    <div class="separator-breadcrumb border-top mt-5"></div>
+    <div class="row">
+      <div class="col-md-12 mt-3 mb-3" *ngIf="catForm.errorMsg">
+        <p class="text-danger" align="center">{{ catForm.errorMsg }}</p>
+      </div>
+      <div align="center" class="col-md-12 z-i-0">
+        <button type="button" routerLink="/product-sections/catalogs" class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Cancel</span>
+        </button>&nbsp; &nbsp; &nbsp;
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit" [ladda]="catForm.submit">
+          {{ (catForm?.form_type=='add')? 'Add': 'Update' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{catForm.name}}"</span>
+        catalog?</strong></p>
+    <div *ngIf="catForm.errorMsg">
+      <p class="text-danger">{{ catForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1" [disabled]="catForm.submit" [ladda]="catForm.submit">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

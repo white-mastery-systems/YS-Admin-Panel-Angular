@@ -1,0 +1,68 @@
+.dark-button,
+.light-button {
+    padding: 7px 15px;
+}
+
+@media screen and (max-width: 767px) {
+    .btn-upgrade {
+        img {
+            height: 20px !important;
+            width: 20px !important;
+        }
+    }
+    .billing-details {
+        .billing-logo {
+            img {
+                width: 170px !important;
+            }
+        }
+        h3 {
+            font-size: 25px !important;
+            width: 100% !important;
+        }
+        p {
+            width: 100% !important;
+            font-size: 14px !important;
+        }
+    }
+}
+
+.btn-upgrade {
+    position: relative;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #FB6B74 0%, #F9969C 100%) !important;
+    border-radius: 30px !important;
+    font-weight: 600;
+    padding: 7px 15px;
+    border: none !important;
+    font-size: 12px;
+    box-sizing: border-box;
+    transition: all 0.5s ease;
+    img {
+        width: 20px !important;
+        height: 20px !important;
+        padding-right: 6px;
+    }
+}
+
+.billing-details {
+    .billing-logo {
+        img {
+            width: 270px;
+            padding: 20px 0;
+        }
+    }
+    h3 {
+        text-align: center;
+        font-size: 35px;
+        width: 75%;
+        line-height: 1.5;
+    }
+    p {
+        text-align: center;
+        width: 75%;
+        font-size: 16px;
+    }
+}

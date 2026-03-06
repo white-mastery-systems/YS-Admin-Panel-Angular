@@ -1,0 +1,51 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb">
+    <h1>Currencies</h1>
+  </div>
+  <div class="top-filter-sec list-button mt-2">
+    <div class="row mb-4">
+      <div class="col-md-6 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="(commonService.currency_types | fieldSearch:'country_code':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-12 col-12 first_col px-0 header-font">
+            <p class="w-100 w-sm-100 m-b-0">Country Code</p>
+          </div>
+        </div>
+        <div class="list-item">
+          <div class="col-md-12 col-12">
+            <div class="prod-scroll px-2">
+              <div class="row pt-3">
+                <div *ngFor="let x of commonService.currency_types | fieldSearch:'country_code':search_bar; let i=index;" class="form-group mb-3 px-2 checking">
+                    <span class="inactive">
+                      <span>{{x.country_code}}</span>
+                    </span>                 
+                </div>
+              </div>
+            </div>         
+          </div>       
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="!(commonService.currency_types | fieldSearch:'country_code':search_bar)?.length" class="row">
+    <div class="col-md-12">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>

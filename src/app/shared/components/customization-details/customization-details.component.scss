@@ -1,0 +1,47 @@
+#customization_pdf {
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #eee;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  #customization_pdf {
+    .pt-5 {
+      padding-top: 0.5rem !important;
+    }
+    .logo-img {
+      height: 30px;
+    }
+    .sub-total-container p,
+    .grand-total p,
+    .invoice-font-size p,
+    .invoice-total td p,
+    .invoice-details td p {
+      margin-bottom: 0px !important;
+    }
+    .invoice-border td {
+      padding-bottom: 5px !important;
+    }
+    p {
+      margin-bottom: 5px !important;
+      &.pt-3 {
+        padding-top: 5px !important;
+      }
+    }
+    .p-10,
+    .p-2 {
+      padding: 4px !important;
+    }
+    .mt-4 {
+      margin-top: 1rem !important;
+    }
+    .mb-4 {
+      margin-bottom: 1rem !important;
+    }
+    .py-2 {
+      padding-bottom: 4px !important;
+      padding-top: 4px !important;
+    }
+  }
+}

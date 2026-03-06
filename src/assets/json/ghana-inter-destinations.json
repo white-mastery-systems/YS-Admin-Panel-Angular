@@ -1,0 +1,897 @@
+[
+  {
+    "destination_id": "122",
+    "destination_name": "ALDERNEY (UK TERRT)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "181",
+    "destination_name": "ALGERIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "17",
+    "destination_name": "ANGOLA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "167",
+    "destination_name": "ANTIGUA (ST JOHN )",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "149",
+    "destination_name": "ANTILLIES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "109",
+    "destination_name": "ARGENTINA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "168",
+    "destination_name": "ARUBA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "110",
+    "destination_name": "AUSTRALIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "92",
+    "destination_name": "AUSTRIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "170",
+    "destination_name": "AZERBAJAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "111",
+    "destination_name": "BAHAMAS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "112",
+    "destination_name": "BAHRAIN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "113",
+    "destination_name": "BANGLADESH",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "114",
+    "destination_name": "BARBADOS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "66",
+    "destination_name": "BELARUS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "53",
+    "destination_name": "BELGIUM",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "135",
+    "destination_name": "BELIZE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "2",
+    "destination_name": "BENIN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "115",
+    "destination_name": "BERMUDA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "116",
+    "destination_name": "BOLIVIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "80",
+    "destination_name": "BOSNIA HERZEGOVINA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "18",
+    "destination_name": "BOTSWANA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "117",
+    "destination_name": "BRAZIL",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "118",
+    "destination_name": "BRUNEI- DARUSSALAM",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "54",
+    "destination_name": "BULGARIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "3",
+    "destination_name": "BURKINA FASO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "19",
+    "destination_name": "BURUNDI",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "4",
+    "destination_name": "CAMEROON ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "81",
+    "destination_name": "CANADA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "20",
+    "destination_name": "CAPE VERDE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "178",
+    "destination_name": "CAYMAN ISLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "21",
+    "destination_name": "CENTRAL AFRICAN REP. REP. CONGO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "5",
+    "destination_name": "CHAD",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "119",
+    "destination_name": "CHANNEL ISLANDS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "127",
+    "destination_name": "CHILE ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "126",
+    "destination_name": "CHINA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "123",
+    "destination_name": "COLOMBIA ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "85",
+    "destination_name": "COMOROS ISLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "172",
+    "destination_name": "CONGO BRAZAVILLE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "174",
+    "destination_name": "CONGO KINSHASHA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "124",
+    "destination_name": "COSTA RICA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "173",
+    "destination_name": "COTE D IVORE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "6",
+    "destination_name": "COTE D\u2019IVOIRE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "55",
+    "destination_name": "CROATIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "125",
+    "destination_name": "CUBA    ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "108",
+    "destination_name": "CYPRUS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "56",
+    "destination_name": "CZECH\/SLOVAK",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "24",
+    "destination_name": "D. R. CONGO (ZAIRE)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "87",
+    "destination_name": "DENMARK",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "23",
+    "destination_name": "DJIBOUTI",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "137",
+    "destination_name": "ECUADOR",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "22",
+    "destination_name": "EGYPT",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "128",
+    "destination_name": "EL SALVADOR",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "44",
+    "destination_name": "EQUATORIAL GUINEA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "46",
+    "destination_name": "ERITREA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "57",
+    "destination_name": "ESTONIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "25",
+    "destination_name": "ETHIOPIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "58",
+    "destination_name": "FINLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "84",
+    "destination_name": "FRANCE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "26",
+    "destination_name": "GABON",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "7",
+    "destination_name": "GAMBIA  ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "129",
+    "destination_name": "GEORGIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "86",
+    "destination_name": "GERMANY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "74",
+    "destination_name": "GIBRALTAR",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "48",
+    "destination_name": "GREAT BRITAIN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "75",
+    "destination_name": "GREECE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "130",
+    "destination_name": "GUATEMALA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "120",
+    "destination_name": "GUERNSEY (UK TERRT)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "8",
+    "destination_name": "GUINEA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "9",
+    "destination_name": "GUINEA BISSAU",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "131",
+    "destination_name": "GUYANA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "166",
+    "destination_name": "HAITI ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "94",
+    "destination_name": "HOLLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "132",
+    "destination_name": "HONG KONG",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "175",
+    "destination_name": "HONG KONG SAR CHINA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "76",
+    "destination_name": "HUNGARY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "60",
+    "destination_name": "ICELAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "133",
+    "destination_name": "INDIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "134",
+    "destination_name": "INDONESIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "96",
+    "destination_name": "IRAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "97",
+    "destination_name": "IRAQ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "61",
+    "destination_name": "IRELAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "62",
+    "destination_name": "ISLE OF MAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "98",
+    "destination_name": "ISRAEL",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "95",
+    "destination_name": "ITALY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "140",
+    "destination_name": "JAMAICA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "141",
+    "destination_name": "JAPAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "121",
+    "destination_name": "JERSEY (UK TERRT)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "99",
+    "destination_name": "JORDAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "180",
+    "destination_name": "KAZAKHSTAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "27",
+    "destination_name": "KENYA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "142",
+    "destination_name": "KOREA (N&S)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "104",
+    "destination_name": "KUWAIT",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "138",
+    "destination_name": "LAOS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "79",
+    "destination_name": "LATVIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "103",
+    "destination_name": "LEBANON",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "28",
+    "destination_name": "LESOTHO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "12",
+    "destination_name": "LIBERIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "177",
+    "destination_name": "LIBYA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "63",
+    "destination_name": "LITHUANIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "77",
+    "destination_name": "LUXEMBOURG",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "147",
+    "destination_name": "MACAO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "73",
+    "destination_name": "MACEDONIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "29",
+    "destination_name": "MADAGASCAR",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "30",
+    "destination_name": "MALAWI",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "144",
+    "destination_name": "MALAYSIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "145",
+    "destination_name": "MALDIVES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "13",
+    "destination_name": "MALI",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "78",
+    "destination_name": "MALTA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "39",
+    "destination_name": "MAURITANIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "40",
+    "destination_name": "MAURITIUS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "146",
+    "destination_name": "MEXICO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "91",
+    "destination_name": "MONACO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "182",
+    "destination_name": "MOROCCO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "45",
+    "destination_name": "MOZAMBIQUE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "41",
+    "destination_name": "NAMIBIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "152",
+    "destination_name": "NEPAL",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "93",
+    "destination_name": "NETHERLANDS",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "151",
+    "destination_name": "NEW ZEALAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "150",
+    "destination_name": "NICARAGUA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "10",
+    "destination_name": "NIGER",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "11",
+    "destination_name": "NIGERIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "50",
+    "destination_name": "NORTHERN IRELAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "88",
+    "destination_name": "NORWAY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "100",
+    "destination_name": "OMAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "154",
+    "destination_name": "PAKISTAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "155",
+    "destination_name": "PANAMA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "157",
+    "destination_name": "PAPUA NEW GUINEA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "169",
+    "destination_name": "PARAGUAY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "139",
+    "destination_name": "PERU",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "156",
+    "destination_name": "PHILIPPINES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "59",
+    "destination_name": "POLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "67",
+    "destination_name": "PORTUGAL",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "102",
+    "destination_name": "QATAR",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "68",
+    "destination_name": "ROMANIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "69",
+    "destination_name": "RUSSIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "31",
+    "destination_name": "RWANDA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "47",
+    "destination_name": "SAO TOME PRINCIPE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "153",
+    "destination_name": "SARK (UK TERRT)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "105",
+    "destination_name": "SAUDI ARABIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "49",
+    "destination_name": "SCOTLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "14",
+    "destination_name": "SENEGAL",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "179",
+    "destination_name": "SERBIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "158",
+    "destination_name": "SEYCHELLES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "15",
+    "destination_name": "SIERRA LEONE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "159",
+    "destination_name": "SINGAPORE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "70",
+    "destination_name": "SLOVENIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "32",
+    "destination_name": "SOMALIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "33",
+    "destination_name": "SOUTH AFRICA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "90",
+    "destination_name": "SPAIN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "160",
+    "destination_name": "SRI LANKA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "34",
+    "destination_name": "SUDAN",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "165",
+    "destination_name": "SURINAM ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "35",
+    "destination_name": "SWAZILAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "89",
+    "destination_name": "SWEDEN ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "83",
+    "destination_name": "SWITZERLAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "107",
+    "destination_name": "SYRIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "161",
+    "destination_name": "SYRIA ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "164",
+    "destination_name": "TAIWAN (CHINA)",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "36",
+    "destination_name": "TANZANIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "162",
+    "destination_name": "THAILAND",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "16",
+    "destination_name": "TOGO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "163",
+    "destination_name": "TRINIDAD AND TOBAGO",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "37",
+    "destination_name": "TUNISIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "71",
+    "destination_name": "TURKEY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "38",
+    "destination_name": "UGANDA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "72",
+    "destination_name": "UKRAINE",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "101",
+    "destination_name": "UNITED ARAB EMIRATES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "52",
+    "destination_name": "UNITED KINGDOM",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "82",
+    "destination_name": "UNITED STATES OF AMERICA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "176",
+    "destination_name": "URUGUAY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "64",
+    "destination_name": "VATICAN CITY",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "136",
+    "destination_name": "VENEZUELA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "183",
+    "destination_name": "VIETNAM",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "51",
+    "destination_name": "WALES",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "106",
+    "destination_name": "YEMEN ",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "65",
+    "destination_name": "YUGOSLAVIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "42",
+    "destination_name": "ZAMBIA",
+    "destination_type": "foreign"
+  },
+  {
+    "destination_id": "43",
+    "destination_name": "ZIMBABWE",
+    "destination_type": "foreign"
+  }
+]

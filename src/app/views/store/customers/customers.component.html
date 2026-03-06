@@ -1,0 +1,12 @@
+<div *ngIf="router.url=='/setting/customers/signup-user' || router.url=='/setting/customers/guest-user'" class="col-12 justify-content-between" [ngClass]="commonService.desktop_device?'carosal':'carosal-type2 px-0'">
+  <ul class="justify-content-start">
+    <li>
+      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/setting/customers/signup-user" [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Signed Up User</a>
+    </li>
+    <li>
+      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/setting/customers/guest-user" [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Guest User</a>
+    </li>
+  </ul>
+</div>
+
+<router-outlet (activate)="commonService.onActivate($event)"></router-outlet>

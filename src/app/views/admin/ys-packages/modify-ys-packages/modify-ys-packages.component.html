@@ -1,0 +1,98 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" (click)="commonService.goBack();">arrow_back</span>
+          <h1>{{params.id? 'Update': 'Add'}} Package</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="row">
+      <div class="col-md-3 form-group mb-3">
+        <label>Category</label>
+        <select name="category" class="form-control" [(ngModel)]="packageForm.category" required>
+          <option *ngFor="let x of commonService.package_categories;" value="{{x.name}}">{{x.display}}</option>
+        </select>
+      </div>
+      <div class="col-md-3 form-group mb-3">
+        <label>Service Type</label>
+        <select name="service" class="form-control" [(ngModel)]="packageForm.service" required>
+          <option *ngFor="let x of commonService.admin_ys_services;" value="{{x.name}}">{{x.display}}</option>
+        </select>
+      </div>
+      <div class="col-md-3 form-group mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" [(ngModel)]="packageForm.name" [disabled]="params.id" required />
+      </div>
+      <div class="col-md-3 form-group mb-3">
+        <label>Display Text</label>
+        <input type="text" name="disp_name" class="form-control" [(ngModel)]="packageForm.disp_name" required />
+      </div>
+      <div class="col-md-3 form-group mb-3">
+        <label>Transaction rate(%)</label>
+        <input type="tel" name="rate" class="form-control" [(ngModel)]="packageForm.transaction_fees" appNumberOnly required />
+      </div>
+      <div class="col-md-12 form-group mb-3">
+        <label>Description</label>
+        <textarea name="description" [(ngModel)]="packageForm.description" #description="ngModel" class="form-control" required></textarea>
+      </div>
+      <ng-container *ngFor="let x of currency_list; let i=index;">
+        <div class="col-md-12">
+          <div class="card p-3 mb-3">
+            <div class="row">
+              <div class="col-md-12">
+                <span class="primary-color"><b>{{x.base}}</b></span>
+              </div>
+              <div class="col-md-3 form-group mb-3" *ngFor="let mon of monthList; let j=index;">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <label>Selling Fees <b>({{mon}} month)</b></label>
+                    <input type="tel" name="selling_cost{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="x.pricing[mon].selling_amount" appNumberOnly required />
+                  </div>
+                  <div class="col-md-12">
+                    <label>Discounted Fees <b>({{mon}} month)</b></label>
+                    <input type="tel" name="cost{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="x.pricing[mon].amount" appNumberOnly required />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 form-group mb-3">
+                <label>Transaction free (sales limit)</label>
+                <input type="tel" name="limit{{i+1}}" class="form-control" [(ngModel)]="x.pricing.transaction_limit" appNumberOnly required />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- <div *ngIf="params.id" class="col-md-12 form-group mb-3">
+        <label class="checkbox checkbox-primary">
+          <input class="form-check-input" type="checkbox" name="trial_status" [(ngModel)]="packageForm.trial_status"
+            #trial_status="ngModel">
+          <span>Allow paid features for trial</span>
+          <span class="checkmark"></span>
+        </label>
+      </div> -->
+      <!-- <div *ngIf="packageForm.trial_status" class="col-md-6 form-group mb-3 ml-3">
+        <label>Trial upto in days</label>
+        <input type="text" name="trial_upto_in_days" class="form-control"
+          [(ngModel)]="packageForm.trial_upto_in_days" #trial_upto_in_days="ngModel" required />
+      </div> -->
+    </div>
+
+    <div class="separator-breadcrumb border-top mt-5"></div>
+    <div class="row">
+      <div align="center" class="col-md-12">
+        <button type="button" routerLink="/admin/packages" class="btn btn-wide btn-outline-secondary">Cancel</button>&nbsp; &nbsp; &nbsp;
+        <button type="submit" class="btn btn-primary">{{ (params?.id)? 'Update': 'Add' }}</button>
+      </div>
+    </div>
+  </form>
+
+</div>

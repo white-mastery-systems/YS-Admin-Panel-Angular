@@ -1,0 +1,156 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="add_but" (click)="galForm = { form_type: 'add' }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div class="col-12 col-md-6">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button type="button" class="highbutton" (click)="galForm = { form_type: 'add' }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+          <span class="material-symbols-rounded">add</span>Add
+        </button>
+      </div>      
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-7 col-6 first_col px-0 header-font">
+            <p class="w-50 w-sm-100">Name</p>
+            <p class="w-50 w-sm-100 m-b-0">Images</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-7 col-6 first_col px-0 cursor">
+            <p class="w-50 w-sm-100 dark-font">{{x.name}}</p>
+            <p class="w-50 w-sm-100 light-font">{{x.image_list.length}} images</p>
+          </div>
+          <div class="col-md-5 col-6">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button (click)="onEdit(x); modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});" [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'">
+                <span class="material-symbols-rounded" >edit</span> {{commonService.desktop_device? 'Edit': ''}}
+              </button>                
+              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded" >delete</span> {{commonService.desktop_device? 'Remove': ''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button ': 'iconbutton'" (click)="goViewPage(x);">
+                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<ng-template #galleryModal let-modal>
+  <form autocomplete="off" (ngSubmit)="galForm.form_type === 'add' ? onAdd() : onUpdate();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">{{ galForm.form_type === 'add' ? 'Add New' : 'update' }}</h4>  
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="galForm.name" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Heading</label>
+              <input type="text" name="heading" class="form-control" [(ngModel)]="galForm.heading" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Sub Heading</label>
+              <input type="text" name="sub_heading" class="form-control" [(ngModel)]="galForm.sub_heading" />
+            </div>
+            <div *ngIf="galForm.form_type !== 'add'" class="col-md-12 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank"  max="{{listCount}}" min="1" class="form-control" [(ngModel)]="galForm.rank" required appNumberOnly />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="galForm.errorMsg">
+          <p class="text-danger">{{ galForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="galForm.submit"
+        [ladda]="galForm.submit">{{ galForm.form_type === 'add' ? 'Add' : 'Update' }}</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>
+        Deleting this <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> will remove the images linked with the gallery.
+        Are you sure you want to proceed?
+      </strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>

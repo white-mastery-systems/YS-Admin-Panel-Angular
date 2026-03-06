@@ -1,0 +1,507 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  
+  <ng-container *ngIf="commonService.desktop_device && billDetails.store_status=='active'">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12 col-md-8 d-flex justify-content-end align-items-start flex-column">
+              <h1>Billing</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="row" *ngIf="!billingStatus">
+    <div class="col-md-12 d-flex">
+      <div class="card w-100 p-3 mb-3">
+        <!-- billing -->
+        <div *ngIf="billDetails.store_package_details?.trial_renewed || commonService.store_details?.package_info?.category=='genie'" class="row">
+          <div class="col-md-6 col-6">
+            <p>
+              <b>Trial Account</b>
+            </p>
+            <p *ngIf="billDetails.store_status=='active'">
+              Valid till {{billDetails.store_package_details?.trial_expiry | date: "dd MMM y":"+0530"}} (IST)
+            </p>
+            <p *ngIf="billDetails.store_status!='active'">
+              <span class="badge badge-warning badge-red">Expired</span>
+            </p>
+          </div>
+          <div class="col-md-6 col-6">
+            <div class="d-flex justify-content-end">
+              <button class="btn-upgrade" routerLink="/deployment/plans" type="button">
+                <img src="assets/images/rocket.svg" alt="upgrade">Select Plan
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- trial renewal -->
+        <div *ngIf="!billDetails.store_package_details?.trial_renewed && commonService.store_details?.package_info?.category!='genie'" class="row">
+          <ng-container *ngIf="billDetails.store_status=='active'">
+            <div class="col-md-6 col-6">
+              <p>
+                <b>Trial Account</b>
+              </p>
+              <p>
+                Valid till {{billDetails.store_package_details?.trial_expiry | date: "dd MMM y":"+0530"}} (IST)
+              </p>
+            </div>
+            <div class="col-md-6 col-6">
+              <div class="d-flex justify-content-end">
+                <button class="btn-upgrade" routerLink="/deployment/plans" type="button">
+                  <img src="assets/images/rocket.svg" alt="upgrade">Select Plan
+                </button>
+              </div>
+            </div>
+          </ng-container>
+          <div *ngIf="billDetails.store_status!='active'" class="col-12 billing-details">
+            <div class="billing-logo d-flex align-items-center justify-content-center">
+              <img src="assets/images/yourstore_logo.svg" alt="" >
+            </div>
+            <div class="d-flex align-items-center justify-content-center pt-4"><h3>Your free trial is over. Select a plan today and get 90% off for 90 days.</h3></div>
+           <div class="d-flex align-items-center justify-content-center pt-4"> <p>
+              We have saved your information so you can continue building your online store.
+              Simply select a plan that’s suitable for your business and pick up right where you left off.
+              If you need some more time to evaluate whether Yourstore is the right choice, you can extend your trial for another 7 days.
+            </p>
+          </div>
+            <div class="d-flex align-items-center justify-content-center py-4">
+              <button type="button" class="btn btn-wide black-outline-btn mr-3" (click)="errorMsg=null; btnDisabled=false; modalService.open(trialModal, { centered: true });">
+                <span class="black-outline-txt">Get 7 More Days</span>
+              </button>
+              <button type="button" class="btn btn-wide btn-primary" routerLink="/deployment/plans">
+                Select Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="billingStatus" class="row">
+    <div *ngIf="commonService.store_details?.package_details?.package_id != configData.free_package_id" class="col-md-12 col-lg-6 d-flex">
+      <div class="card w-100 p-3 mb-3">
+        <div class="row">
+          <div class="col-md-6 col-5">
+            <p>
+              <b>Current Billing</b>
+            </p>            
+          </div>
+          <div class="col-md-6 col-7">
+            <div class="d-flex justify-content-end">
+                <button type="button" [disabled]="!enablePayment" (click)="modalService.open(subscriptionModal);"  class="dark-button" [ngStyle]="{'opacity': !enablePayment? '0.5': '1' }">
+                  <span class="material-symbols-rounded">payments</span> Make Payment
+                </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="billDetails?.store_package_details?.expiry_date && billDetails.disp_nxtdue" class="row">
+          <div class="col-md-6 col-12">
+            <p>Next Payment Due on {{billDetails.store_package_details.expiry_date | date: "dd MMM y":"+0530"}} (IST)</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <p class="m-b-0">Subscription Charges</p>
+            </div>
+            <div class="col-md-6 col-6 d-flex justify-content-end pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">{{billDetails?.subscription_charge | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="paymentData.discount > 0" class="row data-list-card px-0 py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <p class="m-b-0">Discount</p>
+            </div>
+            <div class="col-md-6 col-6 d-flex justify-content-end pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">- {{paymentData.discount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="row data-list-card px-0 py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <p *ngIf="billDetails?.addon_price>0" class="m-b-0">
+                Add-on({{paymentData?.app_list?.length}}) Charges
+                <i style="font-size: 18px; position: relative; top: 4px;" class="material-icons-outlined"
+                (click)="modalService.open(addonsModal, { centered: true });">info</i>
+              </p>
+              <p *ngIf="!billDetails?.addon_price" class="m-b-0">Add-on Charges</p>
+            </div>
+            <div class="col-md-6 col-6 pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">{{billDetails?.addon_price | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="billDetails?.vendor_charges>0" class="row data-list-card px-0 py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <p class="m-b-0">Vendor Account({{billDetails?.vendor_accounts}}) Charges</p>
+            </div>
+            <div class="col-md-6 col-6 pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">{{billDetails?.vendor_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="row data-list-card px-0 py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <div class="">
+                <p class="m-b-0">Transaction Charges</p>
+              </div>
+            </div>
+            <div class="col-md-6 col-6 pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">{{billDetails?.transaction_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="row data-list-card px-0 py-3">
+            <div class="col-md-6 col-6 pl-0">
+              <div class="">
+                <p class="m-b-0"><b>Total</b></p>
+              </div>
+            </div>
+            <div class="col-md-6 col-6 pr-0">
+              <div class="d-flex justify-content-end">
+                <p class="m-b-0">{{((billDetails?.subscription_charge + billDetails?.addon_price + billDetails?.transaction_charges + billDetails?.vendor_charges) - paymentData.discount) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>        
+
+        <!-- <div class="row mt-3">
+          <div class="col-md-6 col-6"><p>Subscription Charges</p></div>
+          <div class="col-md-6 col-6 d-flex justify-content-end">
+            <div class="d-flex justify-content-end">
+              <p>{{billDetails?.subscription_charge | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-6"><p>Add-on Charges</p></div>
+          <div class="col-md-6 col-6">
+            <div class="d-flex justify-content-end">
+              <p>{{billDetails?.addon_price | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-6">
+            <div class="">
+              <p>Transaction Charges</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-6">
+            <div class="d-flex justify-content-end">
+              <p>{{billDetails?.transaction_charges | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="row mt-3">
+          <div class="col-md-6 col-6">
+            <div class="">
+              <p>
+                <b>Total</b>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6 col-6">
+            <div class="d-flex justify-content-end">
+              <p>{{(billDetails?.subscription_charge + billDetails?.addon_price + billDetails?.transaction_charges) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-6 d-flex">
+      <div class="card w-100 p-3 mb-3">
+        <div class="row">
+          <div class="col-md-6 col-5">
+            <p>
+              <b>Current Plan</b>
+            </p>
+          </div>
+          <div class="col-md-6 col-7">
+            <div class="d-flex justify-content-end">
+              <!-- <button class="light-button" [routerLink]="(billDetails?.next_package_details)? '/deployment/plans': '/account/app-store'" type="button">
+                <span class="material-symbols-rounded">{{ (billDetails?.next_package_details)? 'upgrade': 'category' }}</span> {{ (billDetails?.next_package_details)? 'Upgrade Plan': 'View Apps' }}
+              </button> -->
+              <button *ngIf="commonService.lastPackages.indexOf(commonService.store_details?.package_details?.package_id)==-1" class="btn-upgrade" routerLink="/deployment/plans" type="button">
+                <img src="assets/images/rocket.svg" alt="upgrade">Upgrade Plan
+              </button>
+              <!-- <button *ngIf="commonService.lastPackages.indexOf(commonService.store_details?.package_details?.package_id)!=-1" class="light-button" routerLink="/account/app-store" type="button">
+                <span class="material-symbols-rounded">category</span>View Apps
+              </button> -->
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <p>{{billDetails?.package_details?.disp_name | uppercase}}</p>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div *ngIf="billDetails?.next_package_details" class="col-md-12">
+            <div class="">
+              <p>
+                <b>
+                  Upgrade to
+                  <ng-container *ngIf="commonService.store_details?.package_info?.category != billDetails?.next_package_details?.category">
+                    {{billDetails?.next_package_details?.category | titlecase}} -
+                  </ng-container>
+                  {{billDetails?.next_package_details?.disp_name}} Plan
+                </b>
+              </p>
+            </div>
+            <div class="">
+              <ul *ngIf="billDetails?.next_package_details?.features_info?.length" class="check-highlighted-points">
+                <li *ngFor="let x of billDetails?.next_package_details?.features_info">{{x}}</li>
+              </ul>
+            </div>
+          </div>
+
+          <div *ngIf="!billDetails?.next_package_details" class="col-md-12">
+            <div class="">
+              <p>
+                <b>Voila! You are experiencing the best</b>
+              </p>
+              <p>
+                Explore our collection of apps that help enhance your sale
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="commonService.store_details?.package_details?.package_id == configData.free_package_id" class="col-md-12 col-lg-6 d-flex"></div>
+
+    <div class="col-md-12 col-lg-6 d-flex">
+      <div class="card w-100 p-3 mb-3">
+        <div class="row">
+          <div class="col-md-6 col-5">
+            <p>
+              <b>Statement of Charges</b>
+            </p>
+          </div>
+          <div class="col-md-6 col-7">
+            <div class="d-flex justify-content-end">
+              <button class="light-button" routerLink="/account/billing/statement" type="button"><span class="material-symbols-rounded">receipt_long</span> View Statement</button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <p>View summaries of your charges</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-lg-6 d-flex">
+      <div class="card w-100 p-3 mb-3">
+        <div class="row">
+          <div class="col-md-6 col-6">
+            <p>
+              <b>Credits</b>
+            </p>
+          </div>
+          <div class="col-md-12 col-12"  *ngIf="!billDetails?.store_package_details?.credit">
+              <p>there are no credits on your account right now</p>
+          </div>
+          <div class="col-md-6 col-6 d-flex justify-content-end"  *ngIf="billDetails?.store_package_details?.credit">
+              <p>{{billDetails?.store_package_details?.credit | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Subscription Modal -->
+<ng-template #subscriptionModal let-modal>
+  <div class="modal-header">
+    <div>
+      <h4>
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <span class="popup_text">Payment Info</span>
+       </h4>        
+    </div>
+    <div class="d-flex">
+      <i class="material-icons" (click)="modal.dismiss('Cross click');">close</i>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card apps-card w-100 py-3 mb-4">
+            <div class="row m-0">
+              <div class="col-8">
+                <p class="mb-0">Billing Amount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{billDetails?.billing_amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div *ngIf="paymentData.discount" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Discount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">- {{paymentData.discount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div *ngIf="paymentData.credit" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Credit</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">- {{paymentData.credit | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div *ngIf="paymentData.discount || paymentData.credit" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Sub Total</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{ (billDetails?.billing_amount - (paymentData.discount + paymentData.credit)) | currency:commonService.store_currency?.country_code:'symbol':'1.0' }}</p>
+              </div>
+            </div>
+            <div *ngIf="paymentData.tds" class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">TDS</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">- ({{paymentData.tds_percent}}%) {{ paymentData.tds | currency:commonService.store_currency?.country_code:'symbol':'1.0' }}</p>
+              </div>
+            </div>
+            <!-- CGST & SGST -->
+            <div class="row m-0" *ngIf="paymentData.cgst && paymentData.sgst">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.cgst.percentage+paymentData.sgst.percentage}}%) {{(paymentData.cgst.amount+paymentData.sgst.amount) | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <!-- IGST -->
+            <div class="row m-0" *ngIf="paymentData.igst">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0" >GST</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">({{paymentData.igst.percentage}}%) {{paymentData.igst.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+            <div class="row m-0">
+              <div class="col-md-12"><hr class="my-2"></div>
+              <div class="col-8">
+                <p class="mb-0">Payable amount</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0 font-weight-bold">{{paymentData.amount | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="billDetails.errorMsg">
+      <p class="text-danger">{{ billDetails.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <ng-container *ngIf="paymentData.amount > 0">
+      <button type="button" *ngFor="let x of paymentTypes;" (click)="onSubscribe(x);" class="btn btn-wide btn-primary ladda-button m-1"
+      [disabled]="billDetails.submit" [ladda]="billDetails.submit">{{x.btn_name}}</button>
+    </ng-container>
+    <button *ngIf="paymentData.amount===0" type="button" (click)="onSubscribe({ name: '' });" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="billDetails.submit" [ladda]="billDetails.submit">Submit</button>
+  </div>
+</ng-template>
+
+<!-- Addons Modal -->
+<ng-template #addonsModal let-modal>
+  <div class="modal-header">
+    <div>
+      <h4>
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <span class="popup_text">Addon List</span>
+       </h4>        
+    </div>
+    <div class="d-flex">
+      <i class="material-icons" (click)="modal.dismiss('Cross click');">close</i>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card apps-card w-100 py-3">
+            <div *ngFor="let x of paymentData.app_list;" class="row mb-3">
+              <div class="col-8">
+                <p class="mb-0">{{x.name}}</p>
+              </div>
+              <div class="col-4 d-flex justify-content-end">
+                <p class="mb-0">{{x.price | currency:commonService.store_currency?.country_code:'symbol':'1.0'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="modal.dismiss('Cross click');" class="btn btn-wide btn-primary">Close</button>
+  </div>
+</ng-template>
+
+<!-- Trial Modal -->
+<ng-template #trialModal let-modal>
+  <div class="modal-body">
+    <p class="pt-3">
+      <strong>Are you sure you want to extend your trial period?</strong>
+    </p>
+    <div class="col-md-12 pt-3" *ngIf="errorMsg">
+      <p class="text-danger">{{ errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="extendTrial();" class="btn btn-wide btn-primary ladda-button m-1"
+    [disabled]="btnDisabled" [ladda]="btnDisabled">Yes</button>
+  </div>
+</ng-template>
+
+<!-- razorpay form -->
+<form #razorpayForm method="POST" action="{{environment.razorpay_payment_url}}">
+  <input type="hidden" name="key_id" value="{{razorpayOptions.key}}">
+  <input type="hidden" name="order_id" value="{{razorpayOptions.razorpay_order_id}}">
+  <input type="hidden" name="name" value="{{razorpayOptions.store_name}}">
+  <input type="hidden" name="description" value="{{razorpayOptions.description}}">
+  <input type="hidden" name="prefill[name]" value="{{razorpayOptions.customer_name}}">
+  <input type="hidden" name="prefill[email]" value="{{razorpayOptions.customer_email}}">
+  <input type="hidden" name="prefill[contact]" value="{{razorpayOptions.customer_mobile}}">
+  <input type="hidden" name="notes[my_order_id]" value="{{razorpayOptions.my_order_id}}">
+  <input type="hidden" name="notes[my_order_type]" value="{{razorpayOptions.my_order_type}}">
+  <input type="hidden" name="callback_url" value="{{environment.razorpay_redirect_url}}">
+  <input type="hidden" name="cancel_url" value="{{environment.base_url+router.url}}">
+</form>

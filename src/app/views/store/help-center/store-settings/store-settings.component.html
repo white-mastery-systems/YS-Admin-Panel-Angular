@@ -1,0 +1,208 @@
+<div class="help-content">
+    <div class="help-section">
+        <h2>Store Settings</h2>
+        <h3 class="mt-4">Opening Hours</h3>
+        <p>Set up operating hours for your business if you would like to provide store pickup for your customers in
+            addition to home delivery.
+        </p>
+        <ol>
+            <li>
+                Go to your <a routerLink="/dashboard">Yourstore Dashboard</a> and Go
+                to <a routerLink="/setting/store">Settings → Store Settings → Opening Hours</a>
+            </li>
+            <li>
+                Select Availability days and time that your store operates for customers to pick up the items.
+            </li>
+            <li>
+                Delay by days and hours are the time required by the store to prepare the order for pickup.
+            </li>
+            <li>
+                Slot duration is the time interval between each slot, value is to be entered in minutes.<br>
+                Example: The input value is 60, the slots will be 10:00 AM - 11:00 AM, 11:00 AM - 12:00 PM.
+            </li>
+            <li>
+                Delay by hours would allow the customer to select a time slot only after the set duration. <br>
+                Example: Let's assume the customer is placing an order by 12:00 PM, delay by hours is set at 3, the
+                customer will be able to select the slot 3:00 PM to 4:00 PM.
+            </li>
+            <li>
+                Delay by days would allow the customer to select a day and time slot only after the set duration.<br>
+                Example: Let's assume the customer is placing an order on Monday, delay by day is set at 3, the customer
+                will be able to select a slot only on Thursday.
+            </li>
+            <li>Then go to <a routerLink="/account/branches">My Account → Branches </a> click on “Add Branch” to create
+                a branch for your store to be displayed for the customer to select during checkout. If your store has
+                more than one branche you can add multiple branches.
+            </li>
+        </ol>
+
+
+        <h3 class="mt-5">Mail Configuration</h3>
+        <ol>
+            <li>
+                Go to your <a routerLink="/dashboard">Yourstore Dashboard</a> and Go to <a
+                    routerLink="/setting/store">Settings → Store Settings → Mail Configuration</a>
+            </li>
+            <li>
+                By default Yourstore sends email to your customers under your store name without you needing to
+                configure anything.
+            </li>
+            <li>
+                You can choose to update the Fields such as From Name, Contact number & email, these are some
+                information that would be displayed on the email to your customer.
+            </li>
+            <li>
+                You can add multiple email id’s to the field CC Mails to be alerted to in case a new order comes in or
+                there is any update on the status of the order.
+            </li>
+            <li>
+                You can add multiple email ids under Billing Mail to which you would like to receive the billing
+                information of your stores like payment reminders and plan expiry.
+            </li>
+        </ol>
+        <p><b>How to Setup Your Own Email? </b></p>
+        <p>If you would like to use your own email, select own Email Checkbox and we support the following email hosts
+            (not available in Yourstore Genie plans) Megamail.io, Gmail, G Suite, EZVeb, Zoho Mail, GoDaddy, Roundcube
+        </p>
+
+        <h3 class="mt-5">Logo Management</h3>
+        <p>You would have probably added your logo to your website while creating your store, if you would like to
+            update your logo you can do it here.
+        </p>
+        <ol>
+            <li>Go to your <a routerLink="/dashboard">Yourstore Dashboard</a> and Go to <a
+                    routerLink="/setting/store/logo-management">Settings → Store Settings → Logo Management</a> </li>
+            <li>Click on browse to select and update the new logo.</li>
+            <li>If you would like to change only a specific logo type you can do it by individually uploading in the
+                list of logos favicon, site logo, social logo and email logo respectively.
+            </li>
+        </ol>
+
+        <h3 class="mt-5">Store Management</h3>
+        <p>This module has some necessary controls that help manage your store. (Some options are plan specific)
+        </p>
+        <p><b>Guest Checkout</b><br>
+            Enabling this option will allow customers to checkout of the store without creating an account. Guest users
+            data is stored and you can view them under <a routerLink="/setting/customers/guest-user">Marketing Tools →
+                Customers → Guest Users</a></p>
+
+        <p>
+            <b>Feedback</b><br>
+            Enabling this option will allow your customers to give feedback for your service in their My Account section
+            on your website. You can view any feedbacks received <a routerLink="/setting/feedback">Marketing Tools →
+                Feedback</a>
+        </p>
+        <p>
+            <b>Product Addons</b><br>
+            Enabling this option will allow the customer to choose Add Ons or customise their product if you have set it
+            up under <a routerLink="/product-extras/addons">Products → Product Extras → Addons</a>
+
+        </p>
+        <p><b>Hide Currency Type</b><br>
+            Enabling this option will hide the currency information displayed on the header of your website to the
+            customers.
+        </p>
+        <p><b>Shipping only in Domestic</b><br>
+            Enabling this option will allow customers only from the same country as the store to place the orders.
+        </p>
+        <p>
+            <b>Disable Order Delivery</b><br>
+            Enabling this option will disable the store from allowing the customers to place orders for delivery.
+        </p>
+        <p>
+            <b>Display Stock Left</b><br>
+            Enabling this option will show the customers the stock available in the product page. You can update value
+            in the minimum stock, in this case only after the stock reaches that limit the customers will be able to see
+            the stock count.
+            Example: If you have entered 3 in minimum stock, only if your inventory count goes below 3 for a product the
+            customer can see the stock count.
+        </p>
+        <p>
+            <b>Cancel Order Email</b><br>
+            You can input the email id to which the cancellation order request alerts get delivered to you.
+        </p>
+        <p>
+            <b>Minimum Checkout Value</b><br>
+            If you would like to set a minimum value the customer should purchase in order to checkout can be set here.
+            If you do not want to restrict the customer, you can leave the value at 0
+        </p>
+        <p>
+            <b>Gift Wrapping Charges</b><br>
+            If you have enabled the gift order option at checkout settings you can set charges if your customer opt for
+            gift wrapping at checkout.
+        </p>
+        <p>
+            <b>Image Tag Position</b><br>
+            If you have created tags for your image like sold out, new arrival, trending, etc.. under <a routerLink="/product-extras/image-tags"> Products → Product
+            Extras → Image Tags</a> you can set the position these tags would appear over your product image.
+        </p>
+
+        <h3 class="mt-5">Checkout Setting</h3>
+        <p>
+            <b>Apply Coupon</b><br>
+            Enabling this option will allow customers to enter a coupon/offer code at checkout.
+        </p>
+        <p>
+            <b>Apply Gift Card</b><br>
+            Enabling this option will allow customers to enter gift card code at checkout.
+        </p>
+        <p>
+            <b>Gift Order</b><br>
+            Enabling this option will allow customer to mark an order as gift so the store can do the necessary.
+        </p>
+        <p>
+            <b>Order Notes</b><br>
+            Enabling this option will allow customers to enter any special requests during checkout.
+        </p>
+        <p>
+            <b>Offer except discounted products</b><br>
+            If this option is enabled, the coupon/offer code will apply on non-discounted products.
+        </p>
+
+
+        <h3 class="mt-5">Invoice Setting</h3>
+        <p>
+            <b>Prefix</b><br>
+            A letter/number or group of letters/numbers that you put before your invoice number<br>
+            Example: YS/<br>
+            Sample Invoice Number: YS/0001
+        </p>
+        <p>
+            <b>Upcoming Invoice Number</b><br>
+            The number form which the invoice series should start<br>
+            Example:7<br>
+            Sample Invoice Number: YS/7
+        </p>
+
+        <p>
+            <b>Suffix</b><br>
+            A letter/number or group of letters/numbers that you put after your invoice number<br>
+            Example: /22-23<br>
+            Sample Invoice Number: YS/7/22-23
+        </p>
+        <p>
+            <b>Min digit</b><br>
+            Number of digits the invoice number should have<br>
+            Example: 4<br>
+            Sample Invoice Number: YS/0007/22-23
+        </p>
+
+        <h3 class="mt-5">Auto SKU</h3>
+        <p>
+            If you do not maintain your own SKU for your items at stock, you can enable this option to auto generate
+            SKUs
+        </p>
+        <p>
+            <b>Prefix</b><br>
+            A letter or group of letters that you put before your SKU number.<br>
+            Example: YS
+        </p>
+
+        <p>
+            <b>Min Digit</b><br>
+            Number of digits the SKU number should have<br>
+            Example: 4<br>
+            Sample SKU Number: YS0001
+        </p>
+    </div>
+</div>

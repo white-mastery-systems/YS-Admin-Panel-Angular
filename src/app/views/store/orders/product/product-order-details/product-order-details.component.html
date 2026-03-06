@@ -1,0 +1,3905 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader" class="row order-details mb-4">
+  <div class="col-12 mb-3 d-flex justify-content-between align-items-center" *ngIf="commonService.desktop_device">
+    <div class="d-flex align-items-center with-back-btn">
+      <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+      <h3 class="font-16 dark-font m-b-0">
+        {{ commonService.secondary_header }}
+      </h3>
+    </div>
+  </div>
+
+  <div *ngIf="commonService.store_details?.login_type != 'vendor'"
+    class="col-md-9 col-12 list-button d-flex justify-content-end">
+    <button *ngIf="!params?.coupon_id && params?.type == 'inactive'" (click)="
+        editForm = { payment_id: order_details.payment_details?.payment_id };
+        modalService.open(placeOrderModal)
+      " type="button">
+      <span class="material-symbols-rounded">place_item</span> Place Order
+    </button>
+    <ng-container *ngIf="params?.type == 'live'">
+      <button *ngIf="
+          (order_details.vendor_list?.length &&
+            order_details.payment_details?.name != 'COD') ||
+          !order_details.vendor_list?.length
+        " class="ml-3" (click)="
+          editForm = {
+            order_number: order_details.order_number,
+            payment_success: order_details.payment_success
+          };
+          modalService.open(markPaidModal, { centered: true })
+        " type="button">
+        <span class="material-symbols-rounded">payments</span>
+        {{ order_details.payment_success ? "Mark as Unpaid" : "Mark as Paid" }}
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- order details -->
+  <div *ngIf="!order_details.vendor_list?.length" class="col-md-9 col-12 mt-3 mb-3">
+    <div class="row m-0">
+      <div class="col-12 col-md-5 px-0" [ngClass]="commonService.desktop_device ? '' : 'mb-3'">
+        <h5 class="dark-font m-b-0">Status</h5>
+      </div>
+      <div *ngIf="params?.type != 'inactive'"
+        class="col-12 col-md-7 d-flex px-0 justify-content-end align-items-center mb-3 status-split">
+        <div class="d-flex justify-content-end align-items-center">
+          <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+              <button ngbDropdownToggle type="button" class="ml-3 white-button-right-icon">
+                Status
+                <span *ngIf="order_details.existing_status == 'delivered'"
+                  class="material-symbols-rounded icons delivered-bg-dot p-0 ml-2"
+                  style="margin-right: 2px">check_circle</span>
+                <span class="status-dot place-bg-dot" *ngIf="order_details.existing_status == 'placed'"></span>
+                <span class="status-dot conform-bg-dot" *ngIf="order_details.existing_status == 'confirmed'"></span>
+                <span class="status-dot dispatch-bg-dot" *ngIf="order_details.existing_status == 'dispatched'"></span>
+                <span *ngIf="order_details.existing_status == 'cancelled'"
+                  class="material-symbols-rounded icons cancel-bg-dot p-0 ml-2" style="margin-right: 2px">cancel</span>
+                {{ order_details.existing_status | titlecase }}
+                <span *ngIf="params?.type == 'live'" class="material-symbols-rounded">navigate_next</span>
+              </button>
+              <div *ngIf="params?.type == 'live'" class="dropdown-menu" ngbDropdownMenu>
+                <button *ngIf="order_details.order_status == 'confirmed'" (click)="
+                    errorMsg = null;
+                    btnLoader = false;
+                    modalService.open(updateStatusModal, { centered: true })
+                  " class="dropdown-item">
+                  <span class="material-symbols-rounded">done</span>Mark as
+                  Confirmed
+                </button>
+                <ng-container *ngIf="order_details.order_status == 'dispatched'">
+                  <button *ngIf="
+                      order_details.order_type != 'pickup' &&
+                      commonService.courier_partners.length &&
+                      !order_details?.cp_status
+                    " (click)="
+                      courierForm = {};
+                      modalService.open(cpModal, {
+                        windowClass: 'scroll-modal-xl',
+                        scrollable: true
+                      })
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Create
+                    Courier Order
+                  </button>
+                  <button *ngIf="
+                      !commonService.courier_partners.length ||
+                      order_details?.cp_status ||
+                      order_details.order_type == 'pickup'
+                    " (click)="
+                      errorMsg = null;
+                      btnLoader = false;
+                      modalService.open(updateStatusModal, { centered: true })
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded">local_shipping</span>Mark as Dispatched
+                  </button>
+                </ng-container>
+                <button *ngIf="order_details.order_status == 'delivered'" (click)="
+                    errorMsg = null;
+                    btnLoader = false;
+                    modalService.open(updateStatusModal, { centered: true })
+                  " class="dropdown-item">
+                  <span class="material-symbols-rounded">fact_check</span>Mark
+                  as Delivered
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- new -->
+          <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end"
+              [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
+              <button ngbDropdownToggle type="button" [ngClass]="
+                  commonService.desktop_device
+                    ? 'white-button-right-icon ml-3'
+                    : 'iconbutton'
+                ">
+                <span class="material-symbols-rounded mr-1"
+                  [ngClass]="commonService.desktop_device ? '' : 'btnwhite'">more_horiz</span>{{
+                commonService.desktop_device ? "More Options" : "" }}
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <a href="https://yourstore.io/invoice/product/{{
+                    commonService.store_details?._id
+                  }}/{{ order_details._id }}" target="_blank" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">receipt</span>View Invoice
+                </a>
+                <a *ngIf="commonService.store_details._id==configData.chettinad_id"
+                  href="https://yourstore.io/invoice/staff-product/{{commonService.store_details?._id}}/{{order_details._id}}" target="_blank" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">receipt</span>Staff Invoice
+                </a>
+                <ng-container *ngIf="
+                    !params?.coupon_id &&
+                    !order_details.delivered_on &&
+                    commonService.store_details?.login_type != 'vendor'
+                  ">
+                  <button *ngIf="params?.type == 'live'" (click)="
+                      cancelOrder(
+                        { shipping_cost: order_details.shipping_cost },
+                        cancelModal,
+                        'cancel'
+                      )
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded dropdown_icon">cancel</span>Cancel Order
+                  </button>
+                  <button *ngIf="order_details.cancelExists" (click)="
+                      cancelOrder(
+                        { shipping_cost: order_details.shipping_cost },
+                        cancelModal,
+                        'undo'
+                      )
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded dropdown_icon">undo</span>Undo Cancel
+                  </button>
+                </ng-container>
+                <button *ngIf="!params?.coupon_id" (click)="onResendMail(resendMailModal)" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">forward_to_inbox</span>Resend Mail
+                </button>
+                <a *ngIf="customerContNum" target="blank" href="https://api.whatsapp.com/send?phone={{
+                    customerContNum
+                  }}&text=" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">chat</span>WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex px-0">
+      <div class="col-12 col-md-6 mb-3">
+        <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+          <div class="icons mb-0">
+            <span class="material-symbols-rounded">sell</span>
+          </div>
+          <div class="order-details-cardcontent">
+            <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order ID</label>
+            <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+              #{{ order_details.order_number }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mb-3">
+        <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+          <div class="icons mb-0">
+            <span class="material-symbols-rounded">payments</span>
+          </div>
+          <div class="order-details-cardcontent">
+            <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Payment Status</label>
+            <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+              {{ order_details.payment_success ? "Paid" : "Pending" }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mb-3">
+        <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+          <div class="icons mb-0">
+            <span class="material-symbols-rounded">calendar_month</span>
+          </div>
+          <div class="order-details-cardcontent">
+            <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+              {{ params?.type == "inactive" ? "Attempted" : "Order" }} Date
+            </label>
+            <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+              {{ order_details.created_on | date : "dd MMM y" }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- shipping card -->
+      <ng-container
+        *ngIf="commonService.store_details._id != configData.chettinad_id || order_details.order_type == 'delivery'">
+        <div *ngIf="params?.type != 'inactive'" class="col-12 col-md-6 mb-3">
+          <div class="order-details-card d-flex justify-content-start align-items-center flex-row"
+            style="position: relative">
+            <div class="icons mb-0">
+              <span class="material-symbols-rounded">local_shipping</span>
+            </div>
+            <!-- Shipping Info -->
+            <div *ngIf="!order_details.cp_exists" class="order-details-cardcontent">
+              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                <ng-container *ngIf="order_details.order_type != 'pickup'">
+                  {{
+                  order_details.shipping_method?.delivery_method
+                  ? "Delivery"
+                  : "Shipping"
+                  }}
+                  Details
+                </ng-container>
+                <ng-container *ngIf="order_details.order_type == 'pickup'">Pickup Details</ng-container>
+              </label>
+              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                <ng-container *ngIf="!order_details.shipping_method?.delivery_method">
+                  {{ order_details.shipping_method?.tracking_number }}
+                  <ng-container *ngIf="!order_details.shipping_method?.tracking_number">Not Shipped</ng-container>
+                </ng-container>
+                <ng-container *ngIf="order_details.shipping_method?.delivery_method">
+                  {{ order_details.shipping_method?.delivery_date }}<br />
+                  {{ order_details.shipping_method?.delivery_time }}
+                </ng-container>
+              </span>
+              <!-- actions -->
+              <div class="ship" ngbDropdown role="group" aria-label="Select all"
+                *ngIf="!params?.coupon_id && params?.type == 'live'"
+                placement="bottom-start bottom-end top-start top-end">
+                <div ngbDropdown role="group" aria-label="Select all"
+                  placement="bottom-start bottom-end top-start top-end">
+                  <button ngbDropdownToggle type="button" class="light-font">
+                    <span class="material-symbols-rounded ship-abs">more_vert</span>
+                  </button>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <button (click)="onEdit('shipping', shippingModal)" class="dropdown-item">
+                      <span class="material-symbols-rounded">edit</span>Edit
+                      Shipping
+                    </button>
+                    <ng-container *ngIf="order_details.shipping_method?.tracking_number">
+                      <button (click)="
+                          getPackingDetails(
+                            null,
+                            order_details,
+                            customPackageSlipModal
+                          )
+                        " class="dropdown-item">
+                        <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                      </button>
+                      <a class="dropdown-item" [href]="order_details.shipping_method?.tracking_link" target="_blank">
+                        <span class="material-symbols-rounded">local_shipping</span>Track Order
+                      </a>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Courier Partner Info -->
+            <div *ngIf="order_details.cp_exists" class="order-details-cardcontent">
+              <ng-container *ngFor="let x of order_details.cp_orders">
+                <ng-container *ngIf="x.status == 'active'">
+                  <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                    {{
+                    order_details.shipping_method?.delivery_method
+                    ? "Delivery"
+                    : "Shipping"
+                    }}
+                    Details
+                  </label>
+                  <div class="">
+                    <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                      {{ x.order_id }}
+                    </span>
+                    <span *ngIf="order_details.cp_live_status" class="tooltip-container d-flex ml-1">
+                      <span class="tooltip" *ngIf="order_details.tooltip">{{
+                        order_details.cp_live_status
+                        }}</span>
+                      <span class="material-symbols-rounded" style="font-size: 18px"
+                        (click)="order_details.tooltip = !order_details.tooltip">info</span>
+                    </span>
+                  </div>
+                  <!-- actions -->
+                  <div class="ship" ngbDropdown role="group" aria-label="Select all" *ngIf="params?.type == 'live'"
+                    placement="bottom-start bottom-end top-start top-end">
+                    <div ngbDropdown role="group" aria-label="Select all"
+                      placement="bottom-start bottom-end top-start top-end">
+                      <button ngbDropdownToggle type="button" class="light-font">
+                        <span class="material-symbols-rounded ship-abs">more_vert</span>
+                      </button>
+                      <div class="dropdown-menu" ngbDropdownMenu>
+                        <button *ngIf="!params?.coupon_id" (click)="onEdit('shipping', shippingModal)"
+                          class="dropdown-item">
+                          <span class="material-symbols-rounded">edit</span>Edit
+                          Shipping
+                        </button>
+                        <!-- <ng-container *ngIf="order_details?.existing_status!='dispatched'"> -->
+                        <ng-container *ngIf="x.name=='Delhivery'">
+                          <button (click)="
+                              courierForm = {
+                                type: x.name,
+                                order_number: order_details.order_number
+                              };
+                              modalService.open(updateCourierModal, {
+                                centered: true
+                              })
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">local_shipping</span>Update Address
+                          </button>
+                          <button (click)="
+                              courierForm = {
+                                type: x.name,
+                                order_number: order_details.order_number
+                              };
+                              modalService.open(cancelCourierModal, {
+                                centered: true
+                              })
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">cancel</span>
+                            Cancel Order
+                          </button>
+                          <button *ngIf="params?.type != 'inactive'" (click)="
+                              getCpOrderDetails(
+                                {
+                                  type: x.name,
+                                  wbn: x.order_id,
+                                  order_number: order_details.order_number,
+                                  invoice_number: order_details.invoice_number
+                                },
+                                packageSlipModal
+                              )
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                          </button>
+                        </ng-container>
+                        <ng-container *ngIf="x.name=='DHL'">
+                          <button *ngIf="params?.type != 'inactive'" (click)="
+                              courierForm = {
+                                type: x.name,
+                                order_number: order_details.order_number,
+                                requestor_name:
+                                  commonService.store_details?.company_details
+                                    ?.contact_person
+                              };
+                              modalService.open(cancelCourierModal, {
+                                centered: true
+                              })
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">cancel</span>Cancel Order
+                          </button>
+                          <a class="dropdown-item" target="_blank" href="{{
+                              imgBaseUrl +
+                                'uploads/' +
+                                commonService.store_details._id +
+                                '/packing-slip/' +
+                                x.order_id +
+                                '.pdf'
+                            }}">
+                            <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                          </a>
+                        </ng-container>
+                        <ng-container *ngIf="x.name=='Shippo' || x.name=='Speedaf'">
+                          <button *ngIf="params?.type != 'inactive'" (click)="
+                              courierForm = {
+                                type: x.name,
+                                order_number: order_details.order_number
+                              };
+                              modalService.open(cancelCourierModal, {
+                                centered: true
+                              })
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">cancel</span>Cancel Order
+                          </button>
+                          <a class="dropdown-item" target="_blank" [href]="x.packing_slip">
+                            <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                          </a>
+                        </ng-container>
+                        <a *ngIf="x.name=='Aramex' || x.name=='DHL INDIA'" class="dropdown-item" target="_blank" [href]="x.packing_slip">
+                          <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                        </a>
+                        <a *ngIf="x.invoice && x.name=='DHL INDIA'" class="dropdown-item" target="_blank" [href]="x.invoice">
+                          <span class="material-symbols-rounded">document_scanner</span>Invoice
+                        </a>
+                        <button *ngIf="x.name=='Others' || x.name=='DHL INDIA'" (click)="
+                            courierForm = {
+                              type: x.name,
+                              order_number: order_details.order_number
+                            };
+                            modalService.open(cancelCourierModal, {
+                              centered: true
+                            })
+                          " class="dropdown-item">
+                          <span class="material-symbols-rounded">cancel</span>Cancel Order
+                        </button>
+                        <button *ngIf="x?.name == 'EMS'" (click)="
+                            getPackingDetails(
+                              null,
+                              order_details,
+                              customPackageSlipModal
+                            )
+                          " class="dropdown-item">
+                          <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                        </button>
+                        <!-- </ng-container> -->
+                        <a class="dropdown-item" [href]="order_details.shipping_method?.tracking_link" target="_blank">
+                          <span class="material-symbols-rounded">local_shipping</span>Track Order
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <!-- item list -->
+    <ng-container *ngIf="itemList?.length">
+      <div class="col-md-8 col-12 mb-3 mt-2">
+        <h5 class="dark-font">Items</h5>
+      </div>
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          <!-- header -->
+          <div class="list-item data-list-card type5-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-10 col-7 first_col px-0 cursor">
+              <p class="w-50 w-sm-100 m-b-0 font-12 dark-font">Product</p>
+              <p class="w-25 w-sm-100 m-b-0 font-12 dark-font">SKU</p>
+              <p class="w-25 w-sm-100 m-b-0 font-12 dark-font text-right">
+                QTY
+              </p>
+            </div>
+            <div class="col-md-2 col-5 first_col px-0 d-flex" style="margin-bottom: 0px">
+              <p class="m-b-0 w-100 w-sm-100 font-12 dark-font text-right">
+                Total
+              </p>
+            </div>
+          </div>
+          <!-- list -->
+          <ng-container *ngFor="let x of itemList; let i = index">
+            <div *ngIf="
+                commonService.store_details?.login_type != 'vendor' ||
+                x.vendor_id == commonService.vendor_details?._id
+              " class="list-item flex-grow data-list-card type5-card" style="flex-direction: column">
+              <div *ngIf="x.item_status" class="p-0 m-0 col-md-12 cancel-info">
+                <span>
+                  <ng-container *ngIf="x.item_status == 'c_requested'">Cancellation Requested</ng-container>
+                  <ng-container *ngIf="x.item_status == 'c_confirmed'">Cancelled</ng-container>
+                  <ng-container *ngIf="x.item_status == 'c_declined'">Cancellation Request Declined</ng-container>
+                  <i (click)="
+                      itemInfo = x;
+                      modalService.open(cancelItemInfoModal, { centered: true })
+                    " class="material-icons-outlined">info</i>
+                </span>
+              </div>
+              <div class="row m-0 w-100">
+                <div class="col-md-10 col-10 first_col px-0 cursor">
+                  <div class="d-flex align-items-center w-50 w-sm-100">
+                    <img [src]="imgBaseUrl + x.image" alt="product" />
+                    <div class="pl-sm-3 pl-md-3 pl-3 details-content">
+                      <p class="m-b-0 font-12 dark-font">
+                        {{ x.name }}
+                        <ng-container *ngIf="x.multi_addon_list?.length && x.addon_price">
+                          - {{ x.discounted_price | currency : commonService.store_currency?.country_code }}
+                        </ng-container>
+                      </p>
+                      <!-- variants -->
+                      <ng-container *ngIf="x.variant_status">
+                        <p *ngFor="let y of x.variant_types" class="m-b-0 font-12 dark-font">
+                          {{ y.name }}:
+                          <span class="font-12 light-font">{{ y.value }}</span>
+                        </p>
+                      </ng-container>
+                      <!-- comments -->
+                      <p *ngIf="x.comments" class="m-b-0 font-12 dark-font">
+                        Comments:
+                        <span class="font-12 light-font">{{ x.comments }}</span>
+                      </p>
+                      <!-- slot details -->
+                      <p *ngIf="x.slot_details" class="m-b-0 font-12 dark-font">
+                        Delivery on:
+                        <span class="font-12 light-font">{{ x.slot_details?.date | date : "dd MMM y" }} ({{
+                          x.slot_details?.slot
+                          }})</span>
+                      </p>
+                      <!-- addon -->
+                      <ng-container *ngIf="x.addon_status">
+                        <p class="m-b-0 font-12 dark-font">
+                          Addon:
+                          <span *ngIf="x.selected_addon" class="font-12"
+                            (click)="(x.customization_status && x.customized_model?.name)? onViewCustomization(x, order_details.order_number, customizationModal): null"
+                            [ngClass]="(x.customization_status && x.customized_model?.name)? 'color': 'light-font'">{{
+                            x.selected_addon?.name }}</span>
+
+                        </p>
+                        <ng-container *ngIf="x.multi_addon_list?.length">
+                          <p class="light-font" *ngFor="let ad of x.multi_addon_list">
+                            {{ad.name}} <ng-container *ngIf="ad.price"> - {{ ad.price | currency :
+                              commonService.store_currency?.country_code }}</ng-container>
+                          </p>
+                        </ng-container>
+                      </ng-container>
+                      <!-- customizarion -->
+                      <ng-container *ngIf="x.customization_status">
+                        <p *ngIf="x.customized_model?.sizing_list?.length > 1" class="m-b-0 font-12 dark-font">
+                          {{
+                          x.customized_model.sizing_list[
+                          x.customized_model.sizing_list.length - 2
+                          ].value[0].unique_name
+                          }}
+                          -
+                          {{
+                          x.customized_model.sizing_list[
+                          x.customized_model.sizing_list.length - 1
+                          ].value[0].unique_name
+                          }}
+                        </p>
+                        <p (click)="
+                            onViewCustomization(
+                              x,
+                              order_details.order_number,
+                              customizationModal
+                            )
+                          " class="m-b-0 font-12 color">
+                          {{ x.customized_model?.name }}
+                        </p>
+                        <div *ngIf="!params?.coupon_id && params?.type == 'live'" class="btn-group" ngbDropdown
+                          role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                          <button class="light-button" ngbDropdownToggle>
+                            <span class="material-symbols-rounded">Edit</span>Edit
+                          </button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <button *ngIf="x.customized_model?.custom_list?.length" class="dropdown-item" (click)="
+                                itemIndex = i;
+                                onEditCustomization(
+                                  x.customized_model,
+                                  editCustomModal
+                                )
+                              ">
+                              Customization
+                            </button>
+                            <button *ngIf="x.customized_model?.mm_sets?.length" class="dropdown-item" (click)="
+                                itemIndex = i;
+                                onEditMeasurement(editMeasurementModal)
+                              ">
+                              Measurement
+                            </button>
+                            <button *ngIf="x.customized_model?.notes_list?.length" class="dropdown-item" (click)="
+                                itemIndex = i; onEditNotes(editNotesModal)
+                              ">
+                              Notes
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <!-- sku & qty -->
+                      <ng-container *ngIf="!commonService.desktop_device">
+                        <p class="w-20 w-sm-100 m-b-0 font-12 dark-font">
+                          SKU:
+                          <span class="font-12 light-font">{{ x.sku }}</span>
+                        </p>
+                        <p class="w-20 w-sm-100 m-b-0 font-12 dark-font">
+                          QTY:
+                          <span class="font-12 light-font">{{ x.quantity }}
+                            {{ x.unit ? x.unit : "Qty" }}</span>
+                        </p>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <!-- sku & qty -->
+                  <ng-container *ngIf="commonService.desktop_device">
+                    <p class="w-25 w-sm-100 m-b-0 font-12 light-font">
+                      {{ x.sku }}
+                    </p>
+                    <p class="w-25 w-sm-100 m-b-0 font-12 light-font text-light text-right">
+                      {{ x.quantity }} {{ x.unit ? x.unit : "Qty" }}
+                    </p>
+                  </ng-container>
+                </div>
+                <!-- price -->
+                <div class="col-md-2 col-2 first_col px-0 d-flex">
+                  <p class="m-b-0 font-12 text-light d-flex medium-font justify-content-end w-100 w-sm-100 text-right"
+                    [ngClass]="x.item_status == 'c_confirmed' ? 'strike' : ''">
+                    {{
+                    x.item_price
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <!-- total footer -->
+          <div class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Item Total</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{
+                order_details.sub_total
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details?.gift_wrapper > 0" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Gift Wrapping</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{
+                order_details.gift_wrapper
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details?.packaging_charges > 0" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Packaging Charges</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{
+                order_details.packaging_charges
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details.order_type != 'pickup'" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Shipping</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                <s *ngIf="
+                    order_details.osc >= 0 &&
+                    order_details.osc != order_details.shipping_cost
+                  ">
+                  {{
+                  order_details.osc
+                  | currency : commonService.store_currency?.country_code
+                  }}
+                </s>
+                {{
+                order_details.shipping_cost
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details?.cod_charges > 0" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">COD Charges</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{
+                order_details.cod_charges
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details?.discount_amount > 0" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Discount</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                -{{
+                order_details.discount_amount
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <div *ngIf="order_details?.shipping_discount > 0" class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Shipping Discount</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                -{{
+                order_details.shipping_discount
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+          <ng-container *ngIf="order_details.final_price - order_details.refund_amount > 0">
+            <div *ngIf="
+                params?.type != 'cancelled' ||
+                order_details.payment_details?.name == 'COD'
+              " class="data-list-card type5-card">
+              <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                <p class="w-sm-80 m-b-0 font-12 light-font">Grand Total</p>
+              </div>
+              <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                <p class="m-b-0 font-12 text-light medium-font">
+                  {{
+                  order_details.final_price - order_details.refund_amount
+                  | currency : commonService.store_currency?.country_code
+                  }}
+                </p>
+              </div>
+            </div>
+          </ng-container>
+          <div *ngIf="
+              order_details?.refund_amount > 0 &&
+              order_details.payment_details?.name != 'COD'
+            " class="data-list-card type5-card">
+            <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+              <p class="w-sm-80 m-b-0 font-12 light-font">Refund Amount</p>
+            </div>
+            <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+              <p class="m-b-0 font-12 text-light medium-font">
+                {{
+                order_details.refund_amount
+                | currency : commonService.store_currency?.country_code
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- activity -->
+    <ng-container *ngIf="params?.type != 'inactive'">
+      <div class="col-md-8 col-12 mb-3 mt-3">
+        <h5 class="mb-4 dark-font">Activity</h5>
+      </div>
+      <!-- desktop -->
+      <div class="data-list-card-wrapper" *ngIf="commonService.desktop_device">
+        <div class="data-list-card-inner">
+          <div class="list-item d-flex type5-card align-items-center">
+            <div class="activity-content mx-2">
+              <p class="m-b-0 dark-font font-14 medium-font">Placed</p>
+              <span class="font-12 medium-font">{{
+                order_details.created_on | date : "dd MMM y hh:mm a"
+                }}</span>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.confirmed_on" class="d-flex align-items-center"
+              [ngClass]="{ desktop_active: !order_details.confirmed_on }">
+              <div class="activity-border"></div>
+              <div class="activity-border-dot conform-bg-dot"></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Confirmed</p>
+                <span *ngIf="order_details.confirmed_on" class="font-12 medium-font">
+                  {{ order_details.confirmed_on | date : "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.dispatched_on" class="d-flex align-items-center"
+              [ngClass]="{ desktop_active: !order_details.dispatched_on }">
+              <div class="activity-border"></div>
+              <div class="activity-border-dot dispatch-bg-dot"></div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Dispatched</p>
+                <span *ngIf="order_details.dispatched_on" class="font-12 medium-font">
+                  {{ order_details.dispatched_on | date : "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.delivered_on" class="d-flex align-items-center"
+              [ngClass]="{ desktop_active: !order_details.delivered_on }">
+              <div class="activity-border"></div>
+              <div class="activity-border-dot" *ngIf="!order_details.delivered_on"></div>
+              <div class="d-flex" *ngIf="order_details.delivered_on">
+                <span class="material-symbols-rounded icons delivered-bg-dot">check_circle</span>
+              </div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Delivered</p>
+                <span *ngIf="order_details.delivered_on" class="font-12 medium-font">
+                  {{ order_details.delivered_on | date : "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="order_details.cancelled_on" class="d-flex align-items-center">
+              <div class="activity-border"></div>
+              <div class="d-flex">
+                <span class="material-symbols-rounded icons cancel-bg-dot">cancel</span>
+              </div>
+              <div class="activity-content mx-2">
+                <p class="m-b-0 dark-font font-14 medium-font">Cancelled</p>
+                <span class="font-12 medium-font">
+                  {{ order_details.cancelled_on | date : "dd MMM y hh:mm a" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- mobile -->
+      <div class="mobile-view-activity" *ngIf="!commonService.desktop_device">
+        <div class="timeline">
+          <div class="events">
+            <div class="event">
+              <div class="knob">
+                <span class="place-bg-dot knob-dot"></span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Placed</h2>
+              </div>
+              <div class="description">
+                <p>
+                  {{ order_details.created_on | date : "dd MMM y hh:mm a" }}
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.confirmed_on" class="event"
+              [ngClass]="{ active: !order_details.confirmed_on }">
+              <div class="knob">
+                <span class="knob-dot" [ngClass]="order_details.confirmed_on ? 'conform-bg-dot' : ''"></span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Confirmed</h2>
+              </div>
+              <div *ngIf="order_details.confirmed_on" class="description">
+                <p>
+                  {{ order_details.confirmed_on | date : "dd MMM y hh:mm a" }}
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.dispatched_on" class="event"
+              [ngClass]="{ active: !order_details.dispatched_on }">
+              <div class="knob">
+                <span class="knob-dot dispatch-bg-dot"></span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Dispached</h2>
+              </div>
+              <div *ngIf="order_details.dispatched_on" class="description">
+                <p>
+                  {{ order_details.dispatched_on | date : "dd MMM y hh:mm a" }}
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="params?.type == 'live' || order_details.delivered_on" class="event"
+              [ngClass]="{ active: !order_details.delivered_on }">
+              <div class="knob" *ngIf="!order_details.delivered_on">
+                <span class="knob-dot"></span>
+              </div>
+              <div class="knob" *ngIf="order_details.delivered_on">
+                <span class="material-symbols-rounded icons delivered-bg-dot ml-0" style="top: 0px">check_circle</span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Delivered</h2>
+              </div>
+              <div *ngIf="order_details.delivered_on" class="description">
+                <p>
+                  {{ order_details.delivered_on | date : "dd MMM y hh:mm a" }}
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="order_details.cancelled_on" class="event">
+              <div class="knob">
+                <span class="material-symbols-rounded icons cancel-bg-dot ml-0" style="top: 0px">cancel</span>
+              </div>
+              <div class="date">
+                <h2 class="dark-font">Cancelled</h2>
+              </div>
+              <div class="description">
+                <p>
+                  {{ order_details.cancelled_on | date : "dd MMM y hh:mm a" }}
+                </p>
+              </div>
+            </div>
+            <div class="line"></div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- multi-vendor orders -->
+  <div *ngIf="order_details.vendor_list?.length" class="col-md-9 col-12 mb-3">
+    <div *ngFor="let vendor of order_details.vendor_list; let v = index" class="row mt-3">
+      <div class="col-12 col-md-5" [ngClass]="commonService.desktop_device ? '' : 'mb-3'">
+        <h5 class="dark-font m-b-0">
+          {{
+          commonService.store_details?.login_type == "vendor"
+          ? "Status"
+          : "Order " + (v + 1) + " - " + vendor.vendor_name
+          }}
+        </h5>
+      </div>
+      <div *ngIf="params?.type != 'inactive'"
+        class="col-12 col-md-7 d-flex justify-content-end align-items-center mb-3">
+        <div class="d-flex justify-content-end align-items-center status-split">
+          <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+              <button ngbDropdownToggle type="button" class="ml-3 white-button-right-icon">
+                Status
+                <span *ngIf="vendor.existing_status == 'delivered'"
+                  class="material-symbols-rounded icons delivered-bg-dot p-0 ml-2"
+                  style="margin-right: 2px">check_circle</span>
+                <span class="status-dot conform-bg-dot" *ngIf="vendor.existing_status == 'confirmed'"></span>
+                <span class="status-dot dispatch-bg-dot" *ngIf="vendor.existing_status == 'dispatched'"></span>
+                <span class="status-dot place-bg-dot" *ngIf="vendor.existing_status == 'placed'"></span>
+                <span *ngIf="vendor.existing_status == 'cancelled'"
+                  class="material-symbols-rounded icons cancel-bg-dot p-0 ml-2" style="margin-right: 2px">cancel</span>
+                {{ vendor.existing_status | titlecase }}
+                <span *ngIf="params?.type == 'live'" class="material-symbols-rounded">navigate_next</span>
+              </button>
+              <div *ngIf="params?.type == 'live'" class="dropdown-menu" ngbDropdownMenu>
+                <button *ngIf="vendor.order_status == 'confirmed'" (click)="
+                    errorMsg = null;
+                    btnLoader = false;
+                    vendorInfo = vendor;
+                    modalService.open(updateVendorStatusModal, {
+                      centered: true
+                    })
+                  " class="dropdown-item">
+                  <span class="material-symbols-rounded">done</span>Mark as
+                  Confirmed
+                </button>
+                <ng-container *ngIf="vendor.order_status == 'dispatched'">
+                  <button *ngIf="
+                      order_details.order_type != 'pickup' &&
+                      commonService.courier_partners.length &&
+                      !vendor?.cp_status
+                    " (click)="
+                      courierForm = { vendor_id: vendor.vendor_id };
+                      modalService.open(cpModal, {
+                        windowClass: 'scroll-modal-xl',
+                        scrollable: true
+                      })
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Create
+                    Courier Order
+                  </button>
+                  <button *ngIf="
+                      !commonService.courier_partners.length ||
+                      vendor?.cp_status ||
+                      order_details.order_type == 'pickup'
+                    " (click)="
+                      errorMsg = null;
+                      btnLoader = false;
+                      vendorInfo = vendor;
+                      modalService.open(updateVendorStatusModal, {
+                        centered: true
+                      })
+                    " class="dropdown-item">
+                    <span class="material-symbols-rounded">local_shipping</span>Mark as Dispatched
+                  </button>
+                </ng-container>
+                <button *ngIf="vendor.order_status == 'delivered'" (click)="
+                    errorMsg = null;
+                    btnLoader = false;
+                    vendorInfo = vendor;
+                    modalService.open(updateVendorStatusModal, {
+                      centered: true
+                    })
+                  " class="dropdown-item">
+                  <span class="material-symbols-rounded">fact_check</span>Mark
+                  as Delivered
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end"
+              [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
+              <button ngbDropdownToggle type="button" [ngClass]="
+                  commonService.desktop_device
+                    ? 'white-button-right-icon ml-3'
+                    : 'iconbutton'
+                ">
+                <span class="material-symbols-rounded mr-1"
+                  [ngClass]="commonService.desktop_device ? '' : 'btnwhite'">more_horiz</span>{{
+                commonService.desktop_device ? "More Options" : "" }}
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button *ngIf="
+                    order_details.payment_details?.name == 'COD' &&
+                    params?.type == 'live' &&
+                    commonService.store_details?.login_type != 'vendor'
+                  " class="dropdown-item" (click)="
+                    editForm = {
+                      order_number: vendor.order_number,
+                      vendor_id: vendor.vendor_id,
+                      payment_success: vendor.payment_success
+                    };
+                    modalService.open(markPaidModal, { centered: true })
+                  ">
+                  <span class="material-symbols-rounded dropdown_icon">payments</span>
+                  {{
+                  vendor.payment_success ? "Mark as Unpaid" : "Mark as Paid"
+                  }}
+                </button>
+                <a href="https://yourstore.io/invoice/product/{{
+                    commonService.store_details?._id
+                  }}/{{ order_details._id }}/{{ vendor.vendor_id }}" target="_blank" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">receipt</span>View Invoice
+                </a>
+                <a *ngIf="commonService.store_details._id==configData.chettinad_id"
+                href="https://yourstore.io/invoice/staff-product/{{commonService.store_details?._id}}/{{order_details._id}}/{{vendor.vendor_id}}" target="_blank" class="dropdown-item">
+                <span class="material-symbols-rounded dropdown_icon">receipt</span>Staff Invoice
+                </a>
+                <ng-container *ngIf="
+                    !params?.coupon_id &&
+                    !vendor.delivered_on &&
+                    commonService.store_details?.login_type != 'vendor'
+                  ">
+                  <button *ngIf="params?.type == 'live'" (click)="cancelOrder(vendor, cancelModal, 'cancel')"
+                    class="dropdown-item">
+                    <span class="material-symbols-rounded dropdown_icon">cancel</span>Cancel Order
+                  </button>
+                  <button *ngIf="vendor.cancelExists" (click)="cancelOrder(vendor, cancelModal, 'undo')"
+                    class="dropdown-item">
+                    <span class="material-symbols-rounded dropdown_icon">undo</span>Undo Cancel
+                  </button>
+                </ng-container>
+                <button *ngIf="!params?.coupon_id" (click)="
+                    vendorInfo = vendor; onResendVendorMail(resendMailModal)
+                  " class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">forward_to_inbox</span>Resend Mail
+                </button>
+                <a *ngIf="customerContNum" target="blank" href="https://api.whatsapp.com/send?phone={{
+                    customerContNum
+                  }}&text=" class="dropdown-item">
+                  <span class="material-symbols-rounded dropdown_icon">chat</span>WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 mb-3">
+        <div class="row d-flex px-0">
+          <div class="col-12 col-md-6 mb-3">
+            <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">sell</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order ID</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  #{{ vendor.order_number }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">payments</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Payment Status</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  <ng-container *ngIf="order_details.payment_details?.name != 'COD'">
+                    {{ order_details.payment_success ? "Paid" : "Pending" }}
+                  </ng-container>
+                  <ng-container *ngIf="order_details.payment_details?.name == 'COD'">
+                    {{ vendor.payment_success ? "Paid" : "Pending" }}
+                  </ng-container>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <div class="order-details-card d-flex justify-content-start align-items-center flex-row">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">calendar_month</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                  {{ params?.type == "inactive" ? "Attempted" : "Order" }} Date
+                </label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{ order_details.created_on | date : "dd MMM y" }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- shipping card -->
+          <ng-container
+            *ngIf="commonService.store_details._id != configData.chettinad_id || order_details.order_type == 'delivery'">
+            <div *ngIf="params?.type != 'inactive'" class="col-12 col-md-6 mb-3">
+              <div class="order-details-card d-flex justify-content-start align-items-center flex-row"
+                style="position: relative">
+                <div class="icons mb-0">
+                  <span class="material-symbols-rounded">local_shipping</span>
+                </div>
+                <!-- Shipping Info -->
+                <div *ngIf="!vendor.cp_exists" class="order-details-cardcontent">
+                  <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                    <ng-container *ngIf="order_details.order_type != 'pickup'">
+                      {{
+                      vendor.shipping_method?.delivery_method
+                      ? "Delivery"
+                      : "Shipping"
+                      }}
+                      Details
+                    </ng-container>
+                    <ng-container *ngIf="order_details.order_type == 'pickup'">Pickup Details</ng-container>
+                  </label>
+                  <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                    <ng-container *ngIf="!vendor.shipping_method?.delivery_method">
+                      {{ vendor.shipping_method?.tracking_number }}
+                      <ng-container *ngIf="!vendor.shipping_method?.tracking_number">Not Shipped</ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="vendor.shipping_method?.delivery_method">
+                      {{ vendor.shipping_method?.delivery_date }}<br />
+                      {{ vendor.shipping_method?.delivery_time }}
+                    </ng-container>
+                  </span>
+                  <!-- actions -->
+                  <div class="ship" ngbDropdown role="group" aria-label="Select all" *ngIf="
+                      !params?.coupon_id &&
+                      params?.type == 'live' &&
+                      commonService.store_details?.login_type != 'vendor'
+                    " placement="bottom-start bottom-end top-start top-end">
+                    <div ngbDropdown role="group" aria-label="Select all"
+                      placement="bottom-start bottom-end top-start top-end">
+                      <button ngbDropdownToggle type="button" class="light-font">
+                        <span class="material-symbols-rounded ship-abs">more_vert</span>
+                      </button>
+                      <div class="dropdown-menu" ngbDropdownMenu>
+                        <button (click)="
+                            onEditVendorShipping(vendor.vendor_id, shippingModal)
+                          " class="dropdown-item">
+                          <span class="material-symbols-rounded">edit</span>Edit
+                          Shipping
+                        </button>
+                        <ng-container *ngIf="vendor.shipping_method?.tracking_number">
+                          <button (click)="
+                              getPackingDetails(
+                                vendor.vendor_id,
+                                order_details,
+                                customPackageSlipModal
+                              )
+                            " class="dropdown-item">
+                            <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                          </button>
+                          <a class="dropdown-item" [href]="vendor.shipping_method?.tracking_link" target="_blank">
+                            <span class="material-symbols-rounded">local_shipping</span>Track Order
+                          </a>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Courier Partner Info -->
+                <div *ngIf="vendor.cp_exists" class="order-details-cardcontent">
+                  <ng-container *ngFor="let x of vendor.cp_orders">
+                    <ng-container *ngIf="x.status == 'active'">
+                      <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">
+                        {{
+                        vendor.shipping_method?.delivery_method
+                        ? "Delivery"
+                        : "Shipping"
+                        }}
+                        Details
+                      </label>
+                      <div class="">
+                        <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                          {{ x.order_id }}
+                        </span>
+                        <span *ngIf="vendor.cp_live_status" class="tooltip-container d-flex ml-1">
+                          <span class="tooltip" *ngIf="vendor.tooltip">{{
+                            vendor.cp_live_status
+                            }}</span>
+                          <span class="material-symbols-rounded" style="font-size: 18px"
+                            (click)="vendor.tooltip = !vendor.tooltip">info</span>
+                        </span>
+                      </div>
+                      <!-- actions -->
+                      <div class="ship" ngbDropdown role="group" aria-label="Select all" *ngIf="params?.type == 'live'"
+                        placement="bottom-start bottom-end top-start top-end">
+                        <div ngbDropdown role="group" aria-label="Select all"
+                          placement="bottom-start bottom-end top-start top-end">
+                          <button ngbDropdownToggle type="button" class="light-font">
+                            <span class="material-symbols-rounded ship-abs">more_vert</span>
+                          </button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <button *ngIf="!params?.coupon_id" (click)="
+                                onEditVendorShipping(
+                                  vendor.vendor_id,
+                                  shippingModal
+                                )
+                              " class="dropdown-item">
+                              <span class="material-symbols-rounded">edit</span>Edit Shipping
+                            </button>
+                            <!-- <ng-container *ngIf="vendor?.existing_status!='dispatched'"> -->
+                            <ng-container *ngIf="x.name=='Delhivery'">
+                              <button (click)="
+                                  courierForm = {
+                                    type: x.name,
+                                    order_number: vendor.order_number,
+                                    vendor_id: vendor.vendor_id
+                                  };
+                                  modalService.open(updateCourierModal, {
+                                    centered: true
+                                  })
+                                " class="dropdown-item">
+                                <span class="material-symbols-rounded">receipt</span>Update Address
+                              </button>
+                              <button (click)="
+                                  courierForm = {
+                                    type: x.name,
+                                    order_number: vendor.order_number,
+                                    vendor_id: vendor.vendor_id
+                                  };
+                                  modalService.open(cancelCourierModal, {
+                                    centered: true
+                                  })
+                                " class="dropdown-item">
+                                <span class="material-symbols-rounded">cancel</span>
+                                Cancel Order
+                              </button>
+                              <button *ngIf="params?.type != 'inactive'" (click)="
+                                  getCpOrderDetails(
+                                    {
+                                      type: x.name,
+                                      wbn: x.order_id,
+                                      order_number: vendor.order_number,
+                                      invoice_number: vendor.invoice_number
+                                    },
+                                    packageSlipModal
+                                  )
+                                " class="dropdown-item">
+                                <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                              </button>
+                            </ng-container>
+                            <ng-container *ngIf="x.name=='DHL'">
+                              <button *ngIf="params?.type != 'inactive'" (click)="
+                                  courierForm = {
+                                    type: x.name,
+                                    order_number: vendor.order_number,
+                                    vendor_id: vendor.vendor_id,
+                                    requestor_name:
+                                      commonService.store_details?.company_details
+                                        ?.contact_person
+                                  };
+                                  modalService.open(cancelCourierModal, {
+                                    centered: true
+                                  })
+                                " class="dropdown-item">
+                                <span class="material-symbols-rounded">receipt</span>Cancel Order
+                              </button>
+                              <a class="dropdown-item" target="_blank" href="{{
+                                  imgBaseUrl +
+                                    'uploads/' +
+                                    commonService.store_details._id +
+                                    '/packing-slip/' +
+                                    x.order_id +
+                                    '.pdf'
+                                }}">
+                                <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                              </a>
+                            </ng-container>
+                            <ng-container *ngIf="x.name=='Shippo' || x.name=='Speedaf'">
+                              <button *ngIf="params?.type != 'inactive'" (click)="
+                                  courierForm = {
+                                    type: x.name,
+                                    order_number: vendor.order_number,
+                                    vendor_id: vendor.vendor_id
+                                  };
+                                  modalService.open(cancelCourierModal, {
+                                    centered: true
+                                  })
+                                " class="dropdown-item">
+                                <span class="material-symbols-rounded">cancel</span>Cancel Order
+                              </button>
+                              <a class="dropdown-item" target="_blank" [href]="x.packing_slip">
+                                <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                              </a>
+                            </ng-container>
+                            <a *ngIf="x.name=='Aramex' || x.name=='DHL INDIA'" class="dropdown-item" target="_blank" [href]="x.packing_slip">
+                              <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                            </a>
+                            <a *ngIf="x.invoice && x.name=='DHL INDIA'" class="dropdown-item" target="_blank" [href]="x.invoice">
+                              <span class="material-symbols-rounded">document_scanner</span>Invoice
+                            </a>
+                            <button *ngIf="x.name=='Others' || x.name=='DHL INDIA'" (click)="
+                                courierForm = {
+                                  type: x.name,
+                                  order_number: vendor.order_number,
+                                  vendor_id: vendor.vendor_id
+                                };
+                                modalService.open(cancelCourierModal, {
+                                  centered: true
+                                })
+                              " class="dropdown-item">
+                              <span class="material-symbols-rounded">cancel</span>Cancel Order
+                            </button>
+                            <button *ngIf="x?.name == 'EMS'" (click)="
+                                getPackingDetails(
+                                  vendor.vendor_id,
+                                  order_details,
+                                  customPackageSlipModal
+                                )
+                              " class="dropdown-item">
+                              <span class="material-symbols-rounded">document_scanner</span>Packing Slip
+                            </button>
+                            <!-- </ng-container> -->
+                            <a class="dropdown-item" [href]="vendor.shipping_method?.tracking_link" target="_blank">
+                              <span class="material-symbols-rounded">local_shipping</span>Track Order
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <!-- item list -->
+        <ng-container *ngIf="itemList?.length">
+          <div class="col-md-8 col-12 mb-3 mt-2">
+            <h5 class="dark-font">Items</h5>
+          </div>
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              <!-- header -->
+              <div class="list-item data-list-card type5-card" *ngIf="commonService.desktop_device">
+                <div class="col-md-10 col-7 first_col px-0 cursor">
+                  <p class="w-50 w-sm-100 m-b-0 font-12 dark-font">Product</p>
+                  <p class="w-25 w-sm-100 m-b-0 font-12 dark-font">SKU</p>
+                  <p class="w-25 w-sm-100 m-b-0 font-12 dark-font text-right">
+                    QTY
+                  </p>
+                </div>
+                <div class="col-md-2 col-5 first_col px-0 d-flex" style="margin-bottom: 0px">
+                  <p class="m-b-0 w-100 w-sm-100 font-12 dark-font text-right">
+                    Total
+                  </p>
+                </div>
+              </div>
+              <!-- list -->
+              <ng-container *ngFor="let x of itemList; let i = index">
+                <div *ngIf="x.vendor_id == vendor.vendor_id" class="list-item data-list-card type5-card flex-grow"
+                  style="flex-direction: column">
+                  <div *ngIf="x.item_status" class="p-0 m-0 col-md-12 cancel-info">
+                    <span>
+                      <ng-container *ngIf="x.item_status == 'c_requested'">Cancellation Requested</ng-container>
+                      <ng-container *ngIf="x.item_status == 'c_confirmed'">Cancelled</ng-container>
+                      <ng-container *ngIf="x.item_status == 'c_declined'">Cancellation Request Declined</ng-container>
+                      <i (click)="
+                          itemInfo = x;
+                          modalService.open(cancelItemInfoModal, {
+                            centered: true
+                          })
+                        " class="material-icons-outlined">info</i>
+                    </span>
+                  </div>
+                  <div class="row m-0 w-100">
+                    <div class="col-md-10 col-10 first_col px-0 cursor">
+                      <div class="d-flex align-items-center w-50 w-sm-100">
+                        <img [src]="imgBaseUrl + x.image" alt="product" />
+                        <div class="pl-sm-3 pl-md-3 pl-3 details-content">
+                          <p class="m-b-0 font-12 dark-font w-sm-100">
+                            {{ x.name }}
+                            <ng-container *ngIf="x.multi_addon_list?.length && x.addon_price">
+                              - {{ x.discounted_price | currency : commonService.store_currency?.country_code }}
+                            </ng-container>
+                          </p>
+                          <!-- variants -->
+                          <ng-container *ngIf="x.variant_status">
+                            <p *ngFor="let y of x.variant_types" class="m-b-0 font-12 dark-font">
+                              {{ y.name }}:
+                              <span class="font-12 light-font">{{
+                                y.value
+                                }}</span>
+                            </p>
+                          </ng-container>
+                          <!-- comments -->
+                          <p *ngIf="x.comments" class="m-b-0 font-12 dark-font">
+                            Comments:
+                            <span class="font-12 light-font">{{
+                              x.comments
+                              }}</span>
+                          </p>
+                          <!-- slot details -->
+                          <p *ngIf="x.slot_details" class="m-b-0 font-12 dark-font">
+                            Delivery on:
+                            <span class="font-12 light-font">{{
+                              x.slot_details?.date | date : "dd MMM y"
+                              }}
+                              ({{ x.slot_details?.slot }})</span>
+                          </p>
+                          <!-- addon -->
+                          <ng-container *ngIf="x.addon_status">
+                            <p class="m-b-0 font-12 dark-font">
+                              Addon:
+                              <span *ngIf="x.selected_addon" class="font-12"
+                                (click)="(x.customization_status && x.customized_model?.name)? onViewCustomization(x, vendor.order_number, customizationModal): null"
+                                [ngClass]="(x.customization_status && x.customized_model?.name)? 'color': 'light-font'">{{
+                                x.selected_addon?.name }}</span>
+                            </p>
+                            <ng-container *ngIf="x.multi_addon_list?.length">
+                              <p class="light-font" *ngFor="let ad of x.multi_addon_list">
+                                {{ad.name}} <ng-container *ngIf="ad.price"> - {{ ad.price | currency :
+                                  commonService.store_currency?.country_code }}</ng-container>
+                              </p>
+                            </ng-container>
+                          </ng-container>
+                          <!-- customization -->
+                          <ng-container *ngIf="x.customization_status">
+                            <p *ngIf="x.customized_model?.name" (click)="
+                                onViewCustomization(
+                                  x,
+                                  vendor.order_number,
+                                  customizationModal
+                                )
+                              " class="m-b-0 font-12 color">
+                              {{ x.customized_model?.name }}
+                            </p>
+                            <div *ngIf="
+                                !params?.coupon_id &&
+                                params?.type == 'live' &&
+                                commonService.store_details?.login_type !=
+                                  'vendor'
+                              " class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                              placement="bottom-start bottom-end top-start top-end">
+                              <button class="btn btn-wide black-outline-btn mr-3" ngbDropdownToggle>
+                                <span class="black-outline-txt">Edit</span>
+                              </button>
+                              <div class="dropdown-menu" ngbDropdownMenu>
+                                <button *ngIf="
+                                    x.customized_model?.custom_list?.length
+                                  " class="dropdown-item" (click)="
+                                    itemIndex = i;
+                                    onEditCustomization(
+                                      x.customized_model,
+                                      editCustomModal
+                                    )
+                                  ">
+                                  Customization
+                                </button>
+                                <button *ngIf="x.customized_model?.mm_sets?.length" class="dropdown-item" (click)="
+                                    itemIndex = i;
+                                    onEditMeasurement(editMeasurementModal)
+                                  ">
+                                  Measurement
+                                </button>
+                                <button *ngIf="x.customized_model?.notes_list?.length" class="dropdown-item" (click)="
+                                    itemIndex = i; onEditNotes(editNotesModal)
+                                  ">
+                                  Notes
+                                </button>
+                              </div>
+                            </div>
+                          </ng-container>
+                          <!-- sku & qty -->
+                          <ng-container *ngIf="!commonService.desktop_device">
+                            <p class="w-20 w-sm-100 m-b-0 font-12 dark-font">
+                              SKU:
+                              <span class="font-12 light-font">{{
+                                x.sku
+                                }}</span>
+                            </p>
+                            <p class="w-20 w-sm-100 m-b-0 font-12 dark-font">
+                              QTY:
+                              <span class="font-12 light-font">{{ x.quantity }}
+                                {{ x.unit ? x.unit : "Qty" }}</span>
+                            </p>
+                          </ng-container>
+                        </div>
+                      </div>
+                      <!-- sku & qty -->
+                      <ng-container *ngIf="commonService.desktop_device">
+                        <p class="w-25 w-sm-100 m-b-0 font-12 light-font">
+                          {{ x.sku }}
+                        </p>
+                        <p class="w-25 w-sm-100 m-b-0 font-12 light-font text-light text-right">
+                          {{ x.quantity }} {{ x.unit ? x.unit : "Qty" }}
+                        </p>
+                      </ng-container>
+                    </div>
+                    <!-- price -->
+                    <div class="col-md-2 col-2 first_col px-0 d-flex">
+                      <p class="m-b-0 font-12 text-light d-flex medium-font justify-content-end w-100 w-sm-100 text-right"
+                        [ngClass]="
+                          x.item_status == 'c_confirmed' ? 'strike' : ''
+                        ">
+                        {{
+                        x.item_price
+                        | currency
+                        : commonService.store_currency?.country_code
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <!-- total footer -->
+              <div class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">Item Total</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    {{
+                    vendor.sub_total
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div *ngIf="vendor?.gift_wrapper > 0" class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">Gift Wrapping</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    {{
+                    vendor.gift_wrapper
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div *ngIf="order_details.order_type != 'pickup'" class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">Shipping</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    <s *ngIf="
+                        vendor.osc >= 0 && vendor.osc != vendor.shipping_cost
+                      ">
+                      {{
+                      vendor.osc
+                      | currency
+                      : commonService.store_currency?.country_code
+                      }}
+                    </s>
+                    {{
+                    vendor.shipping_cost
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div *ngIf="vendor?.cod_charges > 0" class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">COD Charges</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    {{
+                    vendor.cod_charges
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div *ngIf="vendor?.discount_amount > 0" class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">Discount</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    -{{
+                    vendor.discount_amount
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div *ngIf="vendor?.shipping_discount > 0" class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">
+                    Shipping Discount
+                  </p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    -{{
+                    vendor.shipping_discount
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+              <ng-container *ngIf="vendor.final_price - vendor.refund_amount > 0">
+                <div *ngIf="
+                    params?.type != 'cancelled' ||
+                    order_details.payment_details?.name == 'COD'
+                  " class="data-list-card type5-card">
+                  <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                    <p class="w-sm-80 m-b-0 font-12 light-font">Grand Total</p>
+                  </div>
+                  <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                    <p class="m-b-0 font-12 text-light medium-font">
+                      {{
+                      vendor.final_price - vendor.refund_amount
+                      | currency
+                      : commonService.store_currency?.country_code
+                      }}
+                    </p>
+                  </div>
+                </div>
+              </ng-container>
+              <div *ngIf="
+                  vendor?.refund_amount > 0 &&
+                  order_details.payment_details?.name != 'COD'
+                " class="data-list-card type5-card">
+                <div class="col-md-10 col-8 px-0 cursor single-line-text-ellipsis d-flex justify-content-end">
+                  <p class="w-sm-80 m-b-0 font-12 light-font">Refund Amount</p>
+                </div>
+                <div class="col-md-2 col-4 px-0 d-flex justify-content-end">
+                  <p class="m-b-0 font-12 text-light medium-font">
+                    {{
+                    vendor.refund_amount
+                    | currency : commonService.store_currency?.country_code
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <!-- activity -->
+        <ng-container *ngIf="params?.type != 'inactive'">
+          <div class="col-md-8 col-12 mt-4">
+            <h5 class="mb-2 dark-font">Activity</h5>
+          </div>
+          <!-- desktop -->
+          <div class="data-list-card-wrapper" *ngIf="commonService.desktop_device">
+            <div class="data-list-card-inner">
+              <div class="list-item d-flex type5-card align-items-center">
+                <div class="activity-content mx-2">
+                  <p class="m-b-0 dark-font font-14 medium-font">Placed</p>
+                  <span class="font-12 medium-font">{{
+                    order_details.created_on | date : "dd MMM y hh:mm a"
+                    }}</span>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.confirmed_on" class="d-flex align-items-center"
+                  [ngClass]="{ desktop_active: !vendor.confirmed_on }">
+                  <div class="activity-border"></div>
+                  <div class="activity-border-dot conform-bg-dot"></div>
+                  <div class="activity-content mx-2">
+                    <p class="m-b-0 dark-font font-14 medium-font">Confirmed</p>
+                    <span *ngIf="vendor.confirmed_on" class="font-12 medium-font">
+                      {{ vendor.confirmed_on | date : "dd MMM y hh:mm a" }}
+                    </span>
+                  </div>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.dispatched_on" class="d-flex align-items-center"
+                  [ngClass]="{ desktop_active: !vendor.dispatched_on }">
+                  <div class="activity-border"></div>
+                  <div class="activity-border-dot dispatch-bg-dot"></div>
+                  <div class="activity-content mx-2">
+                    <p class="m-b-0 dark-font font-14 medium-font">
+                      Dispatched
+                    </p>
+                    <span *ngIf="vendor.dispatched_on" class="font-12 medium-font">
+                      {{ vendor.dispatched_on | date : "dd MMM y hh:mm a" }}
+                    </span>
+                  </div>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.delivered_on" class="d-flex align-items-center"
+                  [ngClass]="{ desktop_active: !vendor.delivered_on }">
+                  <div class="activity-border"></div>
+                  <div class="d-flex" *ngIf="vendor.delivered_on">
+                    <span class="material-symbols-rounded icons delivered-bg-dot">check_circle</span>
+                  </div>
+                  <div class="activity-border-dot" *ngIf="!vendor.delivered_on"></div>
+                  <div class="activity-content mx-2">
+                    <p class="m-b-0 dark-font font-14 medium-font">Delivered</p>
+                    <span *ngIf="vendor.delivered_on" class="font-12 medium-font">
+                      {{ vendor.delivered_on | date : "dd MMM y hh:mm a" }}
+                    </span>
+                  </div>
+                </div>
+
+                <div *ngIf="vendor.cancelled_on" class="d-flex align-items-center">
+                  <div class="activity-border"></div>
+                  <div class="d-flex">
+                    <span class="material-symbols-rounded icons cancel-bg-dot">cancel</span>
+                  </div>
+                  <div class="activity-content mx-2">
+                    <p class="m-b-0 dark-font font-14 medium-font">Cancelled</p>
+                    <span class="font-12 medium-font">
+                      {{ vendor.cancelled_on | date : "dd MMM y hh:mm a" }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- mobile -->
+          <div class="mobile-view-activity" *ngIf="!commonService.desktop_device">
+            <div class="timeline">
+              <div class="events">
+                <div class="event">
+                  <div class="knob">
+                    <span class="place-bg-dot knob-dot"></span>
+                  </div>
+                  <div class="date">
+                    <h2 class="dark-font">Placed</h2>
+                  </div>
+                  <div class="description">
+                    <p>
+                      {{ order_details.created_on | date : "dd MMM y hh:mm a" }}
+                    </p>
+                  </div>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.confirmed_on" class="event"
+                  [ngClass]="{ active: !vendor.confirmed_on }">
+                  <div class="knob">
+                    <span class="conform-bg-dot knob-dot"></span>
+                  </div>
+                  <div class="date">
+                    <h2 class="dark-font">Confirmed</h2>
+                  </div>
+                  <div *ngIf="vendor.confirmed_on" class="description">
+                    <p>{{ vendor.confirmed_on | date : "dd MMM y hh:mm a" }}</p>
+                  </div>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.dispatched_on" class="event"
+                  [ngClass]="{ active: !vendor.dispatched_on }">
+                  <div class="knob">
+                    <span class="dispatch-bg-dot knob-dot"></span>
+                  </div>
+                  <div class="date">
+                    <h2 class="dark-font">Dispached</h2>
+                  </div>
+                  <div *ngIf="vendor.dispatched_on" class="description">
+                    <p>
+                      {{ vendor.dispatched_on | date : "dd MMM y hh:mm a" }}
+                    </p>
+                  </div>
+                </div>
+
+                <div *ngIf="params?.type == 'live' || vendor.delivered_on" class="event"
+                  [ngClass]="{ active: !vendor.delivered_on }">
+                  <div class="knob" *ngIf="!vendor.delivered_on">
+                    <span class="knob-dot"></span>
+                  </div>
+                  <div class="knob" *ngIf="vendor.delivered_on">
+                    <span class="material-symbols-rounded icons delivered-bg-dot ml-0"
+                      style="top: 0px">check_circle</span>
+                  </div>
+                  <div class="date">
+                    <h2 class="dark-font">Delivered</h2>
+                  </div>
+                  <div *ngIf="vendor.delivered_on" class="description">
+                    <p>{{ vendor.delivered_on | date : "dd MMM y hh:mm a" }}</p>
+                  </div>
+                </div>
+
+                <div *ngIf="vendor.cancelled_on" class="event">
+                  <div class="knob">
+                    <span class="material-symbols-rounded icons cancel-bg-dot ml-0" style="top: 0px">cancel</span>
+                  </div>
+                  <div class="date">
+                    <h2 class="dark-font">Cancelled</h2>
+                  </div>
+                  <div class="description">
+                    <p>{{ vendor.cancelled_on | date : "dd MMM y hh:mm a" }}</p>
+                  </div>
+                </div>
+                <div class="line"></div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- right side -->
+  <div class="col-md-3 col-12">
+    <h5 class="mb-3 dark-font">Details</h5>
+    <div class="order-details-card">
+      <!-- customer -->
+      <div class="address-head d-flex justify-content-between">
+        <h5 class="dark-font font-14 m-b-0">Customer</h5>
+        <span *ngIf="
+            commonService.store_details?.login_type != 'vendor' &&
+            order_details.order_by != 'guest' &&
+            params?.type == 'live'
+          " class="material-symbols-rounded" (click)="
+            editForm = {
+              _id: order_details.customerDetails[0]?._id,
+              notes: order_details.customerDetails[0]?.notes
+            };
+            modalService.open(customerNoteModal, {
+              windowClass: 'scroll-modal-xl',
+              scrollable: true
+            })
+          ">edit</span>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">person</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          <ng-container *ngIf="order_details.order_by != 'guest'">
+            {{ order_details.customerDetails[0]?.name }}
+          </ng-container>
+          <ng-container *ngIf="order_details.order_by == 'guest'">
+            {{ order_details?.shipping_address?.name }}
+          </ng-container>
+        </p>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">mail</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{
+          order_details.order_by == "guest"
+          ? order_details?.guest_email
+          : order_details.customerDetails[0]?.email
+          }}
+        </p>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">phone</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          <ng-container *ngIf="order_details.order_by != 'guest'">
+            {{ order_details.customerDetails[0]?.dial_code }}
+            {{ order_details.customerDetails[0]?.mobile }}
+          </ng-container>
+          <ng-container *ngIf="order_details.order_by == 'guest'">
+            {{ order_details.shipping_address?.dial_code }}
+            {{ order_details.shipping_address?.mobile }}
+          </ng-container>
+        </p>
+      </div>
+      <div *ngIf="order_details.order_by != 'guest'" class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">note</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{
+          order_details.customerDetails[0]?.notes
+          ? order_details.customerDetails[0].notes
+          : "NA"
+          }}
+        </p>
+      </div>
+      <!-- GST -->
+      <ng-container *ngIf="order_details?.gst?.number">
+        <div class="address-head d-flex justify-content-between">
+          <h5 class="dark-font font-14 m-b-0">GSTIN</h5>
+        </div>
+        <div class="order-details-cardinner d-flex">
+          <span class="material-symbols-rounded">pin</span>
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.gst.number }}
+            <ng-container *ngIf="order_details.gst.company">
+              <br />{{ order_details.gst.company }}
+            </ng-container>
+          </p>
+        </div>
+      </ng-container>
+      <!-- shipping || pickup address -->
+      <div *ngIf="order_details.order_type != 'pickup'" class="address-head d-flex justify-content-between">
+        <h5 class="dark-font font-14 m-b-0">Shipping Address</h5>
+        <span *ngIf="
+            !params?.coupon_id &&
+            params?.type == 'live' &&
+            commonService.store_details?.login_type != 'vendor'
+          " class="material-symbols-rounded"
+          (click)="addressType = 'shipping'; onEdit('address', addressModal)">edit</span>
+      </div>
+      <div *ngIf="order_details.order_type == 'pickup'" class="address-head d-flex justify-content-between">
+        <h5 class="dark-font font-14 m-b-0">Pickup Address</h5>
+        <span *ngIf="
+            !params?.coupon_id &&
+            params?.type == 'live' &&
+            commonService.store_details?.login_type != 'vendor'
+          " class="material-symbols-rounded"
+          (click)="addressType = 'pickup'; onEdit('address', addressModal)">edit</span>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">person</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.shipping_address?.name }}
+        </p>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">phone</span>
+        <p *ngIf="order_details.order_type != 'pickup'" class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.shipping_address?.dial_code }}
+          {{ order_details.shipping_address?.mobile }}
+        </p>
+        <p *ngIf="order_details.order_type == 'pickup'" class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.shipping_address?.mobile }}
+        </p>
+        <!-- <p class="light-font medium-font m-b-0 pl-2">
+          {{order_details.shipping_address?.dial_code}} {{order_details.shipping_address?.mobile}}
+        </p> -->
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">location_on</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.shipping_address?.address }}
+        </p>
+      </div>
+
+      <ng-container *ngIf="order_details.order_type != 'pickup'">
+        <ng-container *ngFor="
+            let x of order_details?.shipping_address?.address_fields
+              | orderAsc : 'keyword';
+            let i = index
+          ">
+          <div class="order-details-cardinner d-flex">
+            <!-- <span class="material-symbols-rounded" *ngIf="i===0">my_location</span>
+            <span class="material-symbols-rounded" *ngIf="i===1">home_pin</span>
+            <span class="material-symbols-rounded" *ngIf="i===2">pin_drop</span> -->
+            <p class="light-font medium-font m-b-0 pl-4">{{ x.value }}</p>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <!-- pickup -->
+      <ng-container *ngIf="order_details.order_type == 'pickup'">
+        <div class="order-details-cardinner d-flex">
+          <!-- <span class="material-symbols-rounded">home_pin</span> -->
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.shipping_address?.city }}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex">
+          <!-- <span class="material-symbols-rounded">pin_drop</span> -->
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.shipping_address?.pincode }}
+          </p>
+        </div>
+        <div class="order-details-cardinner d-flex">
+          <!-- <span class="material-symbols-rounded">my_location</span> -->
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.shipping_address?.state }}
+          </p>
+        </div>
+      </ng-container>
+      <div class="order-details-cardinner d-flex">
+        <!-- <span class="material-symbols-rounded">flag</span> -->
+        <p class="light-font medium-font m-b-0 pl-4">
+          {{ order_details.shipping_address?.country }}
+        </p>
+      </div>
+      <ng-container *ngIf="order_details?.shipping_address?.landmark">
+        <div class="order-details-cardinner d-flex">
+          <span class="material-symbols-rounded">location_automation</span>
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.shipping_address.landmark }}
+          </p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="order_details?.shipping_address?.location_url">
+        <div class="order-details-cardinner d-flex">
+          <span class="material-symbols-rounded">share_location</span>
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.shipping_address.location_url }}
+          </p>
+        </div>
+      </ng-container>
+
+      <!-- billing address -->
+      <div class="address-head d-flex justify-content-between">
+        <h5 class="dark-font font-14 m-b-0">Billing Address</h5>
+        <span *ngIf="
+            !params?.coupon_id &&
+            params?.type == 'live' &&
+            commonService.store_details?.login_type != 'vendor'
+          " class="material-symbols-rounded"
+          (click)="addressType = 'billing'; onEdit('address', addressModal)">edit</span>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">person</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.billing_address?.name }}
+        </p>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">phone</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.billing_address?.dial_code }}
+          {{ order_details.billing_address?.mobile }}
+        </p>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">location_on</span>
+        <p class="light-font medium-font m-b-0 pl-2">
+          {{ order_details.billing_address?.address }}
+        </p>
+      </div>
+      <ng-container *ngFor="
+          let x of order_details?.billing_address?.address_fields
+            | orderAsc : 'keyword';
+          let i = index
+        ">
+        <div class="order-details-cardinner d-flex">
+          <!-- <span class="material-symbols-rounded" *ngIf="i===0">my_location</span>
+          <span class="material-symbols-rounded" *ngIf="i===1">home_pin</span>
+          <span class="material-symbols-rounded" *ngIf="i===2">pin_drop</span> -->
+          <p class="light-font medium-font m-b-0 pl-4">{{ x.value }}</p>
+        </div>
+      </ng-container>
+
+      <div class="order-details-cardinner d-flex">
+        <!-- <span class="material-symbols-rounded">flag</span> -->
+        <p class="light-font medium-font m-b-0 pl-4">
+          {{ order_details.billing_address?.country }}
+        </p>
+      </div>
+      <ng-container *ngIf="order_details?.billing_address?.landmark">
+        <div class="order-details-cardinner d-flex">
+          <span class="material-symbols-rounded">location_automation</span>
+          <p class="light-font medium-font m-b-0 pl-2">
+            {{ order_details.billing_address.landmark }}
+          </p>
+        </div>
+      </ng-container>
+
+      <!-- payment details -->
+      <ng-container *ngIf="
+          order_details?.payment_details &&
+          commonService.store_details?.login_type != 'vendor'
+        ">
+        <div class="address-head d-flex justify-content-between">
+          <h5 class="dark-font font-14 m-b-0">Payment</h5>
+          <span *ngIf="
+              !params?.coupon_id &&
+              params?.type == 'live' &&
+              commonService.store_details?.login_type != 'vendor'
+            " class="material-symbols-rounded" (click)="onEdit('payment', paymentDetailsModal)">edit</span>
+        </div>
+        <div class="order-details-cardinner d-flex">
+          <span class="material-symbols-rounded">payments</span>
+          <div>
+            <p class="light-font medium-font m-b-1 pl-2" style="display: flex; align-items: center;">
+              {{ order_details?.payment_details?.name }}
+              <i *ngIf="order_details?.payment_details?.name=='GCB'" class="material-icons-outlined pay-info"
+              (click)="modalService.open(gcbDetailsModal, { centered: true })">info</i>
+            </p>
+            <p *ngIf="order_details?.payment_details?.payment_id" class="light-font medium-font m-b-0 pl-2">
+              {{ order_details.payment_details.payment_id }}
+            </p>
+            <p *ngIf="
+                order_details.vendor_list?.length &&
+                order_details.cod_charges > 0
+              " class="light-font medium-font m-b-0 pl-2">
+              {{
+              order_details.cod_charges
+              | currency : commonService.store_currency?.country_code
+              }}
+            </p>
+          </div>
+        </div>
+      </ng-container>
+      <!-- manual discount -->
+      <ng-container *ngIf="order_details?.manual_discount?.amount > 0">
+        <div class="address-head d-flex justify-content-between">
+          <h5 class="dark-font font-14 m-b-0">Discount</h5>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">
+            <ng-container *ngIf="order_details?.manual_discount?.percentage">
+              {{ order_details?.manual_discount?.percentage }}%
+            </ng-container>
+          </p>
+          <p class="light-font medium-font m-b-0">
+            {{
+            order_details.manual_discount.amount
+            | currency : commonService.store_currency?.country_code
+            }}
+          </p>
+        </div>
+      </ng-container>
+      <!-- offers -->
+      <ng-container *ngIf="order_details?.offer_applied">
+        <div class="address-head d-flex justify-content-between">
+          <h5 class="dark-font font-14 m-b-0">Redeemed Offers</h5>
+        </div>
+        <div class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">
+            {{ order_details?.offer_details?.code }}
+          </p>
+          <p class="light-font medium-font m-b-0">
+            {{
+            order_details?.offer_details?.price
+            | currency : commonService.store_currency?.country_code
+            }}
+          </p>
+        </div>
+      </ng-container>
+      <!-- gift cards -->
+      <ng-container *ngIf="
+          order_details?.coupon_list?.length &&
+          commonService.store_details?.login_type != 'vendor'
+        ">
+        <div class="address-head d-flex justify-content-between">
+          <h5 class="dark-font font-14 m-b-0">Redeemed Gift Coupons</h5>
+        </div>
+        <div *ngFor="let x of order_details.coupon_list" class="order-details-cardinner d-flex justify-content-between">
+          <p class="light-font medium-font m-b-0">{{ x.code }}</p>
+          <p class="light-font medium-font m-b-0">
+            {{
+            x.price | currency : commonService.store_currency?.country_code
+            }}
+          </p>
+        </div>
+      </ng-container>
+      <!-- order note -->
+      <div class="address-head d-flex justify-content-between">
+        <h5 class="dark-font font-14 m-b-0">Order Notes</h5>
+        <span *ngIf="
+            !params?.coupon_id &&
+            params?.type == 'live' &&
+            commonService.ys_features.indexOf('order_note') != -1 &&
+            commonService.store_details?.login_type != 'vendor'
+          " class="material-symbols-rounded" (click)="onEdit('note', orderNoteModal)">edit</span>
+      </div>
+      <div class="order-details-cardinner d-flex">
+        <span class="material-symbols-rounded">note</span>
+        <div>
+          <p *ngIf="order_details?.order_note" class="light-font medium-font m-b-0 pl-2"
+            [innerHTML]="transformHtml(order_details.order_note)"></p>
+          <p *ngIf="!order_details?.order_note" class="light-font medium-font m-b-0 pl-2">
+            NA
+          </p>
+          <p *ngIf="order_details?.gift_status" class="light-font medium-font m-b-0 pl-2">
+            This is a gift
+          </p>
+          <p *ngIf="order_details?.need_sample" class="light-font medium-font m-b-0 pl-2">
+            {{
+            commonService.store_details._id == configData.hungover_id
+            ? "TRY ON TEE Needed"
+            : "Need sample"
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GCB Payment Details -->
+<ng-template #gcbDetailsModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="popup_text">Payment Details</span>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <p><b>Order Status:</b> {{order_details.payment_details?.status}}</p>
+    <p><b>Order Reference:</b> {{order_details.payment_details?.order_id}}</p>
+    <p><b>Order ID:</b> {{order_details.payment_details?.payment_id}}</p>
+    <p><b>Payment Option:</b> {{order_details.payment_details?.type}} - {{order_details.payment_details?.meta?.paymentOption}}</p>
+    <p><b>Time Completed:</b> {{order_details.payment_details?.meta?.timeCompleted | date: "dd MMM y hh:mm a"}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Close</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- update payment details -->
+<ng-template #paymentDetailsModal let-modal>
+  <form autocomplete="off" (ngSubmit)="
+      onUpdate({
+        _id: order_details._id,
+        payment_details: editForm.payment_details
+      })
+    " ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Payment Details</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Payment Type</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.payment_details.name"
+                #name="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Payment ID</label>
+              <input type="text" name="payment_id" class="form-control"
+                [(ngModel)]="editForm.payment_details.payment_id" #payment_id="ngModel" required />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- update shipping details -->
+<ng-template #shippingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateShippingDetails()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update
+            {{
+            editForm.shipping_method?.delivery_method
+            ? "Delivery"
+            : "Shipping"
+            }}
+            Details</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <!-- delivery details -->
+          <div *ngIf="editForm.shipping_method?.delivery_method" class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Delivery Date</label>
+              <input type="text" name="delivery_date" class="form-control"
+                [(ngModel)]="editForm.shipping_method.delivery_date" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Delivery Time</label>
+              <input type="text" name="delivery_time" class="form-control"
+                [(ngModel)]="editForm.shipping_method.delivery_time" required />
+            </div>
+            <div *ngIf="order_details.order_type != 'pickup'" class="col-md-12 form-group mb-3">
+              <label>Delivery Cost</label>
+              <input type="tel" name="shipping_price" class="form-control"
+                [(ngModel)]="editForm.shipping_method.shipping_price" readonly />
+            </div>
+          </div>
+          <!-- shipping details -->
+          <div *ngIf="!editForm.shipping_method?.delivery_method" class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Carrier Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.shipping_method.name"
+                [readonly]="editForm.cp_status" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Shipping Cost</label>
+              <input type="tel" name="shipping_price" class="form-control"
+                [(ngModel)]="editForm.shipping_method.shipping_price" readonly />
+            </div>
+            <ng-container *ngIf="commonService.store_details?.login_type == 'admin'">
+              <div *ngIf="
+                  editForm.cp_status ||
+                  commonService.ys_features.indexOf('vendors') != -1
+                " class="col-md-12 form-group mb-3">
+                <label>Courier Partner Cost</label>
+                <input type="tel" name="dp_charges" class="form-control"
+                  [(ngModel)]="editForm.shipping_method.dp_charges" appNumberOnly required />
+              </div>
+            </ng-container>
+            <div class="col-md-12 form-group mb-3">
+              <label>Delivery Time</label>
+              <input type="text" name="delivery_time" class="form-control"
+                [(ngModel)]="editForm.shipping_method.delivery_time" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Number</label>
+              <input type="text" name="tracking_number" class="form-control"
+                [(ngModel)]="editForm.shipping_method.tracking_number" [readonly]="editForm.cp_status" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Link</label>
+              <input type="text" name="tracking_link" class="form-control"
+                [(ngModel)]="editForm.shipping_method.tracking_link" required />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- update order note -->
+<ng-template #orderNoteModal let-modal>
+  <form autocomplete="off" (ngSubmit)="
+      onUpdate({ _id: order_details._id, order_note: editForm.order_note })
+    " ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Order Note</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Order Note</label>
+              <textarea class="form-control" rows="5" aria-label="With textarea" name="order_note"
+                [(ngModel)]="editForm.order_note" #order_note="ngModel" required></textarea>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- update address -->
+<ng-template #addressModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateAddress()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update {{ addressType | titlecase }} Address</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <!-- shipping & billing -->
+          <div *ngIf="addressType != 'pickup'" class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Name</label>
+              <input type="text" name="name" [(ngModel)]="addressForm.name" #name="ngModel" class="form-control"
+                required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Country</label>
+              <select name="country" [(ngModel)]="addressForm.country" (change)="
+                  addressForm.state = null; onCountryChange(addressForm.country)
+                " class="form-control select-arrow" required>
+                <option *ngFor="let x of country_list | orderAsc : 'name'" [ngValue]="x.name">
+                  {{ x.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <div class="modal-input">
+                <div class="input-group mobile-no">
+                  <div class="dial-code input-group-prepend d-flex flex-column w-40">
+                    <label>Dial Code</label>
+                    <select name="dial_code" [(ngModel)]="addressForm.dial_code" #dial_code="ngModel"
+                      class="form-control" required>
+                      <option *ngFor="let x of country_list | orderAsc : 'name'" [ngValue]="x.dial_code">
+                        {{ x.dial_code }} ({{ x.code }})
+                      </option>
+                    </select>
+                  </div>
+                  <div class="enter-no d-flex flex-column w-60 pl-2">
+                    <label>Mobile</label>
+                    <input type="text" name="mobile" [(ngModel)]="addressForm.mobile" #mobile="ngModel"
+                      class="form-control" required />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-container *ngFor="let field of address_fields; let j = index">
+              <ng-container *ngIf="field.keyword == 'state'">
+                <!-- if state list exist -->
+                <div *ngIf="state_list?.length" class="col-md-6 form-group mb-3">
+                  <label>{{ field.label }}</label>
+                  <select name="field{{ j }}" [(ngModel)]="field.value" class="form-control select-arrow" required>
+                    <option *ngFor="let x of state_list | orderAsc : 'name'" [ngValue]="x.name">
+                      {{ x.name }}
+                    </option>
+                  </select>
+                </div>
+                <!-- if not state list exist -->
+                <div *ngIf="!state_list?.length" class="col-md-6 form-group mb-3">
+                  <label>{{ field.label }}</label>
+                  <input type="text" name="field{{ j }}" [(ngModel)]="field.value" class="form-control" required />
+                </div>
+              </ng-container>
+              <div *ngIf="field.keyword != 'state'" class="col-md-6 form-group mb-3">
+                <label>{{ field.label }}</label>
+                <input type="text" name="field{{ j }}" [(ngModel)]="field.value" class="form-control" required />
+              </div>
+            </ng-container>
+            <div class="col-md-12 form-group mb-3">
+              <label>Complete Address</label>
+              <textarea class="form-control" rows="3" aria-label="With textarea" name="address"
+                [(ngModel)]="addressForm.address" #address="ngModel" required></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Landmark</label>
+              <input type="text" name="landmark" [(ngModel)]="addressForm.landmark" #landmark="ngModel"
+                class="form-control" />
+            </div>
+            <ng-container *ngIf="commonService.store_details?.type == 'restaurant_based'">
+              <div class="col-md-6 form-group mb-3">
+                <label>Latitude</label>
+                <input type="text" name="lat" [(ngModel)]="addressForm.lat" #lat="ngModel" class="form-control"
+                  readonly />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Longitude</label>
+                <input type="text" name="lng" [(ngModel)]="addressForm.lng" #lng="ngModel" class="form-control"
+                  readonly />
+              </div>
+            </ng-container>
+          </div>
+          <!-- pickup -->
+          <div *ngIf="addressType == 'pickup'" class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Name</label>
+              <input type="text" name="name" [(ngModel)]="addressForm.name" #name="ngModel" class="form-control"
+                required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Contact No</label>
+              <input type="text" name="mobile" [(ngModel)]="addressForm.mobile" #mobile="ngModel" class="form-control"
+                required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Country</label>
+              <input type="text" name="country" [(ngModel)]="addressForm.country" #country="ngModel"
+                class="form-control" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>State</label>
+              <input type="text" name="state" [(ngModel)]="addressForm.state" #state="ngModel" class="form-control" />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>City</label>
+              <input type="text" name="city" [(ngModel)]="addressForm.city" #city="ngModel" class="form-control" />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Pincode</label>
+              <input type="text" name="pincode" [(ngModel)]="addressForm.pincode" #pincode="ngModel"
+                class="form-control" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Complete Address</label>
+              <textarea class="form-control" rows="3" aria-label="With textarea" name="address"
+                [(ngModel)]="addressForm.address" #address="ngModel" required></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Location URL</label>
+              <input type="text" name="location_url" [(ngModel)]="addressForm.location_url" #location_url="ngModel"
+                class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="addressForm.errorMsg">
+          <p class="text-danger">{{ addressForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- edit customization -->
+<ng-template #editCustomModal let-modal>
+  <form id="addon-form" name="addon-form" autocomplete="off" ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span id="closeModal" class="material-symbols-rounded cursor"
+            (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Customization</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="addons-list col-md-12">
+                <h5>{{ custom_list[customIndex]?.name }}</h5>
+                <div class="addons-list__type row my-3">
+                  <div *ngFor="
+                      let x of custom_list[customIndex]?.option_list;
+                      let i = index
+                    " class="col-6 col-sm-4 col-md-4">
+                    <div>
+                      <!-- Radio -->
+                      <label class="radio radio-primary" *ngIf="custom_list[customIndex].type == 'either_or'">
+                        <input type="radio" [checked]="
+                            selected_custom_list[customIndex]?.value[0]?.name ==
+                            x.name
+                          " (change)="onSelectOption([x])" name="option" />
+                        <span class="checkmark"></span>
+                        <img *ngIf="x.image" [src]="imgBaseUrl + x.image" alt="" class="img-fluid" />
+                        <img class="addon-icon opacity6" *ngIf="!x.image" src="assets/images/addon.svg" alt="addon" />
+                        <p class="text-center">{{ x.name }}</p>
+                      </label>
+                      <!-- #Radio -->
+
+                      <!-- Checkbox -->
+                      <label class="checkbox checkbox-primary" *ngIf="custom_list[customIndex].type == 'multiple'">
+                        <input class="form-check-input" type="checkbox" (change)="onSelectCheckbox(x)"
+                          [checked]="checkboxStatus(x)" name="option" />
+                        <span class="checkmark"></span>
+                        <img *ngIf="x.image" [src]="imgBaseUrl + x.image" alt="" class="img-fluid" />
+                        <img class="addon-icon opacity6" *ngIf="!x.image" src="assets/images/addon.svg" alt="addon" />
+                        <p class="text-center">{{ x.name }}</p>
+                      </label>
+                      <!-- #Checkbox -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="updateErrorMsg">
+          <p class="text-danger">{{ updateErrorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="customIndex == 0" (click)="modal.dismiss('cancel')" type="button"
+          class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button *ngIf="customIndex > 0" (click)="customIndex = customIndex - 1" type="button"
+          class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Previous</span>
+        </button>
+        <button *ngIf="custom_list.length - 1 > customIndex" (click)="onCustomNext()" type="button"
+          class="btn btn-wide btn-primary">
+          Next
+        </button>
+        <button *ngIf="custom_list.length - 1 == customIndex" (click)="onUpdateCustomization()" type="button"
+          class="btn btn-wide btn-primary">
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- edit measurements -->
+<ng-template #editMeasurementModal let-modal>
+  <form id="addon-form" name="addon-form" autocomplete="off" ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span id="closeModal" class="material-symbols-rounded cursor"
+            (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Measurements</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <img [src]="imgBaseUrl + customizationForm.mm_sets[mmIndex].image" alt=""
+                class="img-responsive blouse-mrs" style="height: 150px" />
+              <p>{{ customizationForm.mm_sets[mmIndex].name }}</p>
+            </div>
+            <!-- mm unit -->
+            <div class="col-md-12 mb-3">
+              <div *ngIf="mmIndex == 0">
+                <label class="radio radio-primary d-inline-block mr-10">
+                  <input type="radio" type="radio" value="cms" name="unit" (change)="onChangeUnit()"
+                    [(ngModel)]="customizationForm.mm_unit" />
+                  <span>in cms</span>
+                  <span class="checkmark"></span>
+                </label>
+
+                <label class="radio radio-primary d-inline-block mr-10">
+                  <input type="radio" type="radio" value="inches" name="unit" (change)="onChangeUnit()"
+                    [(ngModel)]="customizationForm.mm_unit" />
+                  <span>in inches</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="mmIndex > 0">
+                <label class="radio radio-primary d-inline-block mr-10">
+                  <input type="radio" type="radio" checked />
+                  <span>in {{ customizationForm?.mm_unit }}</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+            <!-- #mm unit -->
+            <div *ngFor="
+                let x of customizationForm.mm_sets[mmIndex].list;
+                let i = index
+              " class="col-md-12 form-group mb-3">
+              <label>{{ x.name }}</label>
+              <input type="tel" id="value{{ mmIndex }}{{ i }}" name="value{{ mmIndex }}{{ i }}" [(ngModel)]="x.value"
+                #value="ngModel" class="form-control" appNumberOnly required />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="updateErrorMsg">
+          <p class="text-danger">{{ updateErrorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="mmIndex == 0" (click)="modal.dismiss('cancel')" type="button"
+          class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button *ngIf="mmIndex > 0" (click)="mmIndex = mmIndex - 1" type="button"
+          class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Previous</span>
+        </button>
+        <button *ngIf="customizationForm.mm_sets?.length - 1 > mmIndex" (click)="onMmNext()" type="button"
+          class="btn btn-wide btn-primary">
+          Next
+        </button>
+        <button *ngIf="customizationForm.mm_sets?.length - 1 == mmIndex" (click)="onUpdateMeasurement()" type="button"
+          class="btn btn-wide btn-primary">
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- edit notes -->
+<ng-template #editNotesModal let-modal>
+  <form id="addon-form" name="addon-form" autocomplete="off" ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span id="closeModal" class="material-symbols-rounded cursor"
+            (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Notes</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div *ngFor="let x of customizationForm.notes_list; let i = index" class="col-md-12 form-group mb-3">
+              <label>{{ x.name }}</label>
+              <input type="text" id="value{{ i }}" name="value{{ i }}" [(ngModel)]="x.value" #value="ngModel"
+                class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="updateErrorMsg">
+          <p class="text-danger">{{ updateErrorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button (click)="modal.dismiss('cancel')" type="button" id="closeModal" class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button (click)="onUpdateNotes()" type="button" class="btn btn-wide btn-primary">
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Update status -->
+<ng-template #updateStatusModal let-modal>
+  <form id="addon-form" name="addon-form" (ngSubmit)="updateOrderStatus()" autocomplete="off" ngNativeValidate
+    ngbAutofocus>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <p>
+            <strong>Do you want to update the order
+              <span class="text-danger">"#{{ order_details.order_number }}"</span>
+              status to {{ order_details.order_status }}?
+            </strong>
+          </p>
+        </div>
+        <ng-container *ngIf="
+            order_details.order_type != 'pickup' &&
+            !order_details?.cp_status &&
+            order_details.order_status == 'dispatched'
+          ">
+          <div class="col-md-12 form-group mb-3 summary-section">
+            <label>Tracking Number</label>
+            <input type="text" name="tracking_number" class="form-control"
+              [(ngModel)]="order_details.shipping_method.tracking_number" required />
+          </div>
+          <div class="col-md-12 form-group mb-3 summary-section">
+            <label>Tracking Link</label>
+            <input type="text" name="tracking_link" class="form-control"
+              [(ngModel)]="order_details.shipping_method.tracking_link" required />
+          </div>
+        </ng-container>
+        <div class="col-md-12 mb-3" *ngIf="errorMsg">
+          <p class="text-danger">{{ errorMsg }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="btnLoader" [ladda]="btnLoader">
+        Yes
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Update vendor status -->
+<ng-template #updateVendorStatusModal let-modal>
+  <form id="addon-form" name="addon-form" (ngSubmit)="updateOrderStatus()" autocomplete="off" ngNativeValidate
+    ngbAutofocus>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <p>
+            <strong>Do you want to update the order
+              <span class="text-danger">"{{
+                commonService.store_details?.login_type != "vendor"
+                ? vendorInfo.vendor_name + " - "
+                : ""
+                }}#{{ vendorInfo.order_number }}"</span>
+              status to {{ vendorInfo.order_status }}?
+            </strong>
+          </p>
+        </div>
+        <ng-container *ngIf="
+            order_details.order_type != 'pickup' &&
+            !vendorInfo?.cp_status &&
+            vendorInfo.order_status == 'dispatched'
+          ">
+          <div class="col-md-12 form-group mb-3 summary-section">
+            <label>Tracking Number</label>
+            <input type="text" name="tracking_number" class="form-control"
+              [(ngModel)]="vendorInfo.shipping_method.tracking_number" required />
+          </div>
+          <div class="col-md-12 form-group mb-3 summary-section">
+            <label>Tracking Link</label>
+            <input type="text" name="tracking_link" class="form-control"
+              [(ngModel)]="vendorInfo.shipping_method.tracking_link" required />
+          </div>
+        </ng-container>
+        <div class="col-md-12 mb-3" *ngIf="errorMsg">
+          <p class="text-danger">{{ errorMsg }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="submit" (click)="updateOrderStatus()" class="btn btn-wide btn-primary ladda-button"
+        [disabled]="btnLoader" [ladda]="btnLoader">
+        Yes
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Mark as Paid -->
+<ng-template #markPaidModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to mark this order as
+        {{ editForm.payment_success ? "UNPAID" : "PAID" }}
+        <span class="text-danger">"#{{ editForm.order_number }}"</span>?
+      </strong>
+    </p>
+    <div *ngIf="editForm.errorMsg">
+      <p class="text-danger">{{ editForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="onMarkPaid()" class="btn btn-wide btn-primary ladda-button"
+      [disabled]="editForm.submit" [ladda]="editForm.submit">
+      Confirm
+    </button>
+  </div>
+</ng-template>
+
+<!-- Cancel Order -->
+<ng-template #cancelModal let-modal>
+  <div class="modal-header pb-0">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ vendorInfo.vendor_name ? vendorInfo.vendor_name + " - " : "" }}
+      {{ vendorInfo.form_type == "undo" ? "Undo" : "" }} Items Cancellation
+    </h4>
+    <p id="closeModal" (click)="modal.dismiss('cancel')">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path
+          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        <path d="M0 0h24v24H0z" fill="none" />
+      </svg>
+    </p>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <ng-container *ngIf="vendorInfo.form_type == 'cancel'">
+        <div class="col-6 mt-2 mb-2">
+          <label class="radio radio-primary">
+            <input type="radio" [(ngModel)]="vendorInfo.request_type" value="approve" name="request_type" required />
+            Approve
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="col-6 mt-2 mb-2">
+          <label class="radio radio-primary">
+            <input type="radio" [(ngModel)]="vendorInfo.request_type" value="reject" name="request_type" required />
+            Reject
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="col-md-12 form-group mb-3">
+          <label>Reason</label>
+          <input type="text" name="cancel_reason" class="form-control" [(ngModel)]="vendorInfo.cancel_reason" />
+        </div>
+        <div *ngIf="vendorInfo.request_type == 'reject'" class="col-md-12 form-group mb-3">
+          <label>Description</label>
+          <textarea name="cancel_desc" [(ngModel)]="vendorInfo.cancel_desc" class="form-control"></textarea>
+        </div>
+      </ng-container>
+      <div *ngIf="
+          vendorInfo.request_type == 'approve' || vendorInfo.form_type == 'undo'
+        " class="col-md-12 form-group mb-3">
+        <label>Shipping Cost</label>
+        <input type="text" name="new_shipping_cost" class="form-control" [(ngModel)]="vendorInfo.new_shipping_cost" />
+      </div>
+      <div class="col-md-12" *ngFor="let x of vendorInfo.item_list; let i = index">
+        <div class="card card-in-card m-10 d-flex flex-row">
+          <p *ngIf="x.item_status" class="p-0 m-0 status-div">
+            <span>
+              <ng-container *ngIf="x.item_status == 'c_requested'">Cancellation Requested</ng-container>
+              <ng-container *ngIf="x.item_status == 'c_confirmed'">Cancelled</ng-container>
+              <ng-container *ngIf="x.item_status == 'c_declined'">Cancellation Request Declined</ng-container>
+              <i (click)="
+                  itemInfo = x;
+                  modalService.open(cancelItemInfoModal, { centered: true })
+                " class="material-icons-outlined">info</i>
+            </span>
+          </p>
+          <div class="list-thumb d-flex p-2">
+            <img width="100px;" [src]="imgBaseUrl + x.image" alt="" />
+          </div>
+          <div class="flex-grow-1 pl-2 d-flex">
+            <div class="card-body row">
+              <div class="col-md-9 d-flex justify-content-center flex-column">
+                <span>{{ x.name }}</span>
+                <ng-container *ngIf="x.variant_status">
+                  <ng-container *ngFor="let y of x.variant_types">
+                    <span class="w-100"><b>{{ y.name }}: </b>{{ y.value }}</span>
+                  </ng-container>
+                </ng-container>
+                <div *ngIf="x.addon_status && x.selected_addon">
+                  <b>Addon: </b><span class="w-100">{{ x.selected_addon?.name }}</span>
+                </div>
+                <span>
+                  <b *ngIf="x.disc_amount">Original Price:</b>
+                  {{
+                  x.item_price
+                  | currency
+                  : commonService.store_currency?.country_code
+                  : "symbol"
+                  : commonService.cFormat
+                  }}
+                </span>
+                <span *ngIf="x.disc_amount">
+                  <b>Discounted Price:</b>
+                  {{
+                  x.item_price - x.disc_amount
+                  | currency
+                  : commonService.store_currency?.country_code
+                  : "symbol"
+                  : commonService.cFormat
+                  }}
+                </span>
+              </div>
+              <div class="col-md-3 d-flex justify-content-center align-items-end flex-column">
+                <div *ngIf="
+                    (vendorInfo.form_type == 'cancel' &&
+                      x.item_status != 'c_confirmed') ||
+                    (vendorInfo.form_type == 'undo' &&
+                      x.item_status == 'c_confirmed')
+                  ">
+                  <label class="checkbox checkbox-primary">
+                    <input class="form-check-input" type="checkbox" name="select_item{{ i + 1 }}"
+                      [(ngModel)]="x.item_checked" />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 mt-3" *ngIf="vendorInfo.errorMsg">
+        <p class="text-danger">{{ vendorInfo.errorMsg }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button (click)="onCancelOrder(confirmCancelModal)" type="submit" [disabled]="vendorInfo.submit"
+      [ladda]="vendorInfo.submit" class="btn btn-wide btn-primary ladda-button">
+      Submit
+    </button>
+  </div>
+</ng-template>
+
+<!-- Confirm Cancel Order -->
+<ng-template #confirmCancelModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong *ngIf="vendorInfo.form_type == 'cancel'">
+        If you cancel the selected items, the products will revert back to
+        stock.
+      </strong>
+      <strong *ngIf="vendorInfo.form_type == 'undo'">
+        If you undo the selected items, the products will get from stock.
+      </strong>
+    </p>
+    <div *ngIf="vendorInfo.errorMsg">
+      <p class="text-danger">{{ vendorInfo.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeConfirmModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="onConfirmCancelOrder()" class="btn btn-wide btn-primary ladda-button"
+      [disabled]="vendorInfo.submit" [ladda]="vendorInfo.submit">
+      Ok
+    </button>
+  </div>
+</ng-template>
+
+<!-- Update Courier -->
+<ng-template #updateCourierModal let-modal>
+  <form autocomplete="off" (ngSubmit)="updateCpOrder()" ngNativeValidate>
+    <div class="modal-body">
+      <p>
+        <strong>Are you sure you want to update the shipping information in
+          <span class="text-danger">"{{ courierForm.type }}"</span> for order
+          <span class="text-danger">"{{ courierForm.order_number }}"</span>?</strong>
+      </p>
+      <div *ngIf="courierForm.errorMsg">
+        <p class="text-danger">{{ courierForm.errorMsg | json }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="courierForm.submit"
+        [ladda]="courierForm.submit">
+        Ok
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Cancel Courier -->
+<ng-template #cancelCourierModal let-modal>
+  <form autocomplete="off" (ngSubmit)="cancelCpOrder()" ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <p *ngIf="courierForm.type == 'Others'">
+        <strong>Are you sure you want to cancel the shipping for
+          <span class="text-danger">"{{ courierForm.order_number }}"</span>?</strong>
+      </p>
+      <p *ngIf="courierForm.type != 'Others'">
+        <strong>Are you sure you want to cancel the
+          <span class="text-danger">"{{ courierForm.type }}"</span> order for
+          <span class="text-danger">"{{ courierForm.order_number }}"</span>?</strong>
+      </p>
+      <div *ngIf="courierForm.type == 'Dunzo' || courierForm.type == 'DHL'" class="row">
+        <div class="col-md-12 form-group">
+          <label>Cancellation Reason</label>
+          <input type="text" name="cancel_reason" [(ngModel)]="courierForm.cancel_reason" #cancel_reason="ngModel"
+            class="form-control" required />
+        </div>
+      </div>
+      <div *ngIf="courierForm.errorMsg">
+        <p class="text-danger">{{ courierForm.errorMsg | json }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="courierForm.submit"
+        [ladda]="courierForm.submit">
+        Ok
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Cancel Item Info -->
+<ng-template #cancelItemInfoModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+      <span class="popup_text">{{ itemInfo.name }}</span>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <h6 class="mt-2">Price</h6>
+    <div class="pl-2">
+      <p [ngClass]="itemInfo.disc_amount ? 'mb-1' : ''">
+        <b *ngIf="itemInfo.disc_amount">Original Price:</b>
+        {{
+        itemInfo.item_price
+        | currency
+        : commonService.store_currency?.country_code
+        : "symbol"
+        : commonService.cFormat
+        }}
+      </p>
+      <p *ngIf="itemInfo.disc_amount">
+        <b>Discounted Price:</b>
+        {{
+        itemInfo.item_price - itemInfo.disc_amount
+        | currency
+        : commonService.store_currency?.country_code
+        : "symbol"
+        : commonService.cFormat
+        }}
+      </p>
+    </div>
+    <ng-container *ngIf="itemInfo?.cancel_info?.title">
+      <h6 class="mt-2">Reason</h6>
+      <p class="pl-2">{{ itemInfo.cancel_info.title }}</p>
+    </ng-container>
+    <ng-container *ngIf="itemInfo?.cancel_info?.description">
+      <h6>Description</h6>
+      <p class="pl-2">{{ itemInfo.cancel_info.description }}</p>
+    </ng-container>
+    <hr class="my-3" />
+    <p *ngIf="itemInfo?.cancel_info?.request_on">
+      <b>Requested on:</b>
+      {{ itemInfo.cancel_info.request_on | date : "dd MMM y hh:mm a" }}
+    </p>
+    <p *ngIf="itemInfo?.cancel_info?.cancelled_on">
+      <b>Cancelled on:</b>
+      {{ itemInfo.cancel_info.cancelled_on | date : "dd MMM y hh:mm a" }}
+    </p>
+    <p *ngIf="
+        itemInfo?.cancel_info?.declined_on &&
+        !itemInfo?.cancel_info?.cancelled_on
+      ">
+      <b>Declined on:</b>
+      {{ itemInfo.cancel_info.declined_on | date : "dd MMM y hh:mm a" }}
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" (click)="modal.dismiss('cancel')" class="btn btn-wide btn-primary">
+      Close
+    </button>
+  </div>
+</ng-template>
+
+<!-- Resend mail -->
+<ng-template #resendMailModal let-modal>
+  <form autocomplete="off" (ngSubmit)="sendMail()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 *ngIf="
+            !mailForm.vendor_id ||
+            commonService.store_details?.login_type == 'vendor'
+          " class="modal-title" id="modal-basic-title">
+          Resend email to customer
+        </h4>
+        <h5 *ngIf="
+            mailForm.vendor_id &&
+            commonService.store_details?.login_type != 'vendor'
+          " class="modal-title" id="modal-basic-title">
+          {{ vendorInfo.vendor_name }} - {{ vendorInfo.order_number }}
+        </h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Send To</label>
+              <input type="text" name="email" class="form-control" [(ngModel)]="mailForm.email" #email="ngModel"
+                required />
+            </div>
+            <!-- store order -->
+            <div *ngIf="!mailForm.vendor_id" class="col-md-12 form-group mb-3">
+              <label>Email Type</label>
+              <select name="type" class="form-control select-arrow" [(ngModel)]="mailForm.type" required>
+                <option value="placed">Order Placed</option>
+                <option *ngIf="order_details.confirmed_on" value="confirmed">
+                  Order Confirmed
+                </option>
+                <option *ngIf="order_details.dispatched_on" value="dispatched">
+                  Order Dispatched
+                </option>
+                <ng-container *ngFor="let x of order_details.item_groups">
+                  <option *ngIf="x.dispatched_on" [ngValue]="x._id">
+                    Order Dispatched - {{ x.name }}
+                  </option>
+                </ng-container>
+                <option *ngIf="order_details.delivered_on" value="delivered">
+                  Order Delivered
+                </option>
+                <option *ngIf="
+                    commonService.ys_features.indexOf('product_reviews') != -1
+                  " value="review">
+                  Order Review
+                </option>
+              </select>
+            </div>
+            <!-- vendor order -->
+            <div *ngIf="mailForm.vendor_id" class="col-md-12 form-group mb-3">
+              <label>Email Type</label>
+              <select name="type" class="form-control select-arrow" [(ngModel)]="mailForm.type" required>
+                <option *ngIf="commonService.store_details?.login_type != 'vendor'" value="placed">
+                  Order Placed
+                </option>
+                <option *ngIf="vendorInfo.confirmed_on" value="confirmed">
+                  Order Confirmed
+                </option>
+                <option *ngIf="vendorInfo.dispatched_on" value="dispatched">
+                  Order Dispatched
+                </option>
+                <option *ngIf="vendorInfo.delivered_on" value="delivered">
+                  Order Delivered
+                </option>
+                <option *ngIf="
+                    commonService.store_details?.login_type != 'vendor' &&
+                    commonService.ys_features.indexOf('product_reviews') != -1
+                  " value="review">
+                  Order Review
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="errorMsg">
+          <p class="text-danger">{{ errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="btnLoader" [ladda]="btnLoader" class="btn btn-wide btn-primary ladda-button">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- create item group -->
+<ng-template #itemGroupModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+      <span class="popup_text">Create New Group</span>
+    </h4>
+  </div>
+  <form autocomplete="off" (ngSubmit)="onCreateNewGroup()" ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="row">
+          <div class="list-item col-md-12 mb-4">
+            <p class="sec-desc">Product List</p>
+            <div *ngFor="let x of remaining_items; let i = index" class="card m-10 d-flex flex-row">
+              <div class="list-thumb d-flex p-2">
+                <img [src]="imgBaseUrl + x.image" alt="" />
+              </div>
+              <div class="flex-grow-1 pl-2 d-flex">
+                <div class="card-body row">
+                  <div class="col-md-7 d-flex justify-content-center flex-column">
+                    <span>{{ x.name }}</span>
+                    <ng-container *ngIf="x.variant_status">
+                      <ng-container *ngFor="let y of x.variant_types">
+                        <span class="w-100">
+                          <b>{{ y.name }}: </b>{{ y.value }}</span>
+                      </ng-container>
+                    </ng-container>
+                    <span *ngIf="x.slot_details" class="w-100">
+                      <b>Delivery on: </b>{{ x.slot_details?.date | date : "dd MMM y" }} ({{
+                      x.slot_details?.slot
+                      }})
+                    </span>
+                    <div *ngIf="x.addon_status && x.selected_addon">
+                      <b>Addon: </b><span class="w-100">{{ x.selected_addon?.name }}</span>
+                      <ng-container *ngIf="x.customization_status">
+                        <br />
+                        <b *ngIf="x.customized_model?.sizing_list?.length > 1">
+                          {{
+                          x.customized_model.sizing_list[
+                          x.customized_model.sizing_list.length - 2
+                          ].value[0].unique_name
+                          }}
+                          -
+                          {{
+                          x.customized_model.sizing_list[
+                          x.customized_model.sizing_list.length - 1
+                          ].value[0].unique_name
+                          }}<br />
+                        </b>
+                        <b class="w-100 text-primary" (click)="
+                            onViewCustomization(
+                              x,
+                              order_details.order_number,
+                              customizationModal
+                            )
+                          " style="cursor: pointer">
+                          {{ x.customized_model?.name }}
+                        </b>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div class="col-md-3 flex-center">{{ x.sku }}</div>
+                  <div class="col-md-2">
+                    <label class="checkbox checkbox-primary pull-right mt-4">
+                      <input (click)="groupForm.errorMsg = null" name="check{{ i }}" type="checkbox"
+                        [(ngModel)]="x.checked" />
+                      <span></span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label>Group Name</label>
+            <input type="text" name="group_name" class="form-control" [(ngModel)]="groupForm.name" #group_name="ngModel"
+              required />
+          </div>
+        </div>
+      </div>
+      <div *ngIf="groupForm.errorMsg">
+        <p class="text-danger">{{ groupForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="groupForm.submit"
+        [ladda]="groupForm.submit">
+        Create
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- update item group -->
+<ng-template #updateItemGroupModal let-modal>
+  <div class="modal-header">
+    <h4>
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+      <span class="popup_text">Update {{ groupForm.name }}</span>
+    </h4>
+  </div>
+  <form autocomplete="off" (ngSubmit)="onUpdateNewGroup()" ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Group Name</label>
+            <input type="text" name="group_name" class="form-control" [(ngModel)]="groupForm.name" #group_name="ngModel"
+              required />
+          </div>
+          <ng-container *ngIf="!order_details.shipping_method?.delivery_method">
+            <div class="col-md-12 form-group mb-3">
+              <label>Carrier Name</label>
+              <input type="text" name="carrier_name" class="form-control" [(ngModel)]="groupForm.carrier_name"
+                #carrier_name="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Number</label>
+              <input type="text" name="tracking_number" class="form-control" [(ngModel)]="groupForm.tracking_number"
+                #tracking_number="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Link</label>
+              <input type="text" name="tracking_link" class="form-control" [(ngModel)]="groupForm.tracking_link"
+                #tracking_link="ngModel" required />
+            </div>
+          </ng-container>
+          <div *ngIf="!groupForm.dispatched_on" class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="dispatched_status"
+                [(ngModel)]="groupForm.dispatched_status" #dispatched_status="ngModel" />
+              <span>Mark as dispatched</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div *ngIf="groupForm.dispatched_on || groupForm.dispatched_status" class="col-md-12 form-group mb-3">
+            <label>{{
+              order_details.shipping_method?.delivery_method
+              ? "Delivery"
+              : "Shipping"
+              }}
+              Cost (for your reference)
+            </label>
+            <input type="tel" name="price" class="form-control" [(ngModel)]="groupForm.price" #price="ngModel"
+              appNumberOnly required />
+          </div>
+        </div>
+      </div>
+      <div *ngIf="groupForm.errorMsg">
+        <p class="text-danger">{{ groupForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="groupForm.submit"
+        [ladda]="groupForm.submit">
+        Update
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- delete item group -->
+<ng-template #deleteItemGroupModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to remove
+        <span class="txt-grdint-highlight">"{{ groupForm.name }}"</span>
+        group?</strong>
+    </p>
+    <div *ngIf="groupForm.errorMsg">
+      <p class="text-danger">{{ groupForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" (click)="onRemoveNewGroup()" class="btn btn-wide btn-primary ladda-button"
+      [disabled]="groupForm.submit" [ladda]="groupForm.submit">
+      Ok
+    </button>
+  </div>
+</ng-template>
+
+<!-- place order -->
+<ng-template #placeOrderModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Place Order</h4>
+  </div>
+  <form autocomplete="off" (ngSubmit)="
+      onPlaceOrder({ _id: order_details._id, payment_id: editForm.payment_id })
+    " ngNativeValidate ngbAutofocus>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Payment ID</label>
+            <input type="text" name="payment_id" class="form-control" [(ngModel)]="editForm.payment_id"
+              #payment_id="ngModel" required />
+          </div>
+        </div>
+      </div>
+      <div *ngIf="editForm.errorMsg">
+        <p class="text-danger">{{ editForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="submit" class="btn btn-wide btn-primary">Confirm</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Customer Note -->
+<ng-template #customerNoteModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateCustomerNote()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Update Customer Note</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <textarea class="form-control" rows="3" aria-label="With textarea" name="notes"
+              [(ngModel)]="editForm.notes"></textarea>
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit"
+          [ladda]="editForm.submit">
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- courier partner -->
+<ng-template #cpModal let-modal>
+  <form autocomplete="off" (ngSubmit)="createCpOrder(courierForm)" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <span class="popup_text">Create Courier Order</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="!courierForm.ratesList?.length" class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Delivery Partners</label>
+            <select name="selected_cp" class="form-control select-arrow" [(ngModel)]="courierForm.selected_cp"
+              (change)="courierForm.errorMsg = ''" required>
+              <option [ngValue]="x.name" *ngFor="let x of commonService.courier_partners">
+                {{ x.name }}
+              </option>
+              <option *ngIf="!order_details.shipping_method.delivery_method" [ngValue]="addedCourier.name">
+                {{ addedCourier?.name }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="courierForm.selected_cp == 'Delhivery'" class="col-md-12 form-group mb-3">
+            <label>Shipping Mode</label>
+            <select name="ship_mode" class="form-control select-arrow" [(ngModel)]="courierForm.ship_mode" required>
+              <option value="Surface">Surface</option>
+              <option value="Express">Express</option>
+            </select>
+          </div>
+          <ng-container *ngIf="courierForm.selected_cp=='DHL' || courierForm.selected_cp=='DHL INDIA' || courierForm.selected_cp=='Shippo'">
+            <div class="col-md-4 form-group mb-3 summary-section">
+              <label>{{ (courierForm.selected_cp=='DHL INDIA')? 'Depth': 'Length' }}</label>
+              <input type="tel" name="length" class="form-control" [(ngModel)]="courierForm.length" appNumberOnly
+                required />
+            </div>
+            <div class="col-md-4 form-group mb-3 summary-section">
+              <label>width</label>
+              <input type="tel" name="width" class="form-control" [(ngModel)]="courierForm.width" appNumberOnly
+                required />
+            </div>
+            <div class="col-md-4 form-group mb-3 summary-section">
+              <label>Height</label>
+              <input type="tel" name="height" class="form-control" [(ngModel)]="courierForm.height" appNumberOnly
+                required />
+            </div>
+          </ng-container>
+          <!-- DHL -->
+          <ng-container *ngIf="courierForm.selected_cp == 'DHL' || courierForm.selected_cp == 'Speedaf'">
+            <div class="col-md-6 form-group mb-3 summary-section">
+              <label>Pickup Date</label>
+              <input type="text" class="form-control" name="pickup_date" autocomplete="off"
+                [(ngModel)]="courierForm.pickup_date" bsDatepicker [bsConfig]="{
+                  showWeekNumbers: false,
+                  dateInputFormat: 'DD-MM-YYYY'
+                }" [minDate]="currDate" required />
+            </div>
+            <div class="col-md-6 form-group mb-3 summary-section">
+              <label>Pickup Time</label>
+              <input type="text" name="pickup_time" class="form-control" [(ngModel)]="courierForm.pickup_time"
+                (click)="timePicker(courierForm, 'pickup_time')" required />
+            </div>
+            <div *ngIf="courierForm.selected_cp == 'DHL'" class="col-md-12 form-group mb-3 summary-section">
+              <label>Order Description</label>
+              <input type="text" name="order_desc" class="form-control" [(ngModel)]="courierForm.order_desc" required />
+            </div>
+          </ng-container>
+          <!-- EMS (Ghana Post) -->
+          <ng-container *ngIf="courierForm.selected_cp == 'EMS'">
+            <div class="col-md-12 form-group mb-3">
+              <label>Choose Destination</label>
+              <select name="destination" [(ngModel)]="courierForm.destination" class="form-control select-arrow"
+                required>
+                <option *ngFor="let x of ghanaPostDestinations" [ngValue]="x.destination_id">
+                  {{ x.destination_name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Description (optional)</label>
+              <input type="text" name="description" class="form-control" [(ngModel)]="courierForm.description" />
+            </div>
+          </ng-container>
+          <!-- DUNZO -->
+          <ng-container *ngIf="courierForm.selected_cp == 'Dunzo'">
+            <div class="col-md-12 form-group mb-3">
+              <label>Special Instructions</label>
+              <input type="text" name="special_instructions" class="form-control"
+                [(ngModel)]="courierForm.special_instructions" />
+            </div>
+            <div *ngIf="order_details.shipping_method?.delivery_method" class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="schedule_status"
+                  [(ngModel)]="courierForm.schedule_status" #schedule_status="ngModel" />
+                <span>Enable Scheduled Delivery</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </ng-container>
+          <!-- OTHERS -->
+          <ng-container *ngIf="courierForm.selected_cp == 'Others'">
+            <div class="col-md-12 form-group mb-3">
+              <label>Courier Name</label>
+              <input type="text" name="tracker_name" class="form-control" [(ngModel)]="courierForm.name" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Number</label>
+              <input type="text" name="tracking_number" class="form-control" [(ngModel)]="courierForm.tracking_number"
+                required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tracking Link</label>
+              <input type="text" name="tracking_link" class="form-control" [(ngModel)]="courierForm.tracking_link"
+                required />
+            </div>
+          </ng-container>
+        </div>
+        <!-- rate list -->
+        <div *ngIf="courierForm.ratesList?.length" class="row">
+          <div *ngFor="let x of courierForm.ratesList" class="col-md-12">
+            <!-- Radio -->
+            <label class="radio radio-primary">
+              <input type="radio" (change)="
+                  courierForm.selected_rate = x;
+                  courierForm.rate_id = x.object_id
+                " [checked]="courierForm.rate_id == x.object_id" name="rates_option" />
+              <span class="checkmark"></span>
+              <img [src]="x.provider_image_75" height="50px" />
+              <p>{{ x.provider }}</p>
+              <p>{{ x.servicelevel.name }}</p>
+              <p>{{ x.amount_local | currency : x.currency_local }}</p>
+              <p>{{ x.duration_terms }}</p>
+            </label>
+            <!-- #Radio -->
+          </div>
+        </div>
+        <div *ngIf="courierForm.errorMsg">
+          <p class="text-danger">{{ courierForm.errorMsg | json }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click')">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="courierForm.submit"
+          [ladda]="courierForm.submit">
+          {{
+          courierForm.selected_cp == "Others" ? "Update Details" : "Submit"
+          }}
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- package slip -->
+<ng-template #packageSlipModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+        {{ slip_details?.oid }}
+      </h4>
+      <p class="m-close-btn m-1">
+        <a (click)="modal.dismiss('Cross click')">CLOSE</a>
+      </p>
+    </div>
+    <div *ngIf="popupLoader" class="modal-body">
+      <app-popup-spinner></app-popup-spinner>
+    </div>
+    <div *ngIf="!popupLoader" class="modal-body">
+      <table class="table table-bordered mb-0 modal-table" align="center">
+        <tr>
+          <td colspan="3" class="pad-0">
+            <table class="w-100">
+              <tr>
+                <td align="center" width="50%" class="border-ltb0">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <img [src]="storeLogo" class="img-fluid deli_img1" />
+                  </div>
+                </td>
+                <td width="50%" class="border-rtb0">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <img src="assets/images/delhivery-right.png" class="img-fluid deli_img2" />
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div class="d-flex justify-content-center align-items-center">
+              <img src="{{ slip_details?.barcode }}" class="img-fluid" />
+            </div>
+            <div class="row m-0">
+              <div class="col-8 pl-0">
+                <p class="mb-0">{{ slip_details?.pin }}</p>
+              </div>
+              <div class="col-4 pr-0 d-flex justify-content-end">
+                <p class="mb-0"><b>DUM/WLT</b></p>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <p class="mb-0">
+              <b>Shipping Address:</b><br />
+              <b>{{ slip_details?.name }}</b><br />
+              {{ slip_details?.address }}<br />{{ slip_details?.destination
+              }}<br />
+              <b>PIN: {{ slip_details?.pin }}</b>
+            </p>
+          </td>
+          <td style="vertical-align: middle">
+            <p class="mb-0" align="center" style="font-weight: 600">
+              <span>{{ slip_details?.pt }}</span><br />
+              <span>{{
+                slip_details?.rs
+                | currency : commonService.store_currency?.country_code
+                }}</span><br />
+              <span>{{
+                slip_details?.mot == "E" ? "Express" : "Surface"
+                }}</span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td width="60%">
+            <p class="mb-0">Seller: {{ slip_details.snm }}</p>
+            <p class="mb-0">Address: {{ slip_details.sadd }}</p>
+          </td>
+          <td colspan="2" width="40%">
+            <p class="mb-0" align="center">&nbsp;</p>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <p class="mb-0">Product</p>
+          </th>
+          <th>
+            <p class="mb-0">Price</p>
+          </th>
+          <th>
+            <p class="mb-0">Total</p>
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <p class="mb-0">{{ slip_details.prd }}</p>
+          </td>
+          <td>
+            <p class="mb-0">
+              {{
+              slip_details?.rs
+              | currency : commonService.store_currency?.country_code
+              }}
+            </p>
+          </td>
+          <td>
+            <p class="mb-0">
+              {{
+              slip_details?.rs
+              | currency : commonService.store_currency?.country_code
+              }}
+            </p>
+          </td>
+        </tr>
+        <tr class="total-b" style="font-weight: bold">
+          <td>
+            <p class="mb-0">Total</p>
+          </td>
+          <td>
+            <p class="mb-0">
+              {{
+              slip_details?.rs
+              | currency : commonService.store_currency?.country_code
+              }}
+            </p>
+          </td>
+          <td>
+            <p class="mb-0">
+              {{
+              slip_details?.rs
+              | currency : commonService.store_currency?.country_code
+              }}
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div class="d-flex justify-content-center align-items-center">
+              <img src="{{ slip_details?.oid_barcode }}" class="img-fluid deli_img2" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <p class="mb-0">
+              <b>Return Address: {{ slip_details.radd }}</b>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-wide btn-primary" (click)="generatePackingSlip()">
+        Save as pdf
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #customPackageSlipModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Packing Slip</h4>
+      <p class="m-close-btn m-1">
+        <a (click)="modal.dismiss('Cross click')">CLOSE</a>
+      </p>
+    </div>
+    <div *ngIf="popupLoader" class="modal-body">
+      <app-popup-spinner></app-popup-spinner>
+    </div>
+    <div *ngIf="!popupLoader" class="modal-body">
+      <table class="table table-bordered mb-0 modal-table" align="center">
+        <tr>
+          <td colspan="3" align="center" width="100%" class="border-ltb0">
+            <div class="d-flex justify-content-center align-items-center">
+              <img [src]="storeLogo" style="height: 60px" class="img-fluid deli_img1" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div class="row m-0">
+              <div class="col-12 pl-0">
+                <b class="mb-0">Order Number: {{ slip_details?.order_number }}</b>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <p class="mb-2"><b>Shipping Address:</b></p>
+            <p class="mb-0">
+              <b>{{ slip_details.shipping_address?.name }}</b><br />
+              {{ slip_details.shipping_address?.dial_code }}
+              {{ slip_details.shipping_address?.mobile }}<br />
+              {{ slip_details.shipping_address?.address }}<br />
+              {{ slip_details.addrList.join(", ") }}<br />
+              {{ slip_details.shipping_address?.pincode }}
+            </p>
+          </td>
+          <td style="vertical-align: middle">
+            <p class="mb-0" align="center" style="font-weight: 600">
+              <span>{{
+                slip_details.payment_success ? "Pre-Paid" : "COD"
+                }}</span><br />
+              <span *ngIf="!slip_details.payment_success">
+                {{
+                slip_details?.final_price
+                | currency : slip_details.currency_code
+                }} </span><br />
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <p class="mb-2"><b>Products:</b></p>
+            <p class="mb-0">{{ slip_details.item_list.join(", ") }}</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <div class="d-flex justify-content-center align-items-center">
+              <img style="height: 100px" src="{{ slip_details.barcode }}" class="img-fluid deli_img2" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="3">
+            <b class="mb-0">{{ slip_details.seller_info?.name }}</b>
+            <p class="mb-0">{{ slip_details.seller_info?.address }}</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-wide btn-primary" (click)="generateCustomPackingSlip()">
+        Save as pdf
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- customization modal -->
+<ng-template #customizationModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+        {{ commonService.custom_model?.name }}
+      </h4>
+      <p class="m-close-btn m-1">
+        <a (click)="modal.dismiss('Cross click')">CLOSE</a>
+      </p>
+    </div>
+    <div class="modal-body">
+      <app-customization-details></app-customization-details>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-wide btn-primary" (click)="generateCustomizatioPdf()">
+        Save as pdf
+      </button>
+    </div>
+  </div>
+</ng-template>

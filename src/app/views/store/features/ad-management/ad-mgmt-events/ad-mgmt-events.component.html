@@ -1,0 +1,144 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+​
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+​
+  <div class="top-filter-sec">
+    <div class="row mb-4">
+      <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-12 form-group mb-3" align="center">
+                <div class="col-md-6">
+                  <div class="card p-3">
+                    <div *ngIf="adForm.image" (click)="modalService.open(popupImage, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});" class="text-center mt-3 cursor">
+                      <span (click)="adForm.img_change=null; adForm.image=null;"
+                      class="material-icons round-img-icon ab-item-close top5"  aria-hidden="true">close</span>
+                      <img *ngIf="adForm.img_change" [src]="adForm.image" height="200px;" width="auto;">
+                      <img *ngIf="!adForm.img_change" [src]="imgBaseUrl+adForm.image" height="200px;" width="auto;">
+                    </div>
+                    <div *ngIf="!adForm.image" class="text-center">
+                      <label>
+                        <div>
+                          <i class="material-icons add-img">add_photo_alternate</i>
+                          <p>Click to upload image</p>
+                        </div>
+                        <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="adForm.form_type=='add'" class="col-md-12 form-group mb-3">
+                <label>Ad Position</label>
+                <select name="type" class="form-control select-arrow" [(ngModel)]="adForm.type" required>
+                  <option [ngValue]="x._id" *ngFor="let x of segmentList;">{{x.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Ad Name</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="adForm.name" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>No. of Slots</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="allocated_slots" class="form-control" [(ngModel)]="adForm.allocated_slots" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Image Description</label>
+                <textarea rows="4" type="text" name="description" class="form-control" [(ngModel)]="adForm.description" required></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Input Remarks</label>
+                <textarea rows="4" type="text" name="input_remarks" class="form-control" [(ngModel)]="adForm.input_remarks" required></textarea>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Price for Normal Traffic Days</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="normal_price" class="form-control" [(ngModel)]="adForm.normal_price" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Price for High Traffic Days</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="peak_price" class="form-control" [(ngModel)]="adForm.peak_price" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="schedule_status" [(ngModel)]="adForm.schedule_status"
+                  (change)="(adForm.schedule_status)? adForm.disable_dates=[{}]: adForm.disable_dates=[];">
+                  <span>Enable Schedule Off</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngFor="let x of adForm.disable_dates; let i=index;">
+           <div class="card  col-md-12 mb-3 py-3 px-0 d-flex" style="flex-direction:row ;">
+            <div class="col-md-6 form-group mb-3">
+              <label>From</label>
+              <input type="text" class="form-control" name="scheduleFrom{{i+1}}" autocomplete="off" [(ngModel)]="x.from" bsDatepicker
+              [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" placement="top" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>To</label>
+              <span *ngIf="adForm.disable_dates.length > 1" (click)="adForm.disable_dates.splice(i, 1);"
+              class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+              <input type="text" class="form-control" name="scheduleTo{{i+1}}" autocomplete="off" [(ngModel)]="x.to" placement="top"
+              bsDatepicker [minDate]="x.from" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required />
+            </div>
+           </div>
+              </ng-container>
+              <button class="light-button" *ngIf="adForm.schedule_status" (click)="adForm.disable_dates.push({});">
+                <span class="material-symbols-rounded">add</span>Add New 
+              </button>
+            </div>
+          </div>
+          <div *ngIf="adForm.errorMsg">
+            <p class="text-danger">{{ adForm.errorMsg }}</p>
+          </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn mr-3" routerLink="/features/ad-management">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-wide btn-primary ladda-button" [disabled]="adForm.submit" [ladda]="adForm.submit">
+            {{adForm.form_type=='add'? 'Add': 'Update'}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+​
+</div>
+​
+<ng-template #popupImage let-modal>
+      <div class="modal-header">
+          <h4>
+              <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+              <span class="popup_text">Ad layout</span>
+             </h4>        
+        </div>
+ 
+    <div class="modal-body m-3">
+      <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <div class="text-center mt-3">
+              <img *ngIf="adForm.img_change" [src]="adForm.image" height="300px;" width="auto;">
+              <img *ngIf="!adForm.img_change" [src]="imgBaseUrl+adForm.image" height="300px;" width="auto;">
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
+          <span class="black-outline-txt">Close</span>
+        </button>
+      </div>
+</ng-template>

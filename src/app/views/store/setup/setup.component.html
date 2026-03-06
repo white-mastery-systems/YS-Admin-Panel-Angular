@@ -1,0 +1,41 @@
+<div *ngIf="list.length" class="mt-3">
+  <!-- <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Website</h1>
+        <ul>
+          <li>Customize you website here</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="separator-breadcrumb border-top"></div> -->
+
+  <!-- list -->
+  <ng-container *ngFor="let x of list;">
+    <div class="row d-flex px-2">
+      <div class="col-md-12 setting_head">
+        <h6>{{x.name}}</h6>
+      </div>
+    </div>
+    <!-- menus -->
+    <div *ngIf="x.menu_list?.length" class="row d-flex px-0 margin-minus10">
+      <div class="col-4 col-md-4 px-2 row_margin" *ngFor="let y of x.menu_list">
+        <div class="card d-flex align-items-center justify-content-start py-3 px-2"  [routerLink]="y.link">
+          <div class="icons">
+            <span class="material-symbols-rounded">{{y.icon}}</span>
+          </div>
+           <label class="text-title cursor">{{y.name}}</label>
+         </div>
+    </div>
+      <!-- <div class="col-6 col-md-6 px-2 mb-3" *ngFor="let y of x.menu_list">
+        <div class="card p-3 d-flex justify-content-start align-items-center flex-row" [routerLink]="y.link">
+          <div class="icons mb-0">
+            <span class="material-symbols-rounded">{{y.icon}}</span>
+          </div>
+          <label class="text-title cursor pl-3">{{y.name}}</label>
+        </div>
+      </div> -->
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,99 @@
+.card-icon .card-body {
+  padding: 1rem 0 !important;
+}
+
+.dashcard {
+  box-shadow: 0px 4px 22px 0px #00000010;
+  -webkit-box-shadow: 0px 4px 22px 0px #00000010;
+  -moz-box-shadow: 0px 4px 22px 0px #00000010;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  padding: 0.75rem;
+
+  p {
+    margin-bottom: 0px;
+    color: #3D3D3D;
+    font-weight: 500;
+    font-size: 12px
+  }
+
+  h4 {
+    color: #E0717B;
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 24px;
+    color: #3D3D3D47;
+    margin-bottom: 6px
+  }
+}
+
+.font-12 {
+  font-size: 12px !important;
+}
+
+i.load-spin {
+  font-family: FontAwesome !important;
+  color: #EC848B;
+}
+
+.desktop_card {
+  background: #E0717B;
+  padding: 16px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 24px 0px #00000010;
+  -webkit-box-shadow: 0px 4px 24px 0px #00000010;
+  -moz-box-shadow: 0px 4px 24px 0px #00000010;
+
+  h6 {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .shop {
+    margin-bottom: 13px;
+
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+  }
+
+  span {
+    font-weight: 100;
+    color: white;
+  }
+}
+
+.custom_button2 {
+  background: rgba(255, 255, 255, 0.16);
+  color: #3d3d3d;
+  border-radius: 18px;
+  border: none;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 4px 12px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    font-size: 12px !important;
+    margin-bottom: 0 !important;
+
+
+    &.material-symbols-rounded {
+      font-size: 16px !important;
+      margin-right: 8px;
+    }
+  }
+}

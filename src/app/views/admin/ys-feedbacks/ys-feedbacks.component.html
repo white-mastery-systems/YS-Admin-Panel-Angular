@@ -1,0 +1,179 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12 p-0">
+        <h1>Feedbacks</h1>
+        <ul>
+          <li>View and manage your feedbacks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="separator-breadcrumb border-top"></div>
+
+  <div class="top-filter-sec list-button mt-2">
+    <div class="row mb-4">
+      <div class="col-md-3 col-6">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="form-group">
+          <select name="type" class="form-control select-arrow" [(ngModel)]="filterForm.type" (change)="ngOnInit();">
+            <option value="all">All</option>
+            <option value="new">New</option>
+            <option value="existing">Existing</option>
+            <option value="progress">In Progress</option>
+            <option value="hold">On Hold</option>
+            <option value="fixed">Fixed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="form-group">
+          <input type="text" placeholder="Select Date" class="form-control" name="from_date"
+            [(ngModel)]="filterForm.from_date" (ngModelChange)="ngOnInit();" bsDatepicker
+            [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="form-group">
+          <input type="text" placeholder="Select Date" class="form-control" name="to_date"
+            [(ngModel)]="filterForm.to_date" (ngModelChange)="ngOnInit();" bsDatepicker [minDate]="filterForm.from_date"
+            [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'title':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngFor="let x of list | numOrderDesc:'created_on' | fieldSearch:'title':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="col-md-10 col-8 first_col px-0">
+            <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.title}}</p>
+            <p class="w-20 w-sm-100 m-b-0 light-font">{{ x.severity }}</p>
+            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y hh:mm a"}}</p>
+            <p class="w-20 w-sm-100 m-b-0 light-font">
+              <span class="badge" [ngClass]="{
+                'badge-red-background': x.status=='new' || x.status=='existing',
+                'badge-green-background': x.status=='fixed',
+                'badge-yellow-background': x.status=='progress' || x.status=='hold'
+              }">
+                <ng-container *ngIf="x.status=='new'">New</ng-container>
+                <ng-container *ngIf="x.status=='existing'">Existing</ng-container>
+                <ng-container *ngIf="x.status=='fixed'">Fixed</ng-container>
+                <ng-container *ngIf="x.status=='progress'">In Progress</ng-container>
+                <ng-container *ngIf="x.status=='hold'">On Hold</ng-container>
+              </span>
+            </p> 
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" (click)="onView(x._id, viewModal);">
+                <span class="material-symbols-rounded right_arrow transicon">
+                  {{commonService.desktop_device? 'visibility': 'chevron_right'}}
+                </span> {{commonService.desktop_device? 'View': ''}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+        maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'title':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #viewModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+      <h4 class="modal-title">Feedback</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="mb-1"><b>Store Details</b></p>
+          <p class="pl-2">{{ viewForm.storeDetails[0]?.name }}<br>({{ viewForm.storeDetails[0]?.email }})</p>
+        </div>
+        <hr class="w-100 mt-0 mb-3">
+        <div class="col-md-12">
+          <p class="mb-1"><b>Title</b></p>
+          <p class="pl-2">{{ viewForm.title }}</p>
+        </div>
+        <hr class="w-100 mt-0 mb-3">
+        <div class="col-md-12">
+          <p class="mb-1"><b>Severity</b></p>
+          <select name="severity" class="form-control select-arrow mb-3" [(ngModel)]="viewForm.severity">
+            <option value="Critical">Critical</option>
+            <option value="Minor">Minor</option>
+            <option value="To improve">To improve</option>
+            <option value="Feature request">Feature request</option>
+          </select>
+        </div>
+        <hr class="w-100 mt-0 mb-3">
+        <div class="col-md-12">
+          <p class="mb-1"><b>Description</b></p>
+          <p class="pl-2">{{ (viewForm.description)? viewForm.description: 'NA' }}</p>
+        </div>
+        <ng-container *ngIf="viewForm.image_list?.length">
+          <hr class="w-100 mt-0 mb-3">
+          <div class="col-md-12">
+            <p class="m-b-0"><b>Image List</b></p>
+          </div>
+          <div class="col-md-6 form-group mb-3" align="center" *ngFor="let x of viewForm.image_list">
+            <div class="card p-3 mt-3 mb-3">
+              <div>
+                <img [src]="imgBaseUrl+x.image" class="card_image">
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="col-md-12 mt-3">
+          <label>Status</label>
+          <select name="status" class="form-control select-arrow" [(ngModel)]="viewForm.status">
+            <option value="new">New</option>
+            <option value="existing">Existing</option>
+            <option value="progress">In Progress</option>
+            <option value="hold">On Hold</option>
+            <option value="fixed">Fixed</option>
+          </select>
+        </div>
+        <div align="center" class="col-md-12 z-i-0" *ngIf="viewForm.errorMsg">
+          <p class="text-danger">{{ viewForm.errorMsg }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" (click)="onUpdate();" class="btn btn-wide btn-primary ml-3">
+        Update
+      </button>
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+    </div>
+  </div>
+</ng-template>

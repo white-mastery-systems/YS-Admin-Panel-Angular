@@ -1,0 +1,938 @@
+[
+  {
+    "name": "Cape Verde",
+    "tz": "Atlantic/Cape_Verde"
+  },
+  {
+    "name": "Dominican Republic",
+    "tz": "America/Santo_Domingo"
+  },
+  {
+    "name": "Brazil",
+    "tz": "America/Sao_Paulo"
+  },
+  {
+    "name": "Bangladesh",
+    "tz": "Asia/Dhaka"
+  },
+  {
+    "name": "Macau",
+    "tz": "Asia/Macau"
+  },
+  {
+    "name": "Turkey",
+    "tz": "Europe/Istanbul"
+  },
+  {
+    "name": "Guinea-Bissau",
+    "tz": "Africa/Bissau"
+  },
+  {
+    "name": "The Philippines",
+    "tz": "Asia/Manila"
+  },
+  {
+    "name": "Hungary",
+    "tz": "Europe/Budapest"
+  },
+  {
+    "name": "Nepal",
+    "tz": "Asia/Kathmandu"
+  },
+  {
+    "name": "Kuwait",
+    "tz": "Asia/Kuwait"
+  },
+  {
+    "name": "Turks and Caicos Islands",
+    "tz": "America/Grand_Turk"
+  },
+  {
+    "name": "Togo",
+    "tz": "Africa/Lome"
+  },
+  {
+    "name": "Wales",
+    "tz": "Europe/London"
+  },
+  {
+    "name": "Kiribati",
+    "tz": "Pacific/Tarawa"
+  },
+  {
+    "name": "Slovakia",
+    "tz": "Europe/Bratislava"
+  },
+  {
+    "name": "Namibia",
+    "tz": "Africa/Windhoek"
+  },
+  {
+    "name": "Estonia",
+    "tz": "Europe/Tallinn"
+  },
+  {
+    "name": "Argentina",
+    "tz": "America/Argentina/Buenos_Aires"
+  },
+  {
+    "name": "Austria",
+    "tz": "Europe/Vienna"
+  },
+  {
+    "name": "Azerbaijan",
+    "tz": "Asia/Baku"
+  },
+  {
+    "name": "Bhutan",
+    "tz": "Asia/Thimphu"
+  },
+  {
+    "name": "Slovenia",
+    "tz": "Europe/Ljubljana"
+  },
+  {
+    "name": "Gabon",
+    "tz": "Africa/Libreville"
+  },
+  {
+    "name": "Democratic Rep. of Congo",
+    "tz": "Africa/Kinshasa"
+  },
+  {
+    "name": "Ecuador",
+    "tz": "America/Guayaquil"
+  },
+  {
+    "name": "Bahrain",
+    "tz": "Asia/Bahrain"
+  },
+  {
+    "name": "Cyprus",
+    "tz": "Asia/Nicosia"
+  },
+  {
+    "name": "American Samoa",
+    "tz": "Pacific/Pago_Pago"
+  },
+  {
+    "name": "Curacao",
+    "tz": "America/Curacao"
+  },
+  {
+    "name": "Iraq",
+    "tz": "Asia/Baghdad"
+  },
+  {
+    "name": "Kyrgyzstan",
+    "tz": "Asia/Bishkek"
+  },
+  {
+    "name": "Mozambique",
+    "tz": "Africa/Maputo"
+  },
+  {
+    "name": "Papua New Guinea",
+    "tz": "Pacific/Port_Moresby"
+  },
+  {
+    "name": "Mauritania",
+    "tz": "Africa/Nouakchott"
+  },
+  {
+    "name": "Sierra Leone",
+    "tz": "Africa/Freetown"
+  },
+  {
+    "name": "Saudi Arabia",
+    "tz": "Asia/Riyadh"
+  },
+  {
+    "name": "United Arab Emirates",
+    "tz": "Asia/Dubai"
+  },
+  {
+    "name": "Norway",
+    "tz": "Europe/Oslo"
+  },
+  {
+    "name": "Oman",
+    "tz": "Asia/Muscat"
+  },
+  {
+    "name": "The Czech Republic",
+    "tz": "Europe/Prague"
+  },
+  {
+    "name": "Bulgaria",
+    "tz": "Europe/Sofia"
+  },
+  {
+    "name": "Djibouti",
+    "tz": "Africa/Djibouti"
+  },
+  {
+    "name": "Brunei",
+    "tz": "Asia/Brunei"
+  },
+  {
+    "name": "Taiwan",
+    "tz": "Asia/Taipei"
+  },
+  {
+    "name": "Thailand",
+    "tz": "Asia/Bangkok"
+  },
+  {
+    "name": "Indonesia",
+    "tz": "Asia/Jakarta"
+  },
+  {
+    "name": "Bahamas",
+    "tz": "America/Nassau"
+  },
+  {
+    "name": "Barbados",
+    "tz": "America/Barbados"
+  },
+  {
+    "name": "Gibraltar",
+    "tz": "Europe/Gibraltar"
+  },
+  {
+    "name": "Georgia",
+    "tz": "Asia/Tbilisi"
+  },
+  {
+    "name": "Pakistan",
+    "tz": "Asia/Karachi"
+  },
+  {
+    "name": "Liechtenstein",
+    "tz": "Europe/Vaduz"
+  },
+  {
+    "name": "India",
+    "tz": "Asia/Kolkata"
+  },
+  {
+    "name": "Fiji",
+    "tz": "Pacific/Fiji"
+  },
+  {
+    "name": "United Kingdom",
+    "tz": "Europe/London"
+  },
+  {
+    "name": "Iceland",
+    "tz": "Atlantic/Reykjavik"
+  },
+  {
+    "name": "Morocco",
+    "tz": "Africa/Casablanca"
+  },
+  {
+    "name": "Solomon Islands",
+    "tz": "Pacific/Guadalcanal"
+  },
+  {
+    "name": "Seychelles",
+    "tz": "Indian/Mahe"
+  },
+  {
+    "name": "France",
+    "tz": "Europe/Paris"
+  },
+  {
+    "name": "Egypt",
+    "tz": "Africa/Cairo"
+  },
+  {
+    "name": "Croatia",
+    "tz": "Europe/Zagreb"
+  },
+  {
+    "name": "Denmark",
+    "tz": "Europe/Copenhagen"
+  },
+  {
+    "name": "Costa Rica",
+    "tz": "America/Costa_Rica"
+  },
+  {
+    "name": "Chad",
+    "tz": "Africa/Ndjamena"
+  },
+  {
+    "name": "French Guiana",
+    "tz": "America/Cayenne"
+  },
+  {
+    "name": "Ghana",
+    "tz": "Africa/Accra"
+  },
+  {
+    "name": "Hong Kong",
+    "tz": "Asia/Hong_Kong"
+  },
+  {
+    "name": "New Zealand",
+    "tz": "Pacific/Auckland"
+  },
+  {
+    "name": "Uzbekistan",
+    "tz": "Asia/Tashkent"
+  },
+  {
+    "name": "Greenland",
+    "tz": "America/Godthab"
+  },
+  {
+    "name": "Uganda",
+    "tz": "Africa/Kampala"
+  },
+  {
+    "name": "Rwanda",
+    "tz": "Africa/Kigali"
+  },
+  {
+    "name": "Italy",
+    "tz": "Europe/Rome"
+  },
+  {
+    "name": "Sri Lanka",
+    "tz": "Asia/Colombo"
+  },
+  {
+    "name": "San Marino",
+    "tz": "Europe/Rome"
+  },
+  {
+    "name": "Afghanistan",
+    "tz": "Asia/Kabul"
+  },
+  {
+    "name": "El Salvador",
+    "tz": "America/El_Salvador"
+  },
+  {
+    "name": "Cameroon",
+    "tz": "Africa/Douala"
+  },
+  {
+    "name": "Eritrea",
+    "tz": "Africa/Asmara"
+  },
+  {
+    "name": "Myanmar",
+    "tz": "Asia/Yangon"
+  },
+  {
+    "name": "Republic of Korea",
+    "tz": "Asia/Seoul"
+  },
+  {
+    "name": "Uruguay",
+    "tz": "America/Montevideo"
+  },
+  {
+    "name": "Panama",
+    "tz": "America/Panama"
+  },
+  {
+    "name": "Colombia",
+    "tz": "America/Bogota"
+  },
+  {
+    "name": "Chile",
+    "tz": "America/Santiago"
+  },
+  {
+    "name": "Angola",
+    "tz": "Africa/Luanda"
+  },
+  {
+    "name": "Cuba",
+    "tz": "America/Havana"
+  },
+  {
+    "name": "Lebanon",
+    "tz": "Asia/Beirut"
+  },
+  {
+    "name": "Somalia",
+    "tz": "Africa/Mogadishu"
+  },
+  {
+    "name": "Nicaragua",
+    "tz": "America/Managua"
+  },
+  {
+    "name": "Turkmenistan",
+    "tz": "Asia/Ashgabat"
+  },
+  {
+    "name": "Libya",
+    "tz": "Africa/Tripoli"
+  },
+  {
+    "name": "Finland",
+    "tz": "Europe/Helsinki"
+  },
+  {
+    "name": "Vatican City State",
+    "tz": "Europe/Vatican"
+  },
+  {
+    "name": "Jamaica",
+    "tz": "America/Jamaica"
+  },
+  {
+    "name": "Madagascar",
+    "tz": "Indian/Antananarivo"
+  },
+  {
+    "name": "Guam",
+    "tz": "Pacific/Guam"
+  },
+  {
+    "name": "United States of America",
+    "tz": "America/New_York"
+  },
+  {
+    "name": "Albania",
+    "tz": "Europe/Tirane"
+  },
+  {
+    "name": "Cambodia",
+    "tz": "Asia/Phnom_Penh"
+  },
+  {
+    "name": "Burkina Faso",
+    "tz": "Africa/Ouagadougou"
+  },
+  {
+    "name": "Liberia",
+    "tz": "Africa/Monrovia"
+  },
+  {
+    "name": "Moldova",
+    "tz": "Europe/Chisinau"
+  },
+  {
+    "name": "Virgin Islands (US)",
+    "tz": "America/St_Thomas"
+  },
+  {
+    "name": "Vanuatu",
+    "tz": "Pacific/Efate"
+  },
+  {
+    "name": "Tanzania",
+    "tz": "Africa/Dar_es_Salaam"
+  },
+  {
+    "name": "Nigeria",
+    "tz": "Africa/Lagos"
+  },
+  {
+    "name": "South Sudan",
+    "tz": "Africa/Juba"
+  },
+  {
+    "name": "Mexico",
+    "tz": "America/Mexico_City"
+  },
+  {
+    "name": "Portugal",
+    "tz": "Europe/Lisbon"
+  },
+  {
+    "name": "Singapore",
+    "tz": "Asia/Singapore"
+  },
+  {
+    "name": "Syria",
+    "tz": "Asia/Damascus"
+  },
+  {
+    "name": "Latvia",
+    "tz": "Europe/Riga"
+  },
+  {
+    "name": "Senegal",
+    "tz": "Africa/Dakar"
+  },
+  {
+    "name": "Malta",
+    "tz": "Europe/Malta"
+  },
+  {
+    "name": "South Africa",
+    "tz": "Africa/Johannesburg"
+  },
+  {
+    "name": "Sweden",
+    "tz": "Europe/Stockholm"
+  },
+  {
+    "name": "Malaysia",
+    "tz": "Asia/Kuala_Lumpur"
+  },
+  {
+    "name": "Sudan",
+    "tz": "Africa/Khartoum"
+  },
+  {
+    "name": "Tajikistan",
+    "tz": "Asia/Dushanbe"
+  },
+  {
+    "name": "Zambia",
+    "tz": "Africa/Lusaka"
+  },
+  {
+    "name": "Zimbabwe",
+    "tz": "Africa/Harare"
+  },
+  {
+    "name": "Central African Rep.",
+    "tz": "Africa/Bangui"
+  },
+  {
+    "name": "Bonaire",
+    "tz": "America/Kralendijk"
+  },
+  {
+    "name": "Guadeloupe",
+    "tz": "America/Guadeloupe"
+  },
+  {
+    "name": "Antigua & Barbuda",
+    "tz": "America/Antigua"
+  },
+  {
+    "name": "The D.P.R of Korea",
+    "tz": "Asia/Pyongyang"
+  },
+  {
+    "name": "Tonga",
+    "tz": "Pacific/Tongatapu"
+  },
+  {
+    "name": "Niger",
+    "tz": "Africa/Niamey"
+  },
+  {
+    "name": "Saint Helena",
+    "tz": "Atlantic/St_Helena"
+  },
+  {
+    "name": "Kenya",
+    "tz": "Africa/Nairobi"
+  },
+  {
+    "name": "The Netherlands",
+    "tz": "Europe/Amsterdam"
+  },
+  {
+    "name": "Honduras",
+    "tz": "America/Tegucigalpa"
+  },
+  {
+    "name": "Maldives",
+    "tz": "Indian/Maldives"
+  },
+  {
+    "name": "Falkland Islands",
+    "tz": "Atlantic/Stanley"
+  },
+  {
+    "name": "Faroe Islands",
+    "tz": "Atlantic/Faroe"
+  },
+  {
+    "name": "Martinique",
+    "tz": "America/Martinique"
+  },
+  {
+    "name": "St. Marteen",
+    "tz": "America/Lower_Princes"
+  },
+  {
+    "name": "The Canary Islands",
+    "tz": "Atlantic/Canary"
+  },
+  {
+    "name": "People's Republic of China",
+    "tz": "Asia/Shanghai"
+  },
+  {
+    "name": "Luxembourg",
+    "tz": "Europe/Luxembourg"
+  },
+  {
+    "name": "Montserrat",
+    "tz": "America/Montserrat"
+  },
+  {
+    "name": "Rep of (N Somalia) Somaliland",
+    "tz": "Africa/Mogadishu"
+  },
+  {
+    "name": "Republic of Macedonia",
+    "tz": "Europe/Skopje"
+  },
+  {
+    "name": "Holland",
+    "tz": "Europe/Amsterdam"
+  },
+  {
+    "name": "Swaziland",
+    "tz": "Africa/Mbabane"
+  },
+  {
+    "name": "Republic of Montenegro",
+    "tz": "Europe/Podgorica"
+  },
+  {
+    "name": "Marshall Islands",
+    "tz": "Pacific/Majuro"
+  },
+  {
+    "name": "Republic of Serbia",
+    "tz": "Europe/Belgrade"
+  },
+  {
+    "name": "Guinea - Republic",
+    "tz": "Africa/Conakry"
+  },
+  {
+    "name": "Guyana (British)",
+    "tz": "America/Guyana"
+  },
+  {
+    "name": "Saipan",
+    "tz": "Pacific/Saipan"
+  },
+  {
+    "name": "Federal States of Micronesia",
+    "tz": "Pacific/Pohnpei"
+  },
+  {
+    "name": "The Russian Federation",
+    "tz": "Europe/Moscow"
+  },
+  {
+    "name": "Monaco",
+    "tz": "Europe/Monaco"
+  },
+  {
+    "name": "Sao Tome and Principe",
+    "tz": "Africa/Sao_Tome"
+  },
+  {
+    "name": "St. Lucia",
+    "tz": "America/St_Lucia"
+  },
+  {
+    "name": "Cook Islands",
+    "tz": "Pacific/Rarotonga"
+  },
+  {
+    "name": "Island of Reunion",
+    "tz": "Indian/Reunion"
+  },
+  {
+    "name": "Gambia",
+    "tz": "Africa/Banjul"
+  },
+  {
+    "name": "Suriname",
+    "tz": "America/Paramaribo"
+  },
+  {
+    "name": "Lithuania",
+    "tz": "Europe/Vilnius"
+  },
+  {
+    "name": "Peru",
+    "tz": "America/Lima"
+  },
+  {
+    "name": "Jordan",
+    "tz": "Asia/Amman"
+  },
+  {
+    "name": "Haiti",
+    "tz": "America/Port-au-Prince"
+  },
+  {
+    "name": "Belize",
+    "tz": "America/Belize"
+  },
+  {
+    "name": "Armenia",
+    "tz": "Asia/Yerevan"
+  },
+  {
+    "name": "Benin",
+    "tz": "Africa/Porto-Novo"
+  },
+  {
+    "name": "Bosnia & Herzegovina",
+    "tz": "Europe/Sarajevo"
+  },
+  {
+    "name": "Dominica",
+    "tz": "America/Dominica"
+  },
+  {
+    "name": "Venezuela",
+    "tz": "America/Caracas"
+  },
+  {
+    "name": "Switzerland",
+    "tz": "Europe/Zurich"
+  },
+  {
+    "name": "Palau",
+    "tz": "Pacific/Palau"
+  },
+  {
+    "name": "Ukraine",
+    "tz": "Europe/Kyiv"
+  },
+  {
+    "name": "Guatemala",
+    "tz": "America/Guatemala"
+  },
+  {
+    "name": "St. Kitts",
+    "tz": "America/St_Kitts"
+  },
+  {
+    "name": "Republic of Ireland",
+    "tz": "Europe/Dublin"
+  },
+  {
+    "name": "Bolivia",
+    "tz": "America/La_Paz"
+  },
+  {
+    "name": "Canada",
+    "tz": "America/Toronto"
+  },
+  {
+    "name": "Anguilla",
+    "tz": "America/Anguilla"
+  },
+  {
+    "name": "Algeria",
+    "tz": "Africa/Algiers"
+  },
+  {
+    "name": "Botswana",
+    "tz": "Africa/Gaborone"
+  },
+  {
+    "name": "Bermuda",
+    "tz": "Atlantic/Bermuda"
+  },
+  {
+    "name": "Mongolia",
+    "tz": "Asia/Ulaanbaatar"
+  },
+  {
+    "name": "Mauritius",
+    "tz": "Indian/Mauritius"
+  },
+  {
+    "name": "Poland",
+    "tz": "Europe/Warsaw"
+  },
+  {
+    "name": "Tunisia",
+    "tz": "Africa/Tunis"
+  },
+  {
+    "name": "Israel",
+    "tz": "Asia/Jerusalem"
+  },
+  {
+    "name": "Paraguay",
+    "tz": "America/Asuncion"
+  },
+  {
+    "name": "Trinidad and Tobago",
+    "tz": "America/Port_of_Spain"
+  },
+  {
+    "name": "Republic of Yemen",
+    "tz": "Asia/Aden"
+  },
+  {
+    "name": "Greece",
+    "tz": "Europe/Athens"
+  },
+  {
+    "name": "Niue",
+    "tz": "Pacific/Niue"
+  },
+  {
+    "name": "Spain",
+    "tz": "Europe/Madrid"
+  },
+  {
+    "name": "Japan",
+    "tz": "Asia/Tokyo"
+  },
+  {
+    "name": "Australia",
+    "tz": "Australia/Sydney"
+  },
+  {
+    "name": "Burundi",
+    "tz": "Africa/Bujumbura"
+  },
+  {
+    "name": "Scotland",
+    "tz": "Europe/London"
+  },
+  {
+    "name": "Iran",
+    "tz": "Asia/Tehran"
+  },
+  {
+    "name": "Malawi",
+    "tz": "Africa/Blantyre"
+  },
+  {
+    "name": "Guernsey",
+    "tz": "Europe/Guernsey"
+  },
+  {
+    "name": "Belgium",
+    "tz": "Europe/Brussels"
+  },
+  {
+    "name": "Cote d'Ivoire",
+    "tz": "Africa/Abidjan"
+  },
+  {
+    "name": "Cayman Islands",
+    "tz": "America/Cayman"
+  },
+  {
+    "name": "Aruba",
+    "tz": "America/Aruba"
+  },
+  {
+    "name": "Andorra",
+    "tz": "Europe/Andorra"
+  },
+  {
+    "name": "Kazakhstan",
+    "tz": "Asia/Almaty"
+  },
+  {
+    "name": "Vietnam",
+    "tz": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "name": "Germany",
+    "tz": "Europe/Berlin"
+  },
+  {
+    "name": "Qatar",
+    "tz": "Asia/Qatar"
+  },
+  {
+    "name": "Republic of Nauru",
+    "tz": "Pacific/Nauru"
+  },
+  {
+    "name": "Romania",
+    "tz": "Europe/Bucharest"
+  },
+  {
+    "name": "Mali",
+    "tz": "Africa/Bamako"
+  },
+  {
+    "name": "St. Eustatius",
+    "tz": "America/Kralendijk"
+  },
+  {
+    "name": "Virgin Islands (British)",
+    "tz": "America/Tortola"
+  },
+  {
+    "name": "Puerto Rico",
+    "tz": "America/Puerto_Rico"
+  },
+  {
+    "name": "Congo",
+    "tz": "Africa/Brazzaville"
+  },
+  {
+    "name": "Ethiopia",
+    "tz": "Africa/Addis_Ababa"
+  },
+  {
+    "name": "Grenada",
+    "tz": "America/Grenada"
+  },
+  {
+    "name": "Jersey",
+    "tz": "Europe/Jersey"
+  },
+  {
+    "name": "Mayotte",
+    "tz": "Indian/Mayotte"
+  },
+  {
+    "name": "Comoros",
+    "tz": "Indian/Comoro"
+  },
+  {
+    "name": "Tuvalu",
+    "tz": "Pacific/Funafuti"
+  },
+  {
+    "name": "St. Vincent",
+    "tz": "America/St_Vincent"
+  },
+  {
+    "name": "Lao People's Democratic Republic",
+    "tz": "Asia/Vientiane"
+  },
+  {
+    "name": "Samoa",
+    "tz": "Pacific/Apia"
+  },
+  {
+    "name": "St. Barthelemy",
+    "tz": "America/St_Barthelemy"
+  },
+  {
+    "name": "Belarus",
+    "tz": "Europe/Minsk"
+  },
+  {
+    "name": "Lesotho",
+    "tz": "Africa/Maseru"
+  },
+  {
+    "name": "Yugoslavia",
+    "tz": "Europe/Belgrade"
+  },
+  {
+    "name": "Netherlands Antilles",
+    "tz": "America/Curacao"
+  },
+  {
+    "name": "New Caledonia",
+    "tz": "Pacific/Noumea"
+  }
+]

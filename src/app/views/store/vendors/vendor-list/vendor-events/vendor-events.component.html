@@ -1,0 +1,614 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb">
+      <div class="d-flex align-items-center">
+        <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+        <h1>{{ commonService.secondary_header }}</h1>
+      </div>
+    </div>
+  </ng-container>
+
+  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
+    <div class="form-group">
+      <div class="row pb-2">
+        <!-- banner -->
+        <div class="col-md-3"></div>
+        <div class="col-md-6 mb-3">
+          <h6 class="mb-3 pt-3 dark-font text-center">BANNER IMAGE</h6>
+          <div class="card">
+            <div class="p-3" align="center">
+              <div *ngIf="vendorForm.image" class="py-2">
+                <span (click)="
+                    vendorForm.img_change = null; vendorForm.image = null
+                  " class="material-icons float-right round-img-icon ab-item-close top5"
+                  aria-hidden="true">close</span>
+                <img *ngIf="vendorForm.image && vendorForm?.img_change" [src]="vendorForm.image" height="100px;"
+                  width="auto;" />
+                <img *ngIf="vendorForm.image && !vendorForm?.img_change" [src]="imgBaseUrl + vendorForm.image"
+                  height="100px;" width="auto;" />
+              </div>
+              <div *ngIf="!vendorForm.image">
+                <label>
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                  <input type="file" name="image" style="display: none" (change)="fileChangeListener($event)"
+                    accept="image/jpeg, image/png, image/webp" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="vendorForm.form_type == 'edit'">
+          <div *ngIf="commonService.ys_features.indexOf('ad_management')!=-1" class="col-md-12 mb-1">
+            <p class="pull-right">
+              Wallet Balance:
+              <b>{{ vendorForm.wallet_balance | currency: commonService.store_currency?.country_code: "symbol":
+                commonService.cFormat }}</b>
+            </p>
+          </div>
+          <div
+            *ngIf="commonService.ys_features.indexOf('vendor_subs')!=-1 && commonService.deploy_details?.vendor_subs_status"
+            class="col-md-12 mb-3">
+            <p *ngIf="!vendorForm.package_details?.expiry_date" class="pull-right">
+              Trial Valid Till:
+              <b>{{vendorForm.package_details?.trial_expiry | date: "dd MMM y": "+0530"}} (IST)</b>
+            </p>
+            <p *ngIf="vendorForm.package_details?.expiry_date" class="pull-right">
+              Account Valid Till:
+              <b>{{vendorForm.package_details?.expiry_date | date: "dd MMM y": "+0530"}} (IST)</b>
+            </p>
+          </div>
+        </ng-container>
+        <div class="col-md-6 mb-3">
+          <label>Contact Person Name</label>
+          <input type="text" name="contact_person" class="form-control" [(ngModel)]="vendorForm.contact_person"
+            required />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label>Mobile</label>
+          <input type="text" name="mobile" class="form-control" [(ngModel)]="vendorForm.mobile" required />
+        </div>
+        <!-- payout -->
+        <ng-container *ngIf="
+            commonService.store_details?.payout_gateway &&
+            vendorForm.payout_contact_id
+          ">
+          <div class="col-md-6">
+            <p>
+              <b>RazorpayX Contact ID:</b> {{ vendorForm.payout_contact_id }}
+            </p>
+          </div>
+          <div class="col-md-6">
+            <label class="checkbox checkbox-success">
+              <input class="form-check-input" type="checkbox" name="update_contact"
+                [(ngModel)]="vendorForm.update_contact" />
+              <b>Update Contact Information in RazorpayX</b>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        </ng-container>
+      </div>
+      <!-- login details -->
+      <div *ngIf="vendorForm.form_type == 'add'" class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <h6>LOGIN DETAILS</h6>
+          </div>
+          <div class="col-md-6">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" [(ngModel)]="vendorForm.email" required />
+          </div>
+          <div class="col-md-6">
+            <label>Password</label>
+            <input type="text" name="password" class="form-control" [(ngModel)]="vendorForm.password" required />
+          </div>
+        </div>
+      </div>
+      <!-- store details -->
+      <div class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <h6>STORE DETAILS</h6>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Business Name</label>
+            <input type="text" name="company_name" class="form-control" [(ngModel)]="vendorForm.company_details.name"
+              required />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Brand Name</label>
+            <input type="text" name="brand_name" class="form-control" [(ngModel)]="vendorForm.company_details.brand"
+              (input)="onChangeTitle()" required />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Instagram Page URL</label>
+            <input type="text" name="instagram" class="form-control"
+              [(ngModel)]="vendorForm.company_details.instagram" />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Website URL (if available)</label>
+            <input type="text" name="website" class="form-control" [(ngModel)]="vendorForm.company_details.website" />
+          </div>
+          <ng-container *ngIf="commonService.store_details?.country == 'India'">
+            <div class="col-md-6 mb-3">
+              <label>GST No</label>
+              <input type="text" name="gst_no" class="form-control" [(ngModel)]="vendorForm.company_details.gst_no" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>PAN No</label>
+              <input type="text" name="pan_no" class="form-control" [(ngModel)]="vendorForm.company_details.pan_no" />
+            </div>
+          </ng-container>
+          <div *ngIf="commonService.store_details?.country != 'India'" class="col-md-6 mb-3">
+            <label>TIN No</label>
+            <input type="text" name="tin_no" class="form-control" [(ngModel)]="vendorForm.company_details.tin_no" />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Shipping Preferences</label>
+            <select name="shipping_type" class="form-control select-arrow"
+              [(ngModel)]="vendorForm.company_details.shipping_type" [disabled]="vendorForm.status == 'active'"
+              required>
+              <option value="">-- Select --</option>
+              <option value="free">
+                Willing to provide free shipping on all orders
+              </option>
+              <option value="free_above">
+                Willing to provide free shipping on orders above
+                {{
+                shippingPriceConfig?.free_above
+                | currency
+                : commonService.store_currency?.country_code
+                : "symbol"
+                : "1.0"
+                }}
+              </option>
+              <option value="paid">
+                Will collect shipping charges on all orders
+              </option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label>Are all the products made in
+              {{ commonService.store_details?.country }}?</label>
+            <select name="made_in_home_country" class="form-control select-arrow"
+              [(ngModel)]="vendorForm.company_details.made_in_home_country" required>
+              <option value="">-- Select --</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Established On</label>
+            <input type="text" placeholder="Select Date" class="form-control" name="established_on"
+            [(ngModel)]="vendorForm.company_details.established_on" bsDatepicker
+            [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required />
+          </div>
+        </div>
+      </div>
+      <!-- registered address -->
+      <div class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <h6>REGISTERED ADDRESS</h6>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Country</label>
+            <select class="form-control" name="r_country" [(ngModel)]="vendorForm.registered_address.country" (change)="onRCountryChange(vendorForm.registered_address.country)" required>
+              <option *ngFor="let x of commonService.country_list | orderAsc: 'name'" [ngValue]="x.name">
+                {{ x.name }}
+              </option>
+            </select>
+          </div>
+          <ng-container *ngFor="let field of reg_address_fields; let j = index">
+            <ng-container *ngIf="field.keyword == 'state'">
+              <!-- if state list exist -->
+              <div *ngIf="rstate_list?.length" class="col-md-6 mb-3">
+                <label>{{ field.label }}</label>
+                <select class="form-control" name="r_field{{ j }}" [(ngModel)]="field.value" required>
+                  <option *ngFor="let x of rstate_list | orderAsc : 'name'" [ngValue]="x.name">
+                    {{ x.name }}
+                  </option>
+                </select>
+              </div>
+              <!-- if not state list exist -->
+              <div *ngIf="!rstate_list?.length" class="col-md-6 mb-3">
+                <label>{{ field.label }}</label>
+                <input class="form-control" type="text" name="r_field{{ j }}" [(ngModel)]="field.value" required />
+              </div>
+            </ng-container>
+            <div *ngIf="field.keyword != 'state'" class="col-md-6 mb-3">
+              <label>{{ field.label }}</label>
+              <input class="form-control" type="text" name="r_field{{ j }}" [(ngModel)]="field.value" required />
+            </div>
+          </ng-container>
+          <div class="col-md-12 mb-3">
+            <label>Complete Address</label>
+            <textarea name="r_address" [(ngModel)]="vendorForm.registered_address.address" class="form-control"
+              required></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- pickup address -->
+      <div class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <h6>PICKUP ADDRESS</h6>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Country</label>
+            <select class="form-control" name="p_country" [(ngModel)]="vendorForm.pickup_address.country" (change)="onPCountryChange(vendorForm.pickup_address.country)" required>
+              <option *ngFor="let x of commonService.country_list | orderAsc: 'name'" [ngValue]="x.name">
+                {{ x.name }}
+              </option>
+            </select>
+          </div>
+          <ng-container *ngFor="let field of pick_address_fields; let j = index">
+            <ng-container *ngIf="field.keyword == 'state'">
+              <!-- if state list exist -->
+              <div *ngIf="pstate_list?.length" class="col-md-6 mb-3">
+                <label>{{ field.label }}</label>
+                <select class="form-control" name="p_field{{ j }}" [(ngModel)]="field.value" required>
+                  <option *ngFor="let x of pstate_list | orderAsc : 'name'" [ngValue]="x.name">
+                    {{ x.name }}
+                  </option>
+                </select>
+              </div>
+              <!-- if not state list exist -->
+              <div *ngIf="!pstate_list?.length" class="col-md-6 mb-3">
+                <label>{{ field.label }}</label>
+                <input class="form-control" type="text" name="p_field{{ j }}" [(ngModel)]="field.value" required />
+              </div>
+            </ng-container>
+            <div *ngIf="field.keyword != 'state'" class="col-md-6 mb-3">
+              <label>{{ field.label }}</label>
+              <input class="form-control" type="text" name="p_field{{ j }}" [(ngModel)]="field.value" required />
+            </div>
+          </ng-container>
+          <div class="col-md-12 mb-3">
+            <label>Complete Address</label>
+            <textarea name="p_address" [(ngModel)]="vendorForm.pickup_address.address" class="form-control"
+              required></textarea>
+          </div>
+          <ng-container *ngIf="commonService.courier_partners?.length">
+            <div *ngFor="let pl of vendorForm.pickup_locations" class="col-md-12">
+              <p>
+                <b>{{ pl.name }}:</b> {{ pl.location_id }}
+              </p>
+            </div>
+            <div *ngIf="vendorForm.status == 'active'" class="col-md-12">
+              <label class="checkbox checkbox-success">
+                <input class="form-check-input" type="checkbox" name="update_warehouse"
+                  [(ngModel)]="vendorForm.update_warehouse" />
+                <b>Add/Update Pickup Address in Delivery Partners</b>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <!-- bank details -->
+      <div class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12">
+            <h6>BANK DETAILS</h6>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Currency Code</label>
+            <select class="form-control" name="bank_currency" [(ngModel)]="vendorForm.bank_details.currency" required>
+              <option *ngFor="
+                  let x of commonService.ys_currency_list | orderAsc : 'name'
+                " [ngValue]="x.name">
+                {{ x.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Beneficiary Name</label>
+            <input type="text" name="beneficiary_name" class="form-control"
+              [(ngModel)]="vendorForm.bank_details.beneficiary" required />
+          </div>
+          <div *ngIf="configData.oneafrica == commonService.store_details?._id" class="col-md-6 mb-3">
+            <label>Source Bank Code</label>
+            <input type="text" name="source_bank_code" class="form-control"
+              [(ngModel)]="vendorForm.bank_details.source_bank_code" required />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Bank Name</label>
+            <input type="text" name="bank_name" class="form-control" [(ngModel)]="vendorForm.bank_details.name"
+              required />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Branch</label>
+            <input type="text" name="branch" class="form-control" [(ngModel)]="vendorForm.bank_details.branch"
+              required />
+          </div>
+          <div class="col-md-6">
+            <label>{{
+              commonService.store_details?.country == "India"
+              ? "IFSC"
+              : "Swift"
+              }}
+              Code</label>
+            <input *ngIf="commonService.store_details?.payout_gateway == 'Razorpay'" type="text" name="ifsc_code"
+              class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code" pattern=".{11,11}" required
+              title="Invalid Code" maxlength="11" required />
+            <input *ngIf="
+                !commonService.store_details?.payout_gateway ||
+                commonService.store_details?.payout_gateway != 'Razorpay'
+              " type="text" name="ifsc_code" class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code"
+              required />
+          </div>
+          <div class="col-md-6" [ngClass]="
+              commonService.store_details?.payout_gateway &&
+              vendorForm.bank_details?.payout_account_id
+                ? 'mb-3'
+                : ''
+            ">
+            <label>Account No</label>
+            <input type="text" name="acc_no" class="form-control" [(ngModel)]="vendorForm.bank_details.acc_no"
+              required />
+          </div>
+          <!-- payout -->
+          <ng-container *ngIf="
+              commonService.store_details?.payout_gateway &&
+              vendorForm.bank_details?.payout_account_id
+            ">
+            <div class="col-md-6">
+              <p>
+                <b>RazorpayX Account ID:</b>
+                {{ vendorForm.bank_details.payout_account_id }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <label class="checkbox checkbox-success">
+                <input class="form-check-input" type="checkbox" name="update_bank"
+                  [(ngModel)]="vendorForm.update_bank" />
+                <b>Update Bank Details in RazorpayX</b>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <!-- commission setting -->
+      <div class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <h6>COMMISSION SETTING</h6>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Type</label>
+            <select name="cmsn_type" class="form-control select-arrow" [(ngModel)]="vendorForm.cmsn_type" required>
+              <option value="flat">Flat Rates</option>
+              <option value="order_range">Order Value Range</option>
+              <option value="product_range">Product Range</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3"></div>
+          <ng-container *ngIf="vendorForm.cmsn_type">
+            <div *ngIf="vendorForm.cmsn_type == 'flat'" class="col-md-6 mb-3">
+              <label>Commission in (%)</label>
+              <input type="tel" name="cmsn_in_pct" class="form-control" [(ngModel)]="vendorForm.cmsn_in_pct"
+                appNumberOnly required />
+            </div>
+            <div *ngIf="vendorForm.cmsn_type != 'flat'" class="col-md-12 mb-3 mt-2">
+              <div class="row">
+                <div class="col-md-12">
+                  <b>PRICE RANGE</b>
+                </div>
+                <div class="col-md-12" *ngFor="let x of vendorForm.price_range; let i = index">
+                  <div class="card card-in-card w-100 p-3 mb-3">
+                    <span (click)="vendorForm.price_range.splice(i, 1)"
+                      class="material-icons round-btn-icon ab-item-close float-right top5"
+                      aria-hidden="true">close</span>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label>Price Above</label>
+                        <input type="tel" name="r_price{{ i }}" class="form-control" [(ngModel)]="x.price" appNumberOnly
+                          required />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label>Percentage</label>
+                        <input type="tel" name="r_percent{{ i }}" class="form-control" [(ngModel)]="x.percentage"
+                          appNumberOnly required />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <p class="add-another mb-0 pull-right" (click)="vendorForm.price_range.push({})">
+                    ADD NEW
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div class="col-md-6 mb-3">
+            <label>Payment Gateway Charges (%)</label>
+            <input type="tel" name="pgw_charges" class="form-control" [(ngModel)]="vendorForm.cmsn_config.pgw_charges"
+              appNumberOnly required />
+          </div>
+          <!-- cmsn tax -->
+          <div class="col-md-12 mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="tax_on_cmsn"
+                [(ngModel)]="vendorForm.cmsn_config.tax_on_cmsn" />
+              <span>Tax on Commission</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <ng-container *ngIf="vendorForm.cmsn_config.tax_on_cmsn">
+            <div *ngIf="commonService.store_details?.country != 'India'" class="col-md-6 mb-3">
+              <label>Tax Name</label>
+              <input type="text" name="tax_name" class="form-control" [(ngModel)]="vendorForm.cmsn_config.tax_name"
+                required />
+            </div>
+            <div class="mb-3 col-md-6">
+              <label>Tax (%)</label>
+              <input type="tel" name="tax_in_pct" class="form-control" [(ngModel)]="vendorForm.cmsn_config.tax_in_pct"
+                appNumberOnly required />
+            </div>
+            <div *ngIf="commonService.store_details?.country == 'India'" class="mb-3 col-md-6"></div>
+            <div class="col-md-6 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="tax_on_shipping"
+                  [(ngModel)]="vendorForm.cmsn_config.tax_on_shipping" />
+                <span>Tax on Shipping</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="tax_on_pgwc"
+                  [(ngModel)]="vendorForm.cmsn_config.tax_on_pgwc" />
+                <span>Tax on Payment Gateway Charges</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </ng-container>
+          <div class="col-md-6 mb-3">
+            <label>Settlement After Delivered in Days</label>
+            <input type="tel" name="settlem_in_days" class="form-control"
+              [(ngModel)]="vendorForm.cmsn_config.settlem_in_days" appNumberOnly required />
+          </div>
+        </div>
+      </div>
+      <!-- documents -->
+      <div *ngIf="vendorForm.documents?.length" class="card card-in-card p-3 mb-2">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <div class="d-flex justify-content-between">
+              <h6>DOCUMENTS</h6>
+              <div class="justify-content-end">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="doc_verified"
+                    [(ngModel)]="vendorForm.doc_verified" />
+                  <span>Mark as Verified</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div *ngFor="let x of vendorForm.documents" class="col-md-12 mb-1">
+            <div class="d-flex">
+              <p>{{ x.name }}</p>
+              <a [href]="imgBaseUrl + x.path" class="ml-2" target="_blank">
+                <span class="material-icons" aria-hidden="true">open_in_new</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SEO -->
+    <div class="data-list-card-wrapper p-0 col-md-12 col-12">
+      <div class="data-list-card-inner p-3">
+        <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+          <p class="m-b-0 dark-font medium-font">
+            SEO Listing Preview
+            <span class="light-font mt-0 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other
+              search engines</span>
+          </p>
+          <ng-container *ngIf="
+              vendorForm.company_details.brand &&
+              commonService.ys_features.indexOf('advanced_seo') != -1
+            ">
+            <span *ngIf="!vendorForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+              (click)="vendorForm.seo_disp = true" aria-hidden="true">edit</span>
+            <span *ngIf="
+                vendorForm.seo_disp &&
+                vendorForm.seo_details.page_url &&
+                vendorForm.seo_details.h1_tag &&
+                vendorForm.seo_details.page_title &&
+                vendorForm.seo_details.meta_desc
+              " (click)="vendorForm.seo_disp = false" class="material-icons float-right round-btn-icon ab-item-close"
+              aria-hidden="true">done</span>
+          </ng-container>
+        </div>
+
+        <ng-container *ngIf="!vendorForm.seo_disp">
+          <p *ngIf="!vendorForm.company_details.brand" class="light-font font-10">
+            Add a Title And Description To See How This Catalog Might Appear In
+            A Search Engine Listing
+          </p>
+          <ng-container *ngIf="vendorForm.company_details.brand">
+            <p class="light-font font-10 mb-1">
+              {{ commonService.store_details?.base_url }}/vendor/{{
+              vendorForm.seo_details?.page_url
+              }}
+            </p>
+            <h6 class="sec-desc mb-1 mt-2 seo-color">
+              {{ vendorForm.seo_details.page_title }}
+            </h6>
+            <p class="light-font font-10">
+              {{ vendorForm.seo_details.meta_desc }}
+            </p>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="vendorForm.seo_disp">
+          <div class="col-md-12 mb-3">
+            <label>Page URL</label>
+            <input type="text" name="page_url" class="form-control" [(ngModel)]="vendorForm.seo_details.page_url"
+              appNoSplChar required />
+          </div>
+          <div class="col-md-12 mb-3">
+            <label>H1 Tag</label>
+            <span *ngIf="vendorForm.seo_details?.h1_tag?.length" class="label_hint">
+              {{ vendorForm.seo_details.h1_tag.length }} of 70 characters used
+            </span>
+            <input type="text" name="h1_tag" class="form-control" [(ngModel)]="vendorForm.seo_details.h1_tag"
+              maxlength="70" required />
+          </div>
+          <div class="col-md-12 mb-3">
+            <label>Page Title</label>
+            <span *ngIf="vendorForm.seo_details?.page_title?.length" class="label_hint">
+              {{ vendorForm.seo_details.page_title.length }} of 70 characters
+              used
+            </span>
+            <input type="text" name="page_title" class="form-control" [(ngModel)]="vendorForm.seo_details.page_title"
+              maxlength="70" required />
+          </div>
+          <div class="col-md-12 mb-3">
+            <label>Meta Description</label>
+            <span *ngIf="vendorForm.seo_details?.meta_desc?.length" class="label_hint">
+              {{ vendorForm.seo_details.meta_desc.length }} of 320 characters
+              used</span>
+            <textarea class="form-control" aria-label="With textarea" name="meta_desc"
+              [(ngModel)]="vendorForm.seo_details.meta_desc" maxlength="320" required></textarea>
+          </div>
+          <div class="col-md-12 mb-3">
+            <label>Meta Keywords</label>
+            <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="vendorForm.seo_details.meta_keyword_list"
+              placeholder="" [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+            <p class="pt-3 mb-0" style="font-size: 12px; opacity: 0.8">
+              Hint: Separate each option by adding a comma, between them or
+              press enter
+            </p>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div class="page_fixedfooter row">
+      <div *ngIf="vendorForm.errorMsg" class="col-md-12 mt-3 mb-3">
+        <p class="text-danger" align="center">{{ vendorForm.errorMsg }}</p>
+      </div>
+      <div align="center" class="col-md-12 z-i-0">
+        <button type="button" routerLink="{{ commonService.redirect }}" class="btn btn-wide black-outline-btn">
+          <span class="black-outline-txt">Cancel</span></button>&nbsp; &nbsp; &nbsp;
+        <button *ngIf="!vendorForm.disableSubmit" type="submit" class="btn btn-wide btn-primary ladda-button m-1"
+          [disabled]="vendorForm.submit" [ladda]="vendorForm.submit">
+          {{ vendorForm.form_type == "edit" ? "Update" : "Save" }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

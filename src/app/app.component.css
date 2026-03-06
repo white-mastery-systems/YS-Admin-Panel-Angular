@@ -1,0 +1,46 @@
+.toastbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  #snackbar {
+    visibility: hidden;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 10px;
+    padding: 14px 26px;
+    margin: 0px 15px;
+    position: fixed;
+    z-index: 9999;
+    bottom: 30px;
+    right: 0;
+    font-size: 13px;
+  }
+
+  .red {
+    background-color: #e2afaf;
+    color: #ad0c0c;
+
+    &:before {
+      content: "error_outline";
+      font-family: "Material Icons";
+      font-size: 22px;
+      margin-right: 5px;
+    }
+  }
+
+  .green {
+    background-color: #afe2af;
+    color: #0cad0c;
+  }
+
+  #snackbar {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+}

@@ -1,0 +1,22 @@
+.checking {
+    span {
+      padding: 6px;
+      border-radius: 10px;
+    }
+  }
+  
+  .inactive {
+    color: #3d3d3d;
+    background: #f4f4f4;
+  }
+  
+  .active {
+    color: white;
+    background: #ec848b;
+  
+    .material-icons {
+      font-size: 16px;
+      vertical-align: middle;
+      margin-top: -2px;
+    }
+  }

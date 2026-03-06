@@ -1,0 +1,223 @@
+<div *ngIf="pageLoader" class="row">
+    <app-spinner></app-spinner>
+  </div>
+  
+  <div *ngIf="!pageLoader">
+    <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Article Catalogs</h1>
+        </div>
+      </div>
+    </div>
+  
+    <div class="top-filter-sec list-button mt-2">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+          <button type="button" class="highbutton" (click)="openPopup('add', null, catalogModal);">
+            <span class="material-symbols-rounded">add</span>Add Article Catalog
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- DATA LIST -->
+    <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-7 col-5 first_col px-0 header-font">
+              <p class="w-50 w-sm-100 m-b-0">Article Name</p>
+              <p class="w-50 w-sm-100 m-b-0">Article Count</p>
+            </div>
+          </div>
+          <div class="list-item data-list-card"
+            *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index"
+            [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+            <div *ngIf="x.isPrimary" class="ribbon-band blue-band">Primary</div>
+            <div class="col-md-7 col-5 first_col px-0">
+              <p class="w-50 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+              <p class="w-50 w-sm-100 m-b-0 light-font">{{x.count}} {{ (x.count>1)? 'articles': 'article' }}</p>
+            </div>
+            <div class="col-md-5 col-7">
+              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                  (click)="catForm = x; modalService.open(deleteModal, { centered: true });">
+                  <span class="material-symbols-rounded" title="delete">delete</span> {{commonService.desktop_device?
+                  'Remove': ''}}
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                  (click)="openPopup('edit', x, catalogModal);">
+                  <span class="material-symbols-rounded" title="edit">edit</span> {{commonService.desktop_device? 'Edit':
+                  ''}}
+                </button>
+                <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'"
+                  (click)="commonService.selected_article_catalog=x;" routerLink="/setting/articles">
+                  <span class="material-symbols-rounded right_arrow transicon"
+                    title="view products">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
+                  {{commonService.desktop_device? 'View': ''}}
+                </button>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+      <!-- PAGINATION CONTROL -->
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+        <p align="center">No data to display</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- CATALOG ADD & EDIT MODAL -->
+  <ng-template #catalogModal let-modal>
+    <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+          <h4 class="modal-title popup_text">
+            {{ catForm.form_type == "add" ? "Add" : "Update" }} Article Catalog
+          </h4>
+        </div>
+        <div *ngIf="popupLoader" class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+        <div *ngIf="!popupLoader" class="modal-body px-0">
+          <div class="form-group mb-0">
+            <div class="row mt-3">
+              <div class="col-md-6 form-group mb-3 quill-mb-5">
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="catForm.name" (input)="onChangeTitle();"
+                  required />
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Description</label>
+                <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.description"
+                  (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+              </div>
+            </div>
+  
+            <!-- SEO -->
+            <div class="data-list-card-wrapper p-0 col-md-12 col-12">
+              <div class="data-list-card-inner p-3">
+                <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+                  <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                    <span class="light-font mt-0 font-10 d-block">This is how your catalog looks on Google, Bing, Yahoo
+                      and other search engines</span>
+                  </p>
+                  <ng-container *ngIf="catForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+                    <span *ngIf="!catForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+                      (click)="catForm.seo_disp=true" aria-hidden="true">edit</span>
+                    <span
+                      *ngIf="catForm.seo_disp && catForm.seo_details.page_url && catForm.seo_details.h1_tag && catForm.seo_details.page_title && catForm.seo_details.meta_desc"
+                      (click)="catForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close"
+                      aria-hidden="true">done</span>
+                  </ng-container>
+                </div>
+                <ng-container *ngIf="!catForm.seo_disp">
+                  <p *ngIf="!catForm.name" class="light-font font-10">
+                    Add a Title And Description To See How This Catalog Might Appear In A Search Engine Listing
+                  </p>
+                  <ng-container *ngIf="catForm.name">
+                    <p class="light-font font-10 mb-1">
+                      {{commonService?.store_details?.base_url}}/articles/{{catForm.seo_details?.page_url}}</p>
+                    <h6 class="sec-desc mb-1 mt-2 seo-color">{{catForm.seo_details.page_title}}</h6>
+                    <p class="light-font font-10">{{catForm.seo_details.meta_desc}}</p>
+                  </ng-container>
+                </ng-container>
+  
+                <ng-container *ngIf="catForm.seo_disp">
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Page URL</label>
+                    <input type="text" name="page_url" class="form-control" [(ngModel)]="catForm.seo_details.page_url"
+                      appNoSplChar required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>H1 Tag</label>
+                    <span *ngIf="catForm.seo_details?.h1_tag?.length" class="label_hint">
+                      {{catForm.seo_details.h1_tag.length}} of 70 characters used
+                    </span>
+                    <input type="text" name="h1_tag" class="form-control" [(ngModel)]="catForm.seo_details.h1_tag"
+                      maxlength="70" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Page Title</label>
+                    <span *ngIf="catForm.seo_details?.page_title?.length" class="label_hint">
+                      {{catForm.seo_details.page_title.length}} of 70 characters used
+                    </span>
+                    <input type="text" name="page_title" class="form-control" [(ngModel)]="catForm.seo_details.page_title"
+                      maxlength="70" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Description</label>
+                    <span *ngIf="catForm.seo_details?.meta_desc?.length" class="label_hint">
+                      {{catForm.seo_details.meta_desc.length}} of 320 characters used</span>
+                    <textarea class="form-control" aria-label="With textarea" name="meta_desc"
+                      [(ngModel)]="catForm.seo_details.meta_desc" maxlength="320" required></textarea>
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Keywords</label>
+                    <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="catForm.seo_details.meta_keyword_list"
+                      placeholder="" [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                    <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma,
+                      between them or press enter</p>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="catForm.errorMsg" style="text-align: center;">
+            <p class="text-danger mt-3">{{ catForm.errorMsg }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+            (click)="modal.dismiss('Cross click')">
+            <span class="black-outline-txt">Cancel</span>
+          </button>
+          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit"
+            [ladda]="catForm.submit">
+            {{ catForm.form_type == "add" ? "Add" : "Update" }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+  
+  <!-- DELETE MODAL -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-body">
+      <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{catForm.name}}"</span>
+          catalog?</strong></p>
+      <div *ngIf="catForm.errorMsg">
+        <p class="text-danger">{{ catForm.errorMsg }}</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+        [disabled]="catForm.submit" [ladda]="catForm.submit">
+        <span class="orng-outline-txt">Yes</span>
+      </button>
+    </div>
+  </ng-template>

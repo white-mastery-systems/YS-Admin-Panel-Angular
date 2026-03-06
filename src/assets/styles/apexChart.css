@@ -1,0 +1,15 @@
+.apexcharts-tooltip-series-group .apexcharts-active{
+    background-color: #fff !important;
+}
+
+.apexcharts-tooltip .apexcharts-tooltip-title {   
+    background: #ffffff !important;
+}
+
+.apexcharts-tooltip.apexcharts-theme-light {
+    border-radius: 0.475rem !important;
+    box-shadow: 0 1px 15px 1px rgb(0 0 0 / 4%), 0 1px 6px rgb(0 0 0 / 8%) !important;
+    border: 0!important;
+    background: #ffffff !important;
+    color: #181C32 !important;
+}

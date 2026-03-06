@@ -1,0 +1,273 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device">
+  <div class="help_mobile_button mr-3" routerLink="/support/design-website/design-homepage">
+    <img src="assets/icons/help.svg" title="help">
+  </div>
+  <div class="add_but" (click)="onAddNewSegment(segmentModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{commonService.secondary_header}} - Segments</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-filter-sec list-button">
+    <div class="row">
+      <div class="col-md-6 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end" *ngIf="commonService.desktop_device">
+        <button class="highbutton" type="button" (click)="onAddNewSegment(segmentModal);">
+          <span class="material-symbols-rounded">add</span>Add Segment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(blogDetails.segments | fieldSearch:'name':search_bar)?.length" class="list-horizontal mt-2">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+          <div class="col-md-10 col-10 first_col px-0 header-font">
+            <p class="w-40 w-sm-100 m-b-0">Name</p>
+            <p class="w-40 w-sm-100 m-b-0">Type</p>
+            <p class="w-20 w-sm-100 m-b-0">Status</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card"
+          *ngFor="let x of blogDetails.segments | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+            [ngClass]="x.active_status? 'green-band': 'red-band'">
+            {{x.active_status? 'Enabled': 'Disabled'}}
+          </div>
+          <div class="col-md-10 col-10 first_col px-0">
+            <p class="w-40 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+            <p class="w-40 w-sm-100 light-font m-b-0">{{ findType(x.type) }}</p>
+            <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
+              <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
+                {{x.active_status? 'Enabled': 'Disabled'}}
+              </span>
+            </p>
+          </div>
+          <div class="col-md-2 col-2">
+            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                placement="bottom-start bottom-end top-start top-end">
+                <button [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'"
+                  ngbDropdownToggle>{{commonService.desktop_device? 'Edit': ''}} <span class="material-symbols-rounded"
+                    [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
+                    {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button class="dropdown-item d-flex" (click)="onEditDetails(x, segmentModal);">
+                    <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
+                      'visibility'}}</span> Details
+                  </button>
+                  <button *ngIf="x.type=='flexible'" class="dropdown-item d-flex"
+                  routerLink="/setting/advanced-blogs/segments/{{blogDetails._id}}/{{x._id}}">
+                    <span class="material-symbols-rounded mr-2">{{ (x.type=='flexible')? 'article': 'image' }}</span> {{ (x.type=='flexible')? 'Content': 'Images' }}
+                  </button>
+                  <button class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                    <span class="material-symbols-rounded mr-2">delete</span> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION CONTROL -->
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(blogDetails.segments | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No data to display</p>
+    </div>
+  </div>
+</div>
+
+<!-- SEGMENT MODAL -->
+<ng-template #segmentModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">{{ (segForm.form_type=='add')? 'Add Segment': 'Update Segment' }} </span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+
+            <!-- add -->
+            <ng-container *ngIf="segForm.form_type=='add'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Type</label>
+                <select name="type" class="form-control select-arrow" [(ngModel)]="segForm.type"
+                  (change)="onChangeType(segForm.type);" required>
+                  <option [ngValue]="x.value" *ngFor="let x of layoutTypes;">{{x.name}}</option>
+                </select>
+              </div>
+              <div *ngIf="segForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
+                <label *ngFor="let x of segForm.grid_list | fieldSearch:'status':'enabled'; let i=index;" class="radio radio-primary display-inline-b mr-5 mb-3">
+                  <input type="radio" name="grid_type" [value]="x.type" [checked]="x.type==segForm.grid_type"
+                  (change)="segForm.grid_type=x.type; segForm.grid_count=x.count;">
+                  <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </ng-container>
+
+            <!-- edit -->
+            <ng-container *ngIf="segForm.form_type!='add'">
+              <div class="col-md-12 mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="active_status" [(ngModel)]="segForm.active_status">
+                  <span>Enable</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="form-group mb-3" [ngClass]="(segForm.grid_type)? 'col-md-6': 'col-md-12'">
+                <label>Type</label>
+                <input type="text" name="dup_type" class="form-control" [(ngModel)]="segForm.dup_type" readonly />
+              </div>
+              <div *ngIf="segForm.grid_type" class="col-md-6 form-group mb-3">
+                <label>Grid Type</label>
+                <input type="text" name="dup_grid_type" class="form-control" [(ngModel)]="segForm.dup_grid_type" readonly />
+              </div>
+            </ng-container>
+
+            <div class="form-group col-md-6 mb-3">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="segForm.name" #name="ngModel" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="segForm.rank" #rank="ngModel" min="1"
+                max="{{maxRank+1}}" appNumberOnly required />
+            </div>
+            <ng-container *ngIf="segForm.type!='slider' && segForm.type!='flexible' && segForm.type!='secondary'">
+              <div class="form-group col-md-12 mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="segForm.heading"
+                  #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="segForm.sub_heading"></textarea>
+              </div>
+            </ng-container>
+            <!-- Featured Products -->
+            <ng-container *ngIf="segForm.type=='featured_product'">
+              <div class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="segForm.blogs_type" required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Link to Catalog</label>
+                <select name="featured_category_id" class="form-control select-arrow"
+                  [(ngModel)]="segForm.featured_category_id" required>
+                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                  <option value="all_products">/all-products</option>
+                  <option value="new_arrivals">/new-arrivals</option>
+                  <option value="on_sale">/on-sale</option>
+                  <option value="featured_products">/featured-products</option>
+                  <option value="best_sellers">/best-sellers</option>
+                </select>
+              </div>
+            </ng-container>
+            <!-- Highlighted Product -->
+            <ng-container *ngIf="segForm.type=='highlighted_product'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Catalogs</label>
+                <select name="featured_category_id" class="form-control select-arrow" [(ngModel)]="segForm.featured_category_id" (change)="productList=[]" required>
+                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-9 form-group mb-3">
+                <input type="text" name="search_bar" placeholder="Search" class="form-control" (input)="productList=[]" [(ngModel)]="segForm.search_bar" />
+              </div>
+              <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
+                <button [disabled]="!segForm.featured_category_id || segForm.search_bar?.length<3" type="button"
+                (click)="searchProduct(segForm.featured_category_id, segForm.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Link to Product
+                  <i *ngIf="searchLoader" class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
+                  <ng-container *ngIf="!searchLoader && segForm.featured_category_id && segForm.search_bar?.length>=3">
+                    ({{productList.length}} products found)
+                  </ng-container>
+                </label>
+                <select name="featured_product_id" class="form-control select-arrow" [(ngModel)]="segForm.featured_product_id" required>
+                  <option [ngValue]="x._id" *ngFor="let x of productList;">{{x.name}}</option>
+                </select>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="segForm.errorMsg">
+          <p class="text-danger">{{ segForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="segForm.submit"
+          [ladda]="segForm.submit">Submit</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- DELETE MODAL -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p>
+      <strong>Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> segment?</strong>
+    </p>
+    <div *ngIf="deleteForm.errorMsg">
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+      <span class="black-outline-txt">No</span>
+    </button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+    [disabled]="deleteForm?.btnLoader" [ladda]="deleteForm?.btnLoader">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
