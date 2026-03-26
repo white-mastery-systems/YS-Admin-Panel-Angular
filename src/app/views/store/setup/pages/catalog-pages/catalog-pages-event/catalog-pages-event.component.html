@@ -1,0 +1,465 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device && params.id">
+  <div class="add_but" (click)="onAddNewSegment(addModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader">
+  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Static Fields ── -->
+  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+    <div class="row">
+      <div class="col-md-2"></div>
+
+      <!-- Image upload (catalog style) -->
+      <div class="col-md-8" align="center">
+        <label class="fw-600">Image</label>
+        <p>1440 x 150 pixels @72ppi</p>
+        <div class="mb-3" align="center">
+          <div class="card">
+            <div *ngIf="formData.temp_image || formData.image" class="py-4">
+              <span (click)="formData.img_change=true; formData.temp_image=null; formData.image=null;"
+                class="material-icons float-right round-img-icon ab-item-close top5" aria-hidden="true">close</span>
+              <img *ngIf="formData.img_change && formData.temp_image" [src]="formData.temp_image" height="100px;" width="auto;">
+              <img *ngIf="!formData.img_change" [src]="imgBaseUrl + formData.image" height="100px;" width="auto;">
+            </div>
+            <div *ngIf="!formData.temp_image && !formData.image" class="py-4">
+              <label>
+                <div>
+                  <i class="material-icons add-img">add_photo_alternate</i>
+                  <p>Click to upload image</p>
+                </div>
+                <input type="file" name="image" style="display:none;" (change)="fileChangeListener($event)"
+                  accept="image/jpeg,image/png,image/webp" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 mb-3">
+        <div class="row mt-3">
+          <!-- Name -->
+          <div class="col-md-6 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="formData.name"
+              (input)="onChangeTitle();" required />
+          </div>
+
+          <!-- Group -->
+          <div class="col-md-3 form-group mb-3">
+            <label>Group <span class="label_hint">(e.g. for-hotels)</span></label>
+            <input type="text" name="group" class="form-control" [(ngModel)]="formData.group" required />
+          </div>
+
+          <!-- Type -->
+          <div class="col-md-3 form-group mb-3">
+            <label>Type <span class="label_hint">(e.g. location)</span></label>
+            <input type="text" name="type" class="form-control" [(ngModel)]="formData.type" required />
+          </div>
+
+          <!-- Description -->
+          <div class="col-md-12 form-group mb-3 quill-mb-5">
+            <label>Description</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.description"
+              [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+
+          <!-- SEO -->
+          <div class="data-list-card-wrapper p-0 col-md-12 col-12">
+            <div class="data-list-card-inner p-3">
+              <div class="col-12 d-flex justify-content-between align-items-center px-0 mb-3">
+                <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                  <span class="light-font mt-0 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other search engines</span>
+                </p>
+                <ng-container *ngIf="formData.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
+                  <span *ngIf="!formData.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
+                    (click)="formData.seo_disp=true" aria-hidden="true">edit</span>
+                  <span *ngIf="formData.seo_disp && formData.seo_details?.h1_tag && formData.seo_details?.page_title && formData.seo_details?.meta_desc"
+                    (click)="formData.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+                </ng-container>
+              </div>
+
+              <ng-container *ngIf="!formData.seo_disp">
+                <p *ngIf="!formData.name" class="light-font font-10">
+                  Add a Title And Description To See How This Page Might Appear In A Search Engine Listing
+                </p>
+                <ng-container *ngIf="formData.name">
+                  <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/{{formData.group}}/{{formData.type}}/{{formData.page_url}}</p>
+                  <h6 class="sec-desc mb-1 mt-2 seo-color">{{formData.seo_details?.page_title}}</h6>
+                  <p class="light-font font-10">{{formData.seo_details?.meta_desc}}</p>
+                </ng-container>
+              </ng-container>
+
+              <ng-container *ngIf="formData.seo_disp">
+                <div class="col-md-12 form-group mb-3">
+                  <label>H1 Tag</label>
+                  <span *ngIf="formData.seo_details?.h1_tag?.length" class="label_hint">{{formData.seo_details.h1_tag.length}} of 70 characters used</span>
+                  <input type="text" name="h1_tag" class="form-control" [(ngModel)]="formData.seo_details.h1_tag" maxlength="70" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page Title</label>
+                  <span *ngIf="formData.seo_details?.page_title?.length" class="label_hint">{{formData.seo_details.page_title.length}} of 70 characters used</span>
+                  <input type="text" name="page_title" class="form-control" [(ngModel)]="formData.seo_details.page_title" maxlength="70" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Description</label>
+                  <span *ngIf="formData.seo_details?.meta_desc?.length" class="label_hint">{{formData.seo_details.meta_desc.length}} of 320 characters used</span>
+                  <textarea class="form-control" name="meta_desc" [(ngModel)]="formData.seo_details.meta_desc" maxlength="320" required></textarea>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Keywords</label>
+                  <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="formData.seo_details.meta_keyword_list"
+                    placeholder="" [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                  <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ── Segments (only after page is saved) ── -->
+  <ng-container *ngIf="params.id">
+    <div class="separator-breadcrumb border-top mt-3 mb-4"></div>
+    <div class="top-filter-sec list-button">
+      <div class="row">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end" *ngIf="commonService.desktop_device">
+          <button class="highbutton" type="button" (click)="onAddNewSegment(addModal);">
+            <span class="material-symbols-rounded">add</span>Add Segment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA LIST -->
+    <div *ngIf="(formData.segments | fieldSearch:'name':search_bar)?.length" class="list-horizontal mt-2">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+            <div class="col-md-10 col-10 first_col px-0 header-font">
+              <p class="w-30 w-sm-100 m-b-0">Name</p>
+              <p class="w-30 w-sm-100 m-b-0">Type</p>
+              <p class="w-20 w-sm-100 m-b-0">Tiles</p>
+              <p class="w-20 w-sm-100 m-b-0">Status</p>
+            </div>
+          </div>
+          <div class="list-item data-list-card"
+            *ngFor="let x of formData.segments | numOrderAsc:'rank' |fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
+            [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+            <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+              [ngClass]="x.active_status? 'green-band': 'red-band'">
+              {{x.active_status? 'Enabled': 'Disabled'}}
+            </div>
+            <div class="col-md-10 col-10 first_col px-0">
+              <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+              <p class="w-30 w-sm-100 light-font m-b-0">{{ findTypeName(x.type) }}</p>
+              <p class="w-20 w-sm-100 light-font m-b-0">
+                <ng-container *ngIf="x.type==='faq'">{{ x.faq_list?.length }} FAQs</ng-container>
+                <ng-container *ngIf="x.type!=='faq'">{{ x.image_list?.length }} Tiles</ng-container>
+              </p>
+              <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
+                <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
+                  {{x.active_status? 'Enabled': 'Disabled'}}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-2 col-2">
+              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                  placement="bottom-start bottom-end top-start top-end">
+                  <button [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'"
+                    ngbDropdownToggle>{{commonService.desktop_device? 'Edit': ''}} <span class="material-symbols-rounded"
+                      [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
+                      {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <button class="dropdown-item d-flex" (click)="onEditDetails(x._id, editModal);">
+                      <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
+                        'visibility'}}</span> Details
+                    </button>
+                    <button *ngIf="x.type!=='faq'" class="dropdown-item d-flex" routerLink="/setup/pages/catalog-pages/modify/{{params.id}}/{{x._id}}">
+                      <span class="material-symbols-rounded mr-2">image</span> Images 
+                    </button>
+                    <button class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded mr-2">delete</span> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- PAGINATION CONTROL -->
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="!(formData.segments | fieldSearch:'name':search_bar)?.length" class="row">
+      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+        <p align="center">No data to display</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="separator-breadcrumb border-top mt-4"></div>
+  <div *ngIf="saveSuccess" class="text-success text-center mb-3">Saved successfully.</div>
+  <div *ngIf="formData.err_msg" class="text-danger text-center mb-3">{{formData.err_msg}}</div>
+  <div align="center" class="col-md-12 z-i-0 mb-4">
+    <button type="button" routerLink="/setup/pages/catalog-pages" class="btn btn-wide black-outline-btn">
+      <span class="black-outline-txt">Cancel</span>
+    </button>
+    <button type="button" class="btn btn-wide btn-primary ladda-button ml-3"
+      (click)="onSubmit()" [disabled]="formData.submit" [ladda]="formData.submit">
+      {{ params.id ? 'Update' : 'Add' }}
+    </button>
+  </div>
+</div>
+
+<!-- ── ADD SEGMENT MODAL ── -->
+<ng-template #addModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onAdd()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Add Segment</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Type</label>
+              <select name="type" class="form-control select-arrow" [(ngModel)]="addForm.type"
+                (change)="onChangeSegmentType(addForm.type, addForm);" required>
+                <option value="">-- Select --</option>
+                <option [ngValue]="x.value" *ngFor="let x of layoutTypes">{{x.name}}</option>
+              </select>
+            </div>
+            <div *ngIf="addForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
+              <label *ngFor="let x of addForm.grid_list | fieldSearch:'status':'enabled'; let i=index;" class="radio radio-primary display-inline-b mr-5 mb-3">
+                <input type="radio" name="section_grid_type" [value]="x.type" [checked]="x.type==addForm.section_grid_type"
+                (change)="addForm.section_grid_type=x.type; addForm.grid_count=x.count;">
+                <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="addForm.name" #name="ngModel" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addForm.rank" #rank="ngModel" min="1"
+                max="{{maxRank+1}}" appNumberOnly required />
+            </div>
+
+            <ng-container *ngIf="addForm.type!='secondary'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+            </ng-container>
+
+            <!-- FAQ items -->
+            <ng-container *ngIf="addForm.type === 'faq'">
+              <div class="col-md-12 mb-2 mt-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label class="m-0">FAQ Items</label>
+                  <button type="button" class="light-button" (click)="addFaqItem(addForm);">
+                    <span class="material-symbols-rounded">add</span> Add FAQ
+                  </button>
+                </div>
+                <div *ngFor="let faq of addForm.faq_list; let fi=index;" class="card p-3 mb-2">
+                  <div class="row poss-rel">
+                    <span (click)="removeFaqItem(addForm, fi);"
+                      class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                    <div class="col-md-12 form-group mb-2">
+                      <label>Question</label>
+                      <input type="text" class="form-control" [(ngModel)]="faq.ques" [ngModelOptions]="{standalone: true}" required />
+                    </div>
+                    <div class="col-md-12 form-group mb-0">
+                      <label>Answer</label>
+                      <textarea class="form-control" [(ngModel)]="faq.answer" [ngModelOptions]="{standalone: true}" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="col-md-12 mb-3 mt-2">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="active_status" [(ngModel)]="addForm.active_status">
+                <span>Enable</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="addForm.errorMsg">
+          <p class="text-danger">{{ addForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeAddModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="addForm.submit"
+          [ladda]="addForm.submit">Add</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- ── EDIT SEGMENT MODAL ── -->
+<ng-template #editModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdate()" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Edit Segment</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="active_status"
+                  [(ngModel)]="editForm.active_status">
+                <span>Enable</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="form-group mb-3"
+              [ngClass]="(editForm.section_grid_type)? 'col-md-6': 'col-md-12'">
+              <label>Type</label>
+              <input type="text" name="dup_type" class="form-control" [(ngModel)]="editForm.dup_type" readonly />
+            </div>
+            <div *ngIf="editForm.section_grid_type" class="col-md-6 form-group mb-3">
+              <label>Grid Type</label>
+              <input type="text" name="dup_grid_type" class="form-control" [(ngModel)]="editForm.dup_grid_type" readonly />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel"
+                required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
+                max="{{maxRank}}" appNumberOnly required />
+            </div>
+
+            <ng-container *ngIf="editForm.type && editForm.type !== 'secondary'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
+                  #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+            </ng-container>
+
+            <!-- FAQ items -->
+            <ng-container *ngIf="editForm.type === 'faq'">
+              <div class="col-md-12 mb-2 mt-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label class="m-0">FAQ Items</label>
+                  <button type="button" class="light-button" (click)="addFaqItem(editForm);">
+                    <span class="material-symbols-rounded">add</span> Add FAQ
+                  </button>
+                </div>
+                <div *ngFor="let faq of editForm.faq_list; let fi=index;" class="card p-3 mb-2">
+                  <div class="row poss-rel">
+                    <span (click)="removeFaqItem(editForm, fi);"
+                      class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                    <div class="col-md-12 form-group mb-2">
+                      <label>Question</label>
+                      <input type="text" class="form-control" [(ngModel)]="faq.ques" [ngModelOptions]="{standalone: true}" required />
+                    </div>
+                    <div class="col-md-12 form-group mb-0">
+                      <label>Answer</label>
+                      <textarea class="form-control" [(ngModel)]="faq.answer" [ngModelOptions]="{standalone: true}" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+          </div>
+        </div>
+        <div *ngIf="editForm.errorMsg">
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeEditModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit"
+          [ladda]="editForm.submit">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- ── DELETE SEGMENT MODAL ── -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body">
+    <p><strong>Remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> segment?</strong></p>
+    <p *ngIf="deleteForm.errorMsg" class="text-danger">{{ deleteForm.errorMsg }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+      (click)="modal.dismiss('Cross click');"><span class="black-outline-txt">No</span></button>
+    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button"
+      [disabled]="deleteForm.btnLoader" [ladda]="deleteForm.btnLoader">
+      <span class="orng-outline-txt">Yes</span>
+    </button>
+  </div>
+</ng-template>
