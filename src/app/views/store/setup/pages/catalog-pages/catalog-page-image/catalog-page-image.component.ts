@@ -73,14 +73,11 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.text_list = [{ image: '', name: '', description: '' }];
             }
           } else if (this.layoutDetails.type === 'featured_cards') {
-            if (!this.layoutDetails.card_list?.length) {
-              this.layoutDetails.card_list = [this.newFeaturedCard(1)];
-            } else {
-              this.layoutDetails.card_list.forEach(card => {
-                if (!card.nearby_list?.length) card.nearby_list = [''];
-                if (!card.gallery_imgs) card.gallery_imgs = ['', '', ''];
-                else { while (card.gallery_imgs.length < 3) card.gallery_imgs.push(''); }
-              });
+            if (!this.layoutDetails.image_list?.length) {
+              this.layoutDetails.image_list = [{ rank: 1 }];
+            }
+            if (!this.layoutDetails.cta_list?.length) {
+              this.layoutDetails.cta_list = [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
             }
           } else if (!this.layoutDetails.image_list.length) {
             this.layoutDetails.image_list.push({ rank: 1 });
@@ -107,38 +104,37 @@ export class CatalogPageImageComponent implements OnInit {
     this.layoutDetails.text_list.push({ image: '', name: '', description: '' });
   }
 
-  newFeaturedCard(rank: number) {
-    return { rank, main_img: '', gallery_imgs: ['', '', ''], name: '', description: '', nearby_list: [''], btn_text: '', btn_link_type: 'internal', btn_link: '' };
-  }
-
   async onUpdateLayout() {
     this.btnLoader = true;
     let layoutData = structuredClone(this.layoutDetails);
 
     this.fileList = new FormData();
+
+    // Handle cover image for featured_cards
+    if (this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
+      delete layoutData.cover_img;
+      this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
+    }
+
     let imageList = this.layoutDetails.image_list || [];
     let textList = this.layoutDetails.text_list || [];
-    let cardList = this.layoutDetails.card_list || [];
 
     this.onSetFormData(imageList).then((imgList: any[]) => {
       layoutData.image_list = imgList;
       this.onSetTextFormData(textList).then((txtList: any[]) => {
         layoutData.text_list = txtList;
-        this.onSetCardFormData(cardList).then((cardDataList: any[]) => {
-          layoutData.card_list = cardDataList;
-          layoutData.store_id = this.commonService.store_details._id;
-          layoutData.page_id = this.params.id;
-          layoutData._id = this.layoutDetails._id;
-          this.fileList.append('data', JSON.stringify(layoutData));
-          this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
-            this.btnLoader = false;
-            if (result.status) {
-              this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
-            } else {
-              this.layoutDetails.errorMsg = result.message;
-              console.log('response', result);
-            }
-          });
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
+          this.btnLoader = false;
+          if (result.status) {
+            this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
+          } else {
+            this.layoutDetails.errorMsg = result.message;
+            console.log('response', result);
+          }
         });
       });
     });
@@ -182,36 +178,10 @@ export class CatalogPageImageComponent implements OnInit {
     });
   }
 
-  onSetCardFormData(cardList) {
-    return new Promise((resolve) => {
-      let updatedList = [];
-      for (let i = 0; i < cardList.length; i++) {
-        let card = cardList[i];
-        let objCard = Object.assign({}, card);
-        delete objCard.temp_main_img;
-        if (card.main_img_change) {
-          delete objCard.main_img;
-          this.fileList.append('attachments', card['main_img'], i + '_main');
-        }
-        let galleryImgs = [...(card.gallery_imgs || ['', '', ''])];
-        for (let j = 0; j < 3; j++) {
-          delete objCard['temp_g' + j + '_img'];
-          if (card['g' + j + '_img_change'] && card.gallery_imgs[j]) {
-            this.fileList.append('attachments', card.gallery_imgs[j], i + '_g' + j);
-            galleryImgs[j] = card.gallery_imgs[j];
-          }
-        }
-        objCard.gallery_imgs = galleryImgs;
-        updatedList.push(objCard);
-      }
-      resolve(updatedList);
-    });
-  }
-
   fileChangeListener(devType, index, event) {
     if (devType === 'desktop') delete this.layoutDetails.image_list[index]?.d_err_msg;
     else if (devType === 'mobile') delete this.layoutDetails.image_list[index]?.m_err_msg;
-    else if (devType === 'card_main' || devType.startsWith('card_g')) { /* no err_msg for cards */ }
+    else if (devType === 'fc_cover') { /* no err_msg for cover */ }
     else delete this.layoutDetails.text_list[index]?.c_err_msg;
 
     if (event.target.files && event.target.files[0]) {
@@ -232,19 +202,12 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.image_list[index].mobile_img = fileData;
               this.layoutDetails.image_list[index].mobile_img_change = true;
             } else { this.layoutDetails.image_list[index].m_err_msg = true; }
-          } else if (devType === 'card_main') {
+          } else if (devType === 'fc_cover') {
             if (fileInKB <= this.fileLimitInKB) {
-              this.layoutDetails.card_list[index].temp_main_img = (<FileReader>e.target).result;
-              this.layoutDetails.card_list[index].main_img = fileData;
-              this.layoutDetails.card_list[index].main_img_change = true;
-            } else { this.layoutDetails.card_list[index].main_img_err = true; }
-          } else if (devType.startsWith('card_g')) {
-            let gIndex = parseInt(devType.charAt(6));
-            if (fileInKB <= this.fileLimitInKB) {
-              this.layoutDetails.card_list[index]['temp_g' + gIndex + '_img'] = (<FileReader>e.target).result;
-              this.layoutDetails.card_list[index].gallery_imgs[gIndex] = fileData;
-              this.layoutDetails.card_list[index]['g' + gIndex + '_img_change'] = true;
-            } else { this.layoutDetails.card_list[index]['g' + gIndex + '_img_err'] = true; }
+              this.layoutDetails.temp_cover_img = (<FileReader>e.target).result;
+              this.layoutDetails.cover_img = fileData;
+              this.layoutDetails.cover_img_change = true;
+            } else { this.layoutDetails.cover_img_err = true; }
           } else {
             if (fileInKB <= this.fileLimitInKB) {
               this.layoutDetails.text_list[index].temp_img = (<FileReader>e.target).result;

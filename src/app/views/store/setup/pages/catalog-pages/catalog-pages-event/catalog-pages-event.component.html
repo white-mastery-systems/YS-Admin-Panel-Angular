@@ -44,13 +44,13 @@
           </div>
 
           <!-- Description -->
-          <div class="col-md-12 form-group mb-3 quill-mb-5">
+          <!-- <div class="col-md-12 form-group mb-3 quill-mb-5">
             <label>Description</label>
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.description"
               [ngModelOptions]="{standalone: true}"></quill-editor>
-          </div>
+          </div> -->
           <!-- HEADER -->
-          <div class="col-md-12 form-group mb-3 mt-3">
+          <!-- <div class="col-md-12 form-group mb-3 mt-3">
             <label class="checkbox checkbox-primary">
               <input class="form-check-input" type="checkbox" name="hc_status" [(ngModel)]="formData.hc_status">
               <span>Enable Header Content</span>
@@ -59,9 +59,9 @@
           </div>
           <div *ngIf="formData.hc_status" class="col-md-12 form-group mb-3 quill-mb-5">
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.header_content" [ngModelOptions]="{standalone: true}"></quill-editor>
-          </div>
+          </div> -->
           <!-- FOOTER -->
-          <div class="col-md-12 form-group mb-3">
+          <!-- <div class="col-md-12 form-group mb-3">
             <label class="checkbox checkbox-primary">
               <input class="form-check-input" type="checkbox" name="fc_status" [(ngModel)]="formData.fc_status">
               <span>Enable Footer Content</span>
@@ -70,9 +70,9 @@
           </div>
           <div *ngIf="formData.fc_status" class="col-md-12 form-group mb-3 quill-mb-5">
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.footer_content" [ngModelOptions]="{standalone: true}"></quill-editor>
-          </div>
+          </div> -->
           <!-- PROFILE -->
-          <ng-container *ngIf="configData?.catalog_navigations?.indexOf(commonService.store_details?._id)!=-1">
+          <!-- <ng-container *ngIf="configData?.catalog_navigations?.indexOf(commonService.store_details?._id)!=-1">
             <div class="col-md-12 form-group mb-3">
               <label class="checkbox checkbox-primary">
                 <input class="form-check-input" type="checkbox" name="profile_status" (change)="!formData.profile_details? formData.profile_details={}: null" [(ngModel)]="formData.profile_status">
@@ -120,15 +120,15 @@
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.profile_details.description" [ngModelOptions]="{standalone: true}"></quill-editor>
               </div>
             </ng-container>
-          </ng-container>
+          </ng-container> -->
           <!-- PRODUCT LIST -->
-          <div class="col-md-12 form-group mb-3">
+          <!-- <div class="col-md-12 form-group mb-3">
             <label class="checkbox checkbox-primary">
               <input class="form-check-input" type="checkbox" name="prod_list_status" [(ngModel)]="formData.prod_list_status">
               <span>Enable Product Price List</span>
               <span class="checkmark"></span>
             </label>
-          </div>
+          </div> -->
 
           <!-- social media links -->
           <ng-container *ngIf="commonService.ys_features.indexOf('catalog_social_links')!=-1">
@@ -273,8 +273,7 @@
                   <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="['grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="x.type=='featured_cards'">{{ x.card_list?.length }} Cards</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'grid', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(x.type)==-1">{{ x.image_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
@@ -526,6 +525,10 @@
                 <label>Sub-heading</label>
                 <textarea class="form-control" name="fc_sub_heading" [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="fc_description" rows="3" [(ngModel)]="addForm.description"></textarea>
+              </div>
             </ng-container>
 
             <div class="col-md-12 mb-3 mt-2">
@@ -744,6 +747,10 @@
               <div class="col-md-12 form-group mb-3">
                 <label>Sub-heading</label>
                 <textarea class="form-control" name="efc_sub_heading" [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="efc_description" rows="3" [(ngModel)]="editForm.description"></textarea>
               </div>
             </ng-container>
 

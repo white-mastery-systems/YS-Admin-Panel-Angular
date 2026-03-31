@@ -261,8 +261,11 @@ export class CatalogPagesEventComponent implements OnInit {
     }
 
     if (type === 'featured_cards') {
-      if (!form.card_list || !form.card_list.length) {
-        form.card_list = [{ rank: 1, name: '', description: '', nearby_list: [''], gallery_imgs: [], btn_link_type: 'internal', btn_link: '' }];
+      if (!form.image_list?.length) {
+        form.image_list = [{ rank: 1 }];
+      }
+      if (!form.cta_list?.length) {
+        form.cta_list = [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
       }
     }
   }
