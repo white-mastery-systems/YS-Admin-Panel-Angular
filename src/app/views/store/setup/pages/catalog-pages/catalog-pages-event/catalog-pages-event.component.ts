@@ -22,14 +22,23 @@ export class CatalogPagesEventComponent implements OnInit {
   addForm: any = {}; editForm: any = {};
   saveSuccess: boolean;
   imgBaseUrl = environment.img_baseurl;
+  configData: any = environment.config_data;
   fileLimitInKB = 500;
+  gridList: any = [];
 
   layoutTypes: any = [
+    { name: 'Slider', value: 'slider' },
     { name: 'Secondary Banner', value: 'secondary' },
     { name: 'Testimonial', value: 'testimonial' },
     { name: 'Highlighted Section', value: 'highlighted_section' },
     { name: 'Section Grid', value: 'section' },
-    { name: 'FAQ', value: 'faq' }
+    { name: 'Grid', value: 'grid' },
+    { name: 'Featured Cards', value: 'featured_cards' },
+    { name: 'Amenities', value: 'amenities' },
+    { name: 'FAQ', value: 'faq' },
+    { name: 'Content Section', value: 'content_section' },
+    { name: 'CTA', value: 'cta' },
+    { name: 'Neighbourhood Map', value: 'map' }
   ];
 
   constructor(
@@ -59,7 +68,14 @@ export class CatalogPagesEventComponent implements OnInit {
                 this.formData.seo_details.meta_keyword_list.push({ display: obj, value: obj });
               });
             }
+            if (!this.formData.profile_details) this.formData.profile_details = {};
+            if (!this.formData.social_media_links) this.formData.social_media_links = [];
+            if (this.formData.social_media_links.length) this.formData.social_media_status = true;
             this.maxRank = this.formData.segments?.length || 0;
+            
+            if(this.commonService.ys_features.indexOf('blogs') !== -1)
+              this.layoutTypes.push({ name: 'Blogs', value: 'blogs' });
+
           } else console.log('response', result);
         });
       } else {
@@ -76,13 +92,14 @@ export class CatalogPagesEventComponent implements OnInit {
     this.formData.seo_details.meta_keyword_list?.forEach(obj => {
       this.formData.seo_details.meta_keywords.push(obj.value);
     });
+    
     const payload = Object.assign({}, this.formData);
     delete payload.segments;
 
     if (this.params.id) {
       this.api.UPDATE_CATALOG_PAGE(payload).subscribe(result => {
         this.formData.submit = false;
-        if (result.status) { this.saveSuccess = true; setTimeout(() => { this.saveSuccess = false; }, 3000); }
+        if (result.status) { this.router.navigate(['/setup/pages/catalog-pages']); }
         else console.log('response', result);
       });
     } else {
@@ -96,15 +113,16 @@ export class CatalogPagesEventComponent implements OnInit {
 
   // ── Image upload ──────────────────────────────────────────────────────────
 
-  fileChangeListener(event) {
+  fileChangeListener(type, event) {
     if (event.target.files && event.target.files[0]) {
       let fileData = event.target.files[0];
       if (['image/jpeg', 'image/png', 'image/webp'].indexOf(fileData.type) !== -1) {
         let reader = new FileReader();
         reader.onload = (e: ProgressEvent) => {
-          this.formData.temp_image = (<FileReader>e.target).result;
-          this.formData.image = (<FileReader>e.target).result;
-          this.formData.img_change = true;
+          if (type === 'profile') {
+            this.formData.profile_details.image = (<FileReader>e.target).result;
+            this.formData.p_img_change = true;
+          }
         };
         reader.readAsDataURL(fileData);
       }
@@ -143,17 +161,18 @@ export class CatalogPagesEventComponent implements OnInit {
   }
 
   // ── Segment edit ──────────────────────────────────────────────────────────
-
+  // segment details for update
   onEditDetails(seg_id, modalName) {
     this.editForm = {};
     this.popupLoader = true;
-    this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
-    this.api.GET_SEGMENT_CATALOG_PAGE(this.params.id, seg_id).subscribe(result => {
+    this.modalService.open(modalName, { size: 'lg', centered: true });
+    this.api.GET_SEGMENT_CATALOG_PAGE(this.params.id, seg_id).subscribe((result) => {
       this.popupLoader = false;
       if (result.status) {
         this.editForm = result.data;
         this.editForm.prev_rank = this.editForm.rank;
         this.editForm.dup_type = this.findTypeName(this.editForm.type);
+        if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
         if (!this.editForm.faq_list) this.editForm.faq_list = [];
         if (this.editForm.type === 'section')
           this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
@@ -199,15 +218,7 @@ export class CatalogPagesEventComponent implements OnInit {
 
   // ── FAQ helpers ───────────────────────────────────────────────────────────
 
-  addFaqItem(form) {
-    if (!form.faq_list) form.faq_list = [];
-    form.faq_list.push({ ques: '', answer: '', rank: form.faq_list.length + 1 });
-  }
 
-  removeFaqItem(form, index) {
-    form.faq_list.splice(index, 1);
-    form.faq_list.forEach((item, i) => { item.rank = i + 1; });
-  }
 
   // ── Utilities ─────────────────────────────────────────────────────────────
 
@@ -228,7 +239,32 @@ export class CatalogPagesEventComponent implements OnInit {
       form.grid_list = this.commonService.grid_list;
       form.section_grid_type = form.grid_list[0].type;
     }
-    if (type === 'faq' && !form.faq_list) form.faq_list = [];
+
+    if ((type === 'grid' || type === 'amenities') && (!form.text_list || !form.text_list.length)) {
+      form.text_list = [{ image: '', name: '', description: '' }];
+    }
+
+    if (type === 'faq' && (!form.faq_list || !form.faq_list.length)) {
+      form.faq_list = [{ ques: '', answer: '', rank: 1 }];
+    }
+
+    if (type === 'blogs') {
+      this.gridList = this.commonService.blog_grid_list;
+      form.blogs_type = 'grid';
+      form.section_grid_type = this.gridList[0].type;
+    }
+
+    if (type === 'map') {
+      if (!form.map_list || !form.map_list.length) {
+        form.map_list = [{ category: '', iframe_url: '' }];
+      }
+    }
+
+    if (type === 'featured_cards') {
+      if (!form.card_list || !form.card_list.length) {
+        form.card_list = [{ rank: 1, name: '', description: '', nearby_list: [''], gallery_imgs: [], btn_link_type: 'internal', btn_link: '' }];
+      }
+    }
   }
 
 }

@@ -102,21 +102,17 @@
       <div class="modal-body">
         <div class="form-group">
           <div class="row">
-            <div class="col-md-6 form-group mb-3">
+            <div class="col-md-12 form-group mb-3">
               <label>Name</label>
               <input type="text" name="name" class="form-control" [(ngModel)]="addForm.name"
                 (input)="onChangeTitle();" required />
             </div>
             <div class="col-md-6 form-group mb-3">
-              <label>Page URL</label>
-              <input type="text" name="page_url" class="form-control" [(ngModel)]="addForm.page_url" appNoSplChar required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Group <span class="label_hint">(e.g. for-hotels)</span></label>
+              <label>Group</label>
               <input type="text" name="group" class="form-control" [(ngModel)]="addForm.group" appNoSplChar required />
             </div>
             <div class="col-md-6 form-group mb-3">
-              <label>Type <span class="label_hint">(e.g. location)</span></label>
+              <label>Type</label>
               <input type="text" name="type" class="form-control" [(ngModel)]="addForm.type" appNoSplChar required />
             </div>
             <div *ngIf="addForm.err_msg" class="col-12 mt-2 text-danger">

@@ -22,36 +22,7 @@
 
   <!-- ── Static Fields ── -->
   <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
-    <div class="row">
-      <div class="col-md-2"></div>
-
-      <!-- Image upload (catalog style) -->
-      <div class="col-md-8" align="center">
-        <label class="fw-600">Image</label>
-        <p>1440 x 150 pixels @72ppi</p>
-        <div class="mb-3" align="center">
-          <div class="card">
-            <div *ngIf="formData.temp_image || formData.image" class="py-4">
-              <span (click)="formData.img_change=true; formData.temp_image=null; formData.image=null;"
-                class="material-icons float-right round-img-icon ab-item-close top5" aria-hidden="true">close</span>
-              <img *ngIf="formData.img_change && formData.temp_image" [src]="formData.temp_image" height="100px;" width="auto;">
-              <img *ngIf="!formData.img_change" [src]="imgBaseUrl + formData.image" height="100px;" width="auto;">
-            </div>
-            <div *ngIf="!formData.temp_image && !formData.image" class="py-4">
-              <label>
-                <div>
-                  <i class="material-icons add-img">add_photo_alternate</i>
-                  <p>Click to upload image</p>
-                </div>
-                <input type="file" name="image" style="display:none;" (change)="fileChangeListener($event)"
-                  accept="image/jpeg,image/png,image/webp" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-12 mb-3">
+    <div class="col-md-12 mb-3">
         <div class="row mt-3">
           <!-- Name -->
           <div class="col-md-6 form-group mb-3">
@@ -62,13 +33,13 @@
 
           <!-- Group -->
           <div class="col-md-3 form-group mb-3">
-            <label>Group <span class="label_hint">(e.g. for-hotels)</span></label>
+            <label>Group</label>
             <input type="text" name="group" class="form-control" [(ngModel)]="formData.group" required />
           </div>
 
           <!-- Type -->
           <div class="col-md-3 form-group mb-3">
-            <label>Type <span class="label_hint">(e.g. location)</span></label>
+            <label>Type</label>
             <input type="text" name="type" class="form-control" [(ngModel)]="formData.type" required />
           </div>
 
@@ -78,6 +49,127 @@
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.description"
               [ngModelOptions]="{standalone: true}"></quill-editor>
           </div>
+          <!-- HEADER -->
+          <div class="col-md-12 form-group mb-3 mt-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="hc_status" [(ngModel)]="formData.hc_status">
+              <span>Enable Header Content</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div *ngIf="formData.hc_status" class="col-md-12 form-group mb-3 quill-mb-5">
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.header_content" [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+          <!-- FOOTER -->
+          <div class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="fc_status" [(ngModel)]="formData.fc_status">
+              <span>Enable Footer Content</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div *ngIf="formData.fc_status" class="col-md-12 form-group mb-3 quill-mb-5">
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.footer_content" [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+          <!-- PROFILE -->
+          <ng-container *ngIf="configData?.catalog_navigations?.indexOf(commonService.store_details?._id)!=-1">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="profile_status" (change)="!formData.profile_details? formData.profile_details={}: null" [(ngModel)]="formData.profile_status">
+                <span>Enable Profile</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="formData.profile_status">
+              <div class="col-md-4"></div>
+              <div class="col-md-4" align="center">
+                <div>
+                  <label class="fw-600">Profile Image</label>
+                  <p>300 x 300 pixels @72ppi</p>
+                  <div class="mb-3" align="center">
+                    <div class="card">
+                      <div *ngIf="formData.profile_details?.image" class="py-4">
+                        <span (click)="formData.p_img_change=true; formData.profile_details.image=null;" class="material-icons float-right round-img-icon ab-item-close top5"
+                          aria-hidden="true">close</span>
+                        <img *ngIf="formData.p_img_change" [src]="formData.profile_details.image" height="100px;" width="auto;">
+                        <img *ngIf="!formData.p_img_change" [src]="imgBaseUrl+formData.profile_details.image" height="100px;" width="auto;">
+                      </div>
+                      <div *ngIf="!formData.profile_details?.image" class="py-4">
+                        <label>
+                          <div>
+                            <i class="material-icons add-img">add_photo_alternate</i>
+                            <p>Click to upload image</p>
+                          </div>
+                          <input type="file" name="profile_image" style="display: none;" (change)="fileChangeListener('profile', $event)" accept="image/jpeg, image/png, image/webp" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 form-group mb-3 quill-mb-5">
+                <label>Name</label>
+                <input type="text" name="profile_name" class="form-control" [(ngModel)]="formData.profile_details.name" required />
+              </div>
+              <div class="col-md-6 form-group mb-3 quill-mb-5">
+                <label>Designation</label>
+                <input type="text" name="profile_designation" class="form-control" [(ngModel)]="formData.profile_details.designation" required />
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Description</label>
+                <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="formData.profile_details.description" [ngModelOptions]="{standalone: true}"></quill-editor>
+              </div>
+            </ng-container>
+          </ng-container>
+          <!-- PRODUCT LIST -->
+          <div class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="prod_list_status" [(ngModel)]="formData.prod_list_status">
+              <span>Enable Product Price List</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+
+          <!-- social media links -->
+          <ng-container *ngIf="commonService.ys_features.indexOf('catalog_social_links')!=-1">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="social_media_status" [(ngModel)]="formData.social_media_status" #social_media_status="ngModel">
+                <span>Enable Social Media Links</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="formData.social_media_status">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of formData.social_media_links; let i=index;">
+                    <div class=" card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="formData.social_media_links.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15"
+                          aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Type</label>
+                          <select name="sm_type{{i}}" class="form-control" [(ngModel)]="x.type" #sm_type="ngModel" required>
+                            <option [ngValue]="x" *ngFor="let x of commonService.socialTypes;">{{x | titlecase}}</option>
+                          </select>
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Link</label>
+                          <input type="text" name="url{{i}}" class="form-control" [(ngModel)]="x.url" #url="ngModel" required />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="formData.social_media_links.push({});" type="button">
+                  <span class="material-symbols-rounded ">add</span>NEW
+                </button>
+              </div>
+            </ng-container>
+          </ng-container>
 
           <!-- SEO -->
           <div class="data-list-card-wrapper p-0 col-md-12 col-12">
@@ -130,9 +222,9 @@
               </ng-container>
             </div>
           </div>
+
         </div>
       </div>
-    </div>
 
   </form>
 
@@ -177,10 +269,13 @@
             <div class="col-md-10 col-10 first_col px-0">
               <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
               <p class="w-30 w-sm-100 light-font m-b-0">{{ findTypeName(x.type) }}</p>
-              <p class="w-20 w-sm-100 light-font m-b-0">
-                <ng-container *ngIf="x.type==='faq'">{{ x.faq_list?.length }} FAQs</ng-container>
-                <ng-container *ngIf="x.type!=='faq'">{{ x.image_list?.length }} Tiles</ng-container>
-              </p>
+                <p class="w-15 w-sm-100 highlight-font m-b-0">
+                  <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="['grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)!=-1">-</ng-container>
+                  <ng-container *ngIf="x.type=='featured_cards'">{{ x.card_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'grid', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(x.type)==-1">{{ x.image_list?.length }} Tiles</ng-container>
+                </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
                   {{x.active_status? 'Enabled': 'Disabled'}}
@@ -200,8 +295,9 @@
                       <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                         'visibility'}}</span> Details
                     </button>
-                    <button *ngIf="x.type!=='faq'" class="dropdown-item d-flex" routerLink="/setup/pages/catalog-pages/modify/{{params.id}}/{{x._id}}">
-                      <span class="material-symbols-rounded mr-2">image</span> Images 
+                    <button *ngIf="['faq', 'grid', 'blogs', 'content_section', 'map'].indexOf(x.type)==-1" class="dropdown-item d-flex"
+                      routerLink="/setup/pages/catalog-pages/modify/{{params.id}}/{{x._id}}">
+                      <span class="material-symbols-rounded mr-2">image</span> Images
                     </button>
                     <button class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
                       <span class="material-symbols-rounded mr-2">delete</span> Remove
@@ -284,7 +380,39 @@
                 max="{{maxRank+1}}" appNumberOnly required />
             </div>
 
-            <ng-container *ngIf="addForm.type!='secondary'">
+            <ng-container *ngIf="addForm.type=='blogs'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Type</label>
+                <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="addForm.blogs_type"
+                  (change)="addForm.section_grid_type=gridList[0].type;" required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="gridList?.length && addForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+                <div>
+                  <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
+                    <label class="radio radio-primary display-inline-b mr-5 mb-3">
+                      <input type="radio" name="section_grid_type" [value]="x.type"
+                        [checked]="x.type==addForm.section_grid_type" (change)="addForm.section_grid_type=x.type;">
+                      <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(addForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
@@ -296,29 +424,107 @@
               </div>
             </ng-container>
 
-            <!-- FAQ items -->
-            <ng-container *ngIf="addForm.type === 'faq'">
-              <div class="col-md-12 mb-2 mt-2">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <label class="m-0">FAQ Items</label>
-                  <button type="button" class="light-button" (click)="addFaqItem(addForm);">
-                    <span class="material-symbols-rounded">add</span> Add FAQ
-                  </button>
-                </div>
-                <div *ngFor="let faq of addForm.faq_list; let fi=index;" class="card p-3 mb-2">
-                  <div class="row poss-rel">
-                    <span (click)="removeFaqItem(addForm, fi);"
-                      class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                    <div class="col-md-12 form-group mb-2">
-                      <label>Question</label>
-                      <input type="text" class="form-control" [(ngModel)]="faq.ques" [ngModelOptions]="{standalone: true}" required />
-                    </div>
-                    <div class="col-md-12 form-group mb-0">
-                      <label>Answer</label>
-                      <textarea class="form-control" [(ngModel)]="faq.answer" [ngModelOptions]="{standalone: true}" required></textarea>
+            <ng-container *ngIf="addForm.type=='content_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Content</label>
+                <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
+                  [ngModelOptions]="{standalone: true}"></quill-editor>
+              </div>
+            </ng-container>
+
+            <!-- FAQ Segment Fields -->
+            <ng-container *ngIf="addForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of addForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="addForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="af_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="af_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="addForm.faq_list.push({ ques: '', answer: '', rank: addForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- Map Segment Fields -->
+            <ng-container *ngIf="addForm.type=='map'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="m_heading" class="form-control" [(ngModel)]="addForm.heading" #m_heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="m_sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Address</label>
+                <textarea class="form-control" name="map_address" rows="3"
+                  [(ngModel)]="addForm.map_address" placeholder="No 29 & 31, Arcot Street, T. Nagar, Chennai"></textarea>
+              </div>
+              <div class="col-md-12 mb-2">
+                <label class="fw-600">Map Categories</label>
+              </div>
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-12 form-group mb-3" *ngFor="let m of addForm.map_list; let mi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="addForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-4 form-group mb-2">
+                          <label>Category Name</label>
+                          <input type="text" [name]="'map_cat_'+mi" class="form-control" [(ngModel)]="m.category" placeholder="e.g. Transit" required />
+                        </div>
+                        <div class="col-md-8 form-group mb-2">
+                          <label>Google Maps Embed URL</label>
+                          <textarea class="form-control" [name]="'map_url_'+mi" rows="2"
+                            [(ngModel)]="m.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="addForm.map_list.push({ category: '', iframe_url: '' });" type="button">
+                  <span class="material-symbols-rounded">add</span>Add Category
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- Featured Cards: heading shown separately -->
+            <ng-container *ngIf="addForm.type=='featured_cards'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="fc_heading" class="form-control" [(ngModel)]="addForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" name="fc_sub_heading" [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
             </ng-container>
 
@@ -391,7 +597,39 @@
                 max="{{maxRank}}" appNumberOnly required />
             </div>
 
-            <ng-container *ngIf="editForm.type && editForm.type !== 'secondary'">
+            <ng-container *ngIf="editForm.type=='blogs'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Type</label>
+                <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="editForm.blogs_type"
+                  (change)="editForm.section_grid_type=gridList[0].type;" required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading" #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="gridList?.length && editForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+                <div>
+                  <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
+                    <label class="radio radio-primary display-inline-b mr-5 mb-3">
+                      <input type="radio" name="section_grid_type" [value]="x.type"
+                        [checked]="x.type==editForm.section_grid_type" (change)="editForm.section_grid_type=x.type;">
+                      <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(editForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
@@ -404,29 +642,108 @@
               </div>
             </ng-container>
 
-            <!-- FAQ items -->
-            <ng-container *ngIf="editForm.type === 'faq'">
-              <div class="col-md-12 mb-2 mt-2">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <label class="m-0">FAQ Items</label>
-                  <button type="button" class="light-button" (click)="addFaqItem(editForm);">
-                    <span class="material-symbols-rounded">add</span> Add FAQ
-                  </button>
-                </div>
-                <div *ngFor="let faq of editForm.faq_list; let fi=index;" class="card p-3 mb-2">
-                  <div class="row poss-rel">
-                    <span (click)="removeFaqItem(editForm, fi);"
-                      class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                    <div class="col-md-12 form-group mb-2">
-                      <label>Question</label>
-                      <input type="text" class="form-control" [(ngModel)]="faq.ques" [ngModelOptions]="{standalone: true}" required />
-                    </div>
-                    <div class="col-md-12 form-group mb-0">
-                      <label>Answer</label>
-                      <textarea class="form-control" [(ngModel)]="faq.answer" [ngModelOptions]="{standalone: true}" required></textarea>
+            <ng-container *ngIf="editForm.type=='content_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
+                  #heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Content</label>
+                <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
+                  [ngModelOptions]="{standalone: true}"></quill-editor>
+              </div>
+            </ng-container>
+
+            <!-- FAQ Segment Edit Fields -->
+            <ng-container *ngIf="editForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of editForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="editForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="ef_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="ef_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="editForm.faq_list.push({ ques: '', answer: '', rank: editForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- Map Segment Edit Fields -->
+            <ng-container *ngIf="editForm.type=='map'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="me_heading" class="form-control" [(ngModel)]="editForm.heading" #me_heading="ngModel" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="me_sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Address</label>
+                <textarea class="form-control" name="map_address" rows="3"
+                  [(ngModel)]="editForm.map_address" placeholder="No 29 & 31, Arcot Street, T. Nagar, Chennai"></textarea>
+              </div>
+              <div class="col-md-12 mb-2">
+                <label class="fw-600">Map Categories</label>
+              </div>
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-12 form-group mb-3" *ngFor="let m of editForm.map_list; let mi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="editForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-4 form-group mb-2">
+                          <label>Category Name</label>
+                          <input type="text" [name]="'e_map_cat_'+mi" class="form-control" [(ngModel)]="m.category" placeholder="e.g. Transit" required />
+                        </div>
+                        <div class="col-md-8 form-group mb-2">
+                          <label>Google Maps Embed URL</label>
+                          <textarea class="form-control" [name]="'e_map_url_'+mi" rows="2"
+                            [(ngModel)]="m.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="editForm.map_list.push({ category: '', iframe_url: '' });" type="button">
+                  <span class="material-symbols-rounded">add</span>Add Category
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- Featured Cards: heading shown separately -->
+            <ng-container *ngIf="editForm.type=='featured_cards'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="efc_heading" class="form-control" [(ngModel)]="editForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" name="efc_sub_heading" [(ngModel)]="editForm.sub_heading"></textarea>
               </div>
             </ng-container>
 
