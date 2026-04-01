@@ -38,7 +38,9 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'FAQ', value: 'faq' },
     { name: 'Content Section', value: 'content_section' },
     { name: 'CTA', value: 'cta' },
-    { name: 'Neighbourhood Map', value: 'map' }
+    { name: 'Neighbourhood Map', value: 'map' },
+    { name: 'Hero CTA', value: 'hero_cta' },
+    { name: 'Feature List', value: 'feature_list' }
   ];
 
   constructor(
@@ -174,6 +176,7 @@ export class CatalogPagesEventComponent implements OnInit {
         this.editForm.dup_type = this.findTypeName(this.editForm.type);
         if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
         if (!this.editForm.faq_list) this.editForm.faq_list = [];
+        if (!this.editForm.feature_list) this.editForm.feature_list = [];
         if (this.editForm.type === 'section')
           this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
       } else {
@@ -244,6 +247,10 @@ export class CatalogPagesEventComponent implements OnInit {
       form.text_list = [{ image: '', name: '', description: '' }];
     }
 
+    if (type === 'feature_list' && (!form.feature_list || !form.feature_list.length)) {
+      form.feature_list = [{ image: '', heading: '', sub_heading: '' }];
+    }
+
     if (type === 'faq' && (!form.faq_list || !form.faq_list.length)) {
       form.faq_list = [{ ques: '', answer: '', rank: 1 }];
     }
@@ -266,6 +273,19 @@ export class CatalogPagesEventComponent implements OnInit {
       }
       if (!form.cta_list?.length) {
         form.cta_list = [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
+      }
+    }
+
+    if (type === 'hero_cta') {
+      form.btn_status = false;
+      form.btn_style = 'primary';
+      form.btn_text_color = 'light';
+      form.btn_link_type = 'internal';
+      if (!form.cta_list?.length) {
+        form.cta_list = [
+          { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' },
+          { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
+        ];
       }
     }
   }

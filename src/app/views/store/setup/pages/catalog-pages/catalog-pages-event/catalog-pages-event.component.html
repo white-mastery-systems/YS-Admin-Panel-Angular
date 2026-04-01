@@ -272,8 +272,9 @@
                 <p class="w-15 w-sm-100 highlight-font m-b-0">
                   <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="['grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
@@ -411,7 +412,7 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(addForm.type)==-1">
+            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards', 'hero_cta'].indexOf(addForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
@@ -531,6 +532,56 @@
               </div>
             </ng-container>
 
+            <!-- Hero CTA Segment Fields -->
+            <ng-container *ngIf="addForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="hcta_heading" class="form-control" [(ngModel)]="addForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="hcta_description" rows="3" [(ngModel)]="addForm.description"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="hcta_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="hcta_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="hcta_btn_style" class="form-control select-arrow" [(ngModel)]="addForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="hcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="addForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="hcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="hcta_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" />
+                </div>
+              </ng-container>
+            </ng-container>
+
             <div class="col-md-12 mb-3 mt-2">
               <label class="checkbox checkbox-primary">
                 <input class="form-check-input" type="checkbox" name="active_status" [(ngModel)]="addForm.active_status">
@@ -632,7 +683,7 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards'].indexOf(editForm.type)==-1">
+            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards', 'hero_cta'].indexOf(editForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
@@ -752,6 +803,56 @@
                 <label>Description</label>
                 <textarea class="form-control" name="efc_description" rows="3" [(ngModel)]="editForm.description"></textarea>
               </div>
+            </ng-container>
+
+            <!-- Hero CTA Segment Edit Fields -->
+            <ng-container *ngIf="editForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="ehcta_heading" class="form-control" [(ngModel)]="editForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="ehcta_description" rows="3" [(ngModel)]="editForm.description"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="ehcta_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="ehcta_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="ehcta_btn_style" class="form-control select-arrow" [(ngModel)]="editForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="ehcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="editForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="ehcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="ehcta_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" />
+                </div>
+              </ng-container>
             </ng-container>
 
           </div>

@@ -14,6 +14,7 @@
 
   <form autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
+    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'grid' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list'">
     <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" 
@@ -370,8 +371,9 @@
         </div>
         <!-- #Link -->
       </div>
-      
+
     </div>
+    </ng-container>
 
     <!-- Grid / Amenities (text_list) -->
     <ng-container *ngIf="layoutDetails.type=='grid' || layoutDetails.type=='amenities'">
@@ -436,6 +438,70 @@
       </div>
     </ng-container>
     <!-- #Grid -->
+
+    <!-- Feature List -->
+    <ng-container *ngIf="layoutDetails.type=='feature_list'">
+      <div *ngFor="let x of layoutDetails.feature_list; let i=index;" class="poss-rel card p-3 mb-3">
+        <span *ngIf="layoutDetails.feature_list?.length > 1" (click)="layoutDetails.feature_list.splice(i, 1);"
+          class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+
+        <div class="row pt-3 pb-3">
+          <div class="col-md-12">
+            <p class="dark-font">{{layoutDetails?.name}} Item {{i+1}}</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>Image (200 x 200) pixels</p>
+                <i *ngIf="!x.image" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="x.image" class="desktop-layout-image-sec">
+                  <img *ngIf="x?.img_change" [src]="x.temp_img">
+                  <ng-container *ngIf="!x?.img_change">
+                    <img [src]="imgBaseUrl+x.image">
+                  </ng-container>
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" name="fl_img{{i}}" class="custom-file-input"
+                    (change)="fileChangeListener('feature', i, $event)" accept="image/gif, image/jpeg, image/png, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="x.c_err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+            <div class="card w-100 p-3 mb-3">
+              <div class="row">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Heading</label>
+                  <input type="text" name="fl_heading{{i}}" class="form-control" [(ngModel)]="x.heading" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Sub-heading</label>
+                  <textarea class="form-control" aria-label="With textarea" name="fl_sub_heading{{i}}" [(ngModel)]="x.sub_heading"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add item button -->
+      <div class="mb-3">
+        <button type="button" class="light-button" (click)="addFeatureItem();" [disabled]="layoutDetails.feature_list?.length >= maxImgCount">
+          <span class="material-symbols-rounded">add</span> Add Item
+        </button>
+      </div>
+    </ng-container>
+    <!-- #Feature List -->
 
     <!-- Featured Cards: Cover Image -->
     <ng-container *ngIf="layoutDetails.type=='featured_cards'">
@@ -537,9 +603,118 @@
     </ng-container>
     <!-- #Featured Cards -->
 
+    <!-- Hero CTA: Cover Image + CTA Cards -->
+    <ng-container *ngIf="layoutDetails.type=='hero_cta'">
+      <div class="card p-3 mb-3">
+        <div class="row pt-2 pb-2">
+          <div class="col-md-12">
+            <p class="dark-font">Cover Image (1850 x 690 px)</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <i *ngIf="!layoutDetails.cover_img && !layoutDetails.temp_cover_img" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="layoutDetails.cover_img || layoutDetails.temp_cover_img" class="desktop-layout-image-sec">
+                  <img *ngIf="layoutDetails.temp_cover_img" [src]="layoutDetails.temp_cover_img" alt="Cover">
+                  <img *ngIf="!layoutDetails.temp_cover_img && layoutDetails.cover_img" [src]="imgBaseUrl + layoutDetails.cover_img" alt="Cover">
+                </figure>
+              </div>
+              <div class="custom-file mt-2">
+                <input type="file" name="fc_cover" class="custom-file-input"
+                  (change)="fileChangeListener('fc_cover', 0, $event)" accept="image/gif, image/jpeg, image/png, image/webp">
+                <label class="custom-file-label">Choose file</label>
+              </div>
+              <div *ngIf="layoutDetails.cover_img_err" class="mt-2">
+                <p class="mb-0 error-msg">Max 500 KB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Add image button (not shown for section grid, grid, amenities) -->
-    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'grid' && layoutDetails.type !== 'amenities'" class="mb-3">
+      <!-- Hero CTA: CTA Cards -->
+      <div class="card p-3 mb-3">
+        <div class="row pt-2 pb-2">
+          <div class="col-md-12">
+            <p class="dark-font fw-600">CTA Cards</p>
+          </div>
+        </div>
+        <div *ngFor="let cta of layoutDetails.cta_list; let ci=index;" class="poss-rel card card-in-card p-3 mb-3">
+          <span *ngIf="layoutDetails.cta_list?.length > 1" (click)="layoutDetails.cta_list.splice(ci, 1);"
+            class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <p class="dark-font mb-3">Card {{ci + 1}}</p>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Card Heading</label>
+              <input type="text" [name]="'hcta_c_heading_'+ci" class="form-control" [(ngModel)]="cta.heading" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Card Description</label>
+              <textarea class="form-control" [name]="'hcta_c_desc_'+ci" rows="3" [(ngModel)]="cta.description"></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'hcta_c_btn_status_'+ci" [(ngModel)]="cta.btn_status"
+                  (change)="cta.btn_text=cta.btn_status?cta.btn_text:''; cta.btn_link=cta.btn_status?cta.btn_link:''; cta.btn_link_type=cta.btn_status?'internal':''">
+                <span>Enable Button</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <ng-container *ngIf="cta.btn_status">
+              <div class="col-md-6 form-group mb-3">
+                <label>Button Text</label>
+                <input type="text" [name]="'hcta_c_btn_text_'+ci" class="form-control" [(ngModel)]="cta.btn_text" maxlength="50" required />
+              </div>
+              <div class="col-md-3 form-group mb-3">
+                <label>Button Style</label>
+                <select [name]="'hcta_c_btn_style_'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_style">
+                  <option value="primary">Primary</option>
+                  <option value="secondary">Secondary</option>
+                </select>
+              </div>
+              <div class="col-md-3 form-group mb-3">
+                <label>Text Color</label>
+                <select [name]="'hcta_c_btn_tc_'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_text_color">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" [name]="'hcta_c_lt_'+ci" [(ngModel)]="cta.btn_link_type" value="internal">
+                  <span>Internal Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label class="radio radio-primary">
+                  <input type="radio" [name]="'hcta_c_lt_'+ci" [(ngModel)]="cta.btn_link_type" value="external">
+                  <span>External Link</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label *ngIf="cta.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{cta.btn_link}}</label>
+                <label *ngIf="cta.btn_link_type=='external'">External Link</label>
+                <input type="text" [name]="'hcta_c_link_'+ci" class="form-control" [(ngModel)]="cta.btn_link" required />
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="mb-2">
+          <button type="button" class="light-button" (click)="layoutDetails.cta_list.push({ heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });">
+            <span class="material-symbols-rounded">add</span> Add Card
+          </button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- #Hero CTA -->
+
+
+    <!-- Add image button (not shown for section grid, grid, amenities, feature_list, hero_cta) -->
+    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'grid' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta'" class="mb-3">
       <button type="button" class="light-button" (click)="addNewImg();"
         [disabled]="layoutDetails.image_list?.length >= maxImgCount">
         <span class="material-symbols-rounded">add</span> {{(layoutDetails.type=='primary_slider' || layoutDetails.type=='slider')? 'Add Slide': 'Add Image'}}
