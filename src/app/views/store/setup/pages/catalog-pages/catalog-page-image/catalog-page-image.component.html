@@ -14,7 +14,7 @@
 
   <form autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
-    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'grid' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list'">
+    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list'">
     <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" 
@@ -376,7 +376,7 @@
     </ng-container>
 
     <!-- Grid / Amenities (text_list) -->
-    <ng-container *ngIf="layoutDetails.type=='grid' || layoutDetails.type=='amenities'">
+    <ng-container *ngIf="layoutDetails.type=='amenities'">
       <div *ngFor="let x of layoutDetails.text_list; let i=index;" class="poss-rel card p-3 mb-3">
         <span *ngIf="layoutDetails.text_list?.length > 1" (click)="layoutDetails.text_list.splice(i, 1);" 
           class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -422,7 +422,7 @@
                 </div>
                 <div class="col-md-12 form-group mb-3">
                   <label>Description</label>
-                  <textarea class="form-control" aria-label="With textarea" name="text_desc{{i}}" [(ngModel)]="x.description" [required]="layoutDetails.type=='grid'"></textarea>
+                  <textarea class="form-control" aria-label="With textarea" name="text_desc{{i}}" [(ngModel)]="x.description"></textarea>
                 </div>
               </div>
             </div>
@@ -713,8 +713,8 @@
     <!-- #Hero CTA -->
 
 
-    <!-- Add image button (not shown for section grid, grid, amenities, feature_list, hero_cta) -->
-    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'grid' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta'" class="mb-3">
+    <!-- Add image button (not shown for section grid, amenities, feature_list, hero_cta) -->
+    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta'" class="mb-3">
       <button type="button" class="light-button" (click)="addNewImg();"
         [disabled]="layoutDetails.image_list?.length >= maxImgCount">
         <span class="material-symbols-rounded">add</span> {{(layoutDetails.type=='primary_slider' || layoutDetails.type=='slider')? 'Add Slide': 'Add Image'}}

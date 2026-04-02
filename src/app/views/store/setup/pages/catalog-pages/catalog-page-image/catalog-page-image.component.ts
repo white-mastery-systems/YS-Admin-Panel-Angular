@@ -68,10 +68,6 @@ export class CatalogPageImageComponent implements OnInit {
             if (!this.layoutDetails.image_list.length)
               this.layoutDetails.image_list.push({ rank: 1, content_details: {} });
             if (this.layoutDetails.type === 'cta') this.maxImgCount = 1;
-          } else if (this.layoutDetails.type === 'grid') {
-            if (!this.layoutDetails.text_list || !this.layoutDetails.text_list.length) {
-              this.layoutDetails.text_list = [{ image: '', name: '', description: '' }];
-            }
           } else if (this.layoutDetails.type === 'feature_list') {
             if (!this.layoutDetails.feature_list || !this.layoutDetails.feature_list.length) {
               this.layoutDetails.feature_list = [{ image: '', heading: '', sub_heading: '' }];

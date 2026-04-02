@@ -32,13 +32,13 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Testimonial', value: 'testimonial' },
     { name: 'Highlighted Section', value: 'highlighted_section' },
     { name: 'Section Grid', value: 'section' },
-    { name: 'Grid', value: 'grid' },
     { name: 'Featured Cards', value: 'featured_cards' },
     { name: 'Amenities', value: 'amenities' },
     { name: 'FAQ', value: 'faq' },
     { name: 'Content Section', value: 'content_section' },
     { name: 'CTA', value: 'cta' },
-    { name: 'Neighbourhood Map', value: 'map' },
+    { name: 'Interactive Map', value: 'interactive_map' },
+    { name: 'Route Map', value: 'route_map' },
     { name: 'Hero CTA', value: 'hero_cta' },
     { name: 'Feature List', value: 'feature_list' }
   ];
@@ -75,7 +75,7 @@ export class CatalogPagesEventComponent implements OnInit {
             if (this.formData.social_media_links.length) this.formData.social_media_status = true;
             this.maxRank = this.formData.segments?.length || 0;
             
-            if(this.commonService.ys_features.indexOf('blogs') !== -1)
+            if (this.commonService.ys_features.indexOf('blogs') !== -1 && this.layoutTypes.findIndex(obj => obj.value === 'blogs') === -1)
               this.layoutTypes.push({ name: 'Blogs', value: 'blogs' });
 
           } else console.log('response', result);
@@ -243,7 +243,7 @@ export class CatalogPagesEventComponent implements OnInit {
       form.section_grid_type = form.grid_list[0].type;
     }
 
-    if ((type === 'grid' || type === 'amenities') && (!form.text_list || !form.text_list.length)) {
+    if (type === 'amenities' && (!form.text_list || !form.text_list.length)) {
       form.text_list = [{ image: '', name: '', description: '' }];
     }
 
@@ -261,7 +261,7 @@ export class CatalogPagesEventComponent implements OnInit {
       form.section_grid_type = this.gridList[0].type;
     }
 
-    if (type === 'map') {
+    if (type === 'interactive_map') {
       if (!form.map_list || !form.map_list.length) {
         form.map_list = [{ category: '', iframe_url: '' }];
       }

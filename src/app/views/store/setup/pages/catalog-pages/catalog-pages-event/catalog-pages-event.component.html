@@ -273,8 +273,8 @@
                   <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
-                  <ng-container *ngIf="['grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'grid', 'blogs', 'content_section', 'cta', 'map'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
+                  <ng-container *ngIf="['blogs', 'content_section', 'cta', 'interactive_map', 'route_map'].indexOf(x.type)!=-1">-</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
@@ -295,7 +295,7 @@
                       <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                         'visibility'}}</span> Details
                     </button>
-                    <button *ngIf="['faq', 'grid', 'blogs', 'content_section', 'map'].indexOf(x.type)==-1" class="dropdown-item d-flex"
+                    <button *ngIf="['faq', 'blogs', 'content_section', 'interactive_map', 'route_map'].indexOf(x.type)==-1" class="dropdown-item d-flex"
                       routerLink="/setup/pages/catalog-pages/modify/{{params.id}}/{{x._id}}">
                       <span class="material-symbols-rounded mr-2">image</span> Images
                     </button>
@@ -412,7 +412,7 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards', 'hero_cta'].indexOf(addForm.type)==-1">
+            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'featured_cards', 'hero_cta'].indexOf(addForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
@@ -471,7 +471,7 @@
             </ng-container>
 
             <!-- Map Segment Fields -->
-            <ng-container *ngIf="addForm.type=='map'">
+            <ng-container *ngIf="addForm.type=='interactive_map'">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="m_heading" class="form-control" [(ngModel)]="addForm.heading" #m_heading="ngModel" />
@@ -513,6 +513,21 @@
                 <button class="light-button" (click)="addForm.map_list.push({ category: '', iframe_url: '' });" type="button">
                   <span class="material-symbols-rounded">add</span>Add Category
                 </button>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='route_map'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="rm_heading" class="form-control" [(ngModel)]="addForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" name="rm_sub_heading" [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Iframe URL</label>
+                <textarea class="form-control" name="rm_iframe_url" rows="3" [(ngModel)]="addForm.iframe_url" required></textarea>
               </div>
             </ng-container>
 
@@ -683,7 +698,7 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'map', 'featured_cards', 'hero_cta'].indexOf(editForm.type)==-1">
+            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'featured_cards', 'hero_cta'].indexOf(editForm.type)==-1">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
@@ -744,7 +759,7 @@
             </ng-container>
 
             <!-- Map Segment Edit Fields -->
-            <ng-container *ngIf="editForm.type=='map'">
+            <ng-container *ngIf="editForm.type=='interactive_map'">
               <div class="col-md-12 form-group mb-3">
                 <label>Heading</label>
                 <input type="text" name="me_heading" class="form-control" [(ngModel)]="editForm.heading" #me_heading="ngModel" />
@@ -786,6 +801,21 @@
                 <button class="light-button" (click)="editForm.map_list.push({ category: '', iframe_url: '' });" type="button">
                   <span class="material-symbols-rounded">add</span>Add Category
                 </button>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='route_map'">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="erm_heading" class="form-control" [(ngModel)]="editForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" name="erm_sub_heading" [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Iframe URL</label>
+                <textarea class="form-control" name="erm_iframe_url" rows="3" [(ngModel)]="editForm.iframe_url" required></textarea>
               </div>
             </ng-container>
 
