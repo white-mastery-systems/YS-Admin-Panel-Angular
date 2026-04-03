@@ -102,7 +102,10 @@ export class CatalogPagesEventComponent implements OnInit {
       this.api.UPDATE_CATALOG_PAGE(payload).subscribe(result => {
         this.formData.submit = false;
         if (result.status) { this.router.navigate(['/setup/pages/catalog-pages']); }
-        else console.log('response', result);
+        else {
+          this.formData.err_msg = result.message;
+          console.log('response', result);
+        }
       });
     } else {
       this.api.ADD_CATALOG_PAGE(payload).subscribe(result => {

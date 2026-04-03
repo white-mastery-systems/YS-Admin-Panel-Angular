@@ -12,6 +12,10 @@
     </div>
   </div>
 
+  <div *ngIf="layoutDetails.errorMsg" class="text-danger text-center mb-3">
+    {{layoutDetails.errorMsg}}
+  </div>
+
   <form autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
     <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list'">
