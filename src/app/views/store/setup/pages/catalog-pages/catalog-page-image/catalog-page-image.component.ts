@@ -64,9 +64,16 @@ export class CatalogPageImageComponent implements OnInit {
           } else if (this.layoutDetails.type === 'highlighted_section' || this.layoutDetails.type === 'cta') {
             this.layoutDetails.image_list.forEach(el => {
               if (!el.content_details) el.content_details = {};
+              if (this.layoutDetails.type === 'highlighted_section') {
+                if (el.highlighted_text === undefined) el.highlighted_text = '';
+                if (el.heading === undefined) el.heading = '';
+                if (el.sub_heading === undefined) el.sub_heading = '';
+                if (el.description === undefined) el.description = '';
+                if (!el.features) el.features = [];
+              }
             });
             if (!this.layoutDetails.image_list.length)
-              this.layoutDetails.image_list.push({ rank: 1, content_details: {} });
+              this.layoutDetails.image_list.push({ rank: 1, content_details: {}, heading: '', sub_heading: '', description: '', highlighted_text: '', features: [] });
             if (this.layoutDetails.type === 'cta') this.maxImgCount = 1;
           } else if (this.layoutDetails.type === 'feature_list') {
             if (!this.layoutDetails.feature_list || !this.layoutDetails.feature_list.length) {
@@ -86,6 +93,10 @@ export class CatalogPageImageComponent implements OnInit {
                 { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
               ];
             }
+          } else if (this.layoutDetails.type === 'internal_links') {
+            if (!this.layoutDetails.cta_list?.length) {
+              this.layoutDetails.cta_list = [{ btn_text: '', btn_link_type: 'internal', btn_link: '', btn_status: false, btn_style: 'primary', btn_text_color: 'light' }];
+            }
           } else if (!this.layoutDetails.image_list.length) {
             this.layoutDetails.image_list.push({ rank: 1 });
           }
@@ -101,7 +112,7 @@ export class CatalogPageImageComponent implements OnInit {
     if (this.layoutDetails.type === 'testimonial') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1, content_details: {} });
     } else if (this.layoutDetails.type === 'highlighted_section') {
-      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1, content_details: {} });
+      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1, content_details: {}, heading: '', sub_heading: '', description: '', highlighted_text: '', features: [] });
     } else {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1 });
     }

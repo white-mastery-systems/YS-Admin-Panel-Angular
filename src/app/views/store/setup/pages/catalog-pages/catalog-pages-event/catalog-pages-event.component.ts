@@ -40,7 +40,8 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Interactive Map', value: 'interactive_map' },
     { name: 'Route Map', value: 'route_map' },
     { name: 'Hero CTA', value: 'hero_cta' },
-    { name: 'Feature List', value: 'feature_list' }
+    { name: 'Feature List', value: 'feature_list' },
+    { name: 'Internal Links', value: 'internal_links' }
   ];
 
   constructor(
@@ -290,6 +291,10 @@ export class CatalogPagesEventComponent implements OnInit {
           { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
         ];
       }
+    }
+
+    if (type === 'internal_links' && (!form.cta_list?.length)) {
+      form.cta_list = [{ btn_text: '', btn_link_type: 'internal', btn_link: '' }];
     }
   }
 

@@ -18,7 +18,7 @@
 
   <form autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
-    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list'">
+    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'internal_links'">
     <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" 
@@ -374,10 +374,63 @@
           </div>
         </div>
         <!-- #Link -->
+      
+      <!-- Highlighted Section per-item: highlighted_text + features -->
+      <ng-container *ngIf="layoutDetails.type=='highlighted_section'">
+        <div class="card p-3 mb-3 mt-2">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Heading</label>
+              <input type="text" [name]="'hs_heading_'+i" class="form-control" [(ngModel)]="x.heading" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Sub Heading</label>
+              <input type="text" [name]="'hs_sub_heading_'+i" class="form-control" [(ngModel)]="x.sub_heading" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Description</label>
+              <textarea class="form-control" [name]="'hs_description_'+i" rows="3" [(ngModel)]="x.description"></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-0">
+              <label>Highlighted Text</label>
+              <input type="text" [name]="'highlighted_text_'+i" class="form-control" [(ngModel)]="x.highlighted_text" />
+            </div>
+          </div>
+        </div>
+
+        <p class="dark-font fw-600 mb-2">Features</p>
+        <div *ngFor="let feat of x.features; let fi=index;" class="poss-rel card p-3 mb-3">
+          <span *ngIf="x.features?.length > 1" (click)="x.features.splice(fi, 1);"
+            class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <div class="row pt-3 pb-3">
+            <div class="col-md-12">
+              <p class="dark-font">Feature {{fi+1}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Name</label>
+              <input type="text" [name]="'hs_feat_name_'+i+'_'+fi" class="form-control" [(ngModel)]="feat.name" />
+            </div>
+            <div class="col-md-12 form-group mb-0">
+              <label>Detail</label>
+              <textarea class="form-control" [name]="'hs_feat_detail_'+i+'_'+fi" rows="2" [(ngModel)]="feat.detail"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <button type="button" class="light-button" (click)="x.features.push({ name: '', detail: '' });">
+            <span class="material-symbols-rounded">add</span> Add Feature
+          </button>
+        </div>
+      </ng-container>
+      <!-- #Highlighted Section per-item -->
+
       </div>
 
     </div>
     </ng-container>
+
 
     <!-- Grid / Amenities (text_list) -->
     <ng-container *ngIf="layoutDetails.type=='amenities'">
@@ -716,9 +769,104 @@
     </ng-container>
     <!-- #Hero CTA -->
 
+    <!-- Internal Links -->
+    <ng-container *ngIf="layoutDetails.type=='internal_links'">
+
+      <!-- Section Heading -->
+      <div class="card p-3 mb-3">
+        <div class="row">
+          <div class="col-md-12 form-group mb-0">
+            <label>Section Heading</label>
+            <input type="text" name="il_section_heading" class="form-control" [(ngModel)]="layoutDetails.heading" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Link Cards Form -->
+      <div class="card p-3 mb-3">
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <p class="dark-font fw-600">Link Cards</p>
+          </div>
+        </div>
+        <div *ngFor="let cta of layoutDetails.cta_list; let ci=index;" class="poss-rel card card-in-card p-3 mb-3">
+          <span *ngIf="layoutDetails.cta_list?.length > 1" (click)="layoutDetails.cta_list.splice(ci, 1);"
+            class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <p class="dark-font mb-3">Link {{ci + 1}}</p>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Label</label>
+              <input type="text" [name]="'il_btn_text_'+ci" class="form-control" [(ngModel)]="cta.btn_text" required />
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label>Link Type</label>
+              <select [name]="'il_link_type_'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_link_type">
+                <option value="internal">Internal</option>
+                <option value="external">External</option>
+              </select>
+            </div>
+            <div class="col-md-8 form-group mb-3">
+              <label>Link</label>
+              <input type="text" [name]="'il_link_'+ci" class="form-control" [(ngModel)]="cta.btn_link" required />
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'il_btn_status_'+ci" [(ngModel)]="cta.btn_status">
+                <span>Enable Button</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label>Button Style</label>
+              <select [name]="'il_btn_style_'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_style">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group mb-0">
+              <label>Text Color</label>
+              <select [name]="'il_btn_text_color_'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_text_color">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="mb-0">
+          <button type="button" class="light-button"
+            (click)="layoutDetails.cta_list.push({ btn_text: '', btn_link_type: 'internal', btn_link: '', btn_status: false, btn_style: 'primary', btn_text_color: 'light' });">
+            <span class="material-symbols-rounded">add</span> Add Link
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="card p-3 mb-3">
+        <p class="dark-font fw-600 mb-3">Preview</p>
+        <h5 class="dark-font mb-3" *ngIf="layoutDetails.heading">{{layoutDetails.heading}}</h5>
+        <div class="row">
+          <div class="col-6 col-md-3 mb-3" *ngFor="let cta of layoutDetails.cta_list">
+            <div class="card p-3 text-center" style="border-radius: 12px; border: 1.5px solid #e0e0e0; min-height: 60px; display:flex; align-items:center; justify-content:center;">
+              <p class="dark-font mb-0 fw-600 font-14">{{cta.btn_text || 'Link Label'}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+    <!-- #Internal Links -->
+
+
+    <!-- Add Section button for highlighted_section -->
+    <div *ngIf="layoutDetails.type === 'highlighted_section'" class="mb-3">
+      <button type="button" class="light-button" (click)="addNewImg();"
+        [disabled]="layoutDetails.image_list?.length >= maxImgCount">
+        <span class="material-symbols-rounded">add</span> Add Section
+      </button>
+    </div>
 
     <!-- Add image button (not shown for section grid, amenities, feature_list, hero_cta) -->
-    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta'" class="mb-3">
+    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'highlighted_section'" class="mb-3">
       <button type="button" class="light-button" (click)="addNewImg();"
         [disabled]="layoutDetails.image_list?.length >= maxImgCount">
         <span class="material-symbols-rounded">add</span> {{(layoutDetails.type=='primary_slider' || layoutDetails.type=='slider')? 'Add Slide': 'Add Image'}}
