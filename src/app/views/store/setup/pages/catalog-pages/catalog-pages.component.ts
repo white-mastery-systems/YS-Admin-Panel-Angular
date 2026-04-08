@@ -18,6 +18,10 @@ export class CatalogPagesComponent implements OnInit {
   list: any = []; deleteForm: any;
   pageLoader: boolean; search_bar: string;
   addForm: any = {};
+  pageCategories: any[] = [
+    { name: 'Hotel', value: 'hotel' },
+    { name: 'Serviced Apartment', value: 'serviced_apartment' }
+  ];
 
   constructor(config: NgbModalConfig, public modalService: NgbModal, private router: Router, private api: SetupService, public commonService: CommonService) {
     config.backdrop = 'static'; config.keyboard = false;
@@ -67,6 +71,11 @@ export class CatalogPagesComponent implements OnInit {
     let tempName = this.addForm.name.substring(0, 70);
     this.addForm.seo_details.h1_tag = tempName;
     this.addForm.seo_details.page_title = tempName;
+  }
+
+  getPageCategoryName(value: string) {
+    const index = this.pageCategories.findIndex(obj => obj.value === value);
+    return index !== -1 ? this.pageCategories[index].name : '-';
   }
 
 }

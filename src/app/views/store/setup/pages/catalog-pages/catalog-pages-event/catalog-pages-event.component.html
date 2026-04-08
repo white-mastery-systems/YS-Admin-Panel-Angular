@@ -43,6 +43,14 @@
             <input type="text" name="type" class="form-control" [(ngModel)]="formData.type" required />
           </div>
 
+          <div class="col-md-3 form-group mb-3">
+            <label>Page Category</label>
+            <select name="page_category" class="form-control select-arrow" [(ngModel)]="formData.page_category">
+              <option [ngValue]="''">Select Category</option>
+              <option *ngFor="let item of pageCategories" [value]="item.value">{{item.name}}</option>
+            </select>
+          </div>
+
           <!-- Description -->
           <!-- <div class="col-md-12 form-group mb-3 quill-mb-5">
             <label>Description</label>
@@ -192,6 +200,7 @@
                 </p>
                 <ng-container *ngIf="formData.name">
                   <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/{{formData.group}}/{{formData.type}}/{{formData.page_url}}</p>
+                  <p *ngIf="formData.page_category" class="light-font font-10 mb-1">Category: {{ getPageCategoryName(formData.page_category) }}</p>
                   <h6 class="sec-desc mb-1 mt-2 seo-color">{{formData.seo_details?.page_title}}</h6>
                   <p class="light-font font-10">{{formData.seo_details?.meta_desc}}</p>
                 </ng-container>
@@ -273,10 +282,11 @@
                   <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
-                  <ng-container *ngIf="x.type=='internal_links'">{{ x.cta_list?.length }} Links</ng-container>
+                  <ng-container *ngIf="x.type=='location_highlights'">{{ x.card_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
                   <ng-container *ngIf="x.type=='highlighted_section'">{{ x.features?.length }} Features</ng-container>
                   <ng-container *ngIf="['blogs', 'content_section', 'cta', 'interactive_map', 'route_map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links', 'location_highlights'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
@@ -382,6 +392,22 @@
                 max="{{maxRank+1}}" appNumberOnly required />
             </div>
 
+            <ng-container *ngIf="addForm.type">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="segment_heading" class="form-control" [(ngModel)]="addForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="segment_sub_heading"
+                  [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="segment_description" rows="3" [(ngModel)]="addForm.description"></textarea>
+              </div>
+            </ng-container>
+
             <ng-container *ngIf="addForm.type=='blogs'">
               <div class="col-md-12 form-group mb-3">
                 <label>Type</label>
@@ -390,15 +416,6 @@
                   <option value="grid">Grid</option>
                   <option value="slider">Slider</option>
                 </select>
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
               <div *ngIf="gridList?.length && addForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
                 <div>
@@ -414,40 +431,11 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="['secondary', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'featured_cards', 'hero_cta', 'internal_links'].indexOf(addForm.type)==-1">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="addForm.sub_heading"></textarea>
-              </div>
-            </ng-container>
-
             <ng-container *ngIf="addForm.type=='content_section'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading" #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="addForm.sub_heading"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3 quill-mb-5">
                 <label>Content</label>
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
                   [ngModelOptions]="{standalone: true}"></quill-editor>
-              </div>
-            </ng-container>
-
-            <!-- Highlighted Section Fields -->
-            <ng-container *ngIf="addForm.type=='highlighted_section'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="ahs_description" rows="3" [(ngModel)]="addForm.description"></textarea>
               </div>
             </ng-container>
 
@@ -482,15 +470,6 @@
 
             <!-- Map Segment Fields -->
             <ng-container *ngIf="addForm.type=='interactive_map'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="m_heading" class="form-control" [(ngModel)]="addForm.heading" #m_heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="m_sub_heading"
-                  [(ngModel)]="addForm.sub_heading"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3">
                 <label>Address</label>
                 <textarea class="form-control" name="map_address" rows="3"
@@ -528,45 +507,28 @@
 
             <ng-container *ngIf="addForm.type=='route_map'">
               <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="rm_heading" class="form-control" [(ngModel)]="addForm.heading" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" name="rm_sub_heading" [(ngModel)]="addForm.sub_heading"></textarea>
-              </div>
-              <div class="col-md-12 form-group mb-3">
                 <label>Iframe URL</label>
                 <textarea class="form-control" name="rm_iframe_url" rows="3" [(ngModel)]="addForm.iframe_url" required></textarea>
               </div>
             </ng-container>
 
-            <!-- Featured Cards: heading shown separately -->
             <ng-container *ngIf="addForm.type=='featured_cards'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="fc_heading" class="form-control" [(ngModel)]="addForm.heading" />
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='location_highlights'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Map details and cards can be edited in the segment image view.</p>
               </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" name="fc_sub_heading" [(ngModel)]="addForm.sub_heading"></textarea>
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="fc_description" rows="3" [(ngModel)]="addForm.description"></textarea>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='cta'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Buttons for this CTA segment can be edited in the segment image view.</p>
               </div>
             </ng-container>
 
             <!-- Hero CTA Segment Fields -->
             <ng-container *ngIf="addForm.type=='hero_cta'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="hcta_heading" class="form-control" [(ngModel)]="addForm.heading" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="hcta_description" rows="3" [(ngModel)]="addForm.description"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3">
                 <label class="checkbox checkbox-primary">
                   <input class="form-check-input" type="checkbox" name="hcta_btn_status" [(ngModel)]="addForm.btn_status">
@@ -611,6 +573,14 @@
             <div class="col-md-6 form-group mb-3">
               <label>Background Color</label>
               <input type="text" name="bg_color" class="form-control" [(ngModel)]="addForm.bg_color" placeholder="#ffffff" />
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="is_margin" [(ngModel)]="addForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
 
             <div class="col-md-12 mb-3 mt-2">
@@ -682,6 +652,22 @@
                 max="{{maxRank}}" appNumberOnly required />
             </div>
 
+            <ng-container *ngIf="editForm.type">
+              <div class="col-md-12 form-group mb-3">
+                <label>Heading</label>
+                <input type="text" name="edit_segment_heading" class="form-control" [(ngModel)]="editForm.heading" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <textarea class="form-control" aria-label="With textarea" name="edit_segment_sub_heading"
+                  [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" name="edit_segment_description" rows="3" [(ngModel)]="editForm.description"></textarea>
+              </div>
+            </ng-container>
+
             <ng-container *ngIf="editForm.type=='blogs'">
               <div class="col-md-12 form-group mb-3">
                 <label>Type</label>
@@ -690,15 +676,6 @@
                   <option value="grid">Grid</option>
                   <option value="slider">Slider</option>
                 </select>
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading" #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="editForm.sub_heading"></textarea>
               </div>
               <div *ngIf="gridList?.length && editForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
                 <div>
@@ -714,42 +691,11 @@
               </div>
             </ng-container>
 
-            <ng-container *ngIf="editForm.type && ['secondary', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'featured_cards', 'hero_cta', 'internal_links'].indexOf(editForm.type)==-1">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
-                  #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="editForm.sub_heading"></textarea>
-              </div>
-            </ng-container>
-
             <ng-container *ngIf="editForm.type=='content_section'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
-                  #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                  [(ngModel)]="editForm.sub_heading"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3 quill-mb-5">
                 <label>Content</label>
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
                   [ngModelOptions]="{standalone: true}"></quill-editor>
-              </div>
-            </ng-container>
-
-            <!-- Highlighted Section Edit Fields -->
-            <ng-container *ngIf="editForm.type=='highlighted_section'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="ehs_description" rows="3" [(ngModel)]="editForm.description"></textarea>
               </div>
             </ng-container>
 
@@ -784,15 +730,6 @@
 
             <!-- Map Segment Edit Fields -->
             <ng-container *ngIf="editForm.type=='interactive_map'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="me_heading" class="form-control" [(ngModel)]="editForm.heading" #me_heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="me_sub_heading"
-                  [(ngModel)]="editForm.sub_heading"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3">
                 <label>Address</label>
                 <textarea class="form-control" name="map_address" rows="3"
@@ -830,45 +767,28 @@
 
             <ng-container *ngIf="editForm.type=='route_map'">
               <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="erm_heading" class="form-control" [(ngModel)]="editForm.heading" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" name="erm_sub_heading" [(ngModel)]="editForm.sub_heading"></textarea>
-              </div>
-              <div class="col-md-12 form-group mb-3">
                 <label>Iframe URL</label>
                 <textarea class="form-control" name="erm_iframe_url" rows="3" [(ngModel)]="editForm.iframe_url" required></textarea>
               </div>
             </ng-container>
 
-            <!-- Featured Cards: heading shown separately -->
             <ng-container *ngIf="editForm.type=='featured_cards'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="efc_heading" class="form-control" [(ngModel)]="editForm.heading" />
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='location_highlights'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Map details and cards are available in the segment image view.</p>
               </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" name="efc_sub_heading" [(ngModel)]="editForm.sub_heading"></textarea>
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="efc_description" rows="3" [(ngModel)]="editForm.description"></textarea>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='cta'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">CTA buttons are available in the segment image view.</p>
               </div>
             </ng-container>
 
             <!-- Hero CTA Segment Edit Fields -->
             <ng-container *ngIf="editForm.type=='hero_cta'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="ehcta_heading" class="form-control" [(ngModel)]="editForm.heading" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Description</label>
-                <textarea class="form-control" name="ehcta_description" rows="3" [(ngModel)]="editForm.description"></textarea>
-              </div>
               <div class="col-md-12 form-group mb-3">
                 <label class="checkbox checkbox-primary">
                   <input class="form-check-input" type="checkbox" name="ehcta_btn_status" [(ngModel)]="editForm.btn_status">
@@ -913,6 +833,14 @@
             <div class="col-md-6 form-group mb-3">
               <label>Background Color</label>
               <input type="text" name="e_bg_color" class="form-control" [(ngModel)]="editForm.bg_color" placeholder="#ffffff" />
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="e_is_margin" [(ngModel)]="editForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
 
           </div>

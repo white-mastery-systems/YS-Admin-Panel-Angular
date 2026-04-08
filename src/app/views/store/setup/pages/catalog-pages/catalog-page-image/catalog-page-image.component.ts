@@ -40,10 +40,23 @@ export class CatalogPageImageComponent implements OnInit {
         if (result.status) {
           this.layoutDetails = result.data;
           this.commonService.secondary_header = this.layoutDetails.name;
+          this.maxImgCount = 10;
 
           if (this.layoutDetails.type === 'amenities') {
+            this.maxImgCount = 50;
             if (!this.layoutDetails.text_list || !this.layoutDetails.text_list.length) {
-              this.layoutDetails.text_list = [{ image: '', name: '', description: '' }];
+              this.layoutDetails.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
+            } else {
+              this.layoutDetails.text_list.forEach(item => {
+                if (item.icon_name === undefined) item.icon_name = '';
+              });
+            }
+          } else if (this.layoutDetails.type === 'location_highlights') {
+            if (!this.layoutDetails.location_iframe) {
+              this.layoutDetails.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };
+            }
+            if (!this.layoutDetails.card_list || !this.layoutDetails.card_list.length) {
+              this.layoutDetails.card_list = [{ image: '', heading: '', sub_heading: '', description: '' }];
             }
           } else if (this.layoutDetails.type === 'section') {
             this.grid_details = this.commonService.grid_list.find(obj => obj.type === this.layoutDetails.section_grid_type);
@@ -58,23 +71,41 @@ export class CatalogPageImageComponent implements OnInit {
           } else if (this.layoutDetails.type === 'testimonial') {
             this.layoutDetails.image_list.forEach(el => {
               if (!el.content_details) el.content_details = {};
+              if (el.content_details.review_star === undefined || el.content_details.review_star === null) el.content_details.review_star = null;
             });
             if (!this.layoutDetails.image_list.length)
-              this.layoutDetails.image_list.push({ rank: 1, content_details: {} });
+              this.layoutDetails.image_list.push({ rank: 1, content_details: { review_star: null } });
           } else if (this.layoutDetails.type === 'highlighted_section' || this.layoutDetails.type === 'cta') {
             this.layoutDetails.image_list.forEach(el => {
               if (!el.content_details) el.content_details = {};
               if (this.layoutDetails.type === 'highlighted_section') {
                 if (el.highlighted_text === undefined) el.highlighted_text = '';
+                if (el.highlighted_text_color === undefined) el.highlighted_text_color = '#000000';
+                if (el.tag_line === undefined) el.tag_line = '';
                 if (el.heading === undefined) el.heading = '';
                 if (el.sub_heading === undefined) el.sub_heading = '';
                 if (el.description === undefined) el.description = '';
+                if (el.notes === undefined) el.notes = '';
                 if (!el.features) el.features = [];
+                el.features = el.features.map(feature => ({
+                  name: feature?.name || '',
+                  detail: feature?.detail || '',
+                  icon_name: feature?.icon_name || ''
+                }));
+                if (el.btn_style === undefined) el.btn_style = 'primary';
+                if (el.btn_text_color === undefined) el.btn_text_color = 'light';
+                if (el.btn_link_type === undefined) el.btn_link_type = 'internal';
+                if (el.btn_link === undefined) el.btn_link = '';
+                el.gallery_images = this.normalizeHighlightedGalleryImages(el.gallery_images);
               }
             });
             if (!this.layoutDetails.image_list.length)
-              this.layoutDetails.image_list.push({ rank: 1, content_details: {}, heading: '', sub_heading: '', description: '', highlighted_text: '', features: [] });
-            if (this.layoutDetails.type === 'cta') this.maxImgCount = 1;
+              this.layoutDetails.image_list.push(this.getDefaultHighlightedSectionItem(1));
+            if (this.layoutDetails.type === 'cta') {
+              this.maxImgCount = 1;
+              this.layoutDetails.cta_list = this.normalizeCtaList(this.layoutDetails.cta_list);
+              if (!this.layoutDetails.cta_list.length) this.layoutDetails.cta_list = [this.getDefaultCtaItem()];
+            }
           } else if (this.layoutDetails.type === 'feature_list') {
             if (!this.layoutDetails.feature_list || !this.layoutDetails.feature_list.length) {
               this.layoutDetails.feature_list = [{ image: '', heading: '', sub_heading: '' }];
@@ -94,9 +125,11 @@ export class CatalogPageImageComponent implements OnInit {
               ];
             }
           } else if (this.layoutDetails.type === 'internal_links') {
-            if (!this.layoutDetails.cta_list?.length) {
-              this.layoutDetails.cta_list = [{ btn_text: '', btn_link_type: 'internal', btn_link: '', btn_status: false, btn_style: 'primary', btn_text_color: 'light' }];
+            this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
+            if (!this.layoutDetails.group_list.length) {
+              this.layoutDetails.group_list = [this.getDefaultInternalLinkGroup()];
             }
+            this.syncInternalLinkGroupRanks();
           } else if (!this.layoutDetails.image_list.length) {
             this.layoutDetails.image_list.push({ rank: 1 });
           }
@@ -112,18 +145,218 @@ export class CatalogPageImageComponent implements OnInit {
     if (this.layoutDetails.type === 'testimonial') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1, content_details: {} });
     } else if (this.layoutDetails.type === 'highlighted_section') {
-      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1, content_details: {}, heading: '', sub_heading: '', description: '', highlighted_text: '', features: [] });
+      this.layoutDetails.image_list.push(this.getDefaultHighlightedSectionItem(this.layoutDetails.image_list.length + 1));
     } else {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length + 1 });
     }
   }
 
+  getDefaultHighlightedGalleryItem(rank = 1) {
+    return {
+      rank,
+      image: '',
+      img_alt: ''
+    };
+  }
+
+  normalizeHighlightedGalleryImages(galleryImages: any[] = []) {
+    const normalizedGallery = (Array.isArray(galleryImages) ? galleryImages : []).map((item, index) => ({
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1,
+      image: item?.image || '',
+      img_alt: item?.img_alt || '',
+      temp_img: item?.temp_img
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+
+    return normalizedGallery.length ? normalizedGallery : [this.getDefaultHighlightedGalleryItem()];
+  }
+
+  getDefaultHighlightedSectionItem(rank = 1) {
+    return {
+      rank,
+      content_details: {},
+      tag_line: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      notes: '',
+      highlighted_text: '',
+      highlighted_text_color: '#000000',
+      features: [],
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      gallery_images: [this.getDefaultHighlightedGalleryItem()]
+    };
+  }
+
+  addGalleryImage(cardIndex) {
+    if (!Array.isArray(this.layoutDetails.image_list[cardIndex].gallery_images)) {
+      this.layoutDetails.image_list[cardIndex].gallery_images = [];
+    }
+    this.layoutDetails.image_list[cardIndex].gallery_images.push(
+      this.getDefaultHighlightedGalleryItem(this.layoutDetails.image_list[cardIndex].gallery_images.length + 1)
+    );
+    this.syncHighlightedGalleryRanks(cardIndex);
+  }
+
+  removeGalleryImage(cardIndex, galleryIndex) {
+    this.layoutDetails.image_list[cardIndex].gallery_images.splice(galleryIndex, 1);
+    if (!this.layoutDetails.image_list[cardIndex].gallery_images.length) {
+      this.layoutDetails.image_list[cardIndex].gallery_images = [this.getDefaultHighlightedGalleryItem()];
+    }
+    this.syncHighlightedGalleryRanks(cardIndex);
+  }
+
+  syncHighlightedGalleryRanks(cardIndex) {
+    if (!Array.isArray(this.layoutDetails.image_list[cardIndex].gallery_images)) {
+      this.layoutDetails.image_list[cardIndex].gallery_images = [this.getDefaultHighlightedGalleryItem()];
+      return;
+    }
+
+    this.layoutDetails.image_list[cardIndex].gallery_images = this.layoutDetails.image_list[cardIndex].gallery_images.map((item, index) => ({
+      ...item,
+      rank: index + 1
+    }));
+  }
+
+  onHighlightedGalleryRankChange(cardIndex) {
+    if (!Array.isArray(this.layoutDetails.image_list[cardIndex].gallery_images)) {
+      this.layoutDetails.image_list[cardIndex].gallery_images = [this.getDefaultHighlightedGalleryItem()];
+      return;
+    }
+
+    this.layoutDetails.image_list[cardIndex].gallery_images = this.layoutDetails.image_list[cardIndex].gallery_images
+      .map((item, index) => ({
+        ...item,
+        rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+      }))
+      .sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
   addTextItem() {
-    this.layoutDetails.text_list.push({ image: '', name: '', description: '' });
+    this.layoutDetails.text_list.push({ image: '', icon_name: '', name: '', description: '' });
   }
 
   addFeatureItem() {
     this.layoutDetails.feature_list.push({ image: '', heading: '', sub_heading: '' });
+  }
+
+  addLocationCard() {
+    this.layoutDetails.card_list.push({ image: '', heading: '', sub_heading: '', description: '' });
+  }
+
+  addInternalLinkGroup() {
+    this.layoutDetails.group_list.push(this.getDefaultInternalLinkGroup());
+    this.syncInternalLinkGroupRanks();
+  }
+
+  removeInternalLinkGroup(groupIndex) {
+    this.layoutDetails.group_list.splice(groupIndex, 1);
+    this.syncInternalLinkGroupRanks();
+  }
+
+  addInternalLinkItem(groupIndex) {
+    this.layoutDetails.group_list[groupIndex].link_list.push(this.getDefaultInternalLinkItem());
+  }
+
+  onInternalLinkGroupRankChange() {
+    this.syncInternalLinkGroupRanks(true);
+  }
+
+  getDefaultCtaItem() {
+    return {
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  normalizeCtaList(ctaList: any[] = []) {
+    return ctaList.map(item => ({
+      ...this.getDefaultCtaItem(),
+      ...item
+    }));
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  syncInternalLinkGroupRanks(sortByRank = false) {
+    if (!Array.isArray(this.layoutDetails.group_list)) {
+      this.layoutDetails.group_list = [];
+      return;
+    }
+
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : index + 1
+    }));
+
+    if (sortByRank) {
+      this.layoutDetails.group_list.sort((a, b) => a.rank - b.rank);
+    }
+
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: index + 1
+    }));
   }
 
   async onUpdateLayout() {
@@ -141,29 +374,37 @@ export class CatalogPageImageComponent implements OnInit {
     let imageList = this.layoutDetails.image_list || [];
     let textList = this.layoutDetails.text_list || [];
     let featureList = this.layoutDetails.feature_list || [];
+    let cardList = this.layoutDetails.card_list || [];
 
     this.onSetFormData(imageList).then((imgList: any[]) => {
       layoutData.image_list = imgList;
-      this.onSetTextFormData(textList).then((txtList: any[]) => {
-        layoutData.text_list = txtList;
-        this.onSetTextFormData(featureList).then((ftList: any[]) => {
-          layoutData.feature_list = ftList;
-          layoutData.store_id = this.commonService.store_details._id;
-          layoutData.page_id = this.params.id;
-          layoutData._id = this.layoutDetails._id;
-          this.fileList.append('data', JSON.stringify(layoutData));
-          this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
-            this.btnLoader = false;
-            if (result.status) {
-              this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
-            } else {
-              this.layoutDetails.errorMsg = result.message;
-              console.log('response', result);
-            }
+        this.onSetTextFormData(textList).then((txtList: any[]) => {
+          layoutData.text_list = txtList;
+          this.onSetTextFormData(featureList).then((ftList: any[]) => {
+            layoutData.feature_list = ftList;
+            this.onSetTextFormData(cardList).then((cdList: any[]) => {
+              layoutData.card_list = cdList;
+              if (layoutData.type === 'internal_links') {
+                layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
+                delete layoutData.cta_list;
+              }
+              layoutData.store_id = this.commonService.store_details._id;
+              layoutData.page_id = this.params.id;
+              layoutData._id = this.layoutDetails._id;
+              this.fileList.append('data', JSON.stringify(layoutData));
+              this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
+                this.btnLoader = false;
+                if (result.status) {
+                  this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
+                } else {
+                  this.layoutDetails.errorMsg = result.message;
+                  console.log('response', result);
+                }
+              });
+            });
           });
         });
       });
-    });
   }
 
   onSetFormData(imgList) {
@@ -173,6 +414,17 @@ export class CatalogPageImageComponent implements OnInit {
         let imgData = imgList[i];
         let objData = Object.assign({}, imgData);
         delete objData.temp_desktop_img; delete objData.temp_mobile_img;
+        if (this.layoutDetails.type === 'highlighted_section') {
+          objData.gallery_images = this.normalizeHighlightedGalleryImages(imgData.gallery_images).map((galleryData, galleryIndex) => {
+            let galleryObj = Object.assign({}, galleryData);
+            delete galleryObj.temp_img;
+            if (galleryData.image && galleryData.image instanceof File) {
+              delete galleryObj.image;
+              this.fileList.append('attachments', galleryData['image'], `hg_${i}_${galleryIndex}`);
+            }
+            return galleryObj;
+          });
+        }
         if (imgData.desktop_img_change) {
           delete objData.desktop_img;
           this.fileList.append('attachments', imgData['desktop_img'], i + '_d');
@@ -181,6 +433,8 @@ export class CatalogPageImageComponent implements OnInit {
           delete objData.mobile_img;
           this.fileList.append('attachments', imgData['mobile_img'], i + '_m');
         }
+        delete objData.desktop_img_change;
+        delete objData.mobile_img_change;
         updatedList.push(objData);
       }
       resolve(updatedList);
@@ -204,11 +458,13 @@ export class CatalogPageImageComponent implements OnInit {
     });
   }
 
-  fileChangeListener(devType, index, event) {
+  fileChangeListener(devType, index, event, subIndex = null) {
     if (devType === 'desktop') delete this.layoutDetails.image_list[index]?.d_err_msg;
     else if (devType === 'mobile') delete this.layoutDetails.image_list[index]?.m_err_msg;
     else if (devType === 'fc_cover') { /* no err_msg for cover */ }
+    else if (devType === 'highlighted_gallery') delete this.layoutDetails.image_list[index]?.gallery_images?.[subIndex]?.err_msg;
     else if (devType === 'feature') delete this.layoutDetails.feature_list[index]?.c_err_msg;
+    else if (devType === 'location_card') delete this.layoutDetails.card_list[index]?.c_err_msg;
     else delete this.layoutDetails.text_list[index]?.c_err_msg;
 
     if (event.target.files && event.target.files[0]) {
@@ -229,6 +485,11 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.image_list[index].mobile_img = fileData;
               this.layoutDetails.image_list[index].mobile_img_change = true;
             } else { this.layoutDetails.image_list[index].m_err_msg = true; }
+          } else if (devType === 'highlighted_gallery') {
+            if (fileInKB <= this.fileLimitInKB) {
+              this.layoutDetails.image_list[index].gallery_images[subIndex].temp_img = (<FileReader>e.target).result;
+              this.layoutDetails.image_list[index].gallery_images[subIndex].image = fileData;
+            } else { this.layoutDetails.image_list[index].gallery_images[subIndex].err_msg = true; }
           } else if (devType === 'fc_cover') {
             if (fileInKB <= this.fileLimitInKB) {
               this.layoutDetails.temp_cover_img = (<FileReader>e.target).result;
@@ -241,6 +502,12 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.feature_list[index].image = fileData;
               this.layoutDetails.feature_list[index].img_change = true;
             } else { this.layoutDetails.feature_list[index].c_err_msg = true; }
+          } else if (devType === 'location_card') {
+            if (fileInKB <= this.fileLimitInKB) {
+              this.layoutDetails.card_list[index].temp_img = (<FileReader>e.target).result;
+              this.layoutDetails.card_list[index].image = fileData;
+              this.layoutDetails.card_list[index].img_change = true;
+            } else { this.layoutDetails.card_list[index].c_err_msg = true; }
           } else {
             if (fileInKB <= this.fileLimitInKB) {
               this.layoutDetails.text_list[index].temp_img = (<FileReader>e.target).result;

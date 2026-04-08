@@ -25,6 +25,10 @@ export class CatalogPagesEventComponent implements OnInit {
   configData: any = environment.config_data;
   fileLimitInKB = 500;
   gridList: any = [];
+  pageCategories: any[] = [
+    { name: 'Hotel', value: 'hotel' },
+    { name: 'Serviced Apartment', value: 'serviced_apartment' }
+  ];
 
   layoutTypes: any = [
     { name: 'Slider', value: 'slider' },
@@ -41,7 +45,8 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Route Map', value: 'route_map' },
     { name: 'Hero CTA', value: 'hero_cta' },
     { name: 'Feature List', value: 'feature_list' },
-    { name: 'Internal Links', value: 'internal_links' }
+    { name: 'Internal Links', value: 'internal_links' },
+    { name: 'Location Highlights', value: 'location_highlights' }
   ];
 
   constructor(
@@ -83,8 +88,14 @@ export class CatalogPagesEventComponent implements OnInit {
         });
       } else {
         this.commonService.secondary_header = 'New Catalog Page';
+        this.formData.page_category = '';
       }
     });
+  }
+
+  getPageCategoryName(value: string) {
+    const index = this.pageCategories.findIndex(obj => obj.value === value);
+    return index !== -1 ? this.pageCategories[index].name : '';
   }
 
   // ── Static fields submit ──────────────────────────────────────────────────
@@ -146,7 +157,7 @@ export class CatalogPagesEventComponent implements OnInit {
   // ── Segment add ───────────────────────────────────────────────────────────
 
   onAddNewSegment(modalName) {
-    this.addForm = { rank: this.maxRank + 1, type: '', faq_list: [] };
+    this.addForm = { rank: this.maxRank + 1, type: '', faq_list: [], is_margin: true, active_status: true };
     this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
   }
 
@@ -177,10 +188,16 @@ export class CatalogPagesEventComponent implements OnInit {
       if (result.status) {
         this.editForm = result.data;
         this.editForm.prev_rank = this.editForm.rank;
+        if (this.editForm.is_margin === undefined) this.editForm.is_margin = true;
         this.editForm.dup_type = this.findTypeName(this.editForm.type);
         if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
         if (!this.editForm.faq_list) this.editForm.faq_list = [];
         if (!this.editForm.feature_list) this.editForm.feature_list = [];
+        if (!this.editForm.card_list) this.editForm.card_list = [];
+        if (!this.editForm.location_iframe) this.editForm.location_iframe = {};
+        if (this.editForm.type === 'internal_links') {
+          this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
+        }
         if (this.editForm.type === 'section')
           this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
       } else {
@@ -239,6 +256,58 @@ export class CatalogPagesEventComponent implements OnInit {
     return index !== -1 ? this.commonService.grid_list[index].name : '';
   }
 
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  getInternalLinksCount(segment) {
+    if (segment?.group_list?.length) {
+      return segment.group_list.reduce((count, group) => count + (group?.link_list?.length || 0), 0);
+    }
+    return segment?.cta_list?.length || 0;
+  }
+
   onChangeSegmentType(type, form) {
     delete form.section_grid_type;
     form.grid_list = [];
@@ -248,11 +317,20 @@ export class CatalogPagesEventComponent implements OnInit {
     }
 
     if (type === 'amenities' && (!form.text_list || !form.text_list.length)) {
-      form.text_list = [{ image: '', name: '', description: '' }];
+      form.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
     }
 
     if (type === 'feature_list' && (!form.feature_list || !form.feature_list.length)) {
       form.feature_list = [{ image: '', heading: '', sub_heading: '' }];
+    }
+
+    if (type === 'location_highlights') {
+      if (!form.location_iframe) {
+        form.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };
+      }
+      if (!form.card_list || !form.card_list.length) {
+        form.card_list = [{ image: '', heading: '', sub_heading: '', description: '' }];
+      }
     }
 
     if (type === 'faq' && (!form.faq_list || !form.faq_list.length)) {
@@ -280,6 +358,15 @@ export class CatalogPagesEventComponent implements OnInit {
       }
     }
 
+    if (type === 'cta') {
+      if (!form.image_list?.length) {
+        form.image_list = [{ rank: 1 }];
+      }
+      if (!form.cta_list?.length) {
+        form.cta_list = [{ heading: '', sub_heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
+      }
+    }
+
     if (type === 'hero_cta') {
       form.btn_status = false;
       form.btn_style = 'primary';
@@ -293,8 +380,11 @@ export class CatalogPagesEventComponent implements OnInit {
       }
     }
 
-    if (type === 'internal_links' && (!form.cta_list?.length)) {
-      form.cta_list = [{ btn_text: '', btn_link_type: 'internal', btn_link: '' }];
+    if (type === 'internal_links') {
+      form.group_list = this.normalizeInternalLinkGroups(form.group_list, form.cta_list);
+      if (!form.group_list.length) {
+        form.group_list = [this.getDefaultInternalLinkGroup()];
+      }
     }
   }
 
