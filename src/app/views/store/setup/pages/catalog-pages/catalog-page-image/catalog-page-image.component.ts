@@ -425,11 +425,11 @@ export class CatalogPageImageComponent implements OnInit {
             return galleryObj;
           });
         }
-        if (imgData.desktop_img_change) {
+        if (imgData.desktop_img_change || imgData.desktop_img instanceof File) {
           delete objData.desktop_img;
           this.fileList.append('attachments', imgData['desktop_img'], i + '_d');
         }
-        if (imgData.mobile_img_change) {
+        if (imgData.mobile_img_change || imgData.mobile_img instanceof File) {
           delete objData.mobile_img;
           this.fileList.append('attachments', imgData['mobile_img'], i + '_m');
         }
