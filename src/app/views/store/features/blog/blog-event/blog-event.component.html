@@ -27,7 +27,7 @@
                 <div *ngIf="blogForm.image">
                   <span (click)="blogForm.img_change=null; blogForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
                   <img *ngIf="blogForm.img_change" [src]="blogForm.image" height="100px;" width="auto;">
-                  <img *ngIf="!blogForm.img_change" [src]="imgBaseUrl+blogForm.image" height="100px;" width="auto;">
+                  <img *ngIf="!blogForm.img_change" [src]="toAbsoluteAssetUrl(blogForm.image)" height="100px;" width="auto;">
                   <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
                     <label>Image Alt Name</label>
                     <input type="text" name="img_alt" class="form-control" [(ngModel)]="blogForm.img_alt" #img_alt="ngModel" />
@@ -51,7 +51,13 @@
         <div class="row">
           <div class="col-md-6 form-group mb-3">
             <label>Author</label>
-            <input type="text" name="author" class="form-control" [(ngModel)]="blogForm.author" #author="ngModel" required />
+            <select name="author_id" class="form-control" [(ngModel)]="blogForm.author_id" (ngModelChange)="onAuthorChange()" [required]="!isLegacyBlog">
+              <option [ngValue]="null">Select author</option>
+              <option *ngFor="let author of authorList" [ngValue]="author._id">{{author.name}}</option>
+            </select>
+            <p class="light-font mt-2 mb-0">
+              Manage authors in <a routerLink="/setting/blogs-authors">Blog Authors</a>
+            </p>
           </div>
           <div class="col-md-6 form-group mb-3">
             <label>Created On</label>
@@ -59,11 +65,59 @@
               [maxDate]="currentDate" [(ngModel)]="blogForm.created_on" bsDatepicker
               [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
           </div>
+          <div class="col-md-12 form-group mb-3" *ngIf="selectedAuthor">
+            <div class="card p-3 author-preview-card">
+              <div class="d-flex align-items-start">
+                <img *ngIf="selectedAuthor.avatar" [src]="toAbsoluteAssetUrl(selectedAuthor.avatar)" class="author-preview-avatar mr-3" alt="">
+                <img *ngIf="!selectedAuthor.avatar" src="assets/images/default.png" class="author-preview-avatar mr-3" alt="">
+                <div>
+                  <p class="dark-font mb-1"><strong>{{selectedAuthor.name}}</strong></p>
+                  <p class="light-font mb-1">{{selectedAuthor.role || 'No role added'}}</p>
+                  <p class="light-font mb-1" *ngIf="selectedAuthor.bio">{{selectedAuthor.bio}}</p>
+                  <a *ngIf="selectedAuthor.link" [href]="selectedAuthor.link" target="_blank" rel="noopener">{{selectedAuthor.link}}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 form-group mb-3" *ngIf="!selectedAuthor && blogForm.author && blogForm.form_type === 'edit'">
+            <div class="alert alert-light mb-0">
+              This blog is using legacy inline author data: <strong>{{blogForm.author}}</strong>. Select an author above to link it to the new author collection.
+            </div>
+          </div>
           <div class="col-md-12 form-group mb-3">
             <label>Title</label>
             <input type="text" name="name" class="form-control" [(ngModel)]="blogForm.name" (input)="onChangeTitle();" #name="ngModel" required />
           </div>
-          <div *ngIf="!isAdvanced" class="col-md-12 form-group mb-3 quill-mb-5">
+          <ng-container *ngIf="!isAdvanced">
+            <div class="col-md-6 form-group mb-3">
+              <label>Editor Type</label>
+              <select name="editor_type" class="form-control" [(ngModel)]="blogForm.editor_type" (ngModelChange)="onEditorTypeChange()">
+                <option value="advanced">Advanced</option>
+                <option value="basic">Basic</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Read Time</label>
+              <input type="text" name="readTime" class="form-control" [(ngModel)]="blogForm.readTime" />
+            </div>
+            <div class="col-md-6 form-group mb-3 d-flex align-items-end">
+              <label class="checkbox checkbox-primary mb-0">
+                <input class="form-check-input" type="checkbox" name="published" [(ngModel)]="blogForm.published">
+                <span>Published</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Tags</label>
+              <tag-input class="w-100" name="tags_list" [(ngModel)]="blogForm.tags_list" placeholder=""
+                [secondaryPlaceholder]="'Enter tags'" [separatorKeyCodes]="[188]"></tag-input>
+            </div>
+            <div class="col-md-12 form-group mb-3" *ngIf="isEditorJsMode()">
+              <label>EditorJS Content</label>
+              <div id="blog-editorjs-holder" class="editorjs-wrapper"></div>
+            </div>
+          </ng-container>
+          <div *ngIf="!isAdvanced && !isEditorJsMode()" class="col-md-12 form-group mb-3 quill-mb-5">
             <label>Description</label>
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="blogForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
           </div>
@@ -206,7 +260,7 @@
          <span class="black-outline-txt">Cancel</span>
         </button>&nbsp; &nbsp; &nbsp;
         <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="blogForm.submit" [ladda]="blogForm.submit">
-          {{ (blogForm?.form_type=='add')? 'Add': 'Update' }}
+          {{ (blogForm?.form_type=='add')? 'Save': 'Update' }}
         </button>
       </div>
     </div>

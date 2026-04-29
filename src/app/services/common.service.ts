@@ -190,6 +190,7 @@ export class CommonService {
   selected_catalog: string;
   selected_blog_catalog: any;
   selected_article_catalog: any;
+  blog_author_list: any = [];
 
   admin_packages: any = [];
   admin_features: any = [];
@@ -273,6 +274,7 @@ export class CommonService {
     if(localStorage.getItem('store_branch_list')) this.store_branch_list = this.decryptData(localStorage.getItem("store_branch_list"));
     if(localStorage.getItem('blog_catalog_list')) this.blog_catalog_list = this.decryptData(localStorage.getItem("blog_catalog_list"));
     if(localStorage.getItem('article_catalog_list')) this.article_catalog_list = this.decryptData(localStorage.getItem("article_catalog_list"));
+    if(localStorage.getItem('blog_author_list')) this.blog_author_list = this.decryptData(localStorage.getItem("blog_author_list"));
     if(localStorage.getItem('payment_list')) this.payment_list = this.decryptData(localStorage.getItem("payment_list"));
     if(localStorage.getItem('ys_payment_list')) this.ys_payment_list = this.decryptData(localStorage.getItem("ys_payment_list"));
     if(localStorage.getItem('branch_list')) this.branch_list = this.decryptData(localStorage.getItem("branch_list"));
@@ -402,6 +404,7 @@ export class CommonService {
     this.catalog_list = [];
     this.blog_catalog_list = [];
     this.article_catalog_list = [];
+    this.blog_author_list = [];
     this.payment_list = [];
     this.currency_types = [];
     

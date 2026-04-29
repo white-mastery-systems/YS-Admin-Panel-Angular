@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
+import { AnchorHeaderTool, ButtonTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
   selector: 'app-blog-event',
@@ -10,14 +12,20 @@ import { environment } from '../../../../../../environments/environment';
   styleUrls: ['./blog-event.component.scss']
 })
 
-export class BlogEventComponent implements OnInit {
+export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   pageLoader: boolean;
   blogForm: any = {};
   currentDate: Date = new Date();
   imgBaseUrl = environment.img_baseurl;
   categoryList: any = [];
+  authorList: any = [];
+  selectedAuthor: any = null;
   isAdvanced: boolean;
+  isLegacyBlog: boolean;
+  editor: any;
+  editorReady = false;
+  pendingEditorInit = false;
 
   constructor(
     private router: Router, private activeRoute: ActivatedRoute, private api: FeaturesApiService, public commonService: CommonService
@@ -26,6 +34,7 @@ export class BlogEventComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.params.subscribe((params: Params) => {
       this.isAdvanced = false;
+      this.isLegacyBlog = false;
       if(this.router.url.includes('/setting/advanced-blogs/')) {
         this.isAdvanced = true;
       }
@@ -35,34 +44,60 @@ export class BlogEventComponent implements OnInit {
         this.commonService.redirect = "/setting/advanced-blogs";
         this.commonService.secondary_header = "Add Advanced Blog";
       }
-      this.blogForm = { form_type: 'add', created_on: this.currentDate, seo_details: {}, faqs: [], category_id: [] };
+      this.destroyEditor();
+      this.editorReady = false;
+      this.pendingEditorInit = false;
+      this.blogForm = {
+        form_type: 'add', created_on: this.currentDate, seo_details: {}, faqs: [], category_id: [],
+        tags_list: [], published: false, content: this.getDefaultContent(), editor_type: 'advanced', description: ''
+      };
       if(params.id!='add') {
         this.pageLoader = true;
         this.commonService.secondary_header = "Update Blog";
         if(this.isAdvanced) this.commonService.secondary_header = "Update Advanced Blog";
-        this.api.BLOG_DETAILS(params.id).subscribe(result => {
+        const reqCall = this.isAdvanced ? this.api.BLOG_DETAILS(params.id) : this.api.BLOG_DETAILS_BY_SLUG(params.id);
+        reqCall.subscribe(result => {
           if(result.status) {
             this.blogForm = result.data;
             this.blogForm.form_type = 'edit';
+            this.blogForm.editor_type = this.normalizeEditorType(this.blogForm.editor_type);
+            this.setEditorMode(this.blogForm.editor_type);
             this.blogForm.created_on = new Date(this.blogForm.created_on);
+            if(this.blogForm.image) this.blogForm.image = this.normalizeAssetPath(this.blogForm.image);
+            if(this.blogForm.coverImage) this.blogForm.coverImage = this.normalizeAssetPath(this.blogForm.coverImage);
+            if(this.blogForm.authorAvatar) this.blogForm.authorAvatar = this.normalizeAssetPath(this.blogForm.authorAvatar);
             if(!this.blogForm.seo_details) this.blogForm.seo_details = {};
             this.blogForm.seo_details.meta_keyword_list = [];
-            if(this.blogForm.seo_details.meta_keywords.length) {
+            if(this.blogForm.seo_details.meta_keywords?.length) {
               this.blogForm.seo_details.meta_keywords.forEach(obj => {
-                this.blogForm.seo_details.meta_keyword_list.push({display: obj, value: obj});
+              this.blogForm.seo_details.meta_keyword_list.push({display: obj, value: obj});
               });
             }
-            if(this.blogForm.faqs.length) this.blogForm.faq_status = true;
+            if(this.blogForm.faqs?.length) this.blogForm.faq_status = true;
+            if(!this.isAdvanced) {
+              this.blogForm.tags_list = (this.blogForm.tags || []).map((tag) => ({ display: tag, value: tag }));
+              if(this.isEditorJsMode()) {
+                this.blogForm.content = this.prepareEditorContentForView(this.blogForm.content || this.getDefaultContent());
+              }
+              this.syncSelectedAuthor();
+            }
           }
           else console.log("response", result);
-          setTimeout(() => { this.pageLoader = false; }, 500);
+          setTimeout(() => {
+            this.pageLoader = false;
+            if(!this.isAdvanced && this.isEditorJsMode()) this.pendingEditorInit = true;
+          }, 500);
         });
       }
+      else if(!this.isAdvanced) {
+        this.pendingEditorInit = this.isEditorJsMode();
+      }
       this.getCatalog();
+      this.getAuthors();
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.blogForm.submit = true;
     this.blogForm.seo_status = true;
     this.blogForm.seo_details.meta_keywords = [];
@@ -83,7 +118,71 @@ export class BlogEventComponent implements OnInit {
     });
     this.blogForm.type = "basic";
     if(this.isAdvanced) this.blogForm.type = "advanced";
-    if(this.blogForm.form_type=='add') {
+    if(!this.isAdvanced && this.isEditorJsMode()) {
+      let content = this.getDefaultContent();
+      if(!this.editor) {
+        this.blogForm.submit = false;
+        this.blogForm.errorMsg = 'Editor is not ready';
+        return;
+      }
+      try {
+        content = await this.editor.save();
+        content = this.finalizeEditorContent(content);
+      }
+      catch (error) {
+        this.blogForm.submit = false;
+        this.blogForm.errorMsg = 'Unable to read editor content';
+        return;
+      }
+      const payload = {
+        editor_type: 'advanced',
+        slug: this.blogForm.seo_details?.page_url || this.commonService.urlFormat(this.blogForm.name || ''),
+        title: this.blogForm.name,
+        author_id: this.blogForm.author_id || null,
+        author: this.blogForm.author,
+        createdOn: this.blogForm.created_on,
+        coverImage: this.blogForm.image || '',
+        imageAlt: this.blogForm.img_alt || '',
+        authorAvatar: this.blogForm.authorAvatar || '',
+        authorRole: this.blogForm.authorRole || '',
+        authorBio: this.blogForm.authorBio || '',
+        authorLink: this.blogForm.authorLink || '',
+        readTime: this.blogForm.readTime || '',
+        tags: (this.blogForm.tags_list || []).map((obj) => obj.value),
+        published: !!this.blogForm.published,
+        content,
+        seo_status: true,
+        seo_details: this.blogForm.seo_details,
+        faq_title: this.blogForm.faq_title,
+        faqs: this.blogForm.faqs,
+        category_id: this.blogForm.category_id
+      };
+      this.api.ADD_BLOG(payload).subscribe(result => {
+        this.blogForm.submit = false;
+        if(result.status) this.router.navigate([this.commonService.redirect]);
+        else {
+          this.blogForm.errorMsg = result.message;
+          console.log("response", result);
+        }
+      });
+    }
+    else if(!this.isAdvanced) {
+      this.blogForm.tags = (this.blogForm.tags_list || []).map((obj) => obj.value);
+      this.blogForm.type = "basic";
+      this.blogForm.editor_type = 'basic';
+      this.blogForm.status = this.blogForm.published ? 'enabled' : 'disabled';
+      this.applySelectedAuthorToForm();
+      const reqCall = this.blogForm.form_type=='add' ? this.api.ADD_BLOG(this.blogForm) : this.api.UPDATE_BLOG(this.blogForm);
+      reqCall.subscribe(result => {
+        this.blogForm.submit = false;
+        if(result.status) this.router.navigate([this.commonService.redirect]);
+        else {
+          this.blogForm.errorMsg = result.message;
+          console.log("response", result);
+        }
+      });
+    }
+    else if(this.blogForm.form_type=='add') {
       this.api.ADD_BLOG(this.blogForm).subscribe(result => {
         this.blogForm.submit = false;
         if(result.status) this.router.navigate([this.commonService.redirect]);
@@ -119,12 +218,39 @@ export class BlogEventComponent implements OnInit {
       })
     }
   }
+  getAuthors() {
+    if(this.commonService.blog_author_list?.length) {
+      this.authorList = this.commonService.blog_author_list;
+      this.syncSelectedAuthor();
+      return;
+    }
+
+    this.api.BLOG_AUTHOR_LIST().subscribe((result) => {
+      if(result.status) {
+        this.authorList = (result.list || []).sort((a, b) => 0 - (a.name > b.name ? -1 : 1));
+        this.commonService.blog_author_list = this.authorList;
+        this.commonService.updateLocalData('blog_author_list', this.commonService.blog_author_list);
+        this.syncSelectedAuthor();
+      }
+    });
+  }
   onSetcatId() {
     this.categoryList = this.commonService?.blog_catalog_list;
     this.categoryList.forEach(element => {
       element.selected = false;
       if(this.blogForm?.category_id?.length && this.blogForm?.category_id.findIndex(x => x == element._id)!=-1) element.selected = true;
     });
+  }
+  onAuthorChange() {
+    this.syncSelectedAuthor();
+    if(!this.isEditorJsMode()) this.applySelectedAuthorToForm();
+  }
+  syncSelectedAuthor() {
+    if(!this.blogForm?.author_id || !this.authorList?.length) {
+      this.selectedAuthor = null;
+      return;
+    }
+    this.selectedAuthor = this.authorList.find((author) => author._id === this.blogForm.author_id) || null;
   }
   onChangeTitle() {
     if(this.blogForm.form_type=='add') {
@@ -139,10 +265,40 @@ export class BlogEventComponent implements OnInit {
       this.blogForm.seo_details.meta_desc = this.commonService.stripHtml(this.blogForm.description).substring(0, 320);
   }
 
+  onEditorTypeChange() {
+    this.blogForm.editor_type = this.normalizeEditorType(this.blogForm.editor_type);
+    this.setEditorMode(this.blogForm.editor_type || 'advanced');
+    this.destroyEditor();
+    this.pendingEditorInit = false;
+    if(this.isEditorJsMode()) {
+      if(!this.blogForm.content) this.blogForm.content = this.getDefaultContent();
+      setTimeout(() => {
+        if(!this.pageLoader) this.pendingEditorInit = true;
+      }, 0);
+    }
+    else {
+      this.applySelectedAuthorToForm();
+    }
+  }
+
   fileChangeListener(event) {
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
       if(["image/jpeg", "image/png", "image/webp"].indexOf(inFile.type) != -1) {
+      if(!this.isAdvanced && this.isEditorJsMode()) {
+        const formData = new FormData();
+        formData.append('image', inFile);
+        this.blogForm.coverLoader = true;
+        this.api.BLOG_UPLOAD_IMAGE(formData).subscribe(result => {
+          this.blogForm.coverLoader = false;
+          if(result.status && result.path) {
+            this.blogForm.image = result.path;
+            this.blogForm.img_change = false;
+          }
+          else this.blogForm.errorMsg = result.message || 'Unable to upload image';
+        });
+        return;
+      }
       let reader = new FileReader();
       reader.onload = (event: ProgressEvent) => {
         this.blogForm.image = (<FileReader>event.target).result;
@@ -152,6 +308,220 @@ export class BlogEventComponent implements OnInit {
     }
     else console.log("Invaid file");
     }
+  }
+
+  authorAvatarChangeListener(event) {
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png", "image/webp"].indexOf(inFile.type) != -1) {
+        const formData = new FormData();
+        formData.append('image', inFile);
+        this.blogForm.avatarLoader = true;
+        this.api.BLOG_UPLOAD_IMAGE(formData).subscribe(result => {
+          this.blogForm.avatarLoader = false;
+          if(result.status && result.path) this.blogForm.authorAvatar = result.path;
+          else this.blogForm.errorMsg = result.message || 'Unable to upload image';
+        });
+      }
+    }
+  }
+
+  getDefaultContent() {
+    return {
+      time: Date.now(),
+      version: '2.29.1',
+      blocks: []
+    };
+  }
+
+  ngAfterViewChecked(): void {
+    if(this.pendingEditorInit && !this.pageLoader && !this.isAdvanced && this.isEditorJsMode()) {
+      this.pendingEditorInit = false;
+      this.initializeEditor();
+    }
+  }
+
+  async initializeEditor() {
+    const holder = document.getElementById('blog-editorjs-holder');
+    if(!holder) {
+      this.pendingEditorInit = true;
+      return;
+    }
+    this.destroyEditor();
+    const EditorJS = (await import('@editorjs/editorjs')).default;
+    const List = (await import('@editorjs/list')).default;
+    const Table = (await import('@editorjs/table')).default;
+    const ImageTool = (await import('@editorjs/image')).default;
+
+    this.editor = new EditorJS({
+      holder: 'blog-editorjs-holder',
+      minHeight: 240,
+      data: this.blogForm.content || this.getDefaultContent(),
+      tools: {
+        header: {
+          class: AnchorHeaderTool as any
+        },
+        list: {
+          class: List as any,
+          inlineToolbar: true
+        },
+        table: {
+          class: Table as any,
+          inlineToolbar: true
+        },
+        tableOfContents: {
+          class: TableOfContentsTool as any
+        },
+        button: {
+          class: ButtonTool as any
+        },
+        productCta: {
+          class: ProductCtaTool as any,
+          config: {
+            uploadImage: async(file: File) => this.uploadEditorImage(file)
+          }
+        },
+        image: {
+          class: ImageTool as any,
+          config: {
+            uploader: {
+              uploadByFile: async(file: File) => this.uploadEditorImageResult(file)
+            }
+          }
+        }
+      },
+      onReady: () => {
+        this.editorReady = true;
+      }
+    });
+  }
+
+  destroyEditor() {
+    if(this.editor && typeof this.editor.destroy === 'function') {
+      this.editor.destroy();
+    }
+    this.editor = null;
+    this.editorReady = false;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyEditor();
+  }
+
+  private async uploadEditorImage(file: File) {
+    const result = await this.uploadEditorImageResult(file);
+    if(result?.file?.url) return result.file.url;
+    throw new Error(result?.message || 'Upload failed');
+  }
+
+  private async uploadEditorImageResult(file: File) {
+    const formData = new FormData();
+    formData.append('image', file);
+    const result = await firstValueFrom(this.api.BLOG_UPLOAD_IMAGE(formData));
+    if(result?.success === 1 && (result?.file?.url || result?.path)) {
+      const path = (result?.file?.path || result?.path || '').replace(/^\/+/, '');
+      const publicUrl = path ? `${this.imgBaseUrl}${path}` : result?.file?.url;
+      return {
+        ...result,
+        url: publicUrl,
+        file: {
+          ...(result.file || {}),
+          path: result?.file?.path || result?.path || '',
+          url: publicUrl
+        }
+      };
+    }
+    throw new Error(result?.message || 'Upload failed');
+  }
+
+  private finalizeEditorContent(content: any) {
+    const normalized = content && typeof content === 'object' ? content : this.getDefaultContent();
+    const blocks = Array.isArray(normalized.blocks) ? normalized.blocks : [];
+    blocks.forEach((block) => {
+      if(block?.type !== 'header') return;
+      block.data = block.data || {};
+      block.data.text = (block.data.text || '').trim();
+      block.data.level = Number(block.data.level || 2);
+      block.data.anchor = block.data.level === 2 ? (block.data.anchor || '').trim().replace(/^#/, '') : '';
+    });
+
+    blocks.forEach((block) => {
+      if(block?.type !== 'tableOfContents' || !Array.isArray(block?.data?.items)) return;
+      block.data.items = block.data.items.map((item) => ({
+        ...item,
+        number: (item?.number || '').trim(),
+        text: (item?.text || '').trim(),
+        anchor: item?.anchor ? `#${String(item.anchor).trim().replace(/^#/, '')}` : ''
+      })).filter((item) => item.text || item.anchor || item.number);
+    });
+
+    return {
+      time: normalized.time || Date.now(),
+      version: normalized.version || '2.29.1',
+      blocks
+    };
+  }
+
+  private prepareEditorContentForView(content: any) {
+    const normalized = content && typeof content === 'object' ? JSON.parse(JSON.stringify(content)) : this.getDefaultContent();
+    const blocks = Array.isArray(normalized.blocks) ? normalized.blocks : [];
+
+    blocks.forEach((block) => {
+      if(block?.type === 'image' && block?.data?.file) {
+        if(block.data.file.path) block.data.file.path = this.toAbsoluteAssetUrl(block.data.file.path);
+        if(block.data.file.url) block.data.file.url = this.toAbsoluteAssetUrl(block.data.file.url);
+      }
+
+      if(block?.type === 'productCta' && block?.data?.productImage) {
+        block.data.productImage = this.toAbsoluteAssetUrl(block.data.productImage);
+      }
+    });
+
+    normalized.blocks = blocks;
+    return normalized;
+  }
+
+  toAbsoluteAssetUrl(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^https?:\/\//i.test(input) || /^data:/i.test(input)) return input;
+    const base = (this.imgBaseUrl || '').replace(/\/+$/, '');
+    const path = input.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : `/${path}`;
+  }
+
+  private normalizeAssetPath(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^data:/i.test(input)) return input;
+    if(/^https?:\/\//i.test(input)) {
+      const match = input.match(/\/uploads\/.+$/i);
+      return match ? match[0] : input;
+    }
+    if(input.startsWith('uploads/')) return `/${input}`;
+    return input;
+  }
+
+  private setEditorMode(editorType: string) {
+    this.isLegacyBlog = !this.isAdvanced && this.normalizeEditorType(editorType) === 'basic';
+  }
+
+  isEditorJsMode() {
+    return !this.isAdvanced && !this.isLegacyBlog;
+  }
+
+  private normalizeEditorType(editorType: string) {
+    return editorType === 'advanced' || editorType === 'editorjs' ? 'advanced' : 'basic';
+  }
+
+  private applySelectedAuthorToForm() {
+    if(!this.selectedAuthor) return;
+    this.blogForm.author_id = this.selectedAuthor._id;
+    this.blogForm.author = this.selectedAuthor.name || '';
+    this.blogForm.authorAvatar = this.normalizeAssetPath(this.selectedAuthor.avatar || '');
+    this.blogForm.authorRole = this.selectedAuthor.role || '';
+    this.blogForm.authorBio = this.selectedAuthor.bio || '';
+    this.blogForm.authorLink = this.selectedAuthor.link || '';
   }
 
 }

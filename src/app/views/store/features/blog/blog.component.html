@@ -33,6 +33,9 @@
         <button *ngIf="commonService.ys_features.indexOf('blog_catalogs')!=-1" type="button" class="mr-3" routerLink="/setting/blogs/catalogs">
           <span class="material-symbols-rounded">visibility</span> View Catalogs
         </button>
+        <button type="button" class="mr-3" routerLink="/setting/blogs-authors">
+          <span class="material-symbols-rounded">group</span> View Authors
+        </button>
         <button type="button" class="mr-3" (click)="open_website()">
           <span class="material-symbols-rounded">visibility</span>View Page
         </button>
@@ -60,7 +63,7 @@
           <div class="col-md-2 col-2 first_col px-0 cursor">            
             <div class="list-thumb d-flex align-self-center">
               <div class="col-md-12 col-12 col-xxl-12 px-0">
-                <img *ngIf="x.image" [src]="imgBaseUrl+x.image" alt=""> 
+                <img *ngIf="x.image" [src]="toAbsoluteAssetUrl(x.coverImage || x.image)" alt=""> 
                 <img *ngIf="!x.image" src="assets/images/default.png" alt=""> 
               </div>
             </div>

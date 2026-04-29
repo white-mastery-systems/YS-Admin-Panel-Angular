@@ -350,6 +350,8 @@ export class SidebarService {
           routePermissionList.push("extra_pages");
           tempWebList.push({ keyword: "extra_pages", name: "Extra Pages" });
         }
+        routePermissionList.push("catalog_page");
+        tempWebList.push({ keyword: "catalog_page", name: "Catalog Pages" });
         tempWebList.push({ keyword: "footer_configuration", name: "Footer Configuration" });
         if(ysFeatures.indexOf('catalog_page_content')!=-1) {
           webList.push({ name: 'Footer SEO Links', type: 'link', icon: 'track_changes', state: '/setup/footer-seo-links' });
@@ -382,8 +384,10 @@ export class SidebarService {
         }
         if(ysFeatures.indexOf('blogs')!=-1) {
           moduleList.push({ icon: 'art_track', name: 'Blogs', state: '/setting/blogs', type: 'link' });
-          routePermissionList.push("blogs");
+          moduleList.push({ icon: 'group', name: 'Blog Authors', state: '/setting/blogs-authors', type: 'link' });
+          routePermissionList.push("blogs", "blog_authors");
           tempModuleList.push({ keyword: "blogs", name: "Blogs" });
+          tempModuleList.push({ keyword: "blog_authors", name: "Blog Authors" });
           if(environment.config_data.adv_blogs.indexOf(this.commonService.store_details._id)!=-1) {
             moduleList.push({ icon: 'art_track', name: 'Advanced Blogs', state: '/setting/advanced-blogs', type: 'link' });
             routePermissionList.push("advanced_blogs");
@@ -404,11 +408,6 @@ export class SidebarService {
           moduleList.push({ icon: 'art_track', name: 'Web Stories', state: '/features/web-stories', type: 'link' });
           routePermissionList.push("web_stories");
           tempModuleList.push({ keyword: "web_stories", name: "Web Stories" });
-        }
-        if(ysFeatures.indexOf('discounts_page')!=-1) {
-          moduleList.push({ icon: 'local_atm', name: 'Catalog Page', state: '/setting/catalog-page', type: 'link' });
-          routePermissionList.push("discounts_page");
-          tempModuleList.push({ keyword: "discounts_page", name: "Discounts Page" });
         }
         if(ysFeatures.indexOf('collections')!=-1) {
           moduleList.push({ icon: 'view_carousel', name: 'Collections', state: '/setting/collections', type: 'link' });
@@ -753,6 +752,10 @@ export class SidebarService {
         pageStatus = true;
         routePermissionList.push("extra_pages");
       }
+      if(subuserFeatures.indexOf('catalog_page')!=-1) {
+        pageStatus = true;
+        routePermissionList.push("catalog_page");
+      }
       if(pageStatus) {
         webList.push({ icon: 'contact_phone', name: 'Pages', state: '/setup/pages', type: 'link' });
         routePermissionList.push("pages");
@@ -782,7 +785,8 @@ export class SidebarService {
       }
       if(ysFeatures.indexOf('blogs')!=-1 && subuserFeatures.indexOf('blogs')!=-1) {
         moduleList.push({ icon: 'art_track', name: 'Blogs', state: '/setting/blogs', type: 'link' });
-        routePermissionList.push("blogs");
+        moduleList.push({ icon: 'group', name: 'Blog Authors', state: '/setting/blogs-authors', type: 'link' });
+        routePermissionList.push("blogs", "blog_authors");
       }
       if(environment.config_data.adv_blogs.indexOf(this.commonService.store_details._id)!=-1 && ysFeatures.indexOf('blogs')!=-1 && subuserFeatures.indexOf('advanced_blogs')!=-1) {
         moduleList.push({ icon: 'art_track', name: 'Advanced Blogs', state: '/setting/advanced-blogs', type: 'link' });
@@ -799,10 +803,6 @@ export class SidebarService {
       if(ysFeatures.indexOf('web_stories')!=-1 && subuserFeatures.indexOf('web_stories')!=-1) {
         moduleList.push({ icon: 'art_track', name: 'Web Stories', state: '/features/web-stories', type: 'link' });
         routePermissionList.push("web_stories");
-      }
-      if(ysFeatures.indexOf('discounts_page')!=-1 && subuserFeatures.indexOf('discounts_page')!=-1) {
-        moduleList.push({ icon: 'local_atm', name: 'Catalog Page', state: '/setting/catalog-page', type: 'link' });
-        routePermissionList.push("discounts_page");
       }
       if(ysFeatures.indexOf('collections')!=-1 && subuserFeatures.indexOf('collections')!=-1) {
         moduleList.push({ icon: 'view_carousel', name: 'Collections', state: '/setting/collections', type: 'link' });

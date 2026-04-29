@@ -50,11 +50,17 @@ export class BlogComponent implements OnInit {
       if(this.isAdvanced) this.commonService.secondary_header = "Advanced Blogs";
     }
     this.pageLoader = true;
-    let catId = null, type = 'basic';
+    let catId = null, type = null;
     if(this.commonService.selected_blog_catalog?._id) catId = this.commonService.selected_blog_catalog._id;
     if(this.isAdvanced) type = 'advanced';
-    this.api.BLOG_LIST(catId, type).subscribe(result => {
-      if(result.status) this.list = result.list;
+    this.api.BLOG_LIST(catId, type, null, 'enabled').subscribe(result => {
+      if(result.status) {
+        this.list = (result.list || []).map((item) => ({
+          ...item,
+          image: this.normalizeAssetPath(item.image),
+          coverImage: this.normalizeAssetPath(item.coverImage)
+        }));
+      }
       else console.log("response", result);
       setTimeout(() => { this.pageLoader = false; }, 500);
     });
@@ -70,7 +76,7 @@ export class BlogComponent implements OnInit {
     if(this.isAdvanced) {
       this.router.navigate(['/setting/advanced-blogs/'+x._id]);
     }
-    else this.router.navigate(['/setting/blogs/'+x._id]);
+    else this.router.navigate(['/setting/blogs/'+(x.slug || x._id)]);
   }
 
   // UPDATE STATUS
@@ -80,7 +86,38 @@ export class BlogComponent implements OnInit {
     this.modalService.open(modalName, { centered: true });
   }
   onUpdateStatus() {
-    this.api.UPDATE_BLOG({ _id: this.blogForm._id, status: this.blogForm.change_status+"d" }).subscribe(result => {
+    let reqData: any = { _id: this.blogForm._id, status: this.blogForm.change_status+"d" };
+    if(!this.isAdvanced && this.isAdvancedEditorType(this.blogForm.editor_type)) {
+      reqData = {
+        editor_type: 'advanced',
+        slug: this.blogForm.slug,
+        title: this.blogForm.name,
+        author_id: this.blogForm.author_id,
+        author: this.blogForm.author,
+        createdOn: this.blogForm.created_on,
+        coverImage: this.blogForm.coverImage || this.blogForm.image,
+        imageAlt: this.blogForm.imageAlt || this.blogForm.img_alt,
+        authorAvatar: this.blogForm.authorAvatar,
+        authorRole: this.blogForm.authorRole,
+        authorBio: this.blogForm.authorBio,
+        authorLink: this.blogForm.authorLink,
+        readTime: this.blogForm.readTime,
+        tags: this.blogForm.tags || [],
+        published: this.blogForm.change_status=='enable',
+        content: this.blogForm.content,
+        seo_details: this.blogForm.seo_details,
+        faq_title: this.blogForm.faq_title,
+        faqs: this.blogForm.faqs
+      };
+    }
+    else if(!this.isAdvanced) {
+      reqData = {
+        ...this.blogForm,
+        status: this.blogForm.change_status+"d",
+        published: this.blogForm.change_status=='enable'
+      };
+    }
+    this.api.UPDATE_BLOG(reqData).subscribe(result => {
 			if(result.status) {
         document.getElementById('closeModal').click();
         this.ngOnInit();
@@ -94,7 +131,9 @@ export class BlogComponent implements OnInit {
 
   // DELETE
   onDelete() {
-    this.api.DELETE_BLOG(this.deleteForm).subscribe(result => {
+    let reqData = this.deleteForm;
+    if(!this.isAdvanced) reqData = { slug: this.deleteForm.slug };
+    this.api.DELETE_BLOG(reqData).subscribe(result => {
       if(result.status) {
         document.getElementById('closeModal').click();
         this.ngOnInit();
@@ -146,6 +185,31 @@ export class BlogComponent implements OnInit {
 
   ngOnDestroy() {
     delete this.commonService.selected_blog_catalog;
+  }
+
+  toAbsoluteAssetUrl(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^https?:\/\//i.test(input) || /^data:/i.test(input)) return input;
+    const base = (this.imgBaseUrl || '').replace(/\/+$/, '');
+    const path = input.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : `/${path}`;
+  }
+
+  private normalizeAssetPath(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^data:/i.test(input)) return input;
+    if(/^https?:\/\//i.test(input)) {
+      const match = input.match(/\/uploads\/.+$/i);
+      return match ? match[0] : input;
+    }
+    if(input.startsWith('uploads/')) return `/${input}`;
+    return input;
+  }
+
+  private isAdvancedEditorType(editorType: string) {
+    return editorType === 'advanced' || editorType === 'editorjs';
   }
 
 }
