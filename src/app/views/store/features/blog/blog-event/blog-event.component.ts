@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
-import { AnchorHeaderTool, ButtonTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
+import { AnchorHeaderTool, ButtonTool, CtaBlockTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
   selector: 'app-blog-event',
@@ -128,6 +128,12 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
       try {
         content = await this.editor.save();
         content = this.finalizeEditorContent(content);
+        const invalidCarouselBlock = this.getInvalidProductCarouselBlockIndex(content);
+        if(invalidCarouselBlock !== -1) {
+          this.blogForm.submit = false;
+          this.blogForm.errorMsg = `Please select one catalog in Product Carousel block #${invalidCarouselBlock + 1}`;
+          return;
+        }
       }
       catch (error) {
         this.blogForm.submit = false;
@@ -171,7 +177,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.blogForm.type = "basic";
       this.blogForm.editor_type = 'basic';
       this.blogForm.status = this.blogForm.published ? 'enabled' : 'disabled';
-      this.applySelectedAuthorToForm();
+      if(!this.isLegacyBlog) this.applySelectedAuthorToForm();
       const reqCall = this.blogForm.form_type=='add' ? this.api.ADD_BLOG(this.blogForm) : this.api.UPDATE_BLOG(this.blogForm);
       reqCall.subscribe(result => {
         this.blogForm.submit = false;
@@ -375,6 +381,18 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         button: {
           class: ButtonTool as any
         },
+        ctaBlock: {
+          class: CtaBlockTool as any
+        },
+        productCarousel: {
+          class: ProductCarouselTool as any,
+          config: {
+            catalogs: (this.commonService.catalog_list || []).map((catalog) => ({
+              _id: catalog._id,
+              name: catalog.name
+            }))
+          }
+        },
         productCta: {
           class: ProductCtaTool as any,
           config: {
@@ -462,6 +480,11 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
+  private getInvalidProductCarouselBlockIndex(content: any) {
+    const blocks = Array.isArray(content?.blocks) ? content.blocks : [];
+    return blocks.findIndex((block) => block?.type === 'productCarousel' && !(block?.data?.category_id || '').trim());
+  }
+
   private prepareEditorContentForView(content: any) {
     const normalized = content && typeof content === 'object' ? JSON.parse(JSON.stringify(content)) : this.getDefaultContent();
     const blocks = Array.isArray(normalized.blocks) ? normalized.blocks : [];
@@ -474,6 +497,13 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
 
       if(block?.type === 'productCta' && block?.data?.productImage) {
         block.data.productImage = this.toAbsoluteAssetUrl(block.data.productImage);
+      }
+
+      if(block?.type === 'productCarousel' && Array.isArray(block?.data?.products)) {
+        block.data.products = block.data.products.map((item) => ({
+          ...item,
+          image: item?.image ? this.toAbsoluteAssetUrl(item.image) : ''
+        }));
       }
     });
 

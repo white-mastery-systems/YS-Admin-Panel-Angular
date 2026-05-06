@@ -189,6 +189,16 @@
   padding-bottom: 18px;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--cta-block {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--product-carousel {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__grid {
   display: grid;
   gap: 12px;
@@ -213,6 +223,44 @@
   border-radius: 14px;
   background: #fff;
   padding: 14px 12px 14px 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__carousel-row {
+  grid-template-columns: minmax(0, 1fr) 124px;
+  align-items: start;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-picker {
+  border: 1px solid #e6e9ef;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  margin-top: 4px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-picker__list {
+  margin-top: 10px;
+  max-height: 180px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-chip {
+  border: 1px solid #d6dce8;
+  background: #f7f8fb;
+  color: #2f3b52;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-chip.is-selected {
+  background: #ec848b;
+  border-color: #ec848b;
+  color: #fff;
 }
 
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__field {
@@ -318,6 +366,56 @@
   display: block;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview {
+  margin-top: 14px;
+  border: 1px solid #d8d3cd;
+  border-radius: 16px;
+  background: #ece8e4;
+  padding: 24px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 24px;
+  align-items: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__text {
+  margin: 0;
+  color: #1f1f25;
+  font-size: 34px;
+  line-height: 1.35;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__actions {
+  display: grid;
+  gap: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button--primary {
+  background: #191724;
+  color: #ffffff;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button--secondary {
+  background: #f0efee;
+  color: #191724;
+  border: 1px solid #c4c0bb;
+}
+
 :host ::ng-deep .editorjs-wrapper .image-tool,
 :host ::ng-deep .editorjs-wrapper .cdx-image {
   margin: 0;
@@ -363,5 +461,15 @@
   :host ::ng-deep .editorjs-wrapper .editorjs-custom__button {
     justify-self: start;
     width: auto;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-cta-preview {
+    grid-template-columns: 1fr;
+    padding: 18px 16px;
+    gap: 16px;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__text {
+    font-size: 24px;
   }
 }

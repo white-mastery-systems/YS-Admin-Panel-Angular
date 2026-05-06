@@ -2,7 +2,7 @@
   <app-spinner></app-spinner>
 </div>
 <div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="addForm={ seo_details: {} }; modalService.open(addModal);">
+  <div class="add_but" (click)="addForm={ seo_details: {}, page_kind: 'catalog' }; modalService.open(addModal);">
     <span class="material-symbols-rounded">add</span>
   </div>
 </div>
@@ -31,7 +31,7 @@
       </div>
       <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
         <button class="highbutton" type="button"
-          (click)="addForm={ seo_details: {} }; modalService.open(addModal);">
+          (click)="addForm={ seo_details: {}, page_kind: 'catalog' }; modalService.open(addModal);">
           <span class="material-symbols-rounded">add</span>Add New Page
         </button>
       </div>
@@ -57,7 +57,7 @@
           <div class="col-md-8 col-8 first_col px-0">
             <p class="w-20 w-sm-100 dark-font">{{x.name}}</p>
             <p class="w-20 w-sm-100 light-font">{{x.group}}</p>
-            <p class="w-20 w-sm-100 light-font">{{x.type}}</p>
+            <p class="w-20 w-sm-100 light-font">{{x.type || '-'}}</p>
             <p class="w-20 w-sm-100 light-font">{{ getPageCategoryName(x.page_category) }}</p>
             <p class="w-20 w-sm-100 m-b-0 light-font" style="word-break: break-word;">{{x.page_url}}</p>
           </div>
@@ -110,10 +110,17 @@
                 (input)="onChangeTitle();" required />
             </div>
             <div class="col-md-6 form-group mb-3">
+              <label>Page Kind</label>
+              <select name="page_kind" class="form-control select-arrow" [(ngModel)]="addForm.page_kind"
+                (change)="onChangePageKind(addForm)" required>
+                <option *ngFor="let item of pageKinds" [value]="item.value">{{item.name}}</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
               <label>Group</label>
               <input type="text" name="group" class="form-control" [(ngModel)]="addForm.group" appNoSplChar required />
             </div>
-            <div class="col-md-6 form-group mb-3">
+            <div class="col-md-6 form-group mb-3" *ngIf="addForm.page_kind !== 'property_product'">
               <label>Type</label>
               <input type="text" name="type" class="form-control" [(ngModel)]="addForm.type" appNoSplChar required />
             </div>

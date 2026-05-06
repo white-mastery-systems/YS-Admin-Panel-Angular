@@ -21,31 +21,55 @@ export class ExtraPagesEventComponent implements OnInit {
   page = 1; pageSize = 10; maxRank: any = 0; addForm: any = {};
   editForm: any = {}; gridList: any = [];
   layoutTypes: any = [
-    { name: 'Main Slider', value: 'slider' },
-    { name: 'Grid', value: 'grid' },
-    { name: 'Featured Sections', value: 'featured_section' },
-    { name: 'Highlighted Section', value: 'highlighted_section' },
-    { name: 'Multi-Highlighted Section', value: 'multiple_highlighted_section' },
-    { name: 'Secondary Banner', value: 'secondary' },
-    { name: 'Flexible Segment', value: 'flexible' },
-    { name: 'Scrolling Text', value: 'scrolling_text' },
-    { name: 'Testimonial', value: 'testimonial' },
-    { name: 'Video Section', value: 'video_section' },
-    { name: 'Highlights', value: 'highlights' }
+    { name: "Main Slider", value: "slider" },
+    { name: "Section Grid", value: "section" },
+    { name: "Featured Sections", value: "featured_section" },
+    { name: "Featured Products", value: "featured_product" },
+    { name: "Highlighted Section", value: "highlighted_section" },
+    { name: "Multi-Highlighted Section", value: "multiple_highlighted_section" },
+    { name: "Multi-Tab Featured Products", value: "multiple_featured_product" },
+    { name: "Secondary Banner", value: "secondary" },
+    { name: "Flexible Segment", value: "flexible" },
+    { name: "Scrolling Text", value: "scrolling_text" },
+    { name: "Social Video", value: "social_video" },
+    { name: "Content Grid", value: "content_grid" }
   ];
   multiTabOptions: any = [
-    { type: 'featured', disp_name: 'Featured' },
-    { type: 'new_arrivals', disp_name: 'New Arrivals' },
-    { type: 'discounted', disp_name: 'Discounted' },
-    { type: 'category', disp_name: 'Catalog' },
+    { type: "featured", disp_name: "Featured" },
+    { type: "new_arrivals", disp_name: "New Arrivals" },
+    { type: "discounted", disp_name: "Discounted" },
+    { type: "category", disp_name: "Catalog" }
   ];
+  themeColorExists: boolean;
 
   constructor(
     private router: Router, config: NgbModalConfig, public modalService: NgbModal,
     private activeRoute: ActivatedRoute, private api: SetupService, public commonService: CommonService
   ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
+    config.backdrop = 'static'; config.keyboard = false;
+    if(this.commonService.deploy_details.theme_colors && this.commonService.deploy_details.theme_colors.primary)
+      this.themeColorExists = true;
+    if(this.commonService.ys_features.indexOf('testimonials') !== -1)
+      this.layoutTypes.push({ name: "Testimonial", value: "testimonial" });
+    if(this.commonService.ys_features.indexOf('shopping_assistant') !== -1)
+      this.layoutTypes.push({ name: "Shopping Assistant", value: "shopping_assistant" });
+    if(this.commonService.ys_features.indexOf('blogs') !== -1)
+      this.layoutTypes.push({ name: "Blogs", value: "blogs" });
+    if(this.commonService.ys_features.indexOf('shop_the_look') !== -1)
+      this.layoutTypes.push({ name: "Shop the Look", value: "shop_the_look" });
+    if(this.commonService.store_details?.package_info?.category!='genie') {
+      this.layoutTypes.push({ name: "Video Section", value: "video_section" });
+      this.layoutTypes.push({ name: "Highlights", value: "highlights" });
+      this.layoutTypes.push({ name: "Instagram", value: "instagram" });
+    }
+    if(this.commonService.store_details?._id==environment.config_data.chettinad_id)
+      this.layoutTypes.push({ name: "Multi-Grid Featured Sections", value: "multi_grid_featured_section" });
+    if(this.commonService.store_details?._id==environment.config_data.surgical_id)
+      this.layoutTypes.push({ name: "Featured Sections with Products", value: "featured_section_product" });
+    if(this.commonService.store_details?._id==environment.config_data.tulsi_madras_id)
+      this.layoutTypes.push({ name: "Live2ai Segment", value: "live2ai" });
+    if(this.commonService.store_details?._id==environment.config_data.oneafrica)
+      this.layoutTypes.push({ name: "Multi Categories", value: "multi_categories" });
   }
 
   ngOnInit(): void {
@@ -107,8 +131,16 @@ export class ExtraPagesEventComponent implements OnInit {
 
   //Open add modal
   onAddNewSegment(modalName) {
-    this.addForm = { rank: this.maxRank + 1, type: '' };
-    this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
+    if(!this.commonService.deploy_stages.logo)
+      this.commonService.openDeployAlertModal('logo', 'Please add logo for your business before adding a new segment');
+    else if(!this.themeColorExists)
+      this.commonService.openDeployAlertModal('color', 'Please set colors for your website before adding a new segment');
+    else if(this.commonService.store_details?.package_details?.package_id==environment.config_data.free_package_id)
+      document.getElementById("openCommonUpgradeModal").click();
+    else {
+      this.addForm = { layout_list: [{}], rank: this.maxRank+1, type: '' };
+      this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
+    }
   }
 
   //Add segment
@@ -120,6 +152,7 @@ export class ExtraPagesEventComponent implements OnInit {
         this.addForm.text_list.push({ name: el.value });
       });
     }
+    if(this.addForm.type!="multiple_featured_product") delete this.addForm.multitab_list;
     this.addForm.page_id = this.formData._id;
     this.addForm.store_id = this.commonService.store_details._id;
     this.api.ADD_SEGMENT_EXTRA_PAGE(this.addForm).subscribe((result) => {
@@ -170,10 +203,13 @@ export class ExtraPagesEventComponent implements OnInit {
         this.editForm.options = [];
         this.editForm.prev_rank = this.editForm.rank;
         this.editForm.dup_type = this.findType(this.editForm.type);
-        if(this.editForm.type!='grid') delete this.editForm.grid_type;
-        if(this.editForm.grid_type)
-          this.editForm.dup_grid_type = this.findGridType(this.editForm.grid_type);
-        if(this.editForm.type == 'scrolling_text') {
+        if(this.editForm.type!='section' && this.editForm.type!='multi_grid_featured_section')
+          delete this.editForm.section_grid_type;
+        if(this.editForm.section_grid_type)
+          this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
+        if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
+        else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
+        else if (this.editForm.type == 'scrolling_text') {
           this.editForm.text_list?.forEach((el) => {
             this.editForm.options.push({ display: el.name, value: el.name });
           });
@@ -203,12 +239,28 @@ export class ExtraPagesEventComponent implements OnInit {
   }
 
   onChangeType(x) {
-    if (x == 'grid') {
+    this.addForm.grid_list = []; this.gridList = [];
+    delete this.addForm.section_grid_type;
+    this.addForm.multitab_list = [{}];
+    if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
-      this.addForm.grid_type = this.addForm.grid_list[0].type;
-    } else {
-      this.addForm.grid_list = [];
-      this.addForm.grid_type = '';
+      this.addForm.section_grid_type = this.addForm.grid_list[0].type;
+    }
+    else if(x=='multi_grid_featured_section') {
+      this.addForm.grid_list = this.commonService.multi_grid_list;
+      this.addForm.section_grid_type = this.addForm.grid_list[0].type;
+      this.addForm.grid_count = this.addForm.grid_list[0].count;
+    }
+    else if(x=='instagram') {
+      this.addForm.insta_config = {};
+      this.gridList = this.commonService.insta_grid_list;
+      this.addForm.blogs_type = 'grid';
+      this.addForm.section_grid_type = this.gridList[0].type;
+    }
+    else if(x=='blogs') {
+      this.gridList = this.commonService.blog_grid_list;
+      this.addForm.blogs_type = 'grid';
+      this.addForm.section_grid_type = this.gridList[0].type;
     }
   }
 

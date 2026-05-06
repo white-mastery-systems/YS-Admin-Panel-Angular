@@ -104,7 +104,12 @@
               <ng-container *ngIf="x.type=='multi_grid_featured_section'">{{ x.multigrid_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='multiple_featured_product'">{{ x.multitab_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='multi_categories'">{{ x.multicategory_list?.length }} Tiles</ng-container>
-              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories'].indexOf(x.type)==-1">
+              <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
+              <ng-container *ngIf="x.type=='dual_map'">{{ x.map_list?.length }} Maps</ng-container>
+              <ng-container *ngIf="x.type=='featured_cards'">{{ x.featured_cards_list?.length }} Groups</ng-container>
+              <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
+              <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
+              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'dual_map', 'featured_cards', 'faq', 'internal_links'].indexOf(x.type)==-1">
                 {{ x.image_list?.length }} Tiles
               </ng-container>
             </p>
@@ -127,7 +132,7 @@
                     <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                       'visibility'}}</span> Details
                   </button>
-                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'flexible', 'instagram', 'multi_grid_featured_section'].indexOf(x.type)==-1"
+                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'flexible', 'instagram', 'multi_grid_featured_section', 'faq', 'dual_map'].indexOf(x.type)==-1"
                     class="dropdown-item d-flex" routerLink="/setup/layouts/home/{{x._id}}">
                     <span class="material-symbols-rounded mr-2">image</span> Images
                   </button>
@@ -214,7 +219,7 @@
                 </label>
               </div>
             </ng-container>
-            <ng-container *ngIf="addForm.type!='primary_slider' && addForm.type!='slider' && addForm.type!='flexible' && addForm.type!='secondary' && addForm.type!='highlights'">
+            <ng-container *ngIf="addForm.type!='slider'">
               <div *ngIf="addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -236,6 +241,11 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="addForm.description"></textarea>
+              </div>
               <div *ngIf="addForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
                  <input type="text" name="content" class="form-control" [(ngModel)]="addForm.content" #content="ngModel" required />
@@ -247,7 +257,7 @@
               </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && addForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
-                <label>Description</label>
+                <label>Content</label>
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="addForm.content"></textarea>
               </div>
@@ -288,6 +298,117 @@
               <label>Content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <ng-container *ngIf="addForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="hcta_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="hcta_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="hcta_btn_style" class="form-control select-arrow" [(ngModel)]="addForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="hcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="addForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="hcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="hcta_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='featured_cards'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image and CTA buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='dual_map'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-12 form-group mb-3" *ngFor="let x of addForm.map_list; let mi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span *ngIf="addForm.map_list.length>1" (click)="addForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Map Iframe URL {{ addForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <textarea class="form-control" [name]="'dual_map_iframe_'+mi" rows="3"
+                            [(ngModel)]="x.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="addForm.map_list.push({ iframe_url: '' });" type="button">
+                  <span class="material-symbols-rounded">add</span>Add Map
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of addForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="addForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="af_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="af_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="addForm.faq_list.push({ ques: '', answer: '', rank: addForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='internal_links'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Internal link groups and links can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="bg_color" class="form-control" [(ngModel)]="addForm.bg_color" placeholder="#ffffff" />
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="is_margin" [(ngModel)]="addForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
           </div>
           <!-- multiple_featured_product -->
@@ -415,7 +536,7 @@
                 </label>
               </div>
             </ng-container>
-            <ng-container *ngIf="editForm.type!='primary_slider' && editForm.type!='slider' && editForm.type!='flexible' && editForm.type!='secondary' && editForm.type!='highlights'">
+            <ng-container *ngIf="editForm.type!='slider'">
               <div *ngIf="editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -437,6 +558,11 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="editForm.sub_heading"></textarea>
               </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="editForm.description"></textarea>
+              </div>
               <div *ngIf="editForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
                  <input type="text" name="content" class="form-control" [(ngModel)]="editForm.content" #content="ngModel" required />
@@ -448,7 +574,7 @@
               </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && editForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
-                <label>Description</label>
+                <label>Content</label>
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="editForm.content"></textarea>
               </div>
@@ -489,6 +615,117 @@
               <label>content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <ng-container *ngIf="editForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="ehcta_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="ehcta_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="ehcta_btn_style" class="form-control select-arrow" [(ngModel)]="editForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="ehcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="editForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="ehcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="ehcta_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='featured_cards'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image and CTA buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='dual_map'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-12 form-group mb-3" *ngFor="let x of editForm.map_list; let mi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span *ngIf="editForm.map_list.length>1" (click)="editForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Map Iframe URL {{ editForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <textarea class="form-control" [name]="'edit_dual_map_iframe_'+mi" rows="3"
+                            [(ngModel)]="x.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" (click)="editForm.map_list.push({ iframe_url: '' });" type="button">
+                  <span class="material-symbols-rounded">add</span>Add Map
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of editForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="editForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="ef_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="ef_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="editForm.faq_list.push({ ques: '', answer: '', rank: editForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='internal_links'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Internal link groups and links are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="e_bg_color" class="form-control" [(ngModel)]="editForm.bg_color" placeholder="#ffffff" />
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="e_is_margin" [(ngModel)]="editForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
           </div>
           <!-- multiple_featured_product -->

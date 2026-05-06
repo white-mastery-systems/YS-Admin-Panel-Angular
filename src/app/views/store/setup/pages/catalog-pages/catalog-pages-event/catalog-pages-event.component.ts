@@ -29,6 +29,10 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Hotel', value: 'hotel' },
     { name: 'Serviced Apartment', value: 'serviced_apartment' }
   ];
+  pageKinds: any[] = [
+    { name: 'Catalog Page', value: 'catalog' },
+    { name: 'Property / Product Page', value: 'property_product' }
+  ];
 
   layoutTypes: any = [
     { name: 'Slider', value: 'slider' },
@@ -68,6 +72,7 @@ export class CatalogPagesEventComponent implements OnInit {
           setTimeout(() => { this.pageLoader = false; }, 500);
           if (result.status) {
             this.formData = result.data;
+            this.formData.page_kind = this.formData.page_kind || 'catalog';
             this.commonService.secondary_header = this.formData.name;
             if (!this.formData.seo_details) this.formData.seo_details = {};
             this.formData.seo_details.meta_keyword_list = [];
@@ -88,6 +93,7 @@ export class CatalogPagesEventComponent implements OnInit {
         });
       } else {
         this.commonService.secondary_header = 'New Catalog Page';
+        this.formData.page_kind = 'catalog';
         this.formData.page_category = '';
       }
     });
@@ -98,10 +104,29 @@ export class CatalogPagesEventComponent implements OnInit {
     return index !== -1 ? this.pageCategories[index].name : '';
   }
 
+  onChangePageKind(form) {
+    form.page_kind = form.page_kind || 'catalog';
+    if (form.page_kind === 'property_product') {
+      form.type = '';
+    }
+  }
+
+  getPagePreviewPath(form) {
+    const pathParts = [this.commonService.store_details?.base_url, form?.group];
+    if (form?.page_kind !== 'property_product' && form?.type) {
+      pathParts.push(form.type);
+    }
+    if (form?.page_url) {
+      pathParts.push(form.page_url);
+    }
+    return pathParts.filter(part => !!part).join('/');
+  }
+
   // ── Static fields submit ──────────────────────────────────────────────────
 
   onSubmit() {
     this.formData.submit = true;
+    this.onChangePageKind(this.formData);
     this.formData.seo_details.meta_keywords = [];
     this.formData.seo_details.meta_keyword_list?.forEach(obj => {
       this.formData.seo_details.meta_keywords.push(obj.value);

@@ -23,6 +23,7 @@ export class ExtraPageImageComponent implements OnInit {
   ];
   grid_details: any = {}; shopping_assist_config: any;
   fileList: FormData; fileLimitInKB: number = 500; videoLimitInKB: number = 5120;
+  maxImgCount: number = 10;
 
   constructor(
     private router: Router, private activeRoute: ActivatedRoute, private api: StoreApiService, public commonService: CommonService,
@@ -39,8 +40,18 @@ export class ExtraPageImageComponent implements OnInit {
         setTimeout(() => { this.pageLoader = false; }, 500);
         if(result.status) {
           this.layoutDetails = result.data;
+          if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
           this.commonService.secondary_header = this.layoutDetails.name;
-          if(this.layoutDetails.type=='grid' && !this.layoutDetails.image_list.length) {
+          if(this.layoutDetails.type=='section') {
+            this.grid_details = this.commonService.grid_list.find(obj => obj.type==this.layoutDetails.section_grid_type);
+            if(this.grid_details) {
+              if(!this.layoutDetails.image_list.length) {
+                for(let i=1; i<=this.grid_details.resolutions.length; i++) this.layoutDetails.image_list.push({ rank: i, productList: [] });
+              }
+            }
+            else if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, productList: [] });
+          }
+          else if(this.layoutDetails.type=='grid' && !this.layoutDetails.image_list.length) {
             let gridIndex = this.commonService.grid_list.findIndex(obj => obj.type==this.layoutDetails.grid_type);
             if(gridIndex!=-1) {
               this.grid_details = this.commonService.grid_list[gridIndex];
@@ -48,23 +59,63 @@ export class ExtraPageImageComponent implements OnInit {
             }
             else this.layoutDetails.image_list.push({ rank: 1 });
           }
+          else if(this.layoutDetails.type=='testimonial') {
+            if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, content_details: {}, productList: [] });
+          }
+          else if(this.layoutDetails.type=='multiple_highlighted_section') {
+            this.layoutDetails.image_list.forEach(element => {
+              element.content_status = true;
+              if(!element.content_details) element.content_details = {};
+            });
+            if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {}, productList: [] });
+          }
+          else if(this.layoutDetails.type=='shopping_assistant') {
+            this.layoutDetails.image_list = [];
+            this.shopping_assist_config = this.layoutDetails.shopping_assistant_config;
+            if(!this.shopping_assist_config.changing_text?.length) this.shopping_assist_config.changing_text = [{ value: ''}];
+          }
+          else if(this.layoutDetails.type=='content_grid' && !this.layoutDetails.text_list?.length) {
+            this.layoutDetails.text_list = [{}];
+          }
+          else if(this.layoutDetails.type=='video_section' && !this.layoutDetails.video_details) {
+            this.layoutDetails.video_details = {};
+          }
+          else if(this.layoutDetails.type=='multi_categories') {
+            if(this.layoutDetails.multicategory_list?.length) {
+              for(let catData of this.layoutDetails.multicategory_list) {
+                this.findProducts(catData);
+                if(catData.image_list?.length) {
+                  for(let x of catData.image_list) { this.findProducts(x); }
+                }
+              }
+            }
+            else this.layoutDetails.multicategory_list = [{ rank: 1, image_list: [{ rank: 1 }] }];
+          }
           else if(!this.layoutDetails.image_list.length) {
             let gridIndex = this.commonService.blog_grid_list.findIndex(obj => obj.type==this.layoutDetails.grid_type);
             if(gridIndex!=-1) {
               this.grid_details = this.commonService.blog_grid_list[gridIndex];
               for(let i=1; i<=this.grid_details.count; i++) this.layoutDetails.image_list.push({ rank: i });
             }
-            else this.layoutDetails.image_list.push({ rank: 1 });
+            else this.layoutDetails.image_list.push({ rank: 1, points_list: [], productList: [] });
           }
-          else if(this.layoutDetails.type=='testimonial') {
-            if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, content_details: {} });
+          // find product
+          if(this.layoutDetails.image_list?.length) {
+            for(let x of this.layoutDetails.image_list)
+            {
+              this.findProducts(x);
+              if (x.points_list?.length) {
+                for (let pt of x.points_list) {
+                  this.findProducts(pt);
+                }
+              }
+            }
           }
-          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section') {
-            if(this.layoutDetails.type=='multiple_highlighted_section') this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {} });
-            else this.layoutDetails.image_list.push({ rank: 1, points_list: [] });
-          }
-          else if(this.layoutDetails.type=='video_section' && !this.layoutDetails.video_details) {
-            this.layoutDetails.video_details = {};
+          if(this.layoutDetails.points_list?.length) {
+            for(let x of this.layoutDetails.points_list)
+            {
+              this.findProducts(x);
+            }
           }
         }
         else {
@@ -73,6 +124,18 @@ export class ExtraPageImageComponent implements OnInit {
         }
       });
     });
+  }
+
+  findProducts(x) {
+    x.productList = [];
+    if(x.link_type=='product' && x.product_id) {
+			this.api.PRODUCT_DETAILS(x.product_id).subscribe(result => {
+				if(result.status) {
+          x.productList = [result.data];
+          x.selected_product = result.data.name;
+        }
+			});
+		}
   }
 
   searchProduct(catId, searchTerm, i) {
@@ -86,6 +149,17 @@ export class ExtraPageImageComponent implements OnInit {
 			});
 		}
 	}
+  searchProductForMultiCat(catId, searchTerm, i, j) {
+    this.layoutDetails.multicategory_list[i].image_list[j].productList = [];
+    this.layoutDetails.multicategory_list[i].image_list[j].searchLoader = true;
+    if(catId && searchTerm.length>=3) {
+      this.api.PRODUCT_LIST({ category_id: catId, search: searchTerm }).subscribe(result => {
+        if(result.status) this.layoutDetails.multicategory_list[i].image_list[j].productList = result.list;
+        else console.log("response", result);
+        this.layoutDetails.multicategory_list[i].image_list[j].searchLoader = false;
+      });
+    }
+  }
   searchProductForLook(catId, searchTerm, i, j) {
     this.layoutDetails.image_list[i].points_list[j].productList = [];
     this.layoutDetails.image_list[i].points_list[j].searchLoader = true;
@@ -105,22 +179,37 @@ export class ExtraPageImageComponent implements OnInit {
     else if(this.layoutDetails.type=='multiple_highlighted_section') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_status: true, content_details: {} });
     }
+    else if(this.layoutDetails.type=='content_grid') {
+      this.layoutDetails.text_list.push({});
+    }
     else {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, points_list: [] });
     }
   }
 
-  onUpdateLayout() {
+  async onUpdateLayout() {
     this.btnLoader = true;
-    let layoutData: any = {};
-    for(let key in this.layoutDetails) {
-      if(this.layoutDetails.hasOwnProperty(key)) layoutData[key] = this.layoutDetails[key];
-    }
+    let layoutData = structuredClone(this.layoutDetails);
     this.fileList = new FormData();
-    if(layoutData.type=='video_section') {
+    if(layoutData.type=='shopping_assistant') {
+      layoutData.shopping_assistant_config = {};
+      layoutData.store_id = this.commonService.store_details._id;
+      layoutData.page_id = this.params.id;
+      layoutData._id = this.layoutDetails._id;
+      for(let key in this.shopping_assist_config) {
+        if(key!='image' && key!='temp_image' && this.shopping_assist_config.hasOwnProperty(key))
+          layoutData.shopping_assistant_config[key] = this.shopping_assist_config[key];
+      }
+      if(this.shopping_assist_config.img_change) this.fileList.append('attachments', this.shopping_assist_config.image);
+      else layoutData.shopping_assistant_config.image = this.shopping_assist_config.image;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
+    else if(layoutData.type=='video_section') {
       layoutData.video_details = {};
-      layoutData.store_id = this.commonService.store_details._id
-        layoutData.page_id = this.params.id
+      layoutData.store_id = this.commonService.store_details._id;
+      layoutData.page_id = this.params.id;
+      layoutData._id = this.layoutDetails._id;
       for(let key in this.layoutDetails.video_details) {
         if(this.layoutDetails.video_details.hasOwnProperty(key) && key!='thumbnail' && key!='src' && key!='temp_image' && key!='temp_video')
           layoutData.video_details[key] = this.layoutDetails.video_details[key];
@@ -132,11 +221,34 @@ export class ExtraPageImageComponent implements OnInit {
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
+    else if(layoutData.type=='multi_categories') {
+      await Promise.all(
+        layoutData.multicategory_list.map(async (catData, i) => {
+          catData.image_list = await this.onSetFormData2(i, catData.image_list);
+        })
+      );
+      layoutData.store_id = this.commonService.store_details._id;
+      layoutData.page_id = this.params.id;
+      layoutData._id = this.layoutDetails._id;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
+    else if(layoutData.type=='content_grid') {
+      this.onSetFormData(layoutData.text_list).then((imgList) => {
+        layoutData.text_list = imgList;
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      });
+    }
     else {
       this.onSetFormData(layoutData.image_list).then((imgList) => {
         layoutData.image_list = imgList;
-        layoutData.store_id = this.commonService.store_details._id
-        layoutData.page_id = this.params.id
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
         this.fileList.append('data', JSON.stringify(layoutData));
         this.callUpdateApi();
       });
@@ -183,6 +295,12 @@ export class ExtraPageImageComponent implements OnInit {
           delete objData.mobile_video;
           this.fileList.append('attachments', imgData['mobile_video'], i+'_mv');
         }
+        // content
+        delete objData.temp_img;
+        if(imgData.img_change) {
+          delete objData.image;
+          this.fileList.append('attachments', imgData['image'], i+'_c');
+        }
         updatedList.push(objData)
       }
       resolve(updatedList);
@@ -190,8 +308,9 @@ export class ExtraPageImageComponent implements OnInit {
   }
 
   fileChangeListener(devType, index, event) {
-    delete this.layoutDetails.image_list[index].d_err_msg;
-    delete this.layoutDetails.image_list[index].m_err_msg;
+    delete this.layoutDetails.image_list[index]?.d_err_msg;
+    delete this.layoutDetails.image_list[index]?.m_err_msg;
+    delete this.layoutDetails.text_list?.[index]?.c_err_msg;
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
       if(["image/jpeg", "image/png", "image/gif"].indexOf(inFile.type) != -1) {
@@ -207,13 +326,21 @@ export class ExtraPageImageComponent implements OnInit {
             }
             else this.layoutDetails.image_list[index].d_err_msg = true;
           }
-          else {
+          else if(devType=='mobile') {
             if(fileInKB<=this.fileLimitInKB) {
               this.layoutDetails.image_list[index].temp_mobile_img = (<FileReader>event.target).result;
               this.layoutDetails.image_list[index].mobile_img = fileData;
               this.layoutDetails.image_list[index].mobile_img_change = true;
             }
             else this.layoutDetails.image_list[index].m_err_msg = true;
+          }
+          else if(devType=='content') {
+            if(fileInKB<=this.fileLimitInKB) {
+              this.layoutDetails.text_list[index].temp_img = (<FileReader>event.target).result;
+              this.layoutDetails.text_list[index].image = fileData;
+              this.layoutDetails.text_list[index].img_change = true;
+            }
+            else this.layoutDetails.text_list[index].c_err_msg = true;
           }
         }
         reader.readAsDataURL(fileData);
@@ -254,6 +381,28 @@ export class ExtraPageImageComponent implements OnInit {
     }
   }
 
+  shopAssistFileChangeListener(event) {
+    delete this.shopping_assist_config.err_msg;
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png"].indexOf(inFile.type) != -1) {
+        let reader = new FileReader();
+        let fileData = event.target.files[0];
+        let fileInKB = Math.round(fileData.size/ 1024);
+        reader.onload = (event: ProgressEvent) => {
+          if(fileInKB<=this.fileLimitInKB) {
+            this.shopping_assist_config.temp_image = (<FileReader>event.target).result;
+            this.shopping_assist_config.image = fileData;
+            this.shopping_assist_config.img_change = true;
+          }
+          else this.shopping_assist_config.err_msg = true;
+        }
+        reader.readAsDataURL(fileData);
+      }
+      else console.log("Invaid file");    
+    }
+  }
+
   videoSecFileChangeListener(event) {
     delete this.layoutDetails.video_details.img_err_msg;
     if(event.target.files && event.target.files[0]) {
@@ -262,20 +411,59 @@ export class ExtraPageImageComponent implements OnInit {
       let fileInKB = Math.round(fileData.size/ 1024);
       if(["image/jpeg", "image/png"].indexOf(fileData.type) != -1) 
       {
-      reader.onload = (event: ProgressEvent) => {
-        if(fileInKB<=this.fileLimitInKB) {
-          this.layoutDetails.video_details.temp_image = (<FileReader>event.target).result;
-          this.layoutDetails.video_details.thumbnail = fileData;
-          this.layoutDetails.video_details.img_change = true;
+        reader.onload = (event: ProgressEvent) => {
+          if(fileInKB<=this.fileLimitInKB) {
+            this.layoutDetails.video_details.temp_image = (<FileReader>event.target).result;
+            this.layoutDetails.video_details.thumbnail = fileData;
+            this.layoutDetails.video_details.img_change = true;
+          }
+          else this.layoutDetails.video_details.img_err_msg = true;
         }
-        else this.layoutDetails.video_details.img_err_msg = true;
-      }
-      reader.readAsDataURL(fileData);
+        reader.readAsDataURL(fileData);
       }
       else console.log("Invaid file");
     }
   }
   
+  onSetFormData2(pInd, imgList) {
+    return new Promise((resolve, reject) => {
+      let updatedList = [];
+      for(let i=0; i<imgList.length; i++) {
+        let imgData = imgList[i];
+        let objData = Object.assign({}, imgData);
+        delete objData.temp_desktop_img;
+        if(imgData.desktop_img_change) {
+          delete objData.desktop_img;
+          this.fileList.append('attachments', imgData['desktop_img'], pInd+'_'+i+'_d');
+        }
+        updatedList.push(objData);
+      }
+      resolve(updatedList);
+    });
+  }
+
+  multiCatFileChangeListener(pIndex, index, event) {
+    delete this.layoutDetails.multicategory_list[pIndex].image_list[index]?.d_err_msg;
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png"].indexOf(inFile.type) != -1) {
+        let reader = new FileReader();
+        let fileData = event.target.files[0];
+        let fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (event: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            this.layoutDetails.multicategory_list[pIndex].image_list[index].temp_desktop_img = (<FileReader>event.target).result;
+            this.layoutDetails.multicategory_list[pIndex].image_list[index].desktop_img = fileData;
+            this.layoutDetails.multicategory_list[pIndex].image_list[index].desktop_img_change = true;
+          }
+          else this.layoutDetails.multicategory_list[pIndex].image_list[index].d_err_msg = true;
+        }
+        reader.readAsDataURL(fileData);
+      }
+      else console.log("Invaid file");
+    }
+  }
+
   videoFileChangeListener(event) {
     delete this.layoutDetails.video_details.vid_err_msg;
     if(event.target.files && event.target.files[0]) {

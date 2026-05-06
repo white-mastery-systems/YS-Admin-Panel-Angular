@@ -21,9 +21,16 @@ export class HomeLayoutComponent implements OnInit {
   layoutTypes: any = [
     { name: "Primary Slider", value: "primary_slider" },
     { name: "Main Slider", value: "slider" },
+    { name: "Hero CTA", value: "hero_cta" },
     { name: "Section Grid", value: "section" },
     { name: "Featured Sections", value: "featured_section" },
     { name: "Featured Products", value: "featured_product" },
+    { name: "Amenities", value: "amenities" },
+    { name: "Featured Cards", value: "featured_cards" },
+    { name: "CTA", value: "cta" },
+    { name: "Dual Map", value: "dual_map" },
+    { name: "FAQ", value: "faq" },
+    { name: "Internal Links", value: "internal_links" },
     { name: "Highlighted Section", value: "highlighted_section" },
     { name: "Multi-Highlighted Section", value: "multiple_highlighted_section" },
     { name: "Multi-Tab Featured Products", value: "multiple_featured_product" },
@@ -103,7 +110,7 @@ export class HomeLayoutComponent implements OnInit {
     else if(this.commonService.store_details?.package_details?.package_id==environment.config_data.free_package_id)
       document.getElementById("openCommonUpgradeModal").click();
     else {
-      this.addForm = { layout_list: [{}], rank: this.maxRank+1 };
+      this.addForm = { layout_list: [{}], rank: this.maxRank+1, is_margin: true, bg_color: '' };
       this.modalService.open(modalName, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});
     }
   }
@@ -140,6 +147,8 @@ export class HomeLayoutComponent implements OnInit {
         this.editForm = result.data;
         this.editForm.options = [];
         this.editForm.prev_rank = this.editForm.rank;
+        if(this.editForm.is_margin === undefined) this.editForm.is_margin = true;
+        if(!this.editForm.bg_color) this.editForm.bg_color = '';
         this.editForm.dup_type = this.findType(this.editForm.type);
         if(this.editForm.type!='section' && this.editForm.type!='multi_grid_featured_section')
           delete this.editForm.section_grid_type;
@@ -151,6 +160,16 @@ export class HomeLayoutComponent implements OnInit {
           this.editForm.text_list?.forEach(el => {
             this.editForm.options.push({ display: el.name, value: el.name });
           });
+        }
+        else if(this.editForm.type=='faq' && !this.editForm.faq_list?.length) {
+          this.editForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
+        }
+        else if(this.editForm.type=='dual_map' && !this.editForm.map_list?.length) {
+          this.editForm.map_list = [{ iframe_url: '' }];
+        }
+        else if(this.editForm.type=='internal_links') {
+          this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
+          if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
         }
 			}
 			else console.log("response", result);
@@ -236,6 +255,29 @@ export class HomeLayoutComponent implements OnInit {
     this.addForm.grid_list = []; this.gridList = [];
     delete this.addForm.section_grid_type;
     this.addForm.multitab_list = [{}];
+    if(x=='hero_cta') {
+      this.addForm.btn_status = false;
+      this.addForm.btn_text = '';
+      this.addForm.btn_style = 'primary';
+      this.addForm.btn_text_color = 'light';
+      this.addForm.btn_link_type = 'internal';
+      this.addForm.btn_link = '';
+    }
+    else if(x=='amenities') {
+      this.addForm.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
+    }
+    else if(x=='featured_cards') {
+      this.addForm.cta_list = [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
+    }
+    else if(x=='faq') {
+      this.addForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
+    }
+    else if(x=='dual_map') {
+      this.addForm.map_list = [{ iframe_url: '' }];
+    }
+    else if(x=='internal_links') {
+      this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
+    }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
       this.addForm.section_grid_type = this.addForm.grid_list[0].type;
@@ -254,6 +296,58 @@ export class HomeLayoutComponent implements OnInit {
 
   open_website() {
     window.open(this.commonService.store_details?.base_url);
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  getInternalLinksCount(segment) {
+    if(segment?.group_list?.length) {
+      return segment.group_list.reduce((count, group) => count + (group?.link_list?.length || 0), 0);
+    }
+    return segment?.cta_list?.length || 0;
   }
 
 }

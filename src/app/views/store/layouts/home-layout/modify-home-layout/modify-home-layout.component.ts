@@ -39,6 +39,10 @@ export class ModifyHomeLayoutComponent implements OnInit {
         if(result.status) {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
+          else if(this.layoutDetails.type=="hero_cta") this.maxImgCount = 1;
+          else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
+          else if(this.layoutDetails.type=="featured_cards") this.maxImgCount = 10;
+          else if(this.layoutDetails.type=="cta") this.maxImgCount = 1;
           this.commonService.secondary_header = this.layoutDetails.name;
           if(this.layoutDetails.type=='section') {
             this.grid_details = this.commonService.grid_list.find(obj => obj.type==this.layoutDetails.section_grid_type);
@@ -53,7 +57,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
             this.layoutDetails.text_list.push({});
           }
           else if(this.layoutDetails.type=='testimonial') {
-            if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, content_details: {}, productList: [] });
+            this.layoutDetails.image_list.forEach(el => {
+              if(!el.content_details) el.content_details = {};
+              if(el.content_details.review_star === undefined || el.content_details.review_star === null) el.content_details.review_star = null;
+            });
+            if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, content_details: { review_star: null }, productList: [] });
           }
           else if(this.layoutDetails.type=='shopping_assistant') {
             this.shopping_assist_config = this.layoutDetails.shopping_assistant_config;
@@ -78,6 +86,60 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             else
               this.layoutDetails.multicategory_list = [{ rank: 1, image_list: [{ rank: 1 }] }];
+          }
+          else if(this.layoutDetails.type=='hero_cta') {
+            if(!this.layoutDetails.image_list?.length) {
+              this.layoutDetails.image_list = [{ rank: 1 }];
+            }
+            if(!this.layoutDetails.cta_list?.length) {
+              this.layoutDetails.cta_list = [
+                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' },
+                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
+              ];
+            }
+          }
+          else if(this.layoutDetails.type=='amenities') {
+            if(!this.layoutDetails.text_list?.length) {
+              this.layoutDetails.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
+            }
+          }
+          else if(this.layoutDetails.type=='featured_cards') {
+            if(!this.layoutDetails.featured_cards_list?.length) {
+              // backward-compatible: if old fields exist, wrap them as a single group
+              const legacyGroup = {
+                heading: this.layoutDetails.heading || '',
+                sub_heading: this.layoutDetails.sub_heading || '',
+                description: this.layoutDetails.description || '',
+                cover_img: this.layoutDetails.cover_img || '',
+                image_list: this.layoutDetails.image_list?.length ? this.layoutDetails.image_list : [{ rank: 1 }],
+                cta_list: this.layoutDetails.cta_list?.length ? this.layoutDetails.cta_list : [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }]
+              };
+              this.layoutDetails.featured_cards_list = [legacyGroup];
+            }
+          }
+          else if(this.layoutDetails.type=='internal_links') {
+            this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
+            if(!this.layoutDetails.group_list.length) {
+              this.layoutDetails.group_list = [this.getDefaultInternalLinkGroup()];
+            }
+          }
+          else if(this.layoutDetails.type=='cta') {
+            if(!this.layoutDetails.image_list?.length) {
+              this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
+            }
+            if(!this.layoutDetails.cta_list?.length) {
+              this.layoutDetails.cta_list = [{
+                heading: '',
+                sub_heading: '',
+                description: '',
+                btn_status: false,
+                btn_text: '',
+                btn_style: 'primary',
+                btn_text_color: 'light',
+                btn_link_type: 'internal',
+                btn_link: ''
+              }];
+            }
           }
           else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid') {
             if(this.layoutDetails.type=='multiple_highlighted_section') this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {}, productList: [] });
@@ -151,7 +213,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
 
   addNewImg() {
     if(this.layoutDetails.type=='testimonial') {
-      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_details: {} });
+      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_details: { review_star: null } });
     }
     else if(this.layoutDetails.type=='multiple_highlighted_section') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_status: true, content_details: {} });
@@ -192,7 +254,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
-    else if(layoutData.type=='content_grid') {
+    else if(layoutData.type=='content_grid' || layoutData.type=='amenities') {
       this.onSetFormData(layoutData.text_list).then((imgList) => {
         layoutData.text_list = imgList;
         this.fileList.append('data', JSON.stringify(layoutData));
@@ -209,11 +271,197 @@ export class ModifyHomeLayoutComponent implements OnInit {
       this.callUpdateApi();
     }
     else {
+      if(layoutData.type=='featured_cards') {
+        layoutData.cover_img_change = false;
+        layoutData.cover_img = '';
+        layoutData.image_list = [];
+        layoutData.cta_list = [];
+
+        if(!Array.isArray(layoutData.featured_cards_list)) layoutData.featured_cards_list = [];
+        layoutData.featured_cards_list = layoutData.featured_cards_list.map((group, gi) => {
+          const g = Object.assign({}, group);
+          delete g.temp_cover_img;
+          if(g.cover_img_change && g.cover_img) {
+            this.fileList.append('attachments', g.cover_img, `fc_${gi}_cover`);
+          }
+          g.image_list = (Array.isArray(g.image_list) ? g.image_list : []).map((img, ii) => {
+            const x = Object.assign({}, img);
+            delete x.temp_desktop_img; delete x.temp_mobile_img;
+            if(img.desktop_img_change) {
+              delete x.desktop_img;
+              this.fileList.append('attachments', img['desktop_img'], `fc_${gi}_${ii}_d`);
+            }
+            if(img.mobile_img_change) {
+              delete x.mobile_img;
+              this.fileList.append('attachments', img['mobile_img'], `fc_${gi}_${ii}_m`);
+            }
+            return x;
+          });
+          return g;
+        });
+      }
+      if(layoutData.type=='internal_links') {
+        layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
+        delete layoutData.cta_list;
+      }
       this.onSetFormData(layoutData.image_list).then((imgList) => {
         layoutData.image_list = imgList;
         this.fileList.append('data', JSON.stringify(layoutData));
         this.callUpdateApi();
       });
+    }
+  }
+
+  addFeaturedCardsGroup() {
+    if(!Array.isArray(this.layoutDetails.featured_cards_list)) this.layoutDetails.featured_cards_list = [];
+    this.layoutDetails.featured_cards_list.push({
+      heading: '',
+      sub_heading: '',
+      description: '',
+      cover_img: '',
+      image_list: [{ rank: 1 }],
+      cta_list: [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }]
+    });
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  addInternalLinkGroup() {
+    this.layoutDetails.group_list.push(this.getDefaultInternalLinkGroup());
+    this.syncInternalLinkGroupRanks();
+  }
+
+  removeInternalLinkGroup(groupIndex) {
+    this.layoutDetails.group_list.splice(groupIndex, 1);
+    this.syncInternalLinkGroupRanks();
+  }
+
+  addInternalLinkItem(groupIndex) {
+    this.layoutDetails.group_list[groupIndex].link_list.push(this.getDefaultInternalLinkItem());
+  }
+
+  onInternalLinkGroupRankChange() {
+    this.syncInternalLinkGroupRanks(true);
+  }
+
+  syncInternalLinkGroupRanks(sortByRank = false) {
+    if(!Array.isArray(this.layoutDetails.group_list)) {
+      this.layoutDetails.group_list = [];
+      return;
+    }
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : index + 1
+    }));
+    if(sortByRank) this.layoutDetails.group_list.sort((a, b) => a.rank - b.rank);
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: index + 1
+    }));
+  }
+
+  addFeaturedCardsImage(groupIndex) {
+    if(!this.layoutDetails.featured_cards_list?.[groupIndex]) return;
+    if(!Array.isArray(this.layoutDetails.featured_cards_list[groupIndex].image_list)) {
+      this.layoutDetails.featured_cards_list[groupIndex].image_list = [];
+    }
+    this.layoutDetails.featured_cards_list[groupIndex].image_list.push({ rank: this.layoutDetails.featured_cards_list[groupIndex].image_list.length + 1 });
+  }
+
+  onFeaturedCardsCoverChange(groupIndex, event) {
+    if(!this.layoutDetails.featured_cards_list?.[groupIndex]) return;
+    delete this.layoutDetails.featured_cards_list[groupIndex].cover_img_err;
+    if(event.target.files && event.target.files[0]) {
+      const fileData = event.target.files[0];
+      const fileInKB = Math.round(fileData.size / 1024);
+      if(["image/jpeg", "image/png", "image/gif", "image/webp"].indexOf(fileData.type) != -1) {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            this.layoutDetails.featured_cards_list[groupIndex].temp_cover_img = (<FileReader>e.target).result;
+            this.layoutDetails.featured_cards_list[groupIndex].cover_img = fileData;
+            this.layoutDetails.featured_cards_list[groupIndex].cover_img_change = true;
+          }
+          else this.layoutDetails.featured_cards_list[groupIndex].cover_img_err = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
+    }
+  }
+
+  onFeaturedCardsImageChange(groupIndex, imgIndex, devType, event) {
+    const group = this.layoutDetails.featured_cards_list?.[groupIndex];
+    if(!group?.image_list?.[imgIndex]) return;
+    delete group.image_list[imgIndex]?.d_err_msg;
+    delete group.image_list[imgIndex]?.m_err_msg;
+    if(event.target.files && event.target.files[0]) {
+      const fileData = event.target.files[0];
+      const fileInKB = Math.round(fileData.size / 1024);
+      if(["image/jpeg", "image/png", "image/gif", "image/webp"].indexOf(fileData.type) != -1) {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent) => {
+          if(devType=='desktop') {
+            if(fileInKB <= this.fileLimitInKB) {
+              group.image_list[imgIndex].temp_desktop_img = (<FileReader>e.target).result;
+              group.image_list[imgIndex].desktop_img = fileData;
+              group.image_list[imgIndex].desktop_img_change = true;
+            }
+            else group.image_list[imgIndex].d_err_msg = true;
+          }
+          else {
+            if(fileInKB <= this.fileLimitInKB) {
+              group.image_list[imgIndex].temp_mobile_img = (<FileReader>e.target).result;
+              group.image_list[imgIndex].mobile_img = fileData;
+              group.image_list[imgIndex].mobile_img_change = true;
+            }
+            else group.image_list[imgIndex].m_err_msg = true;
+          }
+        };
+        reader.readAsDataURL(fileData);
+      }
     }
   }
 
@@ -290,6 +538,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
     delete this.layoutDetails.image_list[index]?.d_err_msg;
     delete this.layoutDetails.image_list[index]?.m_err_msg;
     delete this.layoutDetails.text_list[index]?.c_err_msg;
+    if(devType=='fc_cover') delete this.layoutDetails.cover_img_err;
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
       if(["image/jpeg", "image/png", "image/gif"].indexOf(inFile.type) != -1) {
@@ -312,6 +561,14 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.image_list[index].mobile_img_change = true;
             }
             else this.layoutDetails.image_list[index].m_err_msg = true;
+          }
+          else if(devType=='fc_cover') {
+            if(fileInKB<=this.fileLimitInKB) {
+              this.layoutDetails.temp_cover_img = (<FileReader>event.target).result;
+              this.layoutDetails.cover_img = fileData;
+              this.layoutDetails.cover_img_change = true;
+            }
+            else this.layoutDetails.cover_img_err = true;
           }
           else {
             if(fileInKB<=this.fileLimitInKB) {

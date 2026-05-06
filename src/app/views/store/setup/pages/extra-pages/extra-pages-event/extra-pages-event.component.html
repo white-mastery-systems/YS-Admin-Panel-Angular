@@ -161,9 +161,15 @@
                 <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
                 <p class="w-30 w-sm-100 light-font m-b-0">{{ findType(x.type) }}</p>
                 <p class="w-20 w-sm-100 light-font m-b-0">
+                  <ng-container *ngIf="x.type=='scrolling_text'">{{ x.text_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='multi_grid_featured_section'">{{ x.multigrid_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='multiple_featured_product'">{{ x.multitab_list?.length }} Tiles</ng-container>
-                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product'].indexOf(x.type)==-1">
+                  <ng-container *ngIf="x.type=='multi_categories'">{{ x.multicategory_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='content_grid'">{{ x.text_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='video_section'">{{ x.video_details?.src ? '1 Video' : '-' }}</ng-container>
+                  <ng-container *ngIf="x.type=='featured_product'">{{ x.product_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='flexible' || x.type=='shopping_assistant' || x.type=='blogs' || x.type=='instagram'">-</ng-container>
+                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'video_section', 'content_grid', 'featured_product', 'flexible', 'shopping_assistant', 'blogs', 'instagram'].indexOf(x.type)==-1">
                     {{ x.image_list?.length }} Tiles
                   </ng-container>
                 </p>
@@ -182,7 +188,7 @@
                         [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''">
                         {{commonService.desktop_device? 'expand_more': 'more_vert'}}</span></button>
                     <div class="dropdown-menu" ngbDropdownMenu>
-                      <button *ngIf="x.type!='primary_slider'" class="dropdown-item d-flex" (click)="onEditDetails(x._id, editModal);">
+                      <button class="dropdown-item d-flex" (click)="onEditDetails(x._id, editModal);">
                         <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                           'visibility'}}</span> Details
                       </button>
@@ -193,7 +199,7 @@
                       <button *ngIf="x.type=='multi_grid_featured_section'" class="dropdown-item d-flex" routerLink="/setup/layouts/home/grid/{{x._id}}">
                         <span class="material-symbols-rounded mr-2">grid_view</span> List
                       </button>
-                      <button *ngIf="x.type!='primary_slider'" class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                      <button class="dropdown-item d-flex" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
                         <span class="material-symbols-rounded mr-2">delete</span> Remove
                       </button>
                     </div>
@@ -241,38 +247,28 @@
               <label>Type</label>
               <select name="type" class="form-control select-arrow" [(ngModel)]="addForm.type"
                 (change)="onChangeType(addForm.type);" required>
-                <option Value="">-- Select --</option>
-                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1:20;">{{x.name}}</option>
+                <option value="">-- Select --</option>
+                <option [ngValue]="x.value" *ngFor="let x of layoutTypes">{{x.name}}</option>
               </select>
             </div>
             <div *ngIf="addForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
               <label *ngFor="let x of addForm.grid_list | fieldSearch:'status':'enabled'; let i=index;" class="radio radio-primary display-inline-b mr-5 mb-3">
-                <input type="radio" name="grid_type" [value]="x.type" [checked]="x.type==addForm.grid_type"
-                (change)="addForm.grid_type=x.type; addForm.grid_count=x.count;">
+                <input type="radio" name="section_grid_type" [value]="x.type" [checked]="x.type==addForm.section_grid_type"
+                (change)="addForm.section_grid_type=x.type; addForm.grid_count=x.count;">
                 <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
                 <span class="checkmark"></span>
               </label>
             </div>
-            <div class="form-group mb-3" [ngClass]="(addForm.type=='highlights')? 'col-md-12': 'col-md-6'">
+            <div class="col-md-6 form-group mb-3">
               <label>Title</label>
               <input type="text" name="name" class="form-control" [(ngModel)]="addForm.name" #name="ngModel" required />
             </div>
-            <div *ngIf="addForm.type!='highlights'" class="col-md-6 form-group mb-3">
+            <div class="col-md-6 form-group mb-3">
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addForm.rank" #rank="ngModel" min="1"
                 max="{{maxRank+1}}" appNumberOnly required />
             </div>
-            <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
-              <label>Link to Catalog</label>
-              <select name="featured_category_id" class="form-control select-arrow"
-                [(ngModel)]="addForm.featured_category_id" required>
-                <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
-                <option value="all_products">/all-products</option>
-                <option value="new_arrivals">/new-arrivals</option>
-                <option value="on_sale">/on-sale</option>
-                <option value="featured_products">/featured-products</option>
-              </select>
-            </div>
+
             <ng-container *ngIf="addForm.type=='instagram' && addForm.insta_config">
               <div class="col-md-12 form-group mb-3">
                 <label>Token</label>
@@ -289,12 +285,12 @@
               </div>
             </ng-container>
             <ng-container
-              *ngIf="addForm.type!='primary_slider' && addForm.type!='slider' && addForm.type!='flexible' && addForm.type!='secondary' && addForm.type!='highlights'">
+              *ngIf="addForm.type!='slider' && addForm.type!='flexible' && addForm.type!='secondary' && addForm.type!='highlights'">
               <div *ngIf="addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
                 <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="addForm.blogs_type"
-                  (change)="(addForm.type=='blogs' || addForm.type=='instagram')? addForm.grid_type=gridList[0].type: '';"
+                  (change)="(addForm.type=='blogs' || addForm.type=='instagram')? addForm.section_grid_type=gridList[0].type: '';"
                   required>
                   <option value="grid">Grid</option>
                   <option value="slider">Slider</option>
@@ -311,6 +307,10 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
+              <div *ngIf="addForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
+                <label>Publish ID</label>
+                 <input type="text" name="content" class="form-control" [(ngModel)]="addForm.content" #content="ngModel" required />
+              </div>
               <div *ngIf="addForm.type=='scrolling_text'" class="col-md-12 form-group mb-3">
                 <tag-input class="w-100" name="options" id="options" [(ngModel)]="addForm.options" placeholder=""
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
@@ -326,13 +326,33 @@
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">
-                      <input type="radio" name="grid_type" [value]="x.type"
-                        [checked]="x.type==addForm.grid_type" (change)="addForm.grid_type=x.type;">
+                      <input type="radio" name="section_grid_type" [value]="x.type"
+                        [checked]="x.type==addForm.section_grid_type" (change)="addForm.section_grid_type=x.type;">
                       <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
                       <span class="checkmark"></span>
                     </label>
                   </ng-container>
                 </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='featured_product' || addForm.type=='featured_section_product'">
+              <div *ngIf="addForm.type=='featured_section_product'" class="col-md-12 form-group mb-3">
+                <label>Products Title</label>
+                <input type="text" name="content" class="form-control" [(ngModel)]="addForm.content" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Link to Catalog</label>
+                <select name="featured_category_id" class="form-control select-arrow"
+                  [(ngModel)]="addForm.featured_category_id" required>
+                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                  <option value="all_products">/all-products</option>
+                  <option value="new_arrivals">/new-arrivals</option>
+                  <option value="on_sale">/on-sale</option>
+                  <option value="featured_products">/featured-products</option>
+                  <option value="best_sellers">/best-sellers</option>
+                  <option value="top_rated">/top-rated</option>
+                </select>
               </div>
             </ng-container>
             <!-- flexible -->
@@ -355,14 +375,15 @@
                   <div class="row">
                     <span *ngIf="addForm.multitab_list.length>1" (click)="addForm.multitab_list.splice(i, 1);"
                       class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
-                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category' || x.type=='vendor')? 'col-md-4': 'col-md-6'">
                       <label>Type</label>
                       <select name="type{{i}}" class="form-control select-arrow" [(ngModel)]="x.type" #type="ngModel"
                         required>
                         <option [ngValue]="x.type" *ngFor="let x of multiTabOptions">{{x.disp_name}}</option>
+                        <option *ngIf="commonService.vendor_list?.length" value="vendor">Vendor</option>
                       </select>
                     </div>
-                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category' || x.type=='vendor')? 'col-md-4': 'col-md-6'">
                       <label>Name</label>
                       <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel"
                         required />
@@ -374,11 +395,18 @@
                         <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
                       </select>
                     </div>
+                    <div *ngIf="x.type=='vendor'" class="col-md-4 form-group mb-3">
+                      <label>Link to Vendor</label>
+                      <select name="category_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.category_id"
+                        #category_id="ngModel" required>
+                        <option [ngValue]="x._id" *ngFor="let x of commonService.vendor_list | orderAsc: 'company_details.brand'">{{x.company_details.brand}}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="addForm.multitab_list?.length<3" class="row">
+            <div *ngIf="addForm.multitab_list?.length<5" class="row">
               <div class="col-md-12">
                 <p (click)="addForm.multitab_list.push({});"><b class="add-another">ADD NEW</b></p>
               </div>
@@ -417,7 +445,7 @@
       <div *ngIf="!popupLoader" class="modal-body">
         <div class="form-group">
           <div class="row">
-            <div *ngIf="editForm.type!='primary_slider'" class="col-md-12 mb-3">
+            <div class="col-md-12 mb-3">
               <label class="checkbox checkbox-primary">
                 <input class="form-check-input" type="checkbox" name="active_status"
                   [(ngModel)]="editForm.active_status">
@@ -426,36 +454,23 @@
               </label>
             </div>
             <div class="form-group mb-3"
-              [ngClass]="(editForm.grid_type)? 'col-md-6': 'col-md-12'">
+              [ngClass]="(editForm.section_grid_type)? 'col-md-6': 'col-md-12'">
               <label>Type</label>
               <input type="text" name="dup_type" class="form-control" [(ngModel)]="editForm.dup_type" readonly />
             </div>
-            <div *ngIf="editForm.grid_type" class="col-md-6 form-group mb-3">
+            <div *ngIf="editForm.section_grid_type" class="col-md-6 form-group mb-3">
               <label>Grid Type</label>
               <input type="text" name="dup_grid_type" class="form-control" [(ngModel)]="editForm.dup_grid_type" readonly />
             </div>
-            <div class="form-group mb-3"
-              [ngClass]="(editForm.type=='highlights' || editForm.type=='primary_slider')? 'col-md-12': 'col-md-6'">
+            <div class="col-md-6 form-group mb-3">
               <label>Title</label>
               <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel"
                 required />
             </div>
-            <div *ngIf="editForm.type!='primary_slider' && editForm.type!='highlights'"
-              class="col-md-6 form-group mb-3">
+            <div class="col-md-6 form-group mb-3">
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
                 max="{{maxRank}}" appNumberOnly required />
-            </div>
-            <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
-              <label>Link to Catalog</label>
-              <select name="featured_category_id" class="form-control select-arrow"
-                [(ngModel)]="editForm.featured_category_id" #featured_category_id="ngModel" required>
-                <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
-                <option value="all_products">/all-products</option>
-                <option value="new_arrivals">/new-arrivals</option>
-                <option value="on_sale">/on-sale</option>
-                <option value="featured_products">/featured-products</option>
-              </select>
             </div>
             <ng-container *ngIf="editForm.type=='instagram' && editForm.insta_config">
               <div *ngIf="commonService.master_token" class="col-md-12 form-group mb-3">
@@ -473,12 +488,12 @@
               </div>
             </ng-container>
             <ng-container
-              *ngIf="editForm.type!='primary_slider' && editForm.type!='slider' && editForm.type!='flexible' && editForm.type!='secondary' && editForm.type!='highlights'">
+              *ngIf="editForm.type!='slider' && editForm.type!='flexible' && editForm.type!='secondary' && editForm.type!='highlights'">
               <div *ngIf="editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
                 <select name="blogs_type" class="form-control select-arrow" [(ngModel)]="editForm.blogs_type"
-                  (change)="(editForm.type=='blogs' || editForm.type=='instagram')? editForm.grid_type=gridList[0].type: '';"
+                  (change)="(editForm.type=='blogs' || editForm.type=='instagram')? editForm.section_grid_type=gridList[0].type: '';"
                   required>
                   <option value="grid">Grid</option>
                   <option value="slider">Slider</option>
@@ -495,6 +510,10 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="editForm.sub_heading"></textarea>
               </div>
+              <div *ngIf="editForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
+                <label>Publish ID</label>
+                 <input type="text" name="content" class="form-control" [(ngModel)]="editForm.content" #content="ngModel" required />
+              </div>
               <div *ngIf="editForm.type=='scrolling_text'" class="col-md-12 form-group mb-3">
                 <tag-input class="w-100" name="options" id="options" [(ngModel)]="editForm.options" placeholder=""
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
@@ -510,13 +529,33 @@
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">
-                      <input type="radio" name="grid_type" [value]="x.type"
-                        [checked]="x.type==editForm.grid_type" (change)="editForm.grid_type=x.type;">
+                      <input type="radio" name="section_grid_type" [value]="x.type"
+                        [checked]="x.type==editForm.section_grid_type" (change)="editForm.section_grid_type=x.type;">
                       <span class="d-flex flex-column"><img [src]="x.icon">{{x.name}}</span>
                       <span class="checkmark"></span>
                     </label>
                   </ng-container>
                 </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='featured_product' || editForm.type=='featured_section_product'">
+              <div *ngIf="editForm.type=='featured_section_product'" class="col-md-12 form-group mb-3">
+                <label>Products Title</label>
+                <input type="text" name="content" class="form-control" [(ngModel)]="editForm.content" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Link to Catalog</label>
+                <select name="featured_category_id" class="form-control select-arrow"
+                  [(ngModel)]="editForm.featured_category_id" #featured_category_id="ngModel" required>
+                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
+                  <option value="all_products">/all-products</option>
+                  <option value="new_arrivals">/new-arrivals</option>
+                  <option value="on_sale">/on-sale</option>
+                  <option value="featured_products">/featured-products</option>
+                  <option value="best_sellers">/best-sellers</option>
+                  <option value="top_rated">/top-rated</option>
+                </select>
               </div>
             </ng-container>
             <!-- flexible -->
@@ -539,14 +578,15 @@
                   <div class="row">
                     <span *ngIf="editForm.multitab_list.length>1" (click)="editForm.multitab_list.splice(i, 1);"
                       class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
-                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category' || x.type=='vendor')? 'col-md-4': 'col-md-6'">
                       <label>Type</label>
                       <select name="type{{i}}" class="form-control select-arrow" [(ngModel)]="x.type" #type="ngModel"
                         required>
                         <option [ngValue]="x.type" *ngFor="let x of multiTabOptions">{{x.disp_name}}</option>
+                        <option *ngIf="commonService.vendor_list?.length" value="vendor">Vendor</option>
                       </select>
                     </div>
-                    <div class="form-group mb-3" [ngClass]="(x.type=='category')? 'col-md-4': 'col-md-6'">
+                    <div class="form-group mb-3" [ngClass]="(x.type=='category' || x.type=='vendor')? 'col-md-4': 'col-md-6'">
                       <label>Name</label>
                       <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel"
                         required />
@@ -558,11 +598,18 @@
                         <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
                       </select>
                     </div>
+                    <div *ngIf="x.type=='vendor'" class="col-md-4 form-group mb-3">
+                      <label>Link to Vendor</label>
+                      <select name="category_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.category_id"
+                        #category_id="ngModel" required>
+                        <option [ngValue]="x._id" *ngFor="let x of commonService.vendor_list | orderAsc: 'company_details.brand'">{{x.company_details.brand}}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="editForm.multitab_list?.length<3" class="row">
+            <div *ngIf="editForm.multitab_list?.length<5" class="row">
               <div class="col-md-12">
                 <p (click)="editForm.multitab_list.push({});"><b class="add-another">ADD NEW</b></p>
               </div>

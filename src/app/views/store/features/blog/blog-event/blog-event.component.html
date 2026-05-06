@@ -51,11 +51,12 @@
         <div class="row">
           <div class="col-md-6 form-group mb-3">
             <label>Author</label>
-            <select name="author_id" class="form-control" [(ngModel)]="blogForm.author_id" (ngModelChange)="onAuthorChange()" [required]="!isLegacyBlog">
+            <select *ngIf="!isLegacyBlog" name="author_id" class="form-control" [(ngModel)]="blogForm.author_id" (ngModelChange)="onAuthorChange()">
               <option [ngValue]="null">Select author</option>
               <option *ngFor="let author of authorList" [ngValue]="author._id">{{author.name}}</option>
             </select>
-            <p class="light-font mt-2 mb-0">
+            <input *ngIf="isLegacyBlog" type="text" name="author" class="form-control" [(ngModel)]="blogForm.author" placeholder="Enter author name" />
+            <p *ngIf="!isLegacyBlog" class="light-font mt-2 mb-0">
               Manage authors in <a routerLink="/setting/blogs-authors">Blog Authors</a>
             </p>
           </div>
@@ -79,7 +80,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-12 form-group mb-3" *ngIf="!selectedAuthor && blogForm.author && blogForm.form_type === 'edit'">
+          <div class="col-md-12 form-group mb-3" *ngIf="!isLegacyBlog && !selectedAuthor && blogForm.author && blogForm.form_type === 'edit'">
             <div class="alert alert-light mb-0">
               This blog is using legacy inline author data: <strong>{{blogForm.author}}</strong>. Select an author above to link it to the new author collection.
             </div>

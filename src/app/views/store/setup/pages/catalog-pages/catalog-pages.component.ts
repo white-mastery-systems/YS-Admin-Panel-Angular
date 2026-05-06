@@ -22,6 +22,10 @@ export class CatalogPagesComponent implements OnInit {
     { name: 'Hotel', value: 'hotel' },
     { name: 'Serviced Apartment', value: 'serviced_apartment' }
   ];
+  pageKinds: any[] = [
+    { name: 'Catalog Page', value: 'catalog' },
+    { name: 'Property / Product Page', value: 'property_product' }
+  ];
 
   constructor(config: NgbModalConfig, public modalService: NgbModal, private router: Router, private api: SetupService, public commonService: CommonService) {
     config.backdrop = 'static'; config.keyboard = false;
@@ -41,6 +45,7 @@ export class CatalogPagesComponent implements OnInit {
 
   onAdd() {
     this.addForm.submit = true;
+    this.onChangePageKind(this.addForm);
     this.addForm.store_id = this.commonService.store_details._id;
     this.api.ADD_CATALOG_PAGE(this.addForm).subscribe(result => {
       this.addForm.submit = false;
@@ -76,6 +81,13 @@ export class CatalogPagesComponent implements OnInit {
   getPageCategoryName(value: string) {
     const index = this.pageCategories.findIndex(obj => obj.value === value);
     return index !== -1 ? this.pageCategories[index].name : '-';
+  }
+
+  onChangePageKind(form) {
+    form.page_kind = form.page_kind || 'catalog';
+    if (form.page_kind === 'property_product') {
+      form.type = '';
+    }
   }
 
 }

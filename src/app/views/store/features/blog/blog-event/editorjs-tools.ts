@@ -27,6 +27,25 @@ type ProductCtaData = {
   ctaUrl?: string;
 };
 
+type CtaBlockButtonData = {
+  label?: string;
+  link?: string;
+};
+
+type CtaBlockData = {
+  text?: string;
+  primaryButton?: CtaBlockButtonData;
+  secondaryButton?: CtaBlockButtonData;
+};
+
+type ProductCarouselData = {
+  title?: string;
+  subtitle?: string;
+  category_id?: string;
+  categoryLink?: string;
+  productLimit?: number | string;
+};
+
 type HeadingData = {
   text?: string;
   level?: number;
@@ -287,6 +306,197 @@ export class ButtonTool {
       style: this.styleSelect.value,
       alignment: this.alignmentSelect.value
     };
+  }
+}
+
+export class CtaBlockTool {
+  private data: CtaBlockData;
+  private wrapper: HTMLDivElement;
+  private textInput: HTMLTextAreaElement;
+  private primaryLabelInput: HTMLInputElement;
+  private primaryLinkInput: HTMLInputElement;
+  private secondaryLabelInput: HTMLInputElement;
+  private secondaryLinkInput: HTMLInputElement;
+  private previewText: HTMLParagraphElement;
+  private previewPrimaryButton: HTMLAnchorElement;
+  private previewSecondaryButton: HTMLAnchorElement;
+
+  static get toolbox() {
+    return {
+      title: 'CTA Block',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M6 8H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6 11.5H9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="12.5" y="7.2" width="3.8" height="2.2" rx="1.1" stroke="currentColor" stroke-width="1.2"/><rect x="12.5" y="11" width="3.8" height="2.2" rx="1.1" stroke="currentColor" stroke-width="1.2"/></svg>'
+    };
+  }
+
+  constructor({ data }: { data: CtaBlockData }) {
+    this.data = data || {};
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--cta-block';
+
+    this.textInput = createTextarea(this.data.text || '', 'Take the next step-explore drapes that match this guide.');
+    this.primaryLabelInput = createInput(this.data.primaryButton?.label || '', 'Explore Collection');
+    this.primaryLinkInput = createInput(this.data.primaryButton?.link || '', '/collection');
+    this.secondaryLabelInput = createInput(this.data.secondaryButton?.label || '', 'Jump to Shop');
+    this.secondaryLinkInput = createInput(this.data.secondaryButton?.link || '', '/shop');
+
+    const previewWrap = document.createElement('div');
+    previewWrap.className = 'editorjs-cta-preview';
+
+    const previewContent = document.createElement('div');
+    previewContent.className = 'editorjs-cta-preview__content';
+    this.previewText = document.createElement('p');
+    this.previewText.className = 'editorjs-cta-preview__text';
+    previewContent.appendChild(this.previewText);
+
+    const previewActions = document.createElement('div');
+    previewActions.className = 'editorjs-cta-preview__actions';
+    this.previewPrimaryButton = document.createElement('a');
+    this.previewPrimaryButton.className = 'editorjs-cta-preview__button editorjs-cta-preview__button--primary';
+    this.previewSecondaryButton = document.createElement('a');
+    this.previewSecondaryButton.className = 'editorjs-cta-preview__button editorjs-cta-preview__button--secondary';
+    previewActions.appendChild(this.previewPrimaryButton);
+    previewActions.appendChild(this.previewSecondaryButton);
+
+    previewWrap.appendChild(previewContent);
+    previewWrap.appendChild(previewActions);
+
+    const buttonGrid = document.createElement('div');
+    buttonGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
+    buttonGrid.appendChild(createField('Primary label', this.primaryLabelInput));
+    buttonGrid.appendChild(createField('Primary link', this.primaryLinkInput));
+    buttonGrid.appendChild(createField('Secondary label', this.secondaryLabelInput));
+    buttonGrid.appendChild(createField('Secondary link', this.secondaryLinkInput));
+
+    const updatePreview = () => this.renderPreview();
+    this.textInput.addEventListener('input', updatePreview);
+    this.primaryLabelInput.addEventListener('input', updatePreview);
+    this.primaryLinkInput.addEventListener('input', updatePreview);
+    this.secondaryLabelInput.addEventListener('input', updatePreview);
+    this.secondaryLinkInput.addEventListener('input', updatePreview);
+
+    this.wrapper.appendChild(createField('Text', this.textInput));
+    this.wrapper.appendChild(buttonGrid);
+    this.wrapper.appendChild(previewWrap);
+    this.renderPreview();
+    return this.wrapper;
+  }
+
+  save() {
+    return {
+      text: this.textInput.value.trim(),
+      primaryButton: {
+        label: this.primaryLabelInput.value.trim(),
+        link: this.primaryLinkInput.value.trim()
+      },
+      secondaryButton: {
+        label: this.secondaryLabelInput.value.trim(),
+        link: this.secondaryLinkInput.value.trim()
+      }
+    };
+  }
+
+  private renderPreview() {
+    const text = this.textInput.value.trim() || 'Take the next step-explore drapes that match this guide.';
+    const primaryLabel = this.primaryLabelInput.value.trim() || 'Explore Collection';
+    const primaryLink = this.primaryLinkInput.value.trim() || '/collection';
+    const secondaryLabel = this.secondaryLabelInput.value.trim() || 'Jump to Shop';
+    const secondaryLink = this.secondaryLinkInput.value.trim() || '/shop';
+
+    this.previewText.textContent = text;
+    this.previewPrimaryButton.textContent = primaryLabel.toUpperCase();
+    this.previewPrimaryButton.setAttribute('href', primaryLink || '#');
+    this.previewSecondaryButton.textContent = secondaryLabel.toUpperCase();
+    this.previewSecondaryButton.setAttribute('href', secondaryLink || '#');
+  }
+}
+
+export class ProductCarouselTool {
+  private data: ProductCarouselData;
+  private config: { catalogs?: Array<{ _id: string; name: string }> };
+  private wrapper: HTMLDivElement;
+  private titleInput: HTMLInputElement;
+  private subtitleInput: HTMLInputElement;
+  private categorySearchInput: HTMLInputElement;
+  private categoryListWrap: HTMLDivElement;
+  private productLimitInput: HTMLInputElement;
+  private selectedCategoryId: string;
+
+  static get toolbox() {
+    return {
+      title: 'Product Carousel',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.6" y="4" width="14.8" height="12" rx="2.2" stroke="currentColor" stroke-width="1.6"/><rect x="5" y="7" width="3.2" height="6.2" rx="1.1" stroke="currentColor" stroke-width="1.2"/><rect x="9.2" y="7" width="3.2" height="6.2" rx="1.1" stroke="currentColor" stroke-width="1.2"/><rect x="13.4" y="7" width="1.8" height="6.2" rx="0.9" stroke="currentColor" stroke-width="1.2"/></svg>'
+    };
+  }
+
+  constructor({ data, config }: { data: ProductCarouselData; config?: { catalogs?: Array<{ _id: string; name: string }> } }) {
+    this.data = data || {};
+    this.config = config || {};
+    this.selectedCategoryId = this.data.category_id || '';
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--product-carousel';
+
+    this.titleInput = createInput(this.data.title || '', 'From the cotton collection');
+    this.subtitleInput = createInput(this.data.subtitle || '', 'Suggested drapes that pair with this guide');
+    this.categorySearchInput = createInput('', 'Search catalog');
+    this.categoryListWrap = document.createElement('div');
+    this.categoryListWrap.className = 'editorjs-catalog-picker__list';
+    this.productLimitInput = createInput(String(this.data.productLimit ?? 8), '8');
+
+    this.categorySearchInput.addEventListener('input', () => this.renderCatalogList());
+
+    const pickerWrap = document.createElement('div');
+    pickerWrap.className = 'editorjs-catalog-picker';
+    pickerWrap.appendChild(createField('Catalogs (select one)', this.categorySearchInput));
+    pickerWrap.appendChild(this.categoryListWrap);
+
+    this.wrapper.appendChild(createField('Title', this.titleInput));
+    this.wrapper.appendChild(createField('Subtitle', this.subtitleInput));
+    this.wrapper.appendChild(pickerWrap);
+    this.wrapper.appendChild(createField('Product limit', this.productLimitInput));
+    this.renderCatalogList();
+
+    return this.wrapper;
+  }
+
+  save() {
+    const parsedLimit = Number(this.productLimitInput.value || 0);
+    const productLimit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 8;
+
+    return {
+      title: this.titleInput.value.trim(),
+      subtitle: this.subtitleInput.value.trim(),
+      category_id: this.selectedCategoryId,
+      productLimit
+    };
+  }
+
+  private renderCatalogList() {
+    this.categoryListWrap.innerHTML = '';
+    const catalogs = Array.isArray(this.config.catalogs) ? this.config.catalogs : [];
+    const search = (this.categorySearchInput.value || '').trim().toLowerCase();
+    const filtered = catalogs.filter((catalog) => {
+      if (!catalog?.name) return false;
+      if (!search) return true;
+      return catalog.name.toLowerCase().includes(search);
+    });
+
+    filtered.forEach((catalog) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = `editorjs-catalog-chip ${this.selectedCategoryId === catalog._id ? 'is-selected' : ''}`;
+      item.textContent = catalog.name;
+      item.addEventListener('click', () => {
+        this.selectedCategoryId = this.selectedCategoryId === catalog._id ? '' : catalog._id;
+        this.renderCatalogList();
+      });
+      this.categoryListWrap.appendChild(item);
+    });
   }
 }
 
