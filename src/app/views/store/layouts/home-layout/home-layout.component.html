@@ -184,7 +184,7 @@
               <label>Type</label>
               <select name="type" class="form-control select-arrow" [(ngModel)]="addForm.type"
                 (change)="onChangeType(addForm.type);" required>
-                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1:20;">{{x.name}}</option>
+                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1;">{{x.name}}</option>
               </select>
             </div>
             <div *ngIf="addForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
@@ -241,7 +241,7 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
-              <div class="col-md-12 form-group mb-3">
+              <div *ngIf="addForm.type!='highlighted_section'" class="col-md-12 form-group mb-3">
                 <label>Description</label>
                 <textarea class="form-control" aria-label="With textarea" name="description"
                   [(ngModel)]="addForm.description"></textarea>
@@ -558,7 +558,7 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="editForm.sub_heading"></textarea>
               </div>
-              <div class="col-md-12 form-group mb-3">
+              <div *ngIf="editForm.type!='highlighted_section'" class="col-md-12 form-group mb-3">
                 <label>Description</label>
                 <textarea class="form-control" aria-label="With textarea" name="description"
                   [(ngModel)]="editForm.description"></textarea>
