@@ -255,6 +255,12 @@
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
                 <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
               </div>
+              <div *ngIf="addForm.type=='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Section variant key</label>
+                <input type="text" name="add_section_key" class="form-control" [(ngModel)]="addForm.section_key" maxlength="64" autocomplete="off"
+                  placeholder="e.g. tulsi_heritage" />
+                <p class="mb-0 mt-1 text-muted small">Optional. Used on the site to tell this Highlighted Section apart from others.</p>
+              </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && addForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
                 <label>Content</label>
@@ -291,6 +297,17 @@
                   <option value="best_sellers">/best-sellers</option>
                   <option value="top_rated">/top-rated</option>
                 </select>
+              </div>
+              <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="fp_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="addForm.type=='featured_product' && addForm.btn_status" class="col-md-12 form-group mb-3">
+                <label>Button Text</label>
+                <input type="text" name="fp_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" />
               </div>
             </ng-container>
             <!-- flexible -->
@@ -572,6 +589,12 @@
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
                 <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
               </div>
+              <div *ngIf="editForm.type=='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Section variant key</label>
+                <input type="text" name="edit_section_key" class="form-control" [(ngModel)]="editForm.section_key" maxlength="64" autocomplete="off"
+                  placeholder="e.g. tulsi_heritage" />
+                <p class="mb-0 mt-1 text-muted small">Optional. Used on the site to tell this Highlighted Section apart from others.</p>
+              </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && editForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
                 <label>Content</label>
@@ -608,6 +631,17 @@
                   <option value="best_sellers">/best-sellers</option>
                   <option value="top_rated">/top-rated</option>
                 </select>
+              </div>
+              <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="efp_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="editForm.type=='featured_product' && editForm.btn_status" class="col-md-12 form-group mb-3">
+                <label>Button Text</label>
+                <input type="text" name="efp_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" />
               </div>
             </ng-container>
             <!-- flexible -->

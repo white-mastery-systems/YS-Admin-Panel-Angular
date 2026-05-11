@@ -279,12 +279,12 @@ export class ModifyHomeLayoutComponent implements OnInit {
 
         if(!Array.isArray(layoutData.featured_cards_list)) layoutData.featured_cards_list = [];
         layoutData.featured_cards_list = layoutData.featured_cards_list.map((group, gi) => {
-          const g = Object.assign({}, group);
-          delete g.temp_cover_img;
-          if(g.cover_img_change && g.cover_img) {
-            this.fileList.append('attachments', g.cover_img, `fc_${gi}_cover`);
+          const inputGroup = Object.assign({}, group);
+          delete inputGroup.temp_cover_img;
+          if(inputGroup.cover_img_change && inputGroup.cover_img) {
+            this.fileList.append('attachments', inputGroup.cover_img, `fc_${gi}_cover`);
           }
-          g.image_list = (Array.isArray(g.image_list) ? g.image_list : []).map((img, ii) => {
+          const groupImages = (Array.isArray(inputGroup.image_list) ? inputGroup.image_list : []).map((img, ii) => {
             const x = Object.assign({}, img);
             delete x.temp_desktop_img; delete x.temp_mobile_img;
             if(img.desktop_img_change) {
@@ -297,7 +297,15 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             return x;
           });
-          return g;
+          return {
+            heading: inputGroup.heading || '',
+            sub_heading: inputGroup.sub_heading || '',
+            description: inputGroup.description || '',
+            cover_img: inputGroup.cover_img || '',
+            cover_img_change: !!inputGroup.cover_img_change,
+            image_list: groupImages,
+            cta_list: Array.isArray(inputGroup.cta_list) ? inputGroup.cta_list : []
+          };
         });
       }
       if(layoutData.type=='internal_links') {

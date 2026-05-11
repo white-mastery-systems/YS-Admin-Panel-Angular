@@ -231,6 +231,10 @@
                   <label>Title</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading" maxlength="50" #heading="ngModel" required />
                 </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label>Description</label>
+                  <textarea class="form-control" aria-label="With textarea" name="section_description{{i}}" [(ngModel)]="x.content_details.description"></textarea>
+                </div>
                 <ng-container *ngIf="layoutDetails?.type!='highlights'">
                   <div class="col-md-12 form-group mb-3">
                     <label>Text Color</label>
@@ -260,6 +264,12 @@
         <div *ngIf="layoutDetails.type=='highlighted_section'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
           <div class="card w-100 p-3 mb-3">
             <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Section variant key</label>
+                <input type="text" name="section_key" class="form-control" [(ngModel)]="layoutDetails.section_key" maxlength="64" autocomplete="off"
+                  placeholder="e.g. tulsi_heritage" />
+                <p class="mb-0 mt-1 text-muted small">Optional. Same segment type can appear more than once; set a short key so the storefront can style or branch on this block only.</p>
+              </div>
               <div class="col-md-12 form-group mb-0 quill-mb-5">
                 <label>Description</label>
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="layoutDetails.description"
@@ -271,7 +281,7 @@
         <!-- #Highlighted Section Description -->
 
         <!-- Link -->
-        <div *ngIf="layoutDetails?.type!='testimonial' && layoutDetails?.type!='shop_the_look' && layoutDetails?.type!='hero_cta'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+        <div *ngIf="layoutDetails?.type!='shop_the_look' && layoutDetails?.type!='hero_cta'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
           <div class="card w-100 p-3 mb-3">
             <div class="row">
               <div *ngIf="layoutDetails.type=='highlighted_section' || layoutDetails.type=='multiple_highlighted_section'" class="col-md-12 form-group mb-3">
@@ -351,7 +361,7 @@
               </div>
 
               <!-- Btn -->
-              <ng-container *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails.type=='highlighted_section' || layoutDetails.type=='multiple_highlighted_section'">
+              <ng-container *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails?.type=='secondary' || layoutDetails?.type=='section' || layoutDetails?.type=='testimonial' || layoutDetails.type=='highlighted_section' || layoutDetails.type=='multiple_highlighted_section'">
                 <div class="col-md-12 form-group mb-3">
                   <label class="checkbox checkbox-primary">
                     <input class="form-check-input" type="checkbox" name="btn_status{{i}}" [(ngModel)]="x.btn_status" (change)="x.btn_text='';" #btn_status="ngModel">

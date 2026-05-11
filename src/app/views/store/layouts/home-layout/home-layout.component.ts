@@ -278,6 +278,10 @@ export class HomeLayoutComponent implements OnInit {
     else if(x=='internal_links') {
       this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
     }
+    else if(x=='featured_product') {
+      this.addForm.btn_status = true;
+      this.addForm.btn_text = 'View All';
+    }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
       this.addForm.section_grid_type = this.addForm.grid_list[0].type;
