@@ -51,6 +51,46 @@ export class CatalogPageImageComponent implements OnInit {
                 if (item.icon_name === undefined) item.icon_name = '';
               });
             }
+          } else if (this.layoutDetails.type === 'founder_faq_grid') {
+            if (!this.layoutDetails.founder_intro) {
+              this.layoutDetails.founder_intro = this.getDefaultFounderIntro();
+            } else {
+              this.layoutDetails.founder_intro = { ...this.getDefaultFounderIntro(), ...this.layoutDetails.founder_intro };
+            }
+            if (!this.layoutDetails.highlight_points || !this.layoutDetails.highlight_points.length) {
+              this.layoutDetails.highlight_points = [this.getDefaultHighlightPoint()];
+            } else {
+              this.layoutDetails.highlight_points = this.normalizeHighlightPoints(this.layoutDetails.highlight_points);
+            }
+            if (!this.layoutDetails.founder_faq_list || !this.layoutDetails.founder_faq_list.length) {
+              this.layoutDetails.founder_faq_list = [this.getDefaultFounderFaqItem()];
+            } else {
+              this.layoutDetails.founder_faq_list = this.normalizeFounderFaqList(this.layoutDetails.founder_faq_list);
+            }
+          } else if (this.layoutDetails.type === 'content_checklist_split') {
+            if (!this.layoutDetails.content_split_intro) {
+              this.layoutDetails.content_split_intro = this.getDefaultContentSplitIntro();
+            } else {
+              this.layoutDetails.content_split_intro = { ...this.getDefaultContentSplitIntro(), ...this.layoutDetails.content_split_intro };
+            }
+            if (!this.layoutDetails.checklist_config) {
+              this.layoutDetails.checklist_config = this.getDefaultChecklistConfig();
+            } else {
+              this.layoutDetails.checklist_config = { ...this.getDefaultChecklistConfig(), ...this.layoutDetails.checklist_config };
+            }
+            if (!this.layoutDetails.checklist_items || !this.layoutDetails.checklist_items.length) {
+              this.layoutDetails.checklist_items = [this.getDefaultChecklistItem()];
+            } else {
+              this.layoutDetails.checklist_items = this.normalizeChecklistItems(this.layoutDetails.checklist_items);
+            }
+            if (!this.layoutDetails.theme) {
+              this.layoutDetails.theme = 'light';
+            }
+          } else if (this.layoutDetails.type === 'icon_card_grid') {
+            if (!this.layoutDetails.icon_card_list || !this.layoutDetails.icon_card_list.length) {
+              this.layoutDetails.icon_card_list = [this.getDefaultIconCardItem()];
+            }
+            this.layoutDetails.icon_card_list = this.normalizeIconCardList(this.layoutDetails.icon_card_list);
           } else if (this.layoutDetails.type === 'location_highlights') {
             if (!this.layoutDetails.location_iframe) {
               this.layoutDetails.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };
@@ -108,7 +148,20 @@ export class CatalogPageImageComponent implements OnInit {
             }
           } else if (this.layoutDetails.type === 'feature_list') {
             if (!this.layoutDetails.feature_list || !this.layoutDetails.feature_list.length) {
-              this.layoutDetails.feature_list = [{ image: '', heading: '', sub_heading: '' }];
+              this.layoutDetails.feature_list = [this.getDefaultFeatureListItem()];
+            }
+            this.layoutDetails.feature_list = this.normalizeFeatureListItems(this.layoutDetails.feature_list);
+            // Backward compatibility: migrate segment-level card/button to first item.
+            if (this.layoutDetails.features?.length) {
+              this.layoutDetails.feature_list[0].features = this.normalizeFeatureCards(this.layoutDetails.features);
+            }
+            if (this.layoutDetails.btn_status || this.layoutDetails.btn_text || this.layoutDetails.btn_link) {
+              this.layoutDetails.feature_list[0].btn_status = !!this.layoutDetails.btn_status;
+              this.layoutDetails.feature_list[0].btn_text = this.layoutDetails.btn_text || '';
+              this.layoutDetails.feature_list[0].btn_style = this.layoutDetails.btn_style || 'primary';
+              this.layoutDetails.feature_list[0].btn_text_color = this.layoutDetails.btn_text_color || 'light';
+              this.layoutDetails.feature_list[0].btn_link_type = this.layoutDetails.btn_link_type || 'internal';
+              this.layoutDetails.feature_list[0].btn_link = this.layoutDetails.btn_link || '';
             }
           } else if (this.layoutDetails.type === 'featured_cards') {
             if (!this.layoutDetails.image_list?.length) {
@@ -247,7 +300,184 @@ export class CatalogPageImageComponent implements OnInit {
   }
 
   addFeatureItem() {
-    this.layoutDetails.feature_list.push({ image: '', heading: '', sub_heading: '' });
+    this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
+  }
+
+  addIconCardItem() {
+    this.layoutDetails.icon_card_list.push(this.getDefaultIconCardItem(this.layoutDetails.icon_card_list.length + 1));
+  }
+
+  addHighlightPoint() {
+    this.layoutDetails.highlight_points.push(this.getDefaultHighlightPoint(this.layoutDetails.highlight_points.length + 1));
+  }
+
+  addFounderFaqItem() {
+    this.layoutDetails.founder_faq_list.push(this.getDefaultFounderFaqItem(this.layoutDetails.founder_faq_list.length + 1));
+  }
+
+  addChecklistItem() {
+    this.layoutDetails.checklist_items.push(this.getDefaultChecklistItem(this.layoutDetails.checklist_items.length + 1));
+  }
+
+  getDefaultFeatureCard() {
+    return {
+      icon_name: '',
+      name: '',
+      detail: ''
+    };
+  }
+
+  normalizeFeatureCards(features: any[] = []) {
+    return (Array.isArray(features) ? features : []).map(item => ({
+      ...this.getDefaultFeatureCard(),
+      ...item
+    }));
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultFeatureCard()],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  normalizeFeatureListItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map(item => ({
+      ...this.getDefaultFeatureListItem(),
+      ...item,
+      features: this.normalizeFeatureCards(item?.features)
+    }));
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  normalizeIconCardList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultIconCardItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
+  getDefaultFounderIntro() {
+    return {
+      image: '',
+      img_alt: '',
+      badge_text: '',
+      heading: '',
+      sub_heading: '',
+      description: ''
+    };
+  }
+
+  getDefaultHighlightPoint(rank = 1) {
+    return {
+      rank,
+      text: ''
+    };
+  }
+
+  normalizeHighlightPoints(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultHighlightPoint(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
+  getDefaultFounderFaqItem(rank = 1) {
+    return {
+      rank,
+      question: '',
+      answer: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  normalizeFounderFaqList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultFounderFaqItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
+  getDefaultContentSplitIntro() {
+    return {
+      label: '',
+      heading: '',
+      highlighted_text: '',
+      description: ''
+    };
+  }
+
+  getDefaultChecklistConfig() {
+    return {
+      heading: ''
+    };
+  }
+
+  getDefaultChecklistItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      description: '',
+      active_status: true
+    };
+  }
+
+  normalizeChecklistItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultChecklistItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
   }
 
   addLocationCard() {
@@ -365,6 +595,18 @@ export class CatalogPageImageComponent implements OnInit {
 
     this.fileList = new FormData();
 
+    if (this.layoutDetails.type === 'founder_faq_grid' && this.layoutDetails.founder_intro) {
+      layoutData.founder_intro = { ...layoutData.founder_intro };
+      delete layoutData.founder_intro.temp_image;
+      if (this.layoutDetails.founder_intro_image_change && this.layoutDetails.founder_intro.image instanceof File) {
+        delete layoutData.founder_intro.image;
+        layoutData.founder_intro_image_change = true;
+        this.fileList.append('attachments', this.layoutDetails.founder_intro.image, 'founder_intro_image');
+      } else {
+        delete layoutData.founder_intro_image_change;
+      }
+    }
+
     // Handle cover image for featured_cards
     if (this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
       delete layoutData.cover_img;
@@ -375,6 +617,10 @@ export class CatalogPageImageComponent implements OnInit {
     let textList = this.layoutDetails.text_list || [];
     let featureList = this.layoutDetails.feature_list || [];
     let cardList = this.layoutDetails.card_list || [];
+    let iconCardList = this.layoutDetails.icon_card_list || [];
+    let highlightPoints = this.layoutDetails.highlight_points || [];
+    let founderFaqList = this.layoutDetails.founder_faq_list || [];
+    let checklistItems = this.layoutDetails.checklist_items || [];
 
     this.onSetFormData(imageList).then((imgList: any[]) => {
       layoutData.image_list = imgList;
@@ -384,22 +630,34 @@ export class CatalogPageImageComponent implements OnInit {
             layoutData.feature_list = ftList;
             this.onSetTextFormData(cardList).then((cdList: any[]) => {
               layoutData.card_list = cdList;
-              if (layoutData.type === 'internal_links') {
-                layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
-                delete layoutData.cta_list;
-              }
-              layoutData.store_id = this.commonService.store_details._id;
-              layoutData.page_id = this.params.id;
-              layoutData._id = this.layoutDetails._id;
-              this.fileList.append('data', JSON.stringify(layoutData));
-              this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
-                this.btnLoader = false;
-                if (result.status) {
-                  this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
-                } else {
-                  this.layoutDetails.errorMsg = result.message;
-                  console.log('response', result);
-                }
+              this.onSetTextFormData(iconCardList).then((icList: any[]) => {
+                layoutData.icon_card_list = icList;
+                this.onSetTextFormData(highlightPoints).then((hpList: any[]) => {
+                  layoutData.highlight_points = hpList;
+                  this.onSetTextFormData(founderFaqList).then((ffList: any[]) => {
+                    layoutData.founder_faq_list = ffList;
+                    this.onSetTextFormData(checklistItems).then((ciList: any[]) => {
+                      layoutData.checklist_items = ciList;
+                      if (layoutData.type === 'internal_links') {
+                        layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
+                        delete layoutData.cta_list;
+                      }
+                      layoutData.store_id = this.commonService.store_details._id;
+                      layoutData.page_id = this.params.id;
+                      layoutData._id = this.layoutDetails._id;
+                      this.fileList.append('data', JSON.stringify(layoutData));
+                      this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
+                        this.btnLoader = false;
+                        if (result.status) {
+                          this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
+                        } else {
+                          this.layoutDetails.errorMsg = result.message;
+                          console.log('response', result);
+                        }
+                      });
+                    });
+                  });
+                });
               });
             });
           });
@@ -462,6 +720,7 @@ export class CatalogPageImageComponent implements OnInit {
     if (devType === 'desktop') delete this.layoutDetails.image_list[index]?.d_err_msg;
     else if (devType === 'mobile') delete this.layoutDetails.image_list[index]?.m_err_msg;
     else if (devType === 'fc_cover') { /* no err_msg for cover */ }
+    else if (devType === 'founder_intro') delete this.layoutDetails.founder_intro?.err_msg;
     else if (devType === 'highlighted_gallery') delete this.layoutDetails.image_list[index]?.gallery_images?.[subIndex]?.err_msg;
     else if (devType === 'feature') delete this.layoutDetails.feature_list[index]?.c_err_msg;
     else if (devType === 'location_card') delete this.layoutDetails.card_list[index]?.c_err_msg;
@@ -496,6 +755,12 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.cover_img = fileData;
               this.layoutDetails.cover_img_change = true;
             } else { this.layoutDetails.cover_img_err = true; }
+          } else if (devType === 'founder_intro') {
+            if (fileInKB <= this.fileLimitInKB) {
+              this.layoutDetails.founder_intro.temp_image = (<FileReader>e.target).result;
+              this.layoutDetails.founder_intro.image = fileData;
+              this.layoutDetails.founder_intro_image_change = true;
+            } else { this.layoutDetails.founder_intro.err_msg = true; }
           } else if (devType === 'feature') {
             if (fileInKB <= this.fileLimitInKB) {
               this.layoutDetails.feature_list[index].temp_img = (<FileReader>e.target).result;

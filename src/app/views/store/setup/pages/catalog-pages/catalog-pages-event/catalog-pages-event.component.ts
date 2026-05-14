@@ -50,7 +50,10 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Hero CTA', value: 'hero_cta' },
     { name: 'Feature List', value: 'feature_list' },
     { name: 'Internal Links', value: 'internal_links' },
-    { name: 'Location Highlights', value: 'location_highlights' }
+    { name: 'Location Highlights', value: 'location_highlights' },
+    { name: 'Icon Card Grid', value: 'icon_card_grid' },
+    { name: 'Founder FAQ Grid', value: 'founder_faq_grid' },
+    { name: 'Content Checklist Split', value: 'content_checklist_split' }
   ];
 
   constructor(
@@ -108,6 +111,7 @@ export class CatalogPagesEventComponent implements OnInit {
     form.page_kind = form.page_kind || 'catalog';
     if (form.page_kind === 'property_product') {
       form.type = '';
+      form.page_category = '';
     }
   }
 
@@ -219,6 +223,13 @@ export class CatalogPagesEventComponent implements OnInit {
         if (!this.editForm.faq_list) this.editForm.faq_list = [];
         if (!this.editForm.feature_list) this.editForm.feature_list = [];
         if (!this.editForm.card_list) this.editForm.card_list = [];
+        if (!this.editForm.icon_card_list) this.editForm.icon_card_list = [];
+        if (!this.editForm.highlight_points) this.editForm.highlight_points = [];
+        if (!this.editForm.founder_faq_list) this.editForm.founder_faq_list = [];
+        if (!this.editForm.founder_intro) this.editForm.founder_intro = {};
+        if (!this.editForm.content_split_intro) this.editForm.content_split_intro = {};
+        if (!this.editForm.checklist_config) this.editForm.checklist_config = {};
+        if (!this.editForm.checklist_items) this.editForm.checklist_items = [];
         if (!this.editForm.location_iframe) this.editForm.location_iframe = {};
         if (this.editForm.type === 'internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
@@ -346,7 +357,7 @@ export class CatalogPagesEventComponent implements OnInit {
     }
 
     if (type === 'feature_list' && (!form.feature_list || !form.feature_list.length)) {
-      form.feature_list = [{ image: '', heading: '', sub_heading: '' }];
+      form.feature_list = [{ image: '', heading: '', sub_heading: '', description: '' }];
     }
 
     if (type === 'location_highlights') {
@@ -355,6 +366,39 @@ export class CatalogPagesEventComponent implements OnInit {
       }
       if (!form.card_list || !form.card_list.length) {
         form.card_list = [{ image: '', heading: '', sub_heading: '', description: '' }];
+      }
+    }
+
+    if (type === 'icon_card_grid') {
+      if (!form.icon_card_list) {
+        form.icon_card_list = [];
+      }
+    }
+
+    if (type === 'founder_faq_grid') {
+      if (!form.founder_intro) {
+        form.founder_intro = { icon_name: '', badge_text: '', heading: '', sub_heading: '', description: '' };
+      }
+      if (!form.highlight_points) {
+        form.highlight_points = [];
+      }
+      if (!form.founder_faq_list) {
+        form.founder_faq_list = [];
+      }
+    }
+
+    if (type === 'content_checklist_split') {
+      if (!form.content_split_intro) {
+        form.content_split_intro = { label: '', heading: '', highlighted_text: '', description: '' };
+      }
+      if (!form.checklist_config) {
+        form.checklist_config = { heading: '' };
+      }
+      if (!form.checklist_items) {
+        form.checklist_items = [];
+      }
+      if (!form.theme) {
+        form.theme = 'light';
       }
     }
 

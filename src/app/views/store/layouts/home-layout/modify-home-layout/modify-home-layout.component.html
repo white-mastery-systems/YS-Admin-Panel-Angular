@@ -583,10 +583,53 @@
           </div>
         </div>
 
-        <div class="card p-3 mb-3">
-          <div class="row pt-2 pb-2">
+        <div class="card p-2 mb-3 featured-cards-features-block">
+          <div class="row mb-1">
             <div class="col-md-12">
-              <p class="dark-font">Cover Image (1200 x 600 px)</p>
+              <p class="dark-font fw-600 mb-0 small">Feature Cards</p>
+            </div>
+          </div>
+          <div *ngFor="let feat of g.features; let fi=index;" class="poss-rel card card-in-card p-2 mb-2 featured-card-feature-item">
+            <span *ngIf="g.features?.length > 1" (click)="g.features.splice(fi, 1);"
+              class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+            <div class="row pt-0 pb-1">
+              <div class="col-md-12">
+                <p class="dark-font mb-0 small text-muted">Feature {{fi + 1}}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group mb-2">
+                <label class="small mb-1">Icon Name</label>
+                <input type="text" [name]="'fc_feat_icon_'+gi+'_'+fi" class="form-control form-control-sm" [(ngModel)]="feat.icon_name" />
+              </div>
+              <div class="col-md-6 form-group mb-2">
+                <label class="small mb-1">Name</label>
+                <input type="text" [name]="'fc_feat_name_'+gi+'_'+fi" class="form-control form-control-sm" [(ngModel)]="feat.name" />
+              </div>
+              <div class="col-md-12 form-group mb-0">
+                <label class="small mb-1">Detail</label>
+                <textarea class="form-control form-control-sm featured-card-feature-detail" [name]="'fc_feat_detail_'+gi+'_'+fi" rows="2" [(ngModel)]="feat.detail"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mb-0">
+            <button type="button" class="light-button" (click)="addFeaturedCardsFeature(gi);">
+              <span class="material-symbols-rounded">add</span> Add Feature
+            </button>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div class="row pt-2 pb-2 align-items-end">
+            <div class="col-md-12 col-lg-6">
+              <p class="dark-font mb-2">Cover Image (1200 x 600 px)</p>
+            </div>
+            <div class="col-md-12 col-lg-6 form-group mb-lg-0">
+              <label class="small mb-1">Cover image position</label>
+              <select class="form-control form-control-sm" [name]="'fc_cover_pos_'+gi" [(ngModel)]="g.cover_img_position">
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
             </div>
           </div>
           <div class="row">

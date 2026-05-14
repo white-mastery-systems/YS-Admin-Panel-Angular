@@ -124,7 +124,7 @@
               <label>Type</label>
               <input type="text" name="type" class="form-control" [(ngModel)]="addForm.type" appNoSplChar required />
             </div>
-            <div class="col-md-12 form-group mb-3">
+            <div class="col-md-12 form-group mb-3" *ngIf="addForm.page_kind !== 'property_product'">
               <label>Page Category</label>
               <select name="page_category" class="form-control select-arrow" [(ngModel)]="addForm.page_category">
                 <option [ngValue]="''">Select Category</option>

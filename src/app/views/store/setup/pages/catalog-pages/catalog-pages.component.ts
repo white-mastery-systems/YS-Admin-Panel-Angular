@@ -87,6 +87,7 @@ export class CatalogPagesComponent implements OnInit {
     form.page_kind = form.page_kind || 'catalog';
     if (form.page_kind === 'property_product') {
       form.type = '';
+      form.page_category = '';
     }
   }
 

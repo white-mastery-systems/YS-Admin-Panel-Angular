@@ -1,3 +1,17 @@
 img {
   height: 150px;
 }
+
+.featured-cards-features-block {
+  .featured-card-feature-item {
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    textarea.featured-card-feature-detail {
+      min-height: 3.25rem;
+      max-height: 5rem;
+      resize: vertical;
+    }
+  }
+}

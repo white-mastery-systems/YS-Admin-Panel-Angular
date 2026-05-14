@@ -51,7 +51,7 @@
             <input type="text" name="type" class="form-control" [(ngModel)]="formData.type" required />
           </div>
 
-          <div class="col-md-3 form-group mb-3">
+          <div class="col-md-3 form-group mb-3" *ngIf="formData.page_kind !== 'property_product'">
             <label>Page Category</label>
             <select name="page_category" class="form-control select-arrow" [(ngModel)]="formData.page_category">
               <option [ngValue]="''">Select Category</option>
@@ -291,10 +291,13 @@
                   <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='location_highlights'">{{ x.card_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="x.type=='icon_card_grid'">{{ x.icon_card_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="x.type=='founder_faq_grid'">{{ x.founder_faq_list?.length }} FAQs</ng-container>
+                  <ng-container *ngIf="x.type=='content_checklist_split'">{{ x.checklist_items?.length }} Items</ng-container>
                   <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
                   <ng-container *ngIf="x.type=='highlighted_section'">{{ x.features?.length }} Features</ng-container>
                   <ng-container *ngIf="['blogs', 'content_section', 'cta', 'interactive_map', 'route_map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links', 'location_highlights'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links', 'location_highlights', 'icon_card_grid', 'founder_faq_grid', 'content_checklist_split'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
@@ -526,6 +529,24 @@
             <ng-container *ngIf="addForm.type=='location_highlights'">
               <div class="col-md-12 mb-0">
                 <p class="light-font font-12 mb-0">Map details and cards can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='icon_card_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icons, card content, and buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='founder_faq_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Founder intro, highlight points, and FAQ rows can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="addForm.type=='content_checklist_split'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Split intro content and checklist items can be edited in the segment image view.</p>
               </div>
             </ng-container>
 
@@ -786,6 +807,24 @@
             <ng-container *ngIf="editForm.type=='location_highlights'">
               <div class="col-md-12 mb-0">
                 <p class="light-font font-12 mb-0">Map details and cards are available in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='icon_card_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icons, card content, and buttons are available in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='founder_faq_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Founder intro, highlight points, and FAQ rows are available in the segment image view.</p>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editForm.type=='content_checklist_split'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Split intro content and checklist items are available in the segment image view.</p>
               </div>
             </ng-container>
 

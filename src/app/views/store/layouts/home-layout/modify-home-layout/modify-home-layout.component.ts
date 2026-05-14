@@ -111,11 +111,26 @@ export class ModifyHomeLayoutComponent implements OnInit {
                 sub_heading: this.layoutDetails.sub_heading || '',
                 description: this.layoutDetails.description || '',
                 cover_img: this.layoutDetails.cover_img || '',
+                cover_img_position: 'left',
                 image_list: this.layoutDetails.image_list?.length ? this.layoutDetails.image_list : [{ rank: 1 }],
+                features: [this.getDefaultFeaturedCardsFeature()],
                 cta_list: this.layoutDetails.cta_list?.length ? this.layoutDetails.cta_list : [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }]
               };
               this.layoutDetails.featured_cards_list = [legacyGroup];
             }
+            this.layoutDetails.featured_cards_list.forEach((g) => {
+              if (g.cover_img_position !== 'right') {
+                g.cover_img_position = 'left';
+              }
+              if (!Array.isArray(g.features) || !g.features.length) {
+                g.features = [this.getDefaultFeaturedCardsFeature()];
+              } else {
+                g.features = g.features.map((f) => ({
+                  ...this.getDefaultFeaturedCardsFeature(),
+                  ...f
+                }));
+              }
+            });
           }
           else if(this.layoutDetails.type=='internal_links') {
             this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
@@ -302,8 +317,10 @@ export class ModifyHomeLayoutComponent implements OnInit {
             sub_heading: inputGroup.sub_heading || '',
             description: inputGroup.description || '',
             cover_img: inputGroup.cover_img || '',
+            cover_img_position: inputGroup.cover_img_position === 'right' ? 'right' : 'left',
             cover_img_change: !!inputGroup.cover_img_change,
             image_list: groupImages,
+            features: Array.isArray(inputGroup.features) ? inputGroup.features : [],
             cta_list: Array.isArray(inputGroup.cta_list) ? inputGroup.cta_list : []
           };
         });
@@ -327,9 +344,22 @@ export class ModifyHomeLayoutComponent implements OnInit {
       sub_heading: '',
       description: '',
       cover_img: '',
+      cover_img_position: 'left',
       image_list: [{ rank: 1 }],
+      features: [this.getDefaultFeaturedCardsFeature()],
       cta_list: [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }]
     });
+  }
+
+  getDefaultFeaturedCardsFeature() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  addFeaturedCardsFeature(groupIndex: number) {
+    const g = this.layoutDetails.featured_cards_list?.[groupIndex];
+    if (!g) return;
+    if (!Array.isArray(g.features)) g.features = [];
+    g.features.push(this.getDefaultFeaturedCardsFeature());
   }
 
   getDefaultInternalLinkItem() {

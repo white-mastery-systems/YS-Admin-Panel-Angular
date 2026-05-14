@@ -267,7 +267,18 @@ export class HomeLayoutComponent implements OnInit {
       this.addForm.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
     }
     else if(x=='featured_cards') {
-      this.addForm.cta_list = [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }];
+      const defaultCta = { btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' };
+      this.addForm.cta_list = [{ ...defaultCta }];
+      this.addForm.featured_cards_list = [{
+        heading: '',
+        sub_heading: '',
+        description: '',
+        cover_img: '',
+        cover_img_position: 'left',
+        image_list: [{ rank: 1 }],
+        features: [{ icon_name: '', name: '', detail: '' }],
+        cta_list: [{ ...defaultCta }]
+      }];
     }
     else if(x=='faq') {
       this.addForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
