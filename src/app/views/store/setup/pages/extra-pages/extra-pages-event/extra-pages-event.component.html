@@ -166,10 +166,18 @@
                   <ng-container *ngIf="x.type=='multiple_featured_product'">{{ x.multitab_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='multi_categories'">{{ x.multicategory_list?.length }} Tiles</ng-container>
                   <ng-container *ngIf="x.type=='content_grid'">{{ x.text_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} FAQs</ng-container>
+                  <ng-container *ngIf="x.type=='internal_links'">{{ x.group_list?.length }} Groups</ng-container>
+                  <ng-container *ngIf="x.type=='dual_map'">{{ x.map_list?.length }} Maps</ng-container>
+                  <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
+                  <ng-container *ngIf="x.type=='contact_info'">{{ x.contact_info_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="x.type=='icon_card_grid'">{{ x.icon_card_list?.length }} Cards</ng-container>
+                  <ng-container *ngIf="x.type=='hero_cta' || x.type=='cta'">{{ x.cta_list?.length }} Cards</ng-container>
                   <ng-container *ngIf="x.type=='video_section'">{{ x.video_details?.src ? '1 Video' : '-' }}</ng-container>
                   <ng-container *ngIf="x.type=='featured_product'">{{ x.product_list?.length }} Tiles</ng-container>
-                  <ng-container *ngIf="x.type=='flexible' || x.type=='shopping_assistant' || x.type=='blogs' || x.type=='instagram'">-</ng-container>
-                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'video_section', 'content_grid', 'featured_product', 'flexible', 'shopping_assistant', 'blogs', 'instagram'].indexOf(x.type)==-1">
+                  <ng-container *ngIf="x.type=='flexible' || x.type=='shopping_assistant' || x.type=='blogs' || x.type=='instagram' || x.type=='content_section'">-</ng-container>
+                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'video_section', 'content_grid', 'featured_product', 'flexible', 'shopping_assistant', 'blogs', 'instagram', 'hero_cta', 'cta', 'amenities', 'feature_list', 'faq', 'internal_links', 'dual_map', 'content_section', 'icon_card_grid', 'contact_info'].indexOf(x.type)==-1">
                     {{ x.image_list?.length }} Tiles
                   </ng-container>
                 </p>
@@ -307,6 +315,11 @@
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="addForm.sub_heading"></textarea>
               </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="addForm.description"></textarea>
+              </div>
               <div *ngIf="addForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
                  <input type="text" name="content" class="form-control" [(ngModel)]="addForm.content" #content="ngModel" required />
@@ -412,6 +425,22 @@
               </div>
             </div>
           </ng-container>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="bg_color" class="form-control" [(ngModel)]="addForm.bg_color" placeholder="#ffffff" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="is_margin" [(ngModel)]="addForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
         </div>
         <div *ngIf="addForm.errorMsg">
           <p class="text-danger">{{ addForm.errorMsg }}</p>
@@ -509,6 +538,11 @@
                 <label>Sub-heading</label>
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="editForm.description"></textarea>
               </div>
               <div *ngIf="editForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
@@ -615,6 +649,22 @@
               </div>
             </div>
           </ng-container>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="e_bg_color" class="form-control" [(ngModel)]="editForm.bg_color" placeholder="#ffffff" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="e_is_margin" [(ngModel)]="editForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
         </div>
         <div *ngIf="editForm.errorMsg">
           <p class="text-danger">{{ editForm.errorMsg }}</p>

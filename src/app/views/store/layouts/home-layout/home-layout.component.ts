@@ -164,8 +164,13 @@ export class HomeLayoutComponent implements OnInit {
         else if(this.editForm.type=='faq' && !this.editForm.faq_list?.length) {
           this.editForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
         }
-        else if(this.editForm.type=='dual_map' && !this.editForm.map_list?.length) {
-          this.editForm.map_list = [{ iframe_url: '' }];
+        else if(this.editForm.type=='dual_map') {
+          if(!this.editForm.map_list?.length) {
+            this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+          }
+          else {
+            this.editForm.map_list = this.normalizeDualMapList(this.editForm.map_list);
+          }
         }
         else if(this.editForm.type=='internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
@@ -284,7 +289,7 @@ export class HomeLayoutComponent implements OnInit {
       this.addForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
     }
     else if(x=='dual_map') {
-      this.addForm.map_list = [{ iframe_url: '' }];
+      this.addForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
     }
     else if(x=='internal_links') {
       this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
@@ -363,6 +368,29 @@ export class HomeLayoutComponent implements OnInit {
       return segment.group_list.reduce((count, group) => count + (group?.link_list?.length || 0), 0);
     }
     return segment?.cta_list?.length || 0;
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
   }
 
 }

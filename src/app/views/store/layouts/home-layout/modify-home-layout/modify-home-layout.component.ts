@@ -138,6 +138,14 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.group_list = [this.getDefaultInternalLinkGroup()];
             }
           }
+          else if(this.layoutDetails.type=='dual_map') {
+            if(!this.layoutDetails.map_list?.length) {
+              this.layoutDetails.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+            }
+            else {
+              this.layoutDetails.map_list = this.normalizeDualMapList(this.layoutDetails.map_list);
+            }
+          }
           else if(this.layoutDetails.type=='cta') {
             if(!this.layoutDetails.image_list?.length) {
               this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
@@ -236,6 +244,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
     else if(this.layoutDetails.type=='content_grid') {
       this.layoutDetails.text_list.push({});
     }
+    else if(this.layoutDetails.type=='dual_map') {
+      this.layoutDetails.map_list.push(this.getDefaultDualMapItem());
+    }
     else {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, points_list: [] });
     }
@@ -328,6 +339,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
       if(layoutData.type=='internal_links') {
         layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
         delete layoutData.cta_list;
+      }
+      if(layoutData.type=='dual_map') {
+        layoutData.map_list = this.normalizeDualMapList(layoutData.map_list);
       }
       this.onSetFormData(layoutData.image_list).then((imgList) => {
         layoutData.image_list = imgList;
@@ -438,6 +452,29 @@ export class ModifyHomeLayoutComponent implements OnInit {
     this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
       ...group,
       rank: index + 1
+    }));
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
     }));
   }
 

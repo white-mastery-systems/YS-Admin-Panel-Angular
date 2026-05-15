@@ -22,6 +22,12 @@ export class ExtraPagesEventComponent implements OnInit {
   editForm: any = {}; gridList: any = [];
   layoutTypes: any = [
     { name: "Main Slider", value: "slider" },
+    { name: "Hero CTA", value: "hero_cta" },
+    { name: "FAQ", value: "faq" },
+    { name: "Internal Links", value: "internal_links" },
+    { name: "Dual Map", value: "dual_map" },
+    { name: "Amenities", value: "amenities" },
+    { name: "Feature List", value: "feature_list" },
     { name: "Section Grid", value: "section" },
     { name: "Featured Sections", value: "featured_section" },
     { name: "Featured Products", value: "featured_product" },
@@ -32,7 +38,11 @@ export class ExtraPagesEventComponent implements OnInit {
     { name: "Flexible Segment", value: "flexible" },
     { name: "Scrolling Text", value: "scrolling_text" },
     { name: "Social Video", value: "social_video" },
-    { name: "Content Grid", value: "content_grid" }
+    { name: "Content Grid", value: "content_grid" },
+    { name: "Content Section", value: "content_section" },
+    { name: "Icon Card Grid", value: "icon_card_grid" },
+    { name: "Contact Info", value: "contact_info" },
+    { name: "CTA", value: "cta" }
   ];
   multiTabOptions: any = [
     { type: "featured", disp_name: "Featured" },
@@ -138,7 +148,7 @@ export class ExtraPagesEventComponent implements OnInit {
     else if(this.commonService.store_details?.package_details?.package_id==environment.config_data.free_package_id)
       document.getElementById("openCommonUpgradeModal").click();
     else {
-      this.addForm = { layout_list: [{}], rank: this.maxRank+1, type: '' };
+      this.addForm = { layout_list: [{}], rank: this.maxRank+1, type: '', is_margin: true };
       this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
     }
   }
@@ -203,6 +213,31 @@ export class ExtraPagesEventComponent implements OnInit {
         this.editForm.options = [];
         this.editForm.prev_rank = this.editForm.rank;
         this.editForm.dup_type = this.findType(this.editForm.type);
+        if(this.editForm.is_margin === undefined) this.editForm.is_margin = true;
+        if(this.editForm.type == 'amenities' && !this.editForm.text_list?.length) {
+          this.editForm.text_list = [this.getDefaultAmenityItem()];
+        }
+        if(this.editForm.type == 'faq' && !this.editForm.faq_list?.length) {
+          this.editForm.faq_list = [this.getDefaultFaqItem()];
+        }
+        if(this.editForm.type == 'internal_links' && !this.editForm.group_list?.length) {
+          this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
+        }
+        if(this.editForm.type == 'dual_map' && !this.editForm.map_list?.length) {
+          this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+        }
+        if(this.editForm.type == 'feature_list' && !this.editForm.feature_list?.length) {
+          this.editForm.feature_list = [this.getDefaultFeatureListItem()];
+        }
+        if(this.editForm.type == 'icon_card_grid' && !this.editForm.icon_card_list?.length) {
+          this.editForm.icon_card_list = [this.getDefaultIconCardItem()];
+        }
+        if(this.editForm.type == 'contact_info' && !this.editForm.contact_info_list?.length) {
+          this.editForm.contact_info_list = [this.getDefaultContactInfoItem()];
+        }
+        if(this.editForm.type == 'cta' && !this.editForm.cta_list?.length) {
+          this.editForm.cta_list = [this.getDefaultCtaItem()];
+        }
         if(this.editForm.type!='section' && this.editForm.type!='multi_grid_featured_section')
           delete this.editForm.section_grid_type;
         if(this.editForm.section_grid_type)
@@ -242,6 +277,30 @@ export class ExtraPagesEventComponent implements OnInit {
     this.addForm.grid_list = []; this.gridList = [];
     delete this.addForm.section_grid_type;
     this.addForm.multitab_list = [{}];
+    if(x=='amenities' && !this.addForm.text_list?.length) {
+      this.addForm.text_list = [this.getDefaultAmenityItem()];
+    }
+    if(x=='faq' && !this.addForm.faq_list?.length) {
+      this.addForm.faq_list = [this.getDefaultFaqItem()];
+    }
+    if(x=='internal_links' && !this.addForm.group_list?.length) {
+      this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
+    }
+    if(x=='dual_map' && !this.addForm.map_list?.length) {
+      this.addForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+    }
+    if(x=='feature_list' && !this.addForm.feature_list?.length) {
+      this.addForm.feature_list = [this.getDefaultFeatureListItem()];
+    }
+    if(x=='icon_card_grid' && !this.addForm.icon_card_list?.length) {
+      this.addForm.icon_card_list = [this.getDefaultIconCardItem()];
+    }
+    if(x=='contact_info' && !this.addForm.contact_info_list?.length) {
+      this.addForm.contact_info_list = [this.getDefaultContactInfoItem()];
+    }
+    if(x=='cta' && !this.addForm.cta_list?.length) {
+      this.addForm.cta_list = [this.getDefaultCtaItem()];
+    }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
       this.addForm.section_grid_type = this.addForm.grid_list[0].type;
@@ -276,6 +335,128 @@ export class ExtraPagesEventComponent implements OnInit {
     );
     if (index != -1) return this.commonService.grid_list[index].name;
     else return '';
+  }
+
+  getDefaultContactInfoItem() {
+    return {
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_link_type: 'external',
+      btn_link: ''
+    };
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  getDefaultHeroCtaItem() {
+    return {
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultCtaItem() {
+    return {
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultAmenityItem() {
+    return {
+      image: '',
+      icon_name: '',
+      name: '',
+      description: ''
+    };
+  }
+
+  getDefaultFaqItem() {
+    return {
+      ques: '',
+      answer: '',
+      rank: 1
+    };
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [{ icon_name: '', name: '', detail: '' }],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
   }
 
   onEditSeo(modalName) {

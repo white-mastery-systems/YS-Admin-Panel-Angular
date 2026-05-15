@@ -368,18 +368,62 @@
                     <div class="card p-3">
                       <div class="row poss-rel">
                         <span *ngIf="addForm.map_list.length>1" (click)="addForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                        <div class="col-md-12 form-group mb-0">
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Address {{ addForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <textarea class="form-control" [name]="'dual_map_address_'+mi" rows="3"
+                            [(ngModel)]="x.address"></textarea>
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
                           <label>Map Iframe URL {{ addForm.map_list.length>1 ? mi + 1 : '' }}</label>
                           <textarea class="form-control" [name]="'dual_map_iframe_'+mi" rows="3"
                             [(ngModel)]="x.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
                         </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label class="checkbox checkbox-primary">
+                            <input class="form-check-input" type="checkbox" [name]="'dual_map_btn_status_'+mi" [(ngModel)]="x.btn_status"
+                              (change)="x.btn_link_type=x.btn_status ? (x.btn_link_type || 'internal') : 'internal'; x.btn_link=x.btn_status ? x.btn_link : ''; x.btn_text=x.btn_status ? x.btn_text : '';">
+                            <span>Enable Button</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <ng-container *ngIf="x.btn_status">
+                          <div class="col-md-12 form-group mb-3">
+                            <label>Button Text</label>
+                            <input type="text" [name]="'dual_map_btn_text_'+mi" class="form-control" [(ngModel)]="x.btn_text" maxlength="100" required />
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Style</label>
+                            <select [name]="'dual_map_btn_style_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_style">
+                              <option value="primary">Primary</option>
+                              <option value="secondary">Secondary</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Text Color</label>
+                            <select [name]="'dual_map_btn_text_color_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_text_color">
+                              <option value="light">Light</option>
+                              <option value="dark">Dark</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Link Type</label>
+                            <select [name]="'dual_map_btn_link_type_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_link_type">
+                              <option value="internal">Internal</option>
+                              <option value="external">External</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Link</label>
+                            <input type="text" [name]="'dual_map_btn_link_'+mi" class="form-control" [(ngModel)]="x.btn_link" required />
+                          </div>
+                        </ng-container>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-md-12 mb-3">
-                <button class="light-button" (click)="addForm.map_list.push({ iframe_url: '' });" type="button">
+                <button class="light-button" (click)="addForm.map_list.push(getDefaultDualMapItem());" type="button">
                   <span class="material-symbols-rounded">add</span>Add Map
                 </button>
               </div>
@@ -702,18 +746,62 @@
                     <div class="card p-3">
                       <div class="row poss-rel">
                         <span *ngIf="editForm.map_list.length>1" (click)="editForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                        <div class="col-md-12 form-group mb-0">
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Address {{ editForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <textarea class="form-control" [name]="'edit_dual_map_address_'+mi" rows="3"
+                            [(ngModel)]="x.address"></textarea>
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
                           <label>Map Iframe URL {{ editForm.map_list.length>1 ? mi + 1 : '' }}</label>
                           <textarea class="form-control" [name]="'edit_dual_map_iframe_'+mi" rows="3"
                             [(ngModel)]="x.iframe_url" placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
                         </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label class="checkbox checkbox-primary">
+                            <input class="form-check-input" type="checkbox" [name]="'edit_dual_map_btn_status_'+mi" [(ngModel)]="x.btn_status"
+                              (change)="x.btn_link_type=x.btn_status ? (x.btn_link_type || 'internal') : 'internal'; x.btn_link=x.btn_status ? x.btn_link : ''; x.btn_text=x.btn_status ? x.btn_text : '';">
+                            <span>Enable Button</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <ng-container *ngIf="x.btn_status">
+                          <div class="col-md-12 form-group mb-3">
+                            <label>Button Text</label>
+                            <input type="text" [name]="'edit_dual_map_btn_text_'+mi" class="form-control" [(ngModel)]="x.btn_text" maxlength="100" required />
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Style</label>
+                            <select [name]="'edit_dual_map_btn_style_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_style">
+                              <option value="primary">Primary</option>
+                              <option value="secondary">Secondary</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Text Color</label>
+                            <select [name]="'edit_dual_map_btn_text_color_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_text_color">
+                              <option value="light">Light</option>
+                              <option value="dark">Dark</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Link Type</label>
+                            <select [name]="'edit_dual_map_btn_link_type_'+mi" class="form-control select-arrow" [(ngModel)]="x.btn_link_type">
+                              <option value="internal">Internal</option>
+                              <option value="external">External</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Link</label>
+                            <input type="text" [name]="'edit_dual_map_btn_link_'+mi" class="form-control" [(ngModel)]="x.btn_link" required />
+                          </div>
+                        </ng-container>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-md-12 mb-3">
-                <button class="light-button" (click)="editForm.map_list.push({ iframe_url: '' });" type="button">
+                <button class="light-button" (click)="editForm.map_list.push(getDefaultDualMapItem());" type="button">
                   <span class="material-symbols-rounded">add</span>Add Map
                 </button>
               </div>

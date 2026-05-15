@@ -17,7 +17,7 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of (layoutDetails.type=='internal_links' ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -961,6 +961,80 @@
 
     </ng-container>
     <!-- #Internal Links -->
+
+    <!-- Dual Map -->
+    <ng-container *ngIf="layoutDetails.type=='dual_map'">
+      <div *ngFor="let m of layoutDetails.map_list; let mi=index;" class="poss-rel card p-3 mb-3">
+        <span *ngIf="layoutDetails.map_list?.length > 1" (click)="layoutDetails.map_list.splice(mi, 1);"
+          class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+        <p class="dark-font mb-3">Map {{mi + 1}}</p>
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Address</label>
+            <textarea class="form-control" [name]="'dual_map_address_'+mi" rows="3" [(ngModel)]="m.address"></textarea>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Map Iframe URL</label>
+            <textarea class="form-control" [name]="'dual_map_iframe_'+mi" rows="4" [(ngModel)]="m.iframe_url"
+              placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" [name]="'dual_map_btn_status_'+mi" [(ngModel)]="m.btn_status"
+                (change)="m.btn_link_type=m.btn_status ? (m.btn_link_type || 'internal') : 'internal'; m.btn_link=m.btn_status ? m.btn_link : ''; m.btn_text=m.btn_status ? m.btn_text : '';">
+              <span>Enable Button</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <ng-container *ngIf="m.btn_status">
+            <div class="col-md-12 form-group mb-3">
+              <label>Button Text</label>
+              <input type="text" [name]="'dual_map_btn_text_'+mi" class="form-control" [(ngModel)]="m.btn_text" maxlength="100" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Button Style</label>
+              <select [name]="'dual_map_btn_style_'+mi" class="form-control select-arrow" [(ngModel)]="m.btn_style">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Text Color</label>
+              <select [name]="'dual_map_btn_text_color_'+mi" class="form-control select-arrow" [(ngModel)]="m.btn_text_color">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'dual_map_btn_link_type_'+mi" [(ngModel)]="m.btn_link_type" value="internal">
+                <span>Internal Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'dual_map_btn_link_type_'+mi" [(ngModel)]="m.btn_link_type" value="external">
+                <span>External Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-12 form-group mb-0">
+              <label *ngIf="m.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{m.btn_link}}</label>
+              <label *ngIf="m.btn_link_type=='external'">External Link</label>
+              <input type="text" [name]="'dual_map_btn_link_'+mi" class="form-control" [(ngModel)]="m.btn_link" required />
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button type="button" class="light-button" (click)="addNewImg();">
+          <span class="material-symbols-rounded">add</span> Add Map
+        </button>
+      </div>
+    </ng-container>
+    <!-- #Dual Map -->
     
     <!-- content grid -->
     <div *ngIf="layoutDetails.type=='content_grid'" class="col-md-12 col-lg-12 d-flex justify-content-center align-items-center form-group mb-3">
@@ -1064,7 +1138,7 @@
       </div>
     </ng-container>
     
-    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'internal_links'].indexOf(layoutDetails.type)==-1"  class="row m-0">
+    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'internal_links', 'dual_map'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">
           <span class="material-symbols-rounded">ADD</span>NEW

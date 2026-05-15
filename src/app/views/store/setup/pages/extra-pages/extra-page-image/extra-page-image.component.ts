@@ -41,6 +41,7 @@ export class ExtraPageImageComponent implements OnInit {
         if(result.status) {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
+          else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
           this.commonService.secondary_header = this.layoutDetails.name;
           if(this.layoutDetails.type=='section') {
             this.grid_details = this.commonService.grid_list.find(obj => obj.type==this.layoutDetails.section_grid_type);
@@ -74,8 +75,70 @@ export class ExtraPageImageComponent implements OnInit {
             this.shopping_assist_config = this.layoutDetails.shopping_assistant_config;
             if(!this.shopping_assist_config.changing_text?.length) this.shopping_assist_config.changing_text = [{ value: ''}];
           }
+            else if(this.layoutDetails.type=='amenities') {
+              if(!this.layoutDetails.text_list?.length) {
+                this.layoutDetails.text_list = [this.getDefaultAmenityItem()];
+              }
+              else {
+                this.layoutDetails.text_list.forEach(item => {
+                  if(item.icon_name === undefined) item.icon_name = '';
+                });
+              }
+            }
+            else if(this.layoutDetails.type=='faq') {
+              if(!this.layoutDetails.faq_list?.length) {
+                this.layoutDetails.faq_list = [this.getDefaultFaqItem()];
+              }
+              this.layoutDetails.faq_list = this.normalizeFaqItems(this.layoutDetails.faq_list);
+            }
+            else if(this.layoutDetails.type=='internal_links') {
+              this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
+              if(!this.layoutDetails.group_list.length) {
+                this.layoutDetails.group_list = [this.getDefaultInternalLinkGroup()];
+              }
+              this.syncInternalLinkGroupRanks();
+            }
+            else if(this.layoutDetails.type=='dual_map') {
+              if(!this.layoutDetails.map_list?.length) {
+                this.layoutDetails.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+              }
+              this.layoutDetails.map_list = this.normalizeDualMapList(this.layoutDetails.map_list);
+            }
+            else if(this.layoutDetails.type=='contact_info') {
+              if(!this.layoutDetails.contact_info_list?.length) {
+                this.layoutDetails.contact_info_list = [this.getDefaultContactInfoItem()];
+              }
+              this.layoutDetails.contact_info_list = this.normalizeContactInfoList(this.layoutDetails.contact_info_list);
+            }
+            else if(this.layoutDetails.type=='icon_card_grid') {
+              if(!this.layoutDetails.icon_card_list?.length) {
+                this.layoutDetails.icon_card_list = [this.getDefaultIconCardItem()];
+              }
+              this.layoutDetails.icon_card_list = this.normalizeIconCardList(this.layoutDetails.icon_card_list);
+            }
+            else if(this.layoutDetails.type=='content_section') {
+              if(this.layoutDetails.btn_status === undefined) this.layoutDetails.btn_status = false;
+              if(!this.layoutDetails.btn_style) this.layoutDetails.btn_style = 'primary';
+              if(!this.layoutDetails.btn_text_color) this.layoutDetails.btn_text_color = 'light';
+              if(!this.layoutDetails.btn_link_type) this.layoutDetails.btn_link_type = 'internal';
+            }
+            else if(this.layoutDetails.type=='feature_list') {
+              if(!this.layoutDetails.feature_list?.length) {
+                this.layoutDetails.feature_list = [this.getDefaultFeatureListItem()];
+              }
+              this.layoutDetails.feature_list = this.normalizeFeatureListItems(this.layoutDetails.feature_list);
+          }
           else if(this.layoutDetails.type=='content_grid' && !this.layoutDetails.text_list?.length) {
             this.layoutDetails.text_list = [{}];
+          }
+          else if(this.layoutDetails.type=='hero_cta') {
+            if(!this.layoutDetails.cta_list?.length) {
+              this.layoutDetails.cta_list = [this.getDefaultHeroCtaItem(), this.getDefaultHeroCtaItem()];
+            }
+          }
+          else if(this.layoutDetails.type=='cta') {
+            this.layoutDetails.cta_list = this.normalizeCtaList(this.layoutDetails.cta_list);
+            if(!this.layoutDetails.cta_list.length) this.layoutDetails.cta_list = [this.getDefaultCtaItem()];
           }
           else if(this.layoutDetails.type=='video_section' && !this.layoutDetails.video_details) {
             this.layoutDetails.video_details = {};
@@ -176,6 +239,28 @@ export class ExtraPageImageComponent implements OnInit {
     if(this.layoutDetails.type=='testimonial') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_details: {} });
     }
+    else if(this.layoutDetails.type=='amenities') {
+      this.layoutDetails.text_list.push(this.getDefaultAmenityItem());
+    }
+    else if(this.layoutDetails.type=='faq') {
+      this.layoutDetails.faq_list.push(this.getDefaultFaqItem(this.layoutDetails.faq_list.length + 1));
+    }
+    else if(this.layoutDetails.type=='internal_links') {
+      this.layoutDetails.group_list.push(this.getDefaultInternalLinkGroup());
+      this.syncInternalLinkGroupRanks();
+    }
+    else if(this.layoutDetails.type=='dual_map') {
+      this.layoutDetails.map_list.push(this.getDefaultDualMapItem());
+    }
+    else if(this.layoutDetails.type=='feature_list') {
+      this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
+    }
+    else if(this.layoutDetails.type=='icon_card_grid') {
+      this.layoutDetails.icon_card_list.push(this.getDefaultIconCardItem(this.layoutDetails.icon_card_list.length + 1));
+    }
+    else if(this.layoutDetails.type=='contact_info') {
+      this.layoutDetails.contact_info_list.push(this.getDefaultContactInfoItem());
+    }
     else if(this.layoutDetails.type=='multiple_highlighted_section') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_status: true, content_details: {} });
     }
@@ -202,6 +287,17 @@ export class ExtraPageImageComponent implements OnInit {
       }
       if(this.shopping_assist_config.img_change) this.fileList.append('attachments', this.shopping_assist_config.image);
       else layoutData.shopping_assistant_config.image = this.shopping_assist_config.image;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
+    else if(layoutData.type=='hero_cta') {
+      layoutData.store_id = this.commonService.store_details._id;
+      layoutData.page_id = this.params.id;
+      layoutData._id = this.layoutDetails._id;
+      if(this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
+        delete layoutData.cover_img;
+        this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
+      }
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
@@ -233,10 +329,80 @@ export class ExtraPageImageComponent implements OnInit {
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
-    else if(layoutData.type=='content_grid') {
-      this.onSetFormData(layoutData.text_list).then((imgList) => {
-        layoutData.text_list = imgList;
+      else if(layoutData.type=='content_grid' || layoutData.type=='amenities') {
+        this.onSetFormData(layoutData.text_list).then((imgList) => {
+          layoutData.text_list = imgList;
+          layoutData.store_id = this.commonService.store_details._id;
+          layoutData.page_id = this.params.id;
+          layoutData._id = this.layoutDetails._id;
+          this.fileList.append('data', JSON.stringify(layoutData));
+          this.callUpdateApi();
+        });
+      }
+      else if(layoutData.type=='faq') {
+        layoutData.faq_list = this.normalizeFaqItems(layoutData.faq_list);
         layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='internal_links') {
+        layoutData.group_list = this.normalizeInternalLinkGroups(layoutData.group_list, layoutData.cta_list);
+        delete layoutData.cta_list;
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='dual_map') {
+        layoutData.map_list = this.normalizeDualMapList(layoutData.map_list);
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='contact_info') {
+        layoutData.contact_info_list = this.normalizeContactInfoList(layoutData.contact_info_list);
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        if(this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
+          delete layoutData.cover_img;
+          this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
+        }
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='icon_card_grid') {
+        layoutData.icon_card_list = this.normalizeIconCardList(layoutData.icon_card_list);
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='content_section') {
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='cta') {
+        layoutData.cta_list = this.normalizeCtaList(layoutData.cta_list);
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='feature_list') {
+        this.onSetFeatureFormData(layoutData.feature_list).then((featureList) => {
+          layoutData.feature_list = featureList;
+          layoutData.store_id = this.commonService.store_details._id;
         layoutData.page_id = this.params.id;
         layoutData._id = this.layoutDetails._id;
         this.fileList.append('data', JSON.stringify(layoutData));
@@ -307,10 +473,29 @@ export class ExtraPageImageComponent implements OnInit {
     });
   }
 
+  onSetFeatureFormData(featureList) {
+    return new Promise((resolve, reject) => {
+      let updatedList = [];
+      for(let i=0; i<featureList.length; i++) {
+        let featureData = featureList[i];
+        let objData = Object.assign({}, featureData);
+        delete objData.temp_img;
+        if(featureData.img_change) {
+          delete objData.image;
+          this.fileList.append('attachments', featureData['image'], i+'_c');
+        }
+        updatedList.push(objData);
+      }
+      resolve(updatedList);
+    });
+  }
+
   fileChangeListener(devType, index, event) {
     delete this.layoutDetails.image_list[index]?.d_err_msg;
     delete this.layoutDetails.image_list[index]?.m_err_msg;
     delete this.layoutDetails.text_list?.[index]?.c_err_msg;
+    delete this.layoutDetails.feature_list?.[index]?.c_err_msg;
+    if(devType=='fc_cover') delete this.layoutDetails.cover_img_err;
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
       if(["image/jpeg", "image/png", "image/gif"].indexOf(inFile.type) != -1) {
@@ -342,11 +527,292 @@ export class ExtraPageImageComponent implements OnInit {
             }
             else this.layoutDetails.text_list[index].c_err_msg = true;
           }
+          else if(devType=='feature') {
+            if(fileInKB<=this.fileLimitInKB) {
+              this.layoutDetails.feature_list[index].temp_img = (<FileReader>event.target).result;
+              this.layoutDetails.feature_list[index].image = fileData;
+              this.layoutDetails.feature_list[index].img_change = true;
+            }
+            else this.layoutDetails.feature_list[index].c_err_msg = true;
+          }
+          else if(devType=='fc_cover') {
+            if(fileInKB<=this.fileLimitInKB) {
+              this.layoutDetails.temp_cover_img = (<FileReader>event.target).result;
+              this.layoutDetails.cover_img = fileData;
+              this.layoutDetails.cover_img_change = true;
+            }
+            else this.layoutDetails.cover_img_err = true;
+          }
         }
         reader.readAsDataURL(fileData);
       }
       else console.log("Invaid file");
     }
+  }
+
+  getDefaultHeroCtaItem() {
+    return {
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultAmenityItem() {
+    return {
+      image: '',
+      icon_name: '',
+      name: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultFaqItem(rank = 1) {
+    return {
+      ques: '',
+      answer: '',
+      rank
+    };
+  }
+
+  normalizeFaqItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultFaqItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    }));
+  }
+
+  addInternalLinkGroup() {
+    this.layoutDetails.group_list.push(this.getDefaultInternalLinkGroup());
+    this.syncInternalLinkGroupRanks();
+  }
+
+  removeInternalLinkGroup(groupIndex) {
+    this.layoutDetails.group_list.splice(groupIndex, 1);
+    this.syncInternalLinkGroupRanks();
+  }
+
+  addInternalLinkItem(groupIndex) {
+    this.layoutDetails.group_list[groupIndex].link_list.push(this.getDefaultInternalLinkItem());
+  }
+
+  onInternalLinkGroupRankChange() {
+    this.syncInternalLinkGroupRanks(true);
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
+  }
+
+  getDefaultContactInfoItem() {
+    return {
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_link_type: 'external',
+      btn_link: ''
+    };
+  }
+
+  getDefaultCtaItem() {
+    return {
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  normalizeCtaList(ctaList: any[] = []) {
+    return (Array.isArray(ctaList) ? ctaList : []).map(item => ({
+      ...this.getDefaultCtaItem(),
+      ...item
+    }));
+  }
+
+  normalizeContactInfoList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item) => ({
+      ...this.getDefaultContactInfoItem(),
+      ...item,
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  normalizeIconCardList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultIconCardItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map((group: any) => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map((item: any) => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  syncInternalLinkGroupRanks(sortByRank = false) {
+    if(!Array.isArray(this.layoutDetails.group_list)) {
+      this.layoutDetails.group_list = [];
+      return;
+    }
+
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : index + 1
+    }));
+
+    if(sortByRank) {
+      this.layoutDetails.group_list.sort((a, b) => a.rank - b.rank);
+    }
+
+    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
+      ...group,
+      rank: index + 1
+    }));
+  }
+
+  getDefaultFeatureCard() {
+    return {
+      icon_name: '',
+      name: '',
+      detail: ''
+    };
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultFeatureCard()],
+      cta_list: []
+    };
+  }
+
+  getDefaultFeatureCta() {
+    return {
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: '',
+      btn_style: 'primary',
+      btn_text_color: 'light'
+    };
+  }
+
+  normalizeFeatureListItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map(item => ({
+      ...this.getDefaultFeatureListItem(),
+      ...item,
+      features: (Array.isArray(item?.features) ? item.features : []).length
+        ? item.features.map((feature: any) => ({ ...this.getDefaultFeatureCard(), ...feature }))
+        : [this.getDefaultFeatureCard()],
+      cta_list: Array.isArray(item?.cta_list) ? item.cta_list.map((cta: any) => ({
+        ...this.getDefaultFeatureCta(),
+        ...cta
+      })) : []
+    }));
   }
 
   videoChangeListener(devType, index, event) {
