@@ -53,7 +53,8 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Location Highlights', value: 'location_highlights' },
     { name: 'Icon Card Grid', value: 'icon_card_grid' },
     { name: 'Founder FAQ Grid', value: 'founder_faq_grid' },
-    { name: 'Content Checklist Split', value: 'content_checklist_split' }
+    { name: 'Content Checklist Split', value: 'content_checklist_split' },
+    { name: 'Image Icon Grid Split', value: 'image_icon_grid_split' }
   ];
 
   constructor(
@@ -230,6 +231,7 @@ export class CatalogPagesEventComponent implements OnInit {
         if (!this.editForm.content_split_intro) this.editForm.content_split_intro = {};
         if (!this.editForm.checklist_config) this.editForm.checklist_config = {};
         if (!this.editForm.checklist_items) this.editForm.checklist_items = [];
+        if (!this.editForm.footer_banner) this.editForm.footer_banner = {};
         if (!this.editForm.location_iframe) this.editForm.location_iframe = {};
         if (this.editForm.type === 'internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
@@ -372,6 +374,15 @@ export class CatalogPagesEventComponent implements OnInit {
     if (type === 'icon_card_grid') {
       if (!form.icon_card_list) {
         form.icon_card_list = [];
+      }
+    }
+
+    if (type === 'image_icon_grid_split') {
+      if (!form.icon_card_list) {
+        form.icon_card_list = [];
+      }
+      if (!form.footer_banner) {
+        form.footer_banner = { icon_name: '', heading: '', description: '' };
       }
     }
 

@@ -91,6 +91,19 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.icon_card_list = [this.getDefaultIconCardItem()];
             }
             this.layoutDetails.icon_card_list = this.normalizeIconCardList(this.layoutDetails.icon_card_list);
+          } else if (this.layoutDetails.type === 'image_icon_grid_split') {
+            if (!this.layoutDetails.icon_card_list || !this.layoutDetails.icon_card_list.length) {
+              this.layoutDetails.icon_card_list = [this.getDefaultIconCardItem()];
+            }
+            this.layoutDetails.icon_card_list = this.normalizeIconCardList(this.layoutDetails.icon_card_list);
+            if (!this.layoutDetails.footer_banner) {
+              this.layoutDetails.footer_banner = this.getDefaultFooterBanner();
+            } else {
+              this.layoutDetails.footer_banner = { ...this.getDefaultFooterBanner(), ...this.layoutDetails.footer_banner };
+            }
+            if (this.layoutDetails.cover_img_alt === undefined) {
+              this.layoutDetails.cover_img_alt = '';
+            }
           } else if (this.layoutDetails.type === 'location_highlights') {
             if (!this.layoutDetails.location_iframe) {
               this.layoutDetails.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };
@@ -173,9 +186,14 @@ export class CatalogPageImageComponent implements OnInit {
           } else if (this.layoutDetails.type === 'hero_cta') {
             if (!this.layoutDetails.cta_list?.length) {
               this.layoutDetails.cta_list = [
-                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' },
-                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
+                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] },
+                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] }
               ];
+            } else {
+              this.layoutDetails.cta_list.forEach(cta => {
+                if (!cta.icon_name) cta.icon_name = '';
+                if (!cta.btn_list) cta.btn_list = [];
+              });
             }
           } else if (this.layoutDetails.type === 'internal_links') {
             this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
@@ -384,6 +402,14 @@ export class CatalogPageImageComponent implements OnInit {
         ...item,
         rank: index + 1
       }));
+  }
+
+  getDefaultFooterBanner() {
+    return {
+      icon_name: '',
+      heading: '',
+      description: ''
+    };
   }
 
   getDefaultFounderIntro() {
@@ -607,10 +633,16 @@ export class CatalogPageImageComponent implements OnInit {
       }
     }
 
-    // Handle cover image for featured_cards
+    // Handle cover image for featured_cards, hero_cta, image_icon_grid_split
     if (this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
       delete layoutData.cover_img;
-      this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
+      const coverFieldName = this.layoutDetails.type === 'image_icon_grid_split' ? 'iigs_cover' : 'fc_cover';
+      this.fileList.append('attachments', this.layoutDetails.cover_img, coverFieldName);
+    }
+
+    if (layoutData.type === 'image_icon_grid_split') {
+      layoutData.footer_banner = { ...this.getDefaultFooterBanner(), ...(layoutData.footer_banner || {}) };
+      layoutData.icon_card_list = this.normalizeIconCardList(layoutData.icon_card_list);
     }
 
     let imageList = this.layoutDetails.image_list || [];
@@ -719,7 +751,7 @@ export class CatalogPageImageComponent implements OnInit {
   fileChangeListener(devType, index, event, subIndex = null) {
     if (devType === 'desktop') delete this.layoutDetails.image_list[index]?.d_err_msg;
     else if (devType === 'mobile') delete this.layoutDetails.image_list[index]?.m_err_msg;
-    else if (devType === 'fc_cover') { /* no err_msg for cover */ }
+    else if (devType === 'fc_cover' || devType === 'iigs_cover') { /* no err_msg for cover */ }
     else if (devType === 'founder_intro') delete this.layoutDetails.founder_intro?.err_msg;
     else if (devType === 'highlighted_gallery') delete this.layoutDetails.image_list[index]?.gallery_images?.[subIndex]?.err_msg;
     else if (devType === 'feature') delete this.layoutDetails.feature_list[index]?.c_err_msg;
@@ -749,7 +781,7 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.image_list[index].gallery_images[subIndex].temp_img = (<FileReader>e.target).result;
               this.layoutDetails.image_list[index].gallery_images[subIndex].image = fileData;
             } else { this.layoutDetails.image_list[index].gallery_images[subIndex].err_msg = true; }
-          } else if (devType === 'fc_cover') {
+          } else if (devType === 'fc_cover' || devType === 'iigs_cover') {
             if (fileInKB <= this.fileLimitInKB) {
               this.layoutDetails.temp_cover_img = (<FileReader>e.target).result;
               this.layoutDetails.cover_img = fileData;

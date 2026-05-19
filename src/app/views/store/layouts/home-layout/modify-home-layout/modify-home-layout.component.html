@@ -490,6 +490,10 @@
                 <span *ngIf="layoutDetails.cta_list.length>1" (click)="layoutDetails.cta_list.splice(ci, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
                 <div class="row">
                   <div class="col-md-12 form-group mb-3">
+                    <label>Icon Name</label>
+                    <input type="text" [name]="'hcta_icon_name'+ci" class="form-control" [(ngModel)]="cta.icon_name" />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
                     <label>Heading</label>
                     <input type="text" [name]="'hcta_heading'+ci" class="form-control" [(ngModel)]="cta.heading" />
                   </div>
@@ -500,39 +504,49 @@
                   <div class="col-md-12 form-group mb-3">
                     <label class="checkbox checkbox-primary">
                       <input class="form-check-input" type="checkbox" [name]="'hcta_btn_status'+ci" [(ngModel)]="cta.btn_status">
-                      <span>Enable Button</span>
+                      <span>Enable Buttons</span>
                       <span class="checkmark"></span>
                     </label>
                   </div>
                   <ng-container *ngIf="cta.btn_status">
-                    <div class="col-md-6 form-group mb-3">
-                      <label>Button Text</label>
-                      <input type="text" [name]="'hcta_btn_text'+ci" class="form-control" [(ngModel)]="cta.btn_text" />
-                    </div>
-                    <div class="col-md-3 form-group mb-3">
-                      <label>Button Style</label>
-                      <select [name]="'hcta_btn_style'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_style">
-                        <option value="primary">Primary</option>
-                        <option value="secondary">Secondary</option>
-                      </select>
-                    </div>
-                    <div class="col-md-3 form-group mb-3">
-                      <label>Button Text Color</label>
-                      <select [name]="'hcta_btn_text_color'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_text_color">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                      </select>
-                    </div>
-                    <div class="col-md-4 form-group mb-3">
-                      <label>Link Type</label>
-                      <select [name]="'hcta_btn_link_type'+ci" class="form-control select-arrow" [(ngModel)]="cta.btn_link_type">
-                        <option value="internal">Internal</option>
-                        <option value="external">External</option>
-                      </select>
-                    </div>
-                    <div class="col-md-8 form-group mb-3">
-                      <label>Button Link</label>
-                      <input type="text" [name]="'hcta_btn_link'+ci" class="form-control" [(ngModel)]="cta.btn_link" />
+                    <div class="col-md-12">
+                      <div *ngFor="let btn of cta.btn_list; let bi=index;" class="card p-3 mb-2 poss-rel">
+                        <span *ngIf="cta.btn_list.length>1" (click)="cta.btn_list.splice(bi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Button Text</label>
+                            <input type="text" [name]="'hcta_btn_text'+ci+'_'+bi" class="form-control" [(ngModel)]="btn.btn_text" />
+                          </div>
+                          <div class="col-md-3 form-group mb-3">
+                            <label>Button Style</label>
+                            <select [name]="'hcta_btn_style'+ci+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_style">
+                              <option value="primary">Primary</option>
+                              <option value="secondary">Secondary</option>
+                            </select>
+                          </div>
+                          <div class="col-md-3 form-group mb-3">
+                            <label>Button Text Color</label>
+                            <select [name]="'hcta_btn_text_color'+ci+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_text_color">
+                              <option value="light">Light</option>
+                              <option value="dark">Dark</option>
+                            </select>
+                          </div>
+                          <div class="col-md-4 form-group mb-3">
+                            <label>Link Type</label>
+                            <select [name]="'hcta_btn_link_type'+ci+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_link_type">
+                              <option value="internal">Internal</option>
+                              <option value="external">External</option>
+                            </select>
+                          </div>
+                          <div class="col-md-8 form-group mb-3">
+                            <label>Button Link</label>
+                            <input type="text" [name]="'hcta_btn_link'+ci+'_'+bi" class="form-control" [(ngModel)]="btn.btn_link" />
+                          </div>
+                        </div>
+                      </div>
+                      <button type="button" class="light-button mb-3" (click)="cta.btn_list.push({ btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });">
+                        <span class="material-symbols-rounded">ADD</span>NEW BUTTON
+                      </button>
                     </div>
                   </ng-container>
                 </div>
@@ -541,7 +555,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <button type="button" class="light-button" (click)="layoutDetails.cta_list.push({ heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });">
+          <button type="button" class="light-button" (click)="layoutDetails.cta_list.push({ heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] });">
             <span class="material-symbols-rounded">ADD</span>NEW CTA
           </button>
         </div>
@@ -1137,7 +1151,48 @@
         </button>
       </div>
     </ng-container>
-    
+
+    <!-- secondary banner cards -->
+    <div *ngIf="layoutDetails.type=='secondary'" class="card p-3 mb-3">
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <p class="dark-font mb-0">Info Cards</p>
+        </div>
+        <div class="col-md-12 px-0">
+          <div class="row px-3">
+            <div *ngFor="let card of layoutDetails.text_list; let ti=index;" class="col-md-4 form-group mb-3">
+              <div class="card p-3 poss-rel">
+                <span (click)="layoutDetails.text_list.splice(ti, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                <div class="row">
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Icon Name</label>
+                    <input type="text" [name]="'sec_icon_name'+ti" class="form-control" [(ngModel)]="card.icon_name" />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Name</label>
+                    <input type="text" [name]="'sec_name'+ti" class="form-control" [(ngModel)]="card.name" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Sub Heading</label>
+                    <input type="text" [name]="'sec_sub_heading'+ti" class="form-control" [(ngModel)]="card.sub_heading" />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Description</label>
+                    <textarea class="form-control" [name]="'sec_desc'+ti" rows="2" [(ngModel)]="card.description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="button" class="light-button" (click)="layoutDetails.text_list.push({ icon_name: '', name: '', sub_heading: '', description: '' });">
+            <span class="material-symbols-rounded">ADD</span>NEW CARD
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'internal_links', 'dual_map'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">

@@ -53,6 +53,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             else this.layoutDetails.image_list.push({ rank: 1, productList: [] });
           }
+          else if(this.layoutDetails.type=='secondary') {
+            if(!this.layoutDetails.text_list) this.layoutDetails.text_list = [];
+          }
           else if(this.layoutDetails.type=='content_grid' && !this.layoutDetails.text_list.length) {
             this.layoutDetails.text_list.push({});
           }
@@ -93,9 +96,14 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             if(!this.layoutDetails.cta_list?.length) {
               this.layoutDetails.cta_list = [
-                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' },
-                { heading: '', description: '', btn_status: true, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }
+                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] },
+                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] }
               ];
+            } else {
+              this.layoutDetails.cta_list.forEach(cta => {
+                if(!cta.icon_name) cta.icon_name = '';
+                if(!cta.btn_list) cta.btn_list = [];
+              });
             }
           }
           else if(this.layoutDetails.type=='amenities') {
