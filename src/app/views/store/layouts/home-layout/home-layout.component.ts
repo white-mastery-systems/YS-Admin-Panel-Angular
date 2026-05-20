@@ -29,6 +29,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Featured Cards", value: "featured_cards" },
     { name: "CTA", value: "cta" },
     { name: "Dual Map", value: "dual_map" },
+    { name: "Store Locator", value: "store_locator" },
     { name: "FAQ", value: "faq" },
     { name: "Internal Links", value: "internal_links" },
     { name: "Highlighted Section", value: "highlighted_section" },
@@ -172,6 +173,11 @@ export class HomeLayoutComponent implements OnInit {
             this.editForm.map_list = this.normalizeDualMapList(this.editForm.map_list);
           }
         }
+        else if(this.editForm.type=='store_locator') {
+          if(!this.editForm.store_locator_config) {
+            this.editForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
+          }
+        }
         else if(this.editForm.type=='internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
           if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
@@ -290,6 +296,9 @@ export class HomeLayoutComponent implements OnInit {
     }
     else if(x=='dual_map') {
       this.addForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+    }
+    else if(x=='store_locator') {
+      this.addForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
     }
     else if(x=='internal_links') {
       this.addForm.group_list = [this.getDefaultInternalLinkGroup()];

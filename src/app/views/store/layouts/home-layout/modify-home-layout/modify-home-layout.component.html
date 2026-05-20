@@ -17,7 +17,7 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -69,7 +69,7 @@
                 </div>
               </div>
               <div *ngIf="x.d_err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
               <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
                 <label>Image Alt Name</label>
@@ -104,7 +104,7 @@
                 </div>
               </div>
               <div *ngIf="x.m_err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@
                 </div>
               </div>
               <div *ngIf="x.d_err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
             </div>
           </div>
@@ -662,7 +662,7 @@
                   <label class="custom-file-label">Choose file</label>
                 </div>
                 <div *ngIf="g.cover_img_err" class="mt-2">
-                  <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                  <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
                 </div>
               </div>
             </div>
@@ -708,7 +708,7 @@
                     </div>
                   </div>
                   <div *ngIf="x.d_err_msg" class="mt-2">
-                    <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                    <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
                   </div>
                 </div>
               </div>
@@ -1049,7 +1049,57 @@
       </div>
     </ng-container>
     <!-- #Dual Map -->
-    
+
+    <!-- Store Locator -->
+    <ng-container *ngIf="layoutDetails.type=='store_locator'">
+      <div class="poss-rel card p-3 mb-3">
+        <div class="row pt-3 pb-3">
+          <div class="col-md-6">
+            <p class="dark-font">Store Image</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>1025 x 575 pixels @72ppi</p>
+                <i *ngIf="!layoutDetails.store_locator_config?.store_image && !layoutDetails.store_locator_config?.temp_store_image" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="layoutDetails.store_locator_config?.store_image || layoutDetails.store_locator_config?.temp_store_image" class="desktop-layout-image-sec">
+                  <img *ngIf="layoutDetails.store_locator_config?.img_change" [src]="layoutDetails.store_locator_config.temp_store_image">
+                  <img *ngIf="!layoutDetails.store_locator_config?.img_change && layoutDetails.store_locator_config?.store_image" [src]="imgBaseUrl+layoutDetails.store_locator_config.store_image">
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" name="store_img" class="custom-file-input"
+                    (change)="storeLocatorFileChangeListener($event);"
+                    accept="image/jpeg, image/png, image/gif, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="layoutDetails.store_locator_config?.err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Address</label>
+            <textarea class="form-control" name="sl_address" rows="3"
+              [(ngModel)]="layoutDetails.store_locator_config.address" required></textarea>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Map Iframe URL</label>
+            <textarea class="form-control" name="sl_iframe" rows="3"
+              [(ngModel)]="layoutDetails.store_locator_config.map_iframe_url"
+              placeholder="https://www.google.com/maps/embed?pb=..." required></textarea>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- #Store Locator -->
+
     <!-- content grid -->
     <div *ngIf="layoutDetails.type=='content_grid'" class="col-md-12 col-lg-12 d-flex justify-content-center align-items-center form-group mb-3">
       <div class="card w-100 p-3 mb-3">
@@ -1075,7 +1125,7 @@
                 </div>
               </div>
               <div *ngIf="x.c_err_msg">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
               <div class="col-md-12 form-group">
                 <label>Name</label>
@@ -1120,7 +1170,7 @@
                 </div>
               </div>
               <div *ngIf="x.c_err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
             </div>
           </div>
@@ -1193,7 +1243,7 @@
       </div>
     </div>
 
-    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'internal_links', 'dual_map'].indexOf(layoutDetails.type)==-1"  class="row m-0">
+    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'internal_links', 'dual_map', 'store_locator'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">
           <span class="material-symbols-rounded">ADD</span>NEW
@@ -1222,7 +1272,7 @@
               </div>
             </div>
             <div *ngIf="shopping_assist_config.err_msg" class="mt-2">
-              <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+              <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
             </div>
             <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
               <label>Image Alt Name</label>
@@ -1289,7 +1339,7 @@
               </div>
             </div>
             <div *ngIf="layoutDetails.video_details.img_err_msg" class="mt-2">
-              <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+              <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
             </div>
           </div>
         </div>
@@ -1484,7 +1534,7 @@
                 </div>
               </div>
               <div *ngIf="x.d_err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
               </div>
             </div>
           </div>

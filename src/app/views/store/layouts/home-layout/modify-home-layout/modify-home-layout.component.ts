@@ -21,7 +21,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
     { name: "Bottom Left", value: "b_l" }, { name: "Bottom Center", value: "b_c" }, { name: "Bottom Right", value: "b_r" }
   ];
   grid_details: any = {}; shopping_assist_config: any;
-  fileList: FormData; fileLimitInKB: number = 500; videoLimitInKB: number = 5120;
+  fileList: FormData; fileLimitInKB: number = 5000; videoLimitInKB: number = 5120;
   maxImgCount: number = 10;
 
   constructor(
@@ -152,6 +152,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             else {
               this.layoutDetails.map_list = this.normalizeDualMapList(this.layoutDetails.map_list);
+            }
+          }
+          else if(this.layoutDetails.type=='store_locator') {
+            if(!this.layoutDetails.store_locator_config) {
+              this.layoutDetails.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
             }
           }
           else if(this.layoutDetails.type=='cta') {
@@ -285,6 +290,23 @@ export class ModifyHomeLayoutComponent implements OnInit {
       else layoutData.video_details.src = this.layoutDetails.video_details.src;
       if(this.layoutDetails.video_details.img_change) this.fileList.append('thumbnail', this.layoutDetails.video_details.thumbnail);
       else layoutData.video_details.thumbnail = this.layoutDetails.video_details.thumbnail;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
+    else if(layoutData.type=='store_locator') {
+      let srcConfig = this.layoutDetails.store_locator_config;
+      let slConfig: any = {
+        address: srcConfig.address || '',
+        map_iframe_url: srcConfig.map_iframe_url || ''
+      };
+      if(srcConfig.img_change) {
+        this.fileList.append('attachments', srcConfig.store_image, 'store_img');
+        slConfig.img_change = true;
+      }
+      else {
+        slConfig.store_image = srcConfig.store_image || '';
+      }
+      layoutData.store_locator_config = slConfig;
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
@@ -717,6 +739,27 @@ export class ModifyHomeLayoutComponent implements OnInit {
         reader.readAsDataURL(fileData);
       }
       else console.log("Invaid file");
+    }
+  }
+
+  storeLocatorFileChangeListener(event) {
+    delete this.layoutDetails.store_locator_config.err_msg;
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png", "image/gif", "image/webp"].indexOf(inFile.type) != -1) {
+        let reader = new FileReader();
+        let fileData = event.target.files[0];
+        let fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            this.layoutDetails.store_locator_config.temp_store_image = (<FileReader>e.target).result;
+            this.layoutDetails.store_locator_config.store_image = fileData;
+            this.layoutDetails.store_locator_config.img_change = true;
+          }
+          else this.layoutDetails.store_locator_config.err_msg = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
     }
   }
 

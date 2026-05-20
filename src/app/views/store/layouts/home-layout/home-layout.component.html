@@ -106,10 +106,11 @@
               <ng-container *ngIf="x.type=='multi_categories'">{{ x.multicategory_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='dual_map'">{{ x.map_list?.length }} Maps</ng-container>
+              <ng-container *ngIf="x.type=='store_locator'">1 Tile</ng-container>
               <ng-container *ngIf="x.type=='featured_cards'">{{ x.featured_cards_list?.length }} Groups</ng-container>
               <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
-              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'dual_map', 'featured_cards', 'faq', 'internal_links'].indexOf(x.type)==-1">
+              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'dual_map', 'store_locator', 'featured_cards', 'faq', 'internal_links'].indexOf(x.type)==-1">
                 {{ x.image_list?.length }} Tiles
               </ng-container>
             </p>
@@ -426,6 +427,11 @@
                 <button class="light-button" (click)="addForm.map_list.push(getDefaultDualMapItem());" type="button">
                   <span class="material-symbols-rounded">add</span>Add Map
                 </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='store_locator'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Store image, address, and map can be configured in the segment image view after creating.</p>
               </div>
             </ng-container>
             <ng-container *ngIf="addForm.type=='faq'">
@@ -804,6 +810,11 @@
                 <button class="light-button" (click)="editForm.map_list.push(getDefaultDualMapItem());" type="button">
                   <span class="material-symbols-rounded">add</span>Add Map
                 </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='store_locator'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Store image, address, and map can be configured in the segment image view.</p>
               </div>
             </ng-container>
             <ng-container *ngIf="editForm.type=='faq'">
