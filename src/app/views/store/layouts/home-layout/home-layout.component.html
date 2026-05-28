@@ -370,6 +370,10 @@
                       <div class="row poss-rel">
                         <span *ngIf="addForm.map_list.length>1" (click)="addForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
                         <div class="col-md-12 form-group mb-3">
+                          <label>Heading {{ addForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <input type="text" class="form-control" [name]="'dual_map_heading_'+mi" [(ngModel)]="x.heading" maxlength="200" />
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
                           <label>Address {{ addForm.map_list.length>1 ? mi + 1 : '' }}</label>
                           <textarea class="form-control" [name]="'dual_map_address_'+mi" rows="3"
                             [(ngModel)]="x.address"></textarea>
@@ -752,6 +756,10 @@
                     <div class="card p-3">
                       <div class="row poss-rel">
                         <span *ngIf="editForm.map_list.length>1" (click)="editForm.map_list.splice(mi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Heading {{ editForm.map_list.length>1 ? mi + 1 : '' }}</label>
+                          <input type="text" class="form-control" [name]="'edit_dual_map_heading_'+mi" [(ngModel)]="x.heading" maxlength="200" />
+                        </div>
                         <div class="col-md-12 form-group mb-3">
                           <label>Address {{ editForm.map_list.length>1 ? mi + 1 : '' }}</label>
                           <textarea class="form-control" [name]="'edit_dual_map_address_'+mi" rows="3"

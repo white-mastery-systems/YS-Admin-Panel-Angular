@@ -286,7 +286,7 @@ export class HomeLayoutComponent implements OnInit {
         description: '',
         cover_img: '',
         cover_img_position: 'left',
-        image_list: [{ rank: 1 }],
+        image_list: [],
         features: [{ icon_name: '', name: '', detail: '' }],
         cta_list: [{ ...defaultCta }]
       }];
@@ -381,6 +381,7 @@ export class HomeLayoutComponent implements OnInit {
 
   getDefaultDualMapItem() {
     return {
+      heading: '',
       address: '',
       btn_link_type: 'internal',
       btn_status: true,

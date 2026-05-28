@@ -42,6 +42,7 @@ export class ExtraPageImageComponent implements OnInit {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
           else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
+          else if(this.layoutDetails.type=="faq") this.maxImgCount = 20;
           this.commonService.secondary_header = this.layoutDetails.name;
           if(this.layoutDetails.type=='section') {
             this.grid_details = this.commonService.grid_list.find(obj => obj.type==this.layoutDetails.section_grid_type);
@@ -554,12 +555,14 @@ export class ExtraPageImageComponent implements OnInit {
     return {
       heading: '',
       description: '',
+      icon_name: '',
       btn_status: true,
       btn_text: '',
       btn_style: 'primary',
       btn_text_color: 'light',
       btn_link_type: 'internal',
-      btn_link: ''
+      btn_link: '',
+      btn_list: []
     };
   }
 
@@ -635,6 +638,7 @@ export class ExtraPageImageComponent implements OnInit {
 
   getDefaultDualMapItem() {
     return {
+      heading: '',
       address: '',
       btn_link_type: 'internal',
       btn_status: true,

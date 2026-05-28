@@ -432,6 +432,7 @@ export class ExtraPagesEventComponent implements OnInit {
 
   getDefaultDualMapItem() {
     return {
+      heading: '',
       address: '',
       btn_link_type: 'internal',
       btn_status: true,

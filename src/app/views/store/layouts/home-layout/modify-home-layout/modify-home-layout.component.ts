@@ -39,7 +39,6 @@ export class ModifyHomeLayoutComponent implements OnInit {
         if(result.status) {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
-          else if(this.layoutDetails.type=="hero_cta") this.maxImgCount = 1;
           else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
           else if(this.layoutDetails.type=="featured_cards") this.maxImgCount = 10;
           else if(this.layoutDetails.type=="cta") this.maxImgCount = 1;
@@ -55,6 +54,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
           }
           else if(this.layoutDetails.type=='secondary') {
             if(!this.layoutDetails.text_list) this.layoutDetails.text_list = [];
+            if(!this.layoutDetails.image_list?.length) {
+              this.layoutDetails.image_list = [{ rank: 1, content_details: {}, productList: [] }];
+            }
           }
           else if(this.layoutDetails.type=='content_grid' && !this.layoutDetails.text_list.length) {
             this.layoutDetails.text_list.push({});
@@ -91,17 +93,24 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.multicategory_list = [{ rank: 1, image_list: [{ rank: 1 }] }];
           }
           else if(this.layoutDetails.type=='hero_cta') {
-            if(!this.layoutDetails.image_list?.length) {
-              this.layoutDetails.image_list = [{ rank: 1 }];
+            if(!this.layoutDetails.cover_img) this.layoutDetails.cover_img = '';
+            if(!this.layoutDetails.highlighted_text) this.layoutDetails.highlighted_text = '';
+            if(!this.layoutDetails.highlighted_color) this.layoutDetails.highlighted_color = '';
+            if(!this.layoutDetails.rating_config) {
+              this.layoutDetails.rating_config = { rating_status: false, rating_icon: '', rating_value: 0, rating_label: '', rating_sub_text: '' };
+            }
+            if(!this.layoutDetails.badge_config) {
+              this.layoutDetails.badge_config = { badge_status: false, badge_icon: '', badge_value: '', badge_label: '' };
             }
             if(!this.layoutDetails.cta_list?.length) {
               this.layoutDetails.cta_list = [
-                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] },
-                { heading: '', description: '', icon_name: '', btn_status: true, btn_list: [] }
+                { heading: '', description: '', image: '', icon_name: '', btn_status: true, btn_list: [] },
+                { heading: '', description: '', image: '', icon_name: '', btn_status: true, btn_list: [] }
               ];
             } else {
               this.layoutDetails.cta_list.forEach(cta => {
                 if(!cta.icon_name) cta.icon_name = '';
+                if(!cta.image) cta.image = '';
                 if(!cta.btn_list) cta.btn_list = [];
               });
             }
@@ -310,6 +319,30 @@ export class ModifyHomeLayoutComponent implements OnInit {
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
+    else if(layoutData.type=='hero_cta') {
+      if(this.layoutDetails.cover_img_change) {
+        this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
+        layoutData.cover_img_change = true;
+      }
+      else {
+        layoutData.cover_img_change = false;
+      }
+      // handle CTA card images
+      if(layoutData.cta_list?.length) {
+        layoutData.cta_list = layoutData.cta_list.map((cta, ci) => {
+          let ctaData = Object.assign({}, cta);
+          delete ctaData.temp_image;
+          if(cta.img_change) {
+            delete ctaData.image;
+            this.fileList.append('attachments', this.layoutDetails.cta_list[ci].image, 'cta_'+ci+'_img');
+          }
+          return ctaData;
+        });
+      }
+      delete layoutData.image_list;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
     else if(layoutData.type=='content_grid' || layoutData.type=='amenities') {
       this.onSetFormData(layoutData.text_list).then((imgList) => {
         layoutData.text_list = imgList;
@@ -389,7 +422,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
       description: '',
       cover_img: '',
       cover_img_position: 'left',
-      image_list: [{ rank: 1 }],
+      image_list: [],
       features: [this.getDefaultFeaturedCardsFeature()],
       cta_list: [{ btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' }]
     });
@@ -420,6 +453,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
   getDefaultInternalLinkGroup() {
     return {
       rank: 1,
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
@@ -437,6 +471,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
 
     return sourceGroups.map(group => ({
       rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
       heading: group?.heading || '',
       sub_heading: group?.sub_heading || '',
       description: group?.description || '',
@@ -487,6 +522,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
 
   getDefaultDualMapItem() {
     return {
+      heading: '',
       address: '',
       btn_link_type: 'internal',
       btn_status: true,
@@ -640,10 +676,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
   }
 
   fileChangeListener(devType, index, event) {
-    delete this.layoutDetails.image_list[index]?.d_err_msg;
-    delete this.layoutDetails.image_list[index]?.m_err_msg;
-    delete this.layoutDetails.text_list[index]?.c_err_msg;
-    if(devType=='fc_cover') delete this.layoutDetails.cover_img_err;
+    if(devType=='fc_cover') { delete this.layoutDetails.cover_img_err; }
+    else {
+      if(this.layoutDetails.image_list?.[index]) { delete this.layoutDetails.image_list[index].d_err_msg; delete this.layoutDetails.image_list[index].m_err_msg; }
+      if(this.layoutDetails.text_list?.[index]) { delete this.layoutDetails.text_list[index].c_err_msg; }
+    }
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
       if(["image/jpeg", "image/png", "image/gif"].indexOf(inFile.type) != -1) {
@@ -821,6 +858,28 @@ export class ModifyHomeLayoutComponent implements OnInit {
         else this.layoutDetails.video_details.vid_err_msg = true;
       }
       reader.readAsDataURL(fileData);
+    }
+  }
+
+  ctaFileChangeListener(ctaIndex, event) {
+    let cta = this.layoutDetails.cta_list[ctaIndex];
+    delete cta.img_err_msg;
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png", "image/gif", "image/webp"].indexOf(inFile.type) != -1) {
+        let reader = new FileReader();
+        let fileData = event.target.files[0];
+        let fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            cta.temp_image = (<FileReader>e.target).result;
+            cta.image = fileData;
+            cta.img_change = true;
+          }
+          else cta.img_err_msg = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
     }
   }
 
