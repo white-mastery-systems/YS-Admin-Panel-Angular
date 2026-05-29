@@ -139,6 +139,10 @@
           <label for="imagename{{i}}" class="text-start">Name</label>
           <input type="text" class="form-control" [(ngModel)]="x.name" name="imagename{{i}}" id="imagename{{i}}">
         </div>
+        <div class="form-group">
+          <label for="imageheading{{i}}" class="text-start">Heading</label>
+          <input type="text" class="form-control" [(ngModel)]="x.heading" name="imageheading{{i}}" id="imageheading{{i}}">
+        </div>
       </div>
     </div>
 
@@ -206,6 +210,10 @@
       <div class="form-group">
         <label for="name" class="text-start">Name</label>
         <input type="text" class="form-control" [(ngModel)]="imageDetails.name" name="name" id="name">
+      </div>
+      <div class="form-group">
+        <label for="heading" class="text-start">Heading</label>
+        <input type="text" class="form-control" [(ngModel)]="imageDetails.heading" name="heading" id="heading">
       </div>
       <div class="form-group">
         <label for="rank" class="text-start">Rank</label>

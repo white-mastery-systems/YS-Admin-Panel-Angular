@@ -3,7 +3,7 @@
 </div>
 
 <div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="galForm = { form_type: 'add' }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+  <div class="add_but" (click)="galForm = { form_type: 'add', seo_details: { page_url: '', h1_tag: '', page_title: '', meta_desc: '' } }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
     <span class="material-symbols-rounded">add</span>
   </div>
 </div>
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="highbutton" (click)="galForm = { form_type: 'add' }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+        <button type="button" class="highbutton" (click)="galForm = { form_type: 'add', seo_details: { page_url: '', h1_tag: '', page_title: '', meta_desc: '' } }; modalService.open(galleryModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
           <span class="material-symbols-rounded">add</span>Add
         </button>
       </div>      
@@ -113,6 +113,25 @@
             <div *ngIf="galForm.form_type !== 'add'" class="col-md-12 form-group mb-3">
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank"  max="{{listCount}}" min="1" class="form-control" [(ngModel)]="galForm.rank" required appNumberOnly />
+            </div>
+            <div class="col-md-12 mt-3 mb-2">
+              <p><b>SEO Details</b></p>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Page URL</label>
+              <input type="text" name="page_url" class="form-control" [(ngModel)]="galForm.seo_details.page_url" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>H1 Tag</label>
+              <input type="text" name="h1_tag" class="form-control" [(ngModel)]="galForm.seo_details.h1_tag" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Page Title</label>
+              <input type="text" name="page_title" class="form-control" [(ngModel)]="galForm.seo_details.page_title" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Meta Description</label>
+              <textarea class="form-control" name="meta_desc" [(ngModel)]="galForm.seo_details.meta_desc"></textarea>
             </div>
           </div>
         </div>

@@ -133,7 +133,7 @@
                     <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                       'visibility'}}</span> Details
                   </button>
-                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'flexible', 'instagram', 'multi_grid_featured_section', 'faq', 'dual_map'].indexOf(x.type)==-1"
+                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'site_gallery', 'flexible', 'instagram', 'multi_grid_featured_section', 'faq', 'dual_map'].indexOf(x.type)==-1"
                     class="dropdown-item d-flex" routerLink="/setup/layouts/home/{{x._id}}">
                     <span class="material-symbols-rounded mr-2">image</span> Images
                   </button>
@@ -231,8 +231,18 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="addForm.type=='site_gallery'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="gallery_type" class="form-control select-arrow" [(ngModel)]="addForm.gallery_type"
+                  (change)="addForm.section_grid_type=gridList[0].type;"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div class="form-group mb-3"
-                [ngClass]="(addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(addForm.type=='blogs' || addForm.type=='site_gallery' || addForm.type=='featured_product' || addForm.type=='instagram')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading"
                   #heading="ngModel" />
@@ -268,7 +278,7 @@
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="addForm.content"></textarea>
               </div>
-              <div *ngIf="gridList.length && addForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+              <div *ngIf="gridList.length && (addForm.blogs_type=='grid' || addForm.gallery_type=='grid')" class="col-md-12 form-group mt-2 mb-3">
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">
@@ -618,8 +628,18 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="editForm.type=='site_gallery'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="e_gallery_type" class="form-control select-arrow" [(ngModel)]="editForm.gallery_type"
+                  (change)="editForm.section_grid_type=gridList[0].type;"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div class="form-group mb-3"
-                [ngClass]="(editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(editForm.type=='blogs' || editForm.type=='site_gallery' || editForm.type=='featured_product' || editForm.type=='instagram')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
                   #heading="ngModel" />
@@ -655,7 +675,7 @@
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="editForm.content"></textarea>
               </div>
-              <div *ngIf="gridList.length && editForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+              <div *ngIf="gridList.length && (editForm.blogs_type=='grid' || editForm.gallery_type=='grid')" class="col-md-12 form-group mt-2 mb-3">
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">

@@ -129,7 +129,7 @@ export class GalleryEventComponent implements OnInit {
       let updatedList = [];
       imgList.forEach(imgData => {
         this.fileList.append('image_list', imgData.image);
-        updatedList.push({ name:imgData.name });
+        updatedList.push({ name:imgData.name, heading:imgData.heading });
       });
       resolve(updatedList);
     });

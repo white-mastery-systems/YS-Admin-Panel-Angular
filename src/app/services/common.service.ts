@@ -95,6 +95,11 @@ export class CommonService {
     { type: "grid_2", name: "Grid 2", count: 3, icon: "assets/images/grid/Grid-3.png", status: "enabled" },
     { type: "grid_3", name: "Grid 3", count: 4, icon: "assets/images/grid/Grid-5.png", status: "enabled" }
   ];
+  gallery_grid_list: any = [
+    { type: "grid_1", name: "Grid 1", count: 2, icon: "assets/images/grid/Grid-1.png", status: "enabled" },
+    { type: "grid_2", name: "Grid 2", count: 3, icon: "assets/images/grid/Grid-3.png", status: "enabled" },
+    { type: "grid_3", name: "Grid 3", count: 4, icon: "assets/images/grid/Grid-5.png", status: "enabled" }
+  ];
   insta_grid_list: any = [
     { type: "grid_1", name: "Grid 1", icon: "assets/images/grid/Grid-3.png", status: "enabled" },
     { type: "grid_2", name: "Grid 2", icon: "assets/images/grid/Grid-4.png", status: "enabled" },

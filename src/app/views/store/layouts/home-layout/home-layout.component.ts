@@ -62,6 +62,8 @@ export class HomeLayoutComponent implements OnInit {
       this.layoutTypes.push({ name: "Shopping Assistant", value: "shopping_assistant" });
     if(this.commonService.ys_features.indexOf('blogs') !== -1)
       this.layoutTypes.push({ name: "Blogs", value: "blogs" });
+    if(environment.config_data.gallery.indexOf(this.commonService.store_details?._id) !== -1)
+      this.layoutTypes.push({ name: "Site Gallery", value: "site_gallery" });
     if(this.commonService.ys_features.indexOf('shop_the_look') !== -1)
       this.layoutTypes.push({ name: "Shop the Look", value: "shop_the_look" });
     if(this.commonService.store_details?.package_info?.category!='genie') {
@@ -157,6 +159,7 @@ export class HomeLayoutComponent implements OnInit {
           this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
         if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
         else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
+        else if(this.editForm.type=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
         else if(this.editForm.type=='scrolling_text') {
           this.editForm.text_list?.forEach(el => {
             this.editForm.options.push({ display: el.name, value: el.name });
@@ -190,8 +193,8 @@ export class HomeLayoutComponent implements OnInit {
   // UPDATE
 	onUpdate() {
     this.editForm.submit = true;
-    this.editForm.text_list = [];
     if(this.editForm.type=='scrolling_text') {
+      this.editForm.text_list = [];
       this.editForm.options?.forEach(el => {
         this.editForm.text_list.push({ name: el.value });
       });
@@ -321,6 +324,7 @@ export class HomeLayoutComponent implements OnInit {
       this.gridList = this.commonService.insta_grid_list;
     }
     else if(x=='blogs') this.gridList = this.commonService.blog_grid_list;
+    else if(x=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
   }
 
   open_website() {
