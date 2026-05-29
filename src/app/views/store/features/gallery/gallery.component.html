@@ -41,14 +41,24 @@
       <div class="data-list-card-inner">
         <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
           <div class="col-md-7 col-6 first_col px-0 header-font">
-            <p class="w-50 w-sm-100">Name</p>
-            <p class="w-50 w-sm-100 m-b-0">Images</p>
+            <p class="w-30 w-sm-100">Name</p>
+            <p class="w-30 w-sm-100 m-b-0">Images</p>
+            <p class="w-30 w-sm-100 m-b-0">Status</p>
           </div>
         </div>
         <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+            [ngClass]="x.active_status? 'green-band': 'red-band'">
+            {{x.active_status? 'Enabled': 'Disabled'}}
+          </div>
           <div class="col-md-7 col-6 first_col px-0 cursor">
-            <p class="w-50 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-50 w-sm-100 light-font">{{x.image_list.length}} images</p>
+            <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
+            <p class="w-30 w-sm-100 light-font">{{x.image_list.length}} images</p>
+            <p class="w-30 w-sm-100 m-b-0" *ngIf="commonService.desktop_device">
+              <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">
+                {{x.active_status? 'Enabled': 'Disabled'}}
+              </span>
+            </p>
           </div>
           <div class="col-md-5 col-6">
             <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
@@ -98,6 +108,13 @@
       <div *ngIf="!popupLoader" class="modal-body">
         <div class="form-group">
           <div class="row">
+            <div *ngIf="galForm.form_type !== 'add'" class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="active_status" [(ngModel)]="galForm.active_status">
+                <span>Enable</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
             <div class="col-md-12 form-group mb-3">
               <label>Name</label>
               <input type="text" name="name" class="form-control" [(ngModel)]="galForm.name" required />

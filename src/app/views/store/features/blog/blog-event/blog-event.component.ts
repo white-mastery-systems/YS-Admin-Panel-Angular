@@ -140,7 +140,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.blogForm.errorMsg = 'Unable to read editor content';
         return;
       }
-      const payload = {
+      const payload: any = {
         editor_type: 'advanced',
         slug: this.blogForm.seo_details?.page_url || this.commonService.urlFormat(this.blogForm.name || ''),
         title: this.blogForm.name,
@@ -163,7 +163,11 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         faqs: this.blogForm.faqs,
         category_id: this.blogForm.category_id
       };
-      this.api.ADD_BLOG(payload).subscribe(result => {
+      if(this.blogForm.form_type === 'edit' && this.blogForm._id) {
+        payload._id = this.blogForm._id;
+      }
+      const reqCall = this.blogForm.form_type === 'edit' ? this.api.UPDATE_BLOG(payload) : this.api.ADD_BLOG(payload);
+      reqCall.subscribe(result => {
         this.blogForm.submit = false;
         if(result.status) this.router.navigate([this.commonService.redirect]);
         else {
