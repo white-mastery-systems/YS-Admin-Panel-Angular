@@ -93,6 +93,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.multicategory_list = [{ rank: 1, image_list: [{ rank: 1 }] }];
           }
           else if(this.layoutDetails.type=='hero_cta') {
+            if(!this.layoutDetails.image_list?.length) this.layoutDetails.image_list = [{ rank: 1 }];
             if(!this.layoutDetails.cover_img) this.layoutDetails.cover_img = '';
             if(!this.layoutDetails.highlighted_text) this.layoutDetails.highlighted_text = '';
             if(!this.layoutDetails.highlighted_color) this.layoutDetails.highlighted_color = '';
@@ -339,9 +340,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
           return ctaData;
         });
       }
-      delete layoutData.image_list;
-      this.fileList.append('data', JSON.stringify(layoutData));
-      this.callUpdateApi();
+      this.onSetFormData(layoutData.image_list).then((imgList) => {
+        layoutData.image_list = imgList;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      });
     }
     else if(layoutData.type=='content_grid' || layoutData.type=='amenities') {
       this.onSetFormData(layoutData.text_list).then((imgList) => {

@@ -17,7 +17,7 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='hero_cta') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -475,6 +475,14 @@
           </p>
         </div>
         <!-- #Points list -->
+      </div>
+    </div>
+
+    <div *ngIf="layoutDetails.type=='hero_cta' && layoutDetails?.image_list?.length<maxImgCount" class="row m-0 mb-4 pb-3">
+      <div class="col-md-4">
+        <button type="button" class="light-button" (click)="addNewImg();">
+          <span class="material-symbols-rounded">ADD</span>NEW IMAGE
+        </button>
       </div>
     </div>
 

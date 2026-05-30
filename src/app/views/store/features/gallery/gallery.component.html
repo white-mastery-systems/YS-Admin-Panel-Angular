@@ -127,6 +127,10 @@
               <label>Sub Heading</label>
               <input type="text" name="sub_heading" class="form-control" [(ngModel)]="galForm.sub_heading" />
             </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Icon Name</label>
+              <input type="text" name="icon_name" class="form-control" [(ngModel)]="galForm.icon_name" placeholder="e.g. photo_library" />
+            </div>
             <div *ngIf="galForm.form_type !== 'add'" class="col-md-12 form-group mb-3">
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank"  max="{{listCount}}" min="1" class="form-control" [(ngModel)]="galForm.rank" required appNumberOnly />
