@@ -310,6 +310,15 @@
                 </select>
               </div>
               <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label>Text Align</label>
+                <select name="fp_text_align" class="form-control select-arrow" [(ngModel)]="addForm.text_align">
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="top">Top</option>
+                  <option value="bottom">Bottom</option>
+                </select>
+              </div>
+              <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
                 <label class="checkbox checkbox-primary">
                   <input class="form-check-input" type="checkbox" name="fp_btn_status" [(ngModel)]="addForm.btn_status">
                   <span>Enable Button</span>
@@ -704,6 +713,15 @@
                   <option value="featured_products">/featured-products</option>
                   <option value="best_sellers">/best-sellers</option>
                   <option value="top_rated">/top-rated</option>
+                </select>
+              </div>
+              <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label>Text Align</label>
+                <select name="efp_text_align" class="form-control select-arrow" [(ngModel)]="editForm.text_align">
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="top">Top</option>
+                  <option value="bottom">Bottom</option>
                 </select>
               </div>
               <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">

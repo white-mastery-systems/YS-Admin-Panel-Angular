@@ -309,6 +309,7 @@ export class HomeLayoutComponent implements OnInit {
     else if(x=='featured_product') {
       this.addForm.btn_status = true;
       this.addForm.btn_text = 'View All';
+      this.addForm.text_align = 'left';
     }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
