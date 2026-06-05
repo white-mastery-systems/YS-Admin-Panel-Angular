@@ -27,6 +27,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Featured Products", value: "featured_product" },
     { name: "Amenities", value: "amenities" },
     { name: "Featured Cards", value: "featured_cards" },
+    { name: "Feature Split", value: "feature_split" },
     { name: "CTA", value: "cta" },
     { name: "Dual Map", value: "dual_map" },
     { name: "Store Locator", value: "store_locator" },
@@ -181,6 +182,9 @@ export class HomeLayoutComponent implements OnInit {
             this.editForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
           }
         }
+        else if(this.editForm.type=='feature_split') {
+          this.editForm.feature_split_config = this.normalizeFeatureSplitConfig(this.editForm.feature_split_config);
+        }
         else if(this.editForm.type=='internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
           if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
@@ -303,6 +307,9 @@ export class HomeLayoutComponent implements OnInit {
     else if(x=='store_locator') {
       this.addForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
     }
+    else if(x=='feature_split') {
+      this.addForm.feature_split_config = this.getDefaultFeatureSplitConfig();
+    }
     else if(x=='internal_links') {
       this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
     }
@@ -384,9 +391,46 @@ export class HomeLayoutComponent implements OnInit {
     return segment?.cta_list?.length || 0;
   }
 
+  getDefaultFeatureSplitItem() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  getDefaultFeatureSplitConfig() {
+    return {
+      cover_img: '',
+      img_alt: '',
+      quote_text: '',
+      quote_author: '',
+      features: [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  normalizeFeatureSplitConfig(config: any = {}) {
+    return {
+      ...this.getDefaultFeatureSplitConfig(),
+      ...config,
+      features: (Array.isArray(config?.features) && config.features.length)
+        ? config.features.map((feature) => ({ ...this.getDefaultFeatureSplitItem(), ...feature }))
+        : [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  getFeatureSplitCount(segment) {
+    return segment?.feature_split_config?.features?.length || 0;
+  }
+
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
   getDefaultDualMapItem() {
     return {
+      rank: 1,
+      image: '',
+      img_alt: '',
       heading: '',
+      sub_heading: '',
+      features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
       btn_status: true,
@@ -399,9 +443,13 @@ export class HomeLayoutComponent implements OnInit {
   }
 
   normalizeDualMapList(items: any[] = []) {
-    return (Array.isArray(items) ? items : []).map((item) => ({
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
       ...this.getDefaultDualMapItem(),
       ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
       btn_status: typeof item?.btn_status === 'boolean'
         ? item.btn_status
         : item?.btn_status !== 'false'

@@ -51,6 +51,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               }
             }
             else this.layoutDetails.image_list.push({ rank: 1, productList: [] });
+            this.layoutDetails.image_list.forEach(img => { if(!Array.isArray(img.btn_list)) img.btn_list = []; });
           }
           else if(this.layoutDetails.type=='secondary') {
             if(!this.layoutDetails.text_list) this.layoutDetails.text_list = [];
@@ -169,6 +170,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
             }
           }
+          else if(this.layoutDetails.type=='feature_split') {
+            this.layoutDetails.feature_split_config = this.normalizeFeatureSplitConfig(this.layoutDetails.feature_split_config);
+          }
           else if(this.layoutDetails.type=='cta') {
             if(!this.layoutDetails.image_list?.length) {
               this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
@@ -275,6 +279,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
     }
   }
 
+  addSectionButton(img) {
+    if(!Array.isArray(img.btn_list)) img.btn_list = [];
+    img.btn_list.push({ btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });
+  }
+
   async onUpdateLayout() {
     this.btnLoader = true;
     let layoutData = structuredClone(this.layoutDetails);
@@ -317,6 +326,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
         slConfig.store_image = srcConfig.store_image || '';
       }
       layoutData.store_locator_config = slConfig;
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
+    else if(layoutData.type=='feature_split') {
+      layoutData.feature_split_config = this.prepareFeatureSplitConfigForSave(this.layoutDetails.feature_split_config);
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
     }
@@ -407,7 +421,10 @@ export class ModifyHomeLayoutComponent implements OnInit {
         delete layoutData.cta_list;
       }
       if(layoutData.type=='dual_map') {
-        layoutData.map_list = this.normalizeDualMapList(layoutData.map_list);
+        layoutData.map_list = this.prepareDualMapListForSave(this.layoutDetails.map_list);
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+        return;
       }
       this.onSetFormData(layoutData.image_list).then((imgList) => {
         layoutData.image_list = imgList;
@@ -523,9 +540,99 @@ export class ModifyHomeLayoutComponent implements OnInit {
     }));
   }
 
+  getDefaultFeatureSplitItem() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  getDefaultFeatureSplitConfig() {
+    return {
+      cover_img: '',
+      img_alt: '',
+      quote_text: '',
+      quote_author: '',
+      features: [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  normalizeFeatureSplitConfig(config: any = {}) {
+    return {
+      ...this.getDefaultFeatureSplitConfig(),
+      ...config,
+      features: (Array.isArray(config?.features) && config.features.length)
+        ? config.features.map((feature) => ({ ...this.getDefaultFeatureSplitItem(), ...feature }))
+        : [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  prepareFeatureSplitConfigForSave(config: any = {}) {
+    const fsConfig: any = {
+      img_alt: config?.img_alt || '',
+      quote_text: config?.quote_text || '',
+      quote_author: config?.quote_author || '',
+      features: (Array.isArray(config?.features) ? config.features : []).map((feature) => ({
+        icon_name: feature?.icon_name || '',
+        name: feature?.name || '',
+        detail: feature?.detail || ''
+      }))
+    };
+    delete fsConfig.temp_cover_img;
+    if(config?.img_change && config?.cover_img) {
+      delete fsConfig.cover_img;
+      fsConfig.img_change = true;
+      this.fileList.append('attachments', config.cover_img, 'fs_cover_img');
+    }
+    else {
+      fsConfig.cover_img = config?.cover_img || '';
+    }
+    return fsConfig;
+  }
+
+  addFeatureSplitItem() {
+    if(!this.layoutDetails.feature_split_config) {
+      this.layoutDetails.feature_split_config = this.getDefaultFeatureSplitConfig();
+    }
+    if(!Array.isArray(this.layoutDetails.feature_split_config.features)) {
+      this.layoutDetails.feature_split_config.features = [];
+    }
+    this.layoutDetails.feature_split_config.features.push(this.getDefaultFeatureSplitItem());
+  }
+
+  featureSplitFileChangeListener(event) {
+    if(!this.layoutDetails.feature_split_config) {
+      this.layoutDetails.feature_split_config = this.getDefaultFeatureSplitConfig();
+    }
+    delete this.layoutDetails.feature_split_config.cover_img_err;
+    if(event.target.files && event.target.files[0]) {
+      const inFile = event.target.files[0];
+      if(['image/jpeg', 'image/png', 'image/gif', 'image/webp'].indexOf(inFile.type) != -1) {
+        const reader = new FileReader();
+        const fileData = event.target.files[0];
+        const fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            this.layoutDetails.feature_split_config.temp_cover_img = (<FileReader>e.target).result;
+            this.layoutDetails.feature_split_config.cover_img = fileData;
+            this.layoutDetails.feature_split_config.img_change = true;
+          }
+          else this.layoutDetails.feature_split_config.cover_img_err = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
+    }
+  }
+
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
   getDefaultDualMapItem() {
     return {
+      rank: 1,
+      image: '',
+      img_alt: '',
       heading: '',
+      sub_heading: '',
+      features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
       btn_status: true,
@@ -538,13 +645,82 @@ export class ModifyHomeLayoutComponent implements OnInit {
   }
 
   normalizeDualMapList(items: any[] = []) {
-    return (Array.isArray(items) ? items : []).map((item) => ({
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
       ...this.getDefaultDualMapItem(),
       ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
       btn_status: typeof item?.btn_status === 'boolean'
         ? item.btn_status
         : item?.btn_status !== 'false'
     }));
+  }
+
+  prepareDualMapListForSave(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, mi) => {
+      const mapData: any = {
+        rank: item?.rank || mi + 1,
+        img_alt: item?.img_alt || '',
+        heading: item?.heading || '',
+        sub_heading: item?.sub_heading || '',
+        features: (Array.isArray(item?.features) ? item.features : []).map((feature) => ({
+          icon_name: feature?.icon_name || '',
+          name: feature?.name || ''
+        })),
+        address: item?.address || '',
+        iframe_url: item?.iframe_url || '',
+        btn_link_type: item?.btn_link_type || 'internal',
+        btn_status: typeof item?.btn_status === 'boolean'
+          ? item.btn_status
+          : item?.btn_status !== 'false',
+        btn_style: item?.btn_style || 'primary',
+        btn_text_color: item?.btn_text_color || 'light',
+        btn_text: item?.btn_text || '',
+        btn_link: item?.btn_link || ''
+      };
+      delete mapData.temp_image;
+      if(item?.img_change && item?.image) {
+        delete mapData.image;
+        mapData.img_change = true;
+        this.fileList.append('attachments', item.image, `dm_${mi}_img`);
+      }
+      else {
+        mapData.image = item?.image || '';
+      }
+      return mapData;
+    });
+  }
+
+  addDualMapFeature(mapIndex) {
+    const mapItem = this.layoutDetails.map_list?.[mapIndex];
+    if(!mapItem) return;
+    if(!Array.isArray(mapItem.features)) mapItem.features = [];
+    mapItem.features.push(this.getDefaultMapFeature());
+  }
+
+  dualMapFileChangeListener(mapIndex, event) {
+    const mapItem = this.layoutDetails.map_list?.[mapIndex];
+    if(!mapItem) return;
+    delete mapItem.err_msg;
+    if(event.target.files && event.target.files[0]) {
+      const inFile = event.target.files[0];
+      if(['image/jpeg', 'image/png', 'image/gif', 'image/webp'].indexOf(inFile.type) != -1) {
+        const reader = new FileReader();
+        const fileData = event.target.files[0];
+        const fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            mapItem.temp_image = (<FileReader>e.target).result;
+            mapItem.image = fileData;
+            mapItem.img_change = true;
+          }
+          else mapItem.err_msg = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
+    }
   }
 
   addFeaturedCardsImage(groupIndex) {
