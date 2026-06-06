@@ -28,6 +28,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Amenities", value: "amenities" },
     { name: "Featured Cards", value: "featured_cards" },
     { name: "Feature Split", value: "feature_split" },
+    { name: "Feature List", value: "feature_list" },
     { name: "CTA", value: "cta" },
     { name: "Dual Map", value: "dual_map" },
     { name: "Store Locator", value: "store_locator" },
@@ -185,6 +186,12 @@ export class HomeLayoutComponent implements OnInit {
         else if(this.editForm.type=='feature_split') {
           this.editForm.feature_split_config = this.normalizeFeatureSplitConfig(this.editForm.feature_split_config);
         }
+        else if(this.editForm.type=='feature_list') {
+          if(!this.editForm.feature_list?.length) {
+            this.editForm.feature_list = [this.getDefaultFeatureListItem()];
+          }
+          this.editForm.feature_list = this.normalizeFeatureListItems(this.editForm.feature_list);
+        }
         else if(this.editForm.type=='internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
           if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
@@ -310,6 +317,9 @@ export class HomeLayoutComponent implements OnInit {
     else if(x=='feature_split') {
       this.addForm.feature_split_config = this.getDefaultFeatureSplitConfig();
     }
+    else if(x=='feature_list') {
+      this.addForm.feature_list = [this.getDefaultFeatureListItem()];
+    }
     else if(x=='internal_links') {
       this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
     }
@@ -419,6 +429,44 @@ export class HomeLayoutComponent implements OnInit {
     return segment?.feature_split_config?.features?.length || 0;
   }
 
+  getDefaultFeatureCard() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  normalizeFeatureCards(features: any[] = []) {
+    return (Array.isArray(features) ? features : []).map(item => ({
+      ...this.getDefaultFeatureCard(),
+      ...item
+    }));
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      img_badge_icon: '',
+      img_badge_text: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultFeatureCard()],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      notes: ''
+    };
+  }
+
+  normalizeFeatureListItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map(item => ({
+      ...this.getDefaultFeatureListItem(),
+      ...item,
+      features: this.normalizeFeatureCards(item?.features)
+    }));
+  }
+
   getDefaultMapFeature() {
     return { icon_name: '', name: '' };
   }
@@ -430,6 +478,7 @@ export class HomeLayoutComponent implements OnInit {
       img_alt: '',
       heading: '',
       sub_heading: '',
+      description: '',
       features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
@@ -437,6 +486,7 @@ export class HomeLayoutComponent implements OnInit {
       btn_style: 'primary',
       btn_text_color: 'light',
       btn_text: '',
+      btn_icon_name: '',
       btn_link: '',
       iframe_url: ''
     };

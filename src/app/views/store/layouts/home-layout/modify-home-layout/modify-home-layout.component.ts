@@ -40,6 +40,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
           else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
+          else if(this.layoutDetails.type=="feature_list") this.maxImgCount = 50;
           else if(this.layoutDetails.type=="featured_cards") this.maxImgCount = 10;
           else if(this.layoutDetails.type=="cta") this.maxImgCount = 1;
           this.commonService.secondary_header = this.layoutDetails.name;
@@ -173,6 +174,12 @@ export class ModifyHomeLayoutComponent implements OnInit {
           else if(this.layoutDetails.type=='feature_split') {
             this.layoutDetails.feature_split_config = this.normalizeFeatureSplitConfig(this.layoutDetails.feature_split_config);
           }
+          else if(this.layoutDetails.type=='feature_list') {
+            if(!this.layoutDetails.feature_list?.length) {
+              this.layoutDetails.feature_list = [this.getDefaultFeatureListItem()];
+            }
+            this.layoutDetails.feature_list = this.normalizeFeatureListItems(this.layoutDetails.feature_list);
+          }
           else if(this.layoutDetails.type=='cta') {
             if(!this.layoutDetails.image_list?.length) {
               this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
@@ -191,7 +198,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               }];
             }
           }
-          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid') {
+          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid' && this.layoutDetails.type!='feature_list') {
             if(this.layoutDetails.type=='multiple_highlighted_section') this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {}, productList: [] });
             else this.layoutDetails.image_list.push({ rank: 1, points_list: [], productList: [] });
           }
@@ -271,6 +278,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
     else if(this.layoutDetails.type=='content_grid') {
       this.layoutDetails.text_list.push({});
     }
+    else if(this.layoutDetails.type=='feature_list') {
+      this.addFeatureItem();
+    }
     else if(this.layoutDetails.type=='dual_map') {
       this.layoutDetails.map_list.push(this.getDefaultDualMapItem());
     }
@@ -333,6 +343,13 @@ export class ModifyHomeLayoutComponent implements OnInit {
       layoutData.feature_split_config = this.prepareFeatureSplitConfigForSave(this.layoutDetails.feature_split_config);
       this.fileList.append('data', JSON.stringify(layoutData));
       this.callUpdateApi();
+    }
+    else if(layoutData.type=='feature_list') {
+      this.onSetFormData(layoutData.feature_list).then((ftList) => {
+        layoutData.feature_list = ftList;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      });
     }
     else if(layoutData.type=='hero_cta') {
       if(this.layoutDetails.cover_img_change) {
@@ -450,6 +467,45 @@ export class ModifyHomeLayoutComponent implements OnInit {
 
   getDefaultFeaturedCardsFeature() {
     return { icon_name: '', name: '', detail: '' };
+  }
+
+  normalizeFeatureCards(features: any[] = []) {
+    return (Array.isArray(features) ? features : []).map(item => ({
+      ...this.getDefaultFeaturedCardsFeature(),
+      ...item
+    }));
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      img_badge_icon: '',
+      img_badge_text: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultFeaturedCardsFeature()],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      notes: ''
+    };
+  }
+
+  normalizeFeatureListItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map(item => ({
+      ...this.getDefaultFeatureListItem(),
+      ...item,
+      features: this.normalizeFeatureCards(item?.features)
+    }));
+  }
+
+  addFeatureItem() {
+    if(!Array.isArray(this.layoutDetails.feature_list)) this.layoutDetails.feature_list = [];
+    this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
   }
 
   addFeaturedCardsFeature(groupIndex: number) {
@@ -632,6 +688,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
       img_alt: '',
       heading: '',
       sub_heading: '',
+      description: '',
       features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
@@ -639,6 +696,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
       btn_style: 'primary',
       btn_text_color: 'light',
       btn_text: '',
+      btn_icon_name: '',
       btn_link: '',
       iframe_url: ''
     };
@@ -665,6 +723,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
         img_alt: item?.img_alt || '',
         heading: item?.heading || '',
         sub_heading: item?.sub_heading || '',
+        description: item?.description || '',
         features: (Array.isArray(item?.features) ? item.features : []).map((feature) => ({
           icon_name: feature?.icon_name || '',
           name: feature?.name || ''
@@ -678,6 +737,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
         btn_style: item?.btn_style || 'primary',
         btn_text_color: item?.btn_text_color || 'light',
         btn_text: item?.btn_text || '',
+        btn_icon_name: item?.btn_icon_name || '',
         btn_link: item?.btn_link || ''
       };
       delete mapData.temp_image;
@@ -859,6 +919,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
     else {
       if(this.layoutDetails.image_list?.[index]) { delete this.layoutDetails.image_list[index].d_err_msg; delete this.layoutDetails.image_list[index].m_err_msg; }
       if(this.layoutDetails.text_list?.[index]) { delete this.layoutDetails.text_list[index].c_err_msg; }
+      if(this.layoutDetails.feature_list?.[index]) { delete this.layoutDetails.feature_list[index].c_err_msg; }
     }
     if(event.target.files && event.target.files[0]) {
       let inFile = event.target.files[0];
@@ -890,6 +951,14 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.cover_img_change = true;
             }
             else this.layoutDetails.cover_img_err = true;
+          }
+          else if(devType=='feature') {
+            if(fileInKB<=this.fileLimitInKB) {
+              this.layoutDetails.feature_list[index].temp_img = (<FileReader>event.target).result;
+              this.layoutDetails.feature_list[index].image = fileData;
+              this.layoutDetails.feature_list[index].img_change = true;
+            }
+            else this.layoutDetails.feature_list[index].c_err_msg = true;
           }
           else {
             if(fileInKB<=this.fileLimitInKB) {

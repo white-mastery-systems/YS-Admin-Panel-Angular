@@ -17,7 +17,7 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='feature_split') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='feature_split' || layoutDetails.type=='feature_list') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -261,8 +261,12 @@
               </ng-container>
               <ng-container *ngIf="layoutDetails?.type!='secondary' && layoutDetails?.type!='multiple_highlighted_section' && layoutDetails?.type!='hero_cta'">
                 <div *ngIf="layoutDetails?.type!='primary_slider' && layoutDetails?.type!='slider'" class="col-md-12 form-group mb-3">
-                  <label>Title</label>
+                  <label>{{ layoutDetails?.type=='section' ? 'Heading' : 'Title' }}</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading" maxlength="50" #heading="ngModel" required />
+                </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label>Sub-heading</label>
+                  <textarea class="form-control" aria-label="With textarea" name="section_sub_heading{{i}}" [(ngModel)]="x.content_details.sub_heading"></textarea>
                 </div>
                 <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
                   <label>Description</label>
@@ -1247,6 +1251,10 @@
               <label>Sub-heading</label>
               <textarea class="form-control" [name]="'dual_map_sub_heading_'+mi" rows="2" [(ngModel)]="m.sub_heading"></textarea>
             </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Description</label>
+              <textarea class="form-control" [name]="'dual_map_description_'+mi" rows="3" [(ngModel)]="m.description"></textarea>
+            </div>
           </div>
           <div class="col-md-12">
             <div class="card p-2 mb-3 featured-cards-features-block">
@@ -1297,6 +1305,10 @@
             <div class="col-md-12 form-group mb-3">
               <label>Button Text</label>
               <input type="text" [name]="'dual_map_btn_text_'+mi" class="form-control" [(ngModel)]="m.btn_text" maxlength="100" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Button Icon Name</label>
+              <input type="text" [name]="'dual_map_btn_icon_'+mi" class="form-control" [(ngModel)]="m.btn_icon_name" placeholder="e.g. map" />
             </div>
             <div class="col-md-6 form-group mb-3">
               <label>Button Style</label>
@@ -1521,6 +1533,177 @@
       </div>
     </div>
 
+    <!-- Feature List -->
+    <ng-container *ngIf="layoutDetails.type=='feature_list'">
+      <div *ngFor="let x of layoutDetails.feature_list; let i=index;" class="poss-rel card p-3 mb-3">
+        <span *ngIf="layoutDetails.feature_list?.length > 1" (click)="layoutDetails.feature_list.splice(i, 1);"
+          class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+
+        <div class="row pt-3 pb-3">
+          <div class="col-md-12">
+            <p class="dark-font">{{layoutDetails?.name}} Item {{i+1}}</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>Image (200 x 200) pixels</p>
+                <i *ngIf="!x.image" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="x.image" class="desktop-layout-image-sec">
+                  <img *ngIf="x?.img_change" [src]="x.temp_img">
+                  <ng-container *ngIf="!x?.img_change">
+                    <img [src]="imgBaseUrl+x.image">
+                  </ng-container>
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" name="fl_img{{i}}" class="custom-file-input"
+                    (change)="fileChangeListener('feature', i, $event)" accept="image/gif, image/jpeg, image/png, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="x.c_err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Image Badge Icon</label>
+                  <input type="text" [name]="'fl_img_badge_icon_'+i" class="form-control" [(ngModel)]="x.img_badge_icon" placeholder="e.g. location_on" />
+                </div>
+                <div class="col-md-12 form-group mb-0">
+                  <label>Image Badge Text</label>
+                  <input type="text" [name]="'fl_img_badge_text_'+i" class="form-control" [(ngModel)]="x.img_badge_text" placeholder="e.g. T. Nagar" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+            <div class="card w-100 p-3 mb-3">
+              <div class="row">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Heading</label>
+                  <input type="text" name="fl_heading{{i}}" class="form-control" [(ngModel)]="x.heading" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Sub-heading</label>
+                  <textarea class="form-control" aria-label="With textarea" name="fl_sub_heading{{i}}" [(ngModel)]="x.sub_heading"></textarea>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Description</label>
+                  <textarea class="form-control" aria-label="With textarea" [name]="'fl_description_'+i" [(ngModel)]="x.description"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card p-3 mb-3">
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <p class="dark-font fw-600">Feature Cards</p>
+            </div>
+          </div>
+          <div *ngFor="let feature of x.features; let fi=index;" class="poss-rel card card-in-card p-3 mb-3">
+            <span *ngIf="x.features?.length > 1" (click)="x.features.splice(fi, 1);"
+              class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+            <p class="dark-font mb-3">Feature {{fi + 1}}</p>
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Icon Name</label>
+                <input type="text" [name]="'fl_card_icon_'+i+'_'+fi" class="form-control" [(ngModel)]="feature.icon_name" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Name</label>
+                <input type="text" [name]="'fl_card_name_'+i+'_'+fi" class="form-control" [(ngModel)]="feature.name" />
+              </div>
+              <div class="col-md-12 form-group mb-0">
+                <label>Detail</label>
+                <textarea class="form-control" [name]="'fl_card_detail_'+i+'_'+fi" rows="3" [(ngModel)]="feature.detail"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mb-0">
+            <button type="button" class="light-button" (click)="x.features.push(getDefaultFeaturedCardsFeature());">
+              <span class="material-symbols-rounded">add</span> Add Feature
+            </button>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <p class="dark-font fw-600">CTA Button</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'fl_btn_status_'+i" [(ngModel)]="x.btn_status"
+                  (change)="x.btn_link_type=x.btn_status ? (x.btn_link_type || 'internal') : 'internal'; x.btn_link=x.btn_status ? x.btn_link : '';">
+                <span>Enable Button</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+          <div *ngIf="x.btn_status" class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Button Text</label>
+              <input type="text" [name]="'fl_btn_text_'+i" class="form-control" [(ngModel)]="x.btn_text" maxlength="50" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Button Style</label>
+              <select [name]="'fl_btn_style_'+i" class="form-control select-arrow" [(ngModel)]="x.btn_style">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Text Color</label>
+              <select [name]="'fl_btn_text_color_'+i" class="form-control select-arrow" [(ngModel)]="x.btn_text_color">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'fl_btn_link_type_'+i" [(ngModel)]="x.btn_link_type" value="internal">
+                <span>Internal Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'fl_btn_link_type_'+i" [(ngModel)]="x.btn_link_type" value="external">
+                <span>External Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label *ngIf="x.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{x.btn_link}}</label>
+              <label *ngIf="x.btn_link_type=='external'">External Link</label>
+              <input type="text" [name]="'fl_btn_link_'+i" class="form-control" [(ngModel)]="x.btn_link" required />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 form-group mb-0">
+              <label>Notes</label>
+              <input type="text" [name]="'fl_notes_'+i" class="form-control" [(ngModel)]="x.notes" placeholder="e.g. From ₹12,500/night + taxes" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button type="button" class="light-button" (click)="addFeatureItem();" [disabled]="layoutDetails.feature_list?.length >= maxImgCount">
+          <span class="material-symbols-rounded">add</span> Add Item
+        </button>
+      </div>
+    </ng-container>
+    <!-- #Feature List -->
+
     <!-- amenities -->
     <ng-container *ngIf="layoutDetails.type=='amenities'">
       <div *ngFor="let x of layoutDetails.text_list; let i=index;" class="poss-rel card p-3 mb-3">
@@ -1623,7 +1806,7 @@
       </div>
     </div>
 
-    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'feature_split', 'internal_links', 'dual_map', 'store_locator', 'hero_cta'].indexOf(layoutDetails.type)==-1"  class="row m-0">
+    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'feature_split', 'feature_list', 'internal_links', 'dual_map', 'store_locator', 'hero_cta'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">
           <span class="material-symbols-rounded">ADD</span>NEW

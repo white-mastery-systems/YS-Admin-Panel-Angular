@@ -109,9 +109,10 @@
               <ng-container *ngIf="x.type=='store_locator'">1 Tile</ng-container>
               <ng-container *ngIf="x.type=='featured_cards'">{{ x.featured_cards_list?.length }} Groups</ng-container>
               <ng-container *ngIf="x.type=='feature_split'">{{ getFeatureSplitCount(x) }} Features</ng-container>
+              <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
-              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'dual_map', 'store_locator', 'featured_cards', 'feature_split', 'faq', 'internal_links'].indexOf(x.type)==-1">
+              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'dual_map', 'store_locator', 'featured_cards', 'feature_split', 'feature_list', 'faq', 'internal_links'].indexOf(x.type)==-1">
                 {{ x.image_list?.length }} Tiles
               </ng-container>
             </p>
@@ -385,6 +386,11 @@
             <ng-container *ngIf="addForm.type=='feature_split'">
               <div class="col-md-12 mb-0">
                 <p class="light-font font-12 mb-0">Cover image, quote, and feature items can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='feature_list'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Feature tiles, images, and CTA buttons can be configured in the segment image view after creating.</p>
               </div>
             </ng-container>
             <ng-container *ngIf="addForm.type=='dual_map'">
@@ -730,6 +736,11 @@
             <ng-container *ngIf="editForm.type=='feature_split'">
               <div class="col-md-12 mb-0">
                 <p class="light-font font-12 mb-0">Cover image, quote, and feature items are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='feature_list'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Feature tiles, images, and CTA buttons are available in the segment image view.</p>
               </div>
             </ng-container>
             <ng-container *ngIf="editForm.type=='dual_map'">
