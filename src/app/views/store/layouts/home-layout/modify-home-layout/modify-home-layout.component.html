@@ -269,6 +269,17 @@
                   <textarea class="form-control" aria-label="With textarea" name="section_sub_heading{{i}}" [(ngModel)]="x.content_details.sub_heading"></textarea>
                 </div>
                 <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label class="dark-font fw-600 mb-2 d-block">Options</label>
+                  <div *ngFor="let opt of x.content_details?.option_list; let oi=index;" class="poss-rel card card-in-card p-2 mb-2">
+                    <span *ngIf="x.content_details?.option_list?.length > 1" (click)="x.content_details.option_list.splice(oi, 1);"
+                      class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                    <input type="text" [name]="'sec_option_'+i+'_'+oi" class="form-control" [(ngModel)]="opt.name" placeholder="e.g. Premium" />
+                  </div>
+                  <button type="button" class="light-button" (click)="addSectionOption(x);">
+                    <span class="material-symbols-rounded">add</span> Add Option
+                  </button>
+                </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
                   <label>Description</label>
                   <textarea class="form-control" aria-label="With textarea" name="section_description{{i}}" [(ngModel)]="x.content_details.description"></textarea>
                 </div>

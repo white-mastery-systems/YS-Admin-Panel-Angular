@@ -52,7 +52,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
               }
             }
             else this.layoutDetails.image_list.push({ rank: 1, productList: [] });
-            this.layoutDetails.image_list.forEach(img => { if(!Array.isArray(img.btn_list)) img.btn_list = []; });
+            this.layoutDetails.image_list.forEach(img => {
+              if(!Array.isArray(img.btn_list)) img.btn_list = [];
+              if(!img.content_details) img.content_details = {};
+              img.content_details.option_list = this.normalizeSectionOptionList(img.content_details.option_list);
+            });
           }
           else if(this.layoutDetails.type=='secondary') {
             if(!this.layoutDetails.text_list) this.layoutDetails.text_list = [];
@@ -292,6 +296,23 @@ export class ModifyHomeLayoutComponent implements OnInit {
   addSectionButton(img) {
     if(!Array.isArray(img.btn_list)) img.btn_list = [];
     img.btn_list.push({ btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });
+  }
+
+  getDefaultSectionOption() {
+    return { name: '' };
+  }
+
+  normalizeSectionOptionList(list: any[] = []) {
+    return (Array.isArray(list) ? list : []).map(item => ({
+      ...this.getDefaultSectionOption(),
+      ...item
+    }));
+  }
+
+  addSectionOption(img) {
+    if(!img.content_details) img.content_details = {};
+    if(!Array.isArray(img.content_details.option_list)) img.content_details.option_list = [];
+    img.content_details.option_list.push(this.getDefaultSectionOption());
   }
 
   async onUpdateLayout() {
