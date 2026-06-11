@@ -600,20 +600,26 @@ export class ModifyHomeLayoutComponent implements OnInit {
     this.layoutDetails.group_list[groupIndex].link_list.push(this.getDefaultInternalLinkItem());
   }
 
-  onInternalLinkGroupRankChange() {
-    this.syncInternalLinkGroupRanks(true);
+  onInternalLinkGroupRankChange(changedIndex: number) {
+    if(!Array.isArray(this.layoutDetails.group_list) || changedIndex < 0 || changedIndex >= this.layoutDetails.group_list.length) {
+      return;
+    }
+
+    const total = this.layoutDetails.group_list.length;
+    let newRank = Number(this.layoutDetails.group_list[changedIndex]?.rank);
+    if(!Number.isFinite(newRank) || newRank < 1) newRank = 1;
+    if(newRank > total) newRank = total;
+
+    const [movedGroup] = this.layoutDetails.group_list.splice(changedIndex, 1);
+    this.layoutDetails.group_list.splice(newRank - 1, 0, movedGroup);
+    this.syncInternalLinkGroupRanks();
   }
 
-  syncInternalLinkGroupRanks(sortByRank = false) {
+  syncInternalLinkGroupRanks() {
     if(!Array.isArray(this.layoutDetails.group_list)) {
       this.layoutDetails.group_list = [];
       return;
     }
-    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
-      ...group,
-      rank: Number(group?.rank) > 0 ? Number(group.rank) : index + 1
-    }));
-    if(sortByRank) this.layoutDetails.group_list.sort((a, b) => a.rank - b.rank);
     this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
       ...group,
       rank: index + 1

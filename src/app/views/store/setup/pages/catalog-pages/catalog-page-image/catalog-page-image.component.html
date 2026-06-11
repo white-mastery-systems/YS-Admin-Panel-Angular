@@ -1659,7 +1659,7 @@
             <div class="col-md-3 form-group mb-3">
               <label>Rank</label>
               <input type="number" min="1" [name]="'il_group_rank_'+gi" class="form-control"
-                [(ngModel)]="group.rank" (change)="onInternalLinkGroupRankChange()" />
+                [(ngModel)]="group.rank" (change)="onInternalLinkGroupRankChange(gi)" />
             </div>
             <div class="col-md-9 form-group mb-3">
               <label>Icon Name</label>

@@ -658,6 +658,22 @@
             </div>
           </ng-container>
 
+          <ng-container *ngIf="editForm.type=='dual_map'">
+            <div class="row">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Map images, highlights, and map links are available in the segment image view.</p>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="editForm.type=='cta'">
+            <div class="row">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Banner images and CTA buttons are available in the segment image view.</p>
+              </div>
+            </div>
+          </ng-container>
+
           <div class="row">
             <div class="col-md-6 form-group mb-3">
               <label>Background Color</label>

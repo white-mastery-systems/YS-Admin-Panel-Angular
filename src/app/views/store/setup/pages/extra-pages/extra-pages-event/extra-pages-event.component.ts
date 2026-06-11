@@ -197,6 +197,19 @@ export class ExtraPagesEventComponent implements OnInit {
       delete updatePayload.sub_heading;
       delete updatePayload.description;
     }
+    if (updatePayload.type === 'dual_map') {
+      delete updatePayload.map_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+    if (updatePayload.type === 'cta') {
+      delete updatePayload.image_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
 		this.api.UPDATE_SEGMENT_EXTRA_PAGE(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if(result.status) {
@@ -235,8 +248,11 @@ export class ExtraPagesEventComponent implements OnInit {
             this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
           }
         }
-        if(this.editForm.type == 'dual_map' && !this.editForm.map_list?.length) {
-          this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+        if(this.editForm.type == 'dual_map') {
+          this.editForm.map_list = this.normalizeDualMapList(this.editForm.map_list);
+          if(!this.editForm.map_list.length) {
+            this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+          }
         }
         if(this.editForm.type == 'feature_list' && !this.editForm.feature_list?.length) {
           this.editForm.feature_list = [this.getDefaultFeatureListItem()];
@@ -469,18 +485,43 @@ export class ExtraPagesEventComponent implements OnInit {
       }));
   }
 
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
   getDefaultDualMapItem() {
     return {
+      rank: 1,
+      image: '',
+      img_alt: '',
       heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
       btn_status: true,
       btn_style: 'primary',
       btn_text_color: 'light',
       btn_text: '',
+      btn_icon_name: '',
       btn_link: '',
       iframe_url: ''
     };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
   }
 
   getDefaultFeatureListItem() {

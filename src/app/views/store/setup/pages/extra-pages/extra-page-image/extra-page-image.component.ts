@@ -92,6 +92,14 @@ export class ExtraPageImageComponent implements OnInit {
               }
               this.layoutDetails.faq_list = this.normalizeFaqItems(this.layoutDetails.faq_list);
             }
+          else if(this.layoutDetails.type=='cta') {
+            this.maxImgCount = 1;
+            if(!this.layoutDetails.image_list?.length) {
+              this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
+            }
+            this.layoutDetails.cta_list = this.normalizeCtaList(this.layoutDetails.cta_list);
+            if(!this.layoutDetails.cta_list.length) this.layoutDetails.cta_list = [this.getDefaultCtaItem()];
+          }
             else if(this.layoutDetails.type=='internal_links') {
               this.layoutDetails.group_list = this.normalizeInternalLinkGroups(this.layoutDetails.group_list, this.layoutDetails.cta_list);
               if(!this.layoutDetails.group_list.length) {
@@ -136,10 +144,6 @@ export class ExtraPageImageComponent implements OnInit {
             if(!this.layoutDetails.cta_list?.length) {
               this.layoutDetails.cta_list = [this.getDefaultHeroCtaItem(), this.getDefaultHeroCtaItem()];
             }
-          }
-          else if(this.layoutDetails.type=='cta') {
-            this.layoutDetails.cta_list = this.normalizeCtaList(this.layoutDetails.cta_list);
-            if(!this.layoutDetails.cta_list.length) this.layoutDetails.cta_list = [this.getDefaultCtaItem()];
           }
           else if(this.layoutDetails.type=='video_section' && !this.layoutDetails.video_details) {
             this.layoutDetails.video_details = {};
@@ -358,7 +362,7 @@ export class ExtraPageImageComponent implements OnInit {
         this.callUpdateApi();
       }
       else if(layoutData.type=='dual_map') {
-        layoutData.map_list = this.normalizeDualMapList(layoutData.map_list);
+        layoutData.map_list = this.prepareDualMapListForSave(this.layoutDetails.map_list);
         layoutData.store_id = this.commonService.store_details._id;
         layoutData.page_id = this.params.id;
         layoutData._id = this.layoutDetails._id;
@@ -394,11 +398,14 @@ export class ExtraPageImageComponent implements OnInit {
       }
       else if(layoutData.type=='cta') {
         layoutData.cta_list = this.normalizeCtaList(layoutData.cta_list);
-        layoutData.store_id = this.commonService.store_details._id;
-        layoutData.page_id = this.params.id;
-        layoutData._id = this.layoutDetails._id;
-        this.fileList.append('data', JSON.stringify(layoutData));
-        this.callUpdateApi();
+        this.onSetFormData(layoutData.image_list).then((imgList) => {
+          layoutData.image_list = imgList;
+          layoutData.store_id = this.commonService.store_details._id;
+          layoutData.page_id = this.params.id;
+          layoutData._id = this.layoutDetails._id;
+          this.fileList.append('data', JSON.stringify(layoutData));
+          this.callUpdateApi();
+        });
       }
       else if(layoutData.type=='feature_list') {
         this.onSetFeatureFormData(layoutData.feature_list).then((featureList) => {
@@ -611,8 +618,19 @@ export class ExtraPageImageComponent implements OnInit {
     this.layoutDetails.group_list[groupIndex].link_list.push(this.getDefaultInternalLinkItem());
   }
 
-  onInternalLinkGroupRankChange() {
-    this.syncInternalLinkGroupRanks(true);
+  onInternalLinkGroupRankChange(changedIndex: number) {
+    if(!Array.isArray(this.layoutDetails.group_list) || changedIndex < 0 || changedIndex >= this.layoutDetails.group_list.length) {
+      return;
+    }
+
+    const total = this.layoutDetails.group_list.length;
+    let newRank = Number(this.layoutDetails.group_list[changedIndex]?.rank);
+    if(!Number.isFinite(newRank) || newRank < 1) newRank = 1;
+    if(newRank > total) newRank = total;
+
+    const [movedGroup] = this.layoutDetails.group_list.splice(changedIndex, 1);
+    this.layoutDetails.group_list.splice(newRank - 1, 0, movedGroup);
+    this.syncInternalLinkGroupRanks();
   }
 
   getDefaultInternalLinkItem() {
@@ -637,28 +655,110 @@ export class ExtraPageImageComponent implements OnInit {
     };
   }
 
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
   getDefaultDualMapItem() {
     return {
+      rank: 1,
+      image: '',
+      img_alt: '',
       heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultMapFeature()],
       address: '',
       btn_link_type: 'internal',
       btn_status: true,
       btn_style: 'primary',
       btn_text_color: 'light',
       btn_text: '',
+      btn_icon_name: '',
       btn_link: '',
       iframe_url: ''
     };
   }
 
   normalizeDualMapList(items: any[] = []) {
-    return (Array.isArray(items) ? items : []).map((item) => ({
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
       ...this.getDefaultDualMapItem(),
       ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
       btn_status: typeof item?.btn_status === 'boolean'
         ? item.btn_status
         : item?.btn_status !== 'false'
     }));
+  }
+
+  prepareDualMapListForSave(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, mi) => {
+      const mapData: any = {
+        rank: item?.rank || mi + 1,
+        img_alt: item?.img_alt || '',
+        heading: item?.heading || '',
+        sub_heading: item?.sub_heading || '',
+        description: item?.description || '',
+        features: (Array.isArray(item?.features) ? item.features : []).map((feature) => ({
+          icon_name: feature?.icon_name || '',
+          name: feature?.name || ''
+        })),
+        address: item?.address || '',
+        iframe_url: item?.iframe_url || '',
+        btn_link_type: item?.btn_link_type || 'internal',
+        btn_status: typeof item?.btn_status === 'boolean'
+          ? item.btn_status
+          : item?.btn_status !== 'false',
+        btn_style: item?.btn_style || 'primary',
+        btn_text_color: item?.btn_text_color || 'light',
+        btn_text: item?.btn_text || '',
+        btn_icon_name: item?.btn_icon_name || '',
+        btn_link: item?.btn_link || ''
+      };
+      delete mapData.temp_image;
+      if(item?.img_change && item?.image) {
+        delete mapData.image;
+        mapData.img_change = true;
+        this.fileList.append('attachments', item.image, `dm_${mi}_img`);
+      }
+      else {
+        mapData.image = item?.image || '';
+      }
+      return mapData;
+    });
+  }
+
+  addDualMapFeature(mapIndex) {
+    const mapItem = this.layoutDetails.map_list?.[mapIndex];
+    if(!mapItem) return;
+    if(!Array.isArray(mapItem.features)) mapItem.features = [];
+    mapItem.features.push(this.getDefaultMapFeature());
+  }
+
+  dualMapFileChangeListener(mapIndex, event) {
+    const mapItem = this.layoutDetails.map_list?.[mapIndex];
+    if(!mapItem) return;
+    delete mapItem.err_msg;
+    if(event.target.files && event.target.files[0]) {
+      const inFile = event.target.files[0];
+      if(['image/jpeg', 'image/png', 'image/gif', 'image/webp'].indexOf(inFile.type) != -1) {
+        const reader = new FileReader();
+        const fileData = event.target.files[0];
+        const fileInKB = Math.round(fileData.size / 1024);
+        reader.onload = (e: ProgressEvent) => {
+          if(fileInKB <= this.fileLimitInKB) {
+            mapItem.temp_image = (<FileReader>e.target).result;
+            mapItem.image = fileData;
+            mapItem.img_change = true;
+          }
+          else mapItem.err_msg = true;
+        };
+        reader.readAsDataURL(fileData);
+      }
+    }
   }
 
   getDefaultContactInfoItem() {
@@ -758,19 +858,10 @@ export class ExtraPageImageComponent implements OnInit {
       }));
   }
 
-  syncInternalLinkGroupRanks(sortByRank = false) {
+  syncInternalLinkGroupRanks() {
     if(!Array.isArray(this.layoutDetails.group_list)) {
       this.layoutDetails.group_list = [];
       return;
-    }
-
-    this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({
-      ...group,
-      rank: Number(group?.rank) > 0 ? Number(group.rank) : index + 1
-    }));
-
-    if(sortByRank) {
-      this.layoutDetails.group_list.sort((a, b) => a.rank - b.rank);
     }
 
     this.layoutDetails.group_list = this.layoutDetails.group_list.map((group, index) => ({

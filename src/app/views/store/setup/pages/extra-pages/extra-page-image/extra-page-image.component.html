@@ -920,9 +920,74 @@
           class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
         <p class="dark-font mb-3">Map {{mi + 1}}</p>
         <div class="row">
-          <div class="col-md-12 form-group mb-3">
-            <label>Heading</label>
-            <input type="text" class="form-control" [name]="'dual_map_heading_'+mi" [(ngModel)]="m.heading" maxlength="200" />
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>1025 x 575 pixels @72ppi</p>
+                <i *ngIf="!m.image && !m.temp_image" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="m.image || m.temp_image" class="desktop-layout-image-sec">
+                  <img *ngIf="m.img_change" [src]="m.temp_image">
+                  <img *ngIf="!m.img_change && m.image" [src]="imgBaseUrl+m.image">
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" [name]="'dual_map_img_'+mi" class="custom-file-input"
+                    (change)="dualMapFileChangeListener(mi, $event);"
+                    accept="image/jpeg, image/png, image/gif, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="m.err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+              <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
+                <label>Image Alt Name</label>
+                <input type="text" [name]="'dual_map_img_alt_'+mi" class="form-control" [(ngModel)]="m.img_alt" />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-lg-6">
+            <div class="col-md-12 form-group mb-3">
+              <label>Heading</label>
+              <input type="text" class="form-control" [name]="'dual_map_heading_'+mi" [(ngModel)]="m.heading" maxlength="200" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Sub-heading</label>
+              <textarea class="form-control" [name]="'dual_map_sub_heading_'+mi" rows="2" [(ngModel)]="m.sub_heading"></textarea>
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Description</label>
+              <textarea class="form-control" [name]="'dual_map_description_'+mi" rows="3" [(ngModel)]="m.description"></textarea>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card p-2 mb-3 featured-cards-features-block">
+              <div class="row mb-1">
+                <div class="col-md-12">
+                  <p class="dark-font fw-600 mb-0 small">Highlights</p>
+                </div>
+              </div>
+              <div *ngFor="let feat of m.features; let fi=index;" class="poss-rel card card-in-card p-2 mb-2 featured-card-feature-item">
+                <span *ngIf="m.features?.length > 1" (click)="m.features.splice(fi, 1);"
+                  class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-2">
+                    <label class="small mb-1">Icon Name</label>
+                    <input type="text" [name]="'dual_map_feat_icon_'+mi+'_'+fi" class="form-control form-control-sm" [(ngModel)]="feat.icon_name" />
+                  </div>
+                  <div class="col-md-6 form-group mb-0">
+                    <label class="small mb-1">Name</label>
+                    <input type="text" [name]="'dual_map_feat_name_'+mi+'_'+fi" class="form-control form-control-sm" [(ngModel)]="feat.name" />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-0">
+                <button type="button" class="light-button" (click)="addDualMapFeature(mi);">
+                  <span class="material-symbols-rounded">add</span> Add Highlight
+                </button>
+              </div>
+            </div>
           </div>
           <div class="col-md-12 form-group mb-3">
             <label>Address</label>
@@ -945,6 +1010,10 @@
             <div class="col-md-12 form-group mb-3">
               <label>Button Text</label>
               <input type="text" [name]="'dual_map_btn_text_'+mi" class="form-control" [(ngModel)]="m.btn_text" maxlength="100" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Button Icon Name</label>
+              <input type="text" [name]="'dual_map_btn_icon_'+mi" class="form-control" [(ngModel)]="m.btn_icon_name" placeholder="e.g. map" />
             </div>
             <div class="col-md-6 form-group mb-3">
               <label>Button Style</label>
@@ -1271,7 +1340,7 @@
             <div class="col-md-3 form-group mb-3">
               <label>Rank</label>
               <input type="number" min="1" [name]="'il_group_rank_'+gi" class="form-control"
-                [(ngModel)]="group.rank" (change)="onInternalLinkGroupRankChange()" />
+                [(ngModel)]="group.rank" (change)="onInternalLinkGroupRankChange(gi)" />
             </div>
             <div class="col-md-9 form-group mb-3">
               <label>Icon Name</label>
@@ -1540,6 +1609,66 @@
     <!-- Hero CTA -->
     <!-- CTA -->
     <ng-container *ngIf="layoutDetails.type=='cta'">
+      <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
+        <div class="row pt-3 pb-3">
+          <div class="col-md-12">
+            <p class="dark-font">{{layoutDetails?.name}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>(Desktop) - 1850 x 400 pixels @72ppi</p>
+                <i *ngIf="!x.desktop_img" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="x.desktop_img" class="desktop-layout-image-sec">
+                  <img *ngIf="x?.desktop_img_change" [src]="x.temp_desktop_img">
+                  <img *ngIf="!x?.desktop_img_change" [src]="imgBaseUrl+x.desktop_img">
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" [name]="'cta_desktop_img_'+i" class="custom-file-input" [required]="!x.desktop_img"
+                    (change)="fileChangeListener('desktop', i, $event)"
+                    accept="image/gif, image/jpeg, image/png, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="x.d_err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+              <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
+                <label>Image Alt Name</label>
+                <input type="text" [name]="'cta_img_alt_'+i" class="form-control" [(ngModel)]="x.img_alt" />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <p>(Mobile) - 650 x 800 pixels @72ppi</p>
+                <i *ngIf="!x.mobile_img" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="x.mobile_img" class="desktop-layout-image-sec">
+                  <img *ngIf="x?.mobile_img_change" [src]="x.temp_mobile_img">
+                  <img *ngIf="!x?.mobile_img_change" [src]="imgBaseUrl+x.mobile_img">
+                </figure>
+              </div>
+              <div class="h-100 d-flex align-items-end">
+                <div class="custom-file mt-2">
+                  <input type="file" [name]="'cta_mobile_img_'+i" class="custom-file-input" [required]="!x.mobile_img"
+                    (change)="fileChangeListener('mobile', i, $event)"
+                    accept="image/gif, image/jpeg, image/png, image/webp">
+                  <label class="custom-file-label">Choose file</label>
+                </div>
+              </div>
+              <div *ngIf="x.m_err_msg" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="card p-3 mb-3">
         <div class="row pt-2 pb-2">
           <div class="col-md-12">
