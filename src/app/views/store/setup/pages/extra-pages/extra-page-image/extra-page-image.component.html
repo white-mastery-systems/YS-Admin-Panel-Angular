@@ -1273,6 +1273,10 @@
               <input type="number" min="1" [name]="'il_group_rank_'+gi" class="form-control"
                 [(ngModel)]="group.rank" (change)="onInternalLinkGroupRankChange()" />
             </div>
+            <div class="col-md-9 form-group mb-3">
+              <label>Icon Name</label>
+              <input type="text" [name]="'il_group_icon_'+gi" class="form-control" [(ngModel)]="group.icon_name" placeholder="e.g. hotel" />
+            </div>
             <div class="col-md-12 form-group mb-3">
               <label>Group Heading</label>
               <input type="text" [name]="'il_group_heading_'+gi" class="form-control" [(ngModel)]="group.heading" />

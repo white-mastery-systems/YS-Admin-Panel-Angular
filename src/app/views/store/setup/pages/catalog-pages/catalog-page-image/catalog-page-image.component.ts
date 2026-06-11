@@ -563,6 +563,7 @@ export class CatalogPageImageComponent implements OnInit {
   getDefaultInternalLinkGroup() {
     return {
       rank: 1,
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
@@ -572,6 +573,7 @@ export class CatalogPageImageComponent implements OnInit {
 
   normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
     const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
@@ -580,6 +582,7 @@ export class CatalogPageImageComponent implements OnInit {
 
     return sourceGroups.map(group => ({
       rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
       heading: group?.heading || '',
       sub_heading: group?.sub_heading || '',
       description: group?.description || '',

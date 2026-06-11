@@ -210,7 +210,16 @@ export class HomeLayoutComponent implements OnInit {
         this.editForm.text_list.push({ name: el.value });
       });
     }
-		this.api.UPDATE_LAYOUT(this.editForm).subscribe(result => {
+    const updatePayload = { ...this.editForm };
+    // Content fields for internal_links are edited in segment image view only.
+    if(updatePayload.type === 'internal_links') {
+      delete updatePayload.group_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+		this.api.UPDATE_LAYOUT(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if(result.status) {
         document.getElementById('closeModal').click();
@@ -363,6 +372,7 @@ export class HomeLayoutComponent implements OnInit {
   getDefaultInternalLinkGroup() {
     return {
       rank: 1,
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
@@ -372,6 +382,7 @@ export class HomeLayoutComponent implements OnInit {
 
   normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
     const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
@@ -380,6 +391,7 @@ export class HomeLayoutComponent implements OnInit {
 
     return sourceGroups.map(group => ({
       rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
       heading: group?.heading || '',
       sub_heading: group?.sub_heading || '',
       description: group?.description || '',

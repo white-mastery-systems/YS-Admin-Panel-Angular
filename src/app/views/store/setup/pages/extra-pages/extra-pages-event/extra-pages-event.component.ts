@@ -188,7 +188,16 @@ export class ExtraPagesEventComponent implements OnInit {
     }
     this.editForm.page_id = this.formData._id;
     this.editForm.store_id = this.commonService.store_details._id;
-		this.api.UPDATE_SEGMENT_EXTRA_PAGE(this.editForm).subscribe(result => {
+    const updatePayload = { ...this.editForm };
+    // Content fields for internal_links are edited in segment image view only.
+    if (updatePayload.type === 'internal_links') {
+      delete updatePayload.group_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+		this.api.UPDATE_SEGMENT_EXTRA_PAGE(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if(result.status) {
         document.getElementById('closeModal').click();
@@ -220,8 +229,11 @@ export class ExtraPagesEventComponent implements OnInit {
         if(this.editForm.type == 'faq' && !this.editForm.faq_list?.length) {
           this.editForm.faq_list = [this.getDefaultFaqItem()];
         }
-        if(this.editForm.type == 'internal_links' && !this.editForm.group_list?.length) {
-          this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
+        if(this.editForm.type == 'internal_links') {
+          this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
+          if(!this.editForm.group_list.length) {
+            this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
+          }
         }
         if(this.editForm.type == 'dual_map' && !this.editForm.map_list?.length) {
           this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
@@ -423,11 +435,38 @@ export class ExtraPagesEventComponent implements OnInit {
   getDefaultInternalLinkGroup() {
     return {
       rank: 1,
+      icon_name: '',
       heading: '',
       sub_heading: '',
       description: '',
       link_list: [this.getDefaultInternalLinkItem()]
     };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
   }
 
   getDefaultDualMapItem() {

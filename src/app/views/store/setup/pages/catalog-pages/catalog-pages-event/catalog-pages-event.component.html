@@ -847,6 +847,12 @@
               </div>
             </ng-container>
 
+            <ng-container *ngIf="editForm.type=='internal_links'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Internal link groups and links are available in the segment image view.</p>
+              </div>
+            </ng-container>
+
             <!-- Hero CTA Segment Edit Fields -->
             <ng-container *ngIf="editForm.type=='hero_cta'">
               <div class="col-md-12 form-group mb-3">

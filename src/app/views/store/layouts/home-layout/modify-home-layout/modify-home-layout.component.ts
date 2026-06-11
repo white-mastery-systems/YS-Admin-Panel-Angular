@@ -99,7 +99,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.multicategory_list = [{ rank: 1, image_list: [{ rank: 1 }] }];
           }
           else if(this.layoutDetails.type=='hero_cta') {
-            if(!this.layoutDetails.image_list?.length) this.layoutDetails.image_list = [{ rank: 1 }];
+            if(!this.layoutDetails.image_list?.length) this.layoutDetails.image_list = [{ rank: 1, productList: [] }];
             if(!this.layoutDetails.cover_img) this.layoutDetails.cover_img = '';
             if(!this.layoutDetails.highlighted_text) this.layoutDetails.highlighted_text = '';
             if(!this.layoutDetails.highlighted_color) this.layoutDetails.highlighted_color = '';
@@ -287,6 +287,9 @@ export class ModifyHomeLayoutComponent implements OnInit {
     }
     else if(this.layoutDetails.type=='dual_map') {
       this.layoutDetails.map_list.push(this.getDefaultDualMapItem());
+    }
+    else if(this.layoutDetails.type=='hero_cta') {
+      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, productList: [] });
     }
     else {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, points_list: [] });
