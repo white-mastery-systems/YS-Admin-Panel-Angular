@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
-import { AnchorHeaderTool, ButtonTool, CtaBlockTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
+import { AnchorHeaderTool, ButtonTool, CtaBlockTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
   selector: 'app-blog-event',
@@ -49,7 +49,8 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.pendingEditorInit = false;
       this.blogForm = {
         form_type: 'add', created_on: this.currentDate, seo_details: {}, faqs: [], category_id: [],
-        tags_list: [], published: false, content: this.getDefaultContent(), editor_type: 'advanced', description: ''
+        tags_list: [], published: false, content: this.getDefaultContent(), editor_type: 'advanced', description: '',
+        eyebrow_heading: ''
       };
       if(params.id!='add') {
         this.pageLoader = true;
@@ -144,6 +145,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         editor_type: 'advanced',
         slug: this.blogForm.seo_details?.page_url || this.commonService.urlFormat(this.blogForm.name || ''),
         title: this.blogForm.name,
+        eyebrow_heading: (this.blogForm.eyebrow_heading || '').trim(),
         author_id: this.blogForm.author_id || null,
         author: this.blogForm.author,
         createdOn: this.blogForm.created_on,
@@ -388,6 +390,9 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         ctaBlock: {
           class: CtaBlockTool as any
         },
+        keyFeatures: {
+          class: KeyFeaturesTool as any
+        },
         productCarousel: {
           class: ProductCarouselTool as any,
           config: {
@@ -475,6 +480,15 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         text: (item?.text || '').trim(),
         anchor: item?.anchor ? `#${String(item.anchor).trim().replace(/^#/, '')}` : ''
       })).filter((item) => item.text || item.anchor || item.number);
+    });
+
+    blocks.forEach((block) => {
+      if(block?.type !== 'keyFeatures') return;
+      block.data = block.data || {};
+      block.data.title = (block.data.title || '').trim() || 'Key features to check before booking:';
+      block.data.features = Array.isArray(block.data.features)
+        ? block.data.features.map((feature) => (typeof feature === 'string' ? feature.trim() : '')).filter((feature) => !!feature)
+        : [];
     });
 
     return {

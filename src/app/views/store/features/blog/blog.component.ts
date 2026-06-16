@@ -92,6 +92,7 @@ export class BlogComponent implements OnInit {
         editor_type: 'advanced',
         slug: this.blogForm.slug,
         title: this.blogForm.name,
+        eyebrow_heading: this.blogForm.eyebrow_heading || '',
         author_id: this.blogForm.author_id,
         author: this.blogForm.author,
         createdOn: this.blogForm.created_on,

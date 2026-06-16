@@ -199,6 +199,172 @@
   padding-bottom: 18px;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features > .editorjs-custom__field {
+  margin-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__label {
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+  color: #21314c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn:hover {
+  border-color: #ec848b;
+  background: #fff8f8;
+  color: #c9565f;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn span {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__panel {
+  border: 1px solid #e6e9ef;
+  border-radius: 12px;
+  background: #fbfcfe;
+  padding: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__list {
+  display: grid;
+  gap: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__remove:hover {
+  border-color: #ec848b;
+  background: #fff1f2;
+  color: #d6455d;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview {
+  margin-top: 18px;
+  border: 1px solid #e8e2d8;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fdfbf7 0%, #f8f4ee 100%);
+  padding: 16px 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__label {
+  display: block;
+  margin-bottom: 10px;
+  color: #8a8178;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__title {
+  margin: 0 0 14px;
+  color: #4a3426;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #4f4f4f;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__item--empty {
+  grid-column: 1 / -1;
+  color: #8a8178;
+  font-size: 13px;
+  font-style: italic;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__check {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f0c14b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__text {
+  flex: 1 1 auto;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__grid {
   display: grid;
   gap: 12px;
@@ -471,5 +637,9 @@
 
   :host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__text {
     font-size: 24px;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__grid {
+    grid-template-columns: 1fr;
   }
 }

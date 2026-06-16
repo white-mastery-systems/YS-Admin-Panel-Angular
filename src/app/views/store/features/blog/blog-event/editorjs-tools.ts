@@ -46,6 +46,11 @@ type ProductCarouselData = {
   productLimit?: number | string;
 };
 
+type KeyFeaturesData = {
+  title?: string;
+  features?: string[];
+};
+
 type HeadingData = {
   text?: string;
   level?: number;
@@ -622,5 +627,168 @@ export class ProductCtaTool {
     image.alt = 'Product CTA preview';
     image.className = 'editorjs-custom__preview-image';
     this.preview.appendChild(image);
+  }
+}
+
+export class KeyFeaturesTool {
+  private data: KeyFeaturesData;
+  private wrapper: HTMLDivElement;
+  private titleInput: HTMLInputElement;
+  private itemsContainer: HTMLDivElement;
+  private previewWrap: HTMLDivElement;
+  private previewTitle: HTMLHeadingElement;
+  private previewList: HTMLUListElement;
+
+  static get toolbox() {
+    return {
+      title: 'Key Features',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="3" width="15" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 8.5L8.5 10.5L13.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 13.5H13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    };
+  }
+
+  constructor({ data }: { data: KeyFeaturesData }) {
+    this.data = data || {};
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--key-features';
+
+    this.titleInput = createInput(
+      this.data.title || '',
+      'Key features to check before booking:'
+    );
+
+    this.itemsContainer = document.createElement('div');
+    this.itemsContainer.className = 'editorjs-key-features__list';
+
+    const featuresHeader = document.createElement('div');
+    featuresHeader.className = 'editorjs-key-features__header';
+
+    const featuresLabel = document.createElement('span');
+    featuresLabel.className = 'editorjs-key-features__label';
+    featuresLabel.textContent = 'Features';
+
+    const addButton = document.createElement('button');
+    addButton.type = 'button';
+    addButton.className = 'editorjs-key-features__add-btn';
+    addButton.innerHTML = '<span aria-hidden="true">+</span> Add feature';
+    addButton.addEventListener('click', () => {
+      this.addItem();
+      this.renderPreview();
+    });
+
+    featuresHeader.appendChild(featuresLabel);
+    featuresHeader.appendChild(addButton);
+
+    const featuresPanel = document.createElement('div');
+    featuresPanel.className = 'editorjs-key-features__panel';
+    featuresPanel.appendChild(this.itemsContainer);
+
+    this.previewWrap = document.createElement('div');
+    this.previewWrap.className = 'editorjs-key-features-preview';
+
+    const previewLabel = document.createElement('span');
+    previewLabel.className = 'editorjs-key-features-preview__label';
+    previewLabel.textContent = 'Preview';
+
+    this.previewTitle = document.createElement('h4');
+    this.previewTitle.className = 'editorjs-key-features-preview__title';
+    this.previewList = document.createElement('ul');
+    this.previewList.className = 'editorjs-key-features-preview__grid';
+
+    this.previewWrap.appendChild(previewLabel);
+    this.previewWrap.appendChild(this.previewTitle);
+    this.previewWrap.appendChild(this.previewList);
+
+    this.titleInput.addEventListener('input', () => this.renderPreview());
+
+    this.wrapper.appendChild(createField('Title', this.titleInput));
+    this.wrapper.appendChild(featuresHeader);
+    this.wrapper.appendChild(featuresPanel);
+    this.wrapper.appendChild(this.previewWrap);
+
+    const features = Array.isArray(this.data.features) && this.data.features.length
+      ? this.data.features
+      : [''];
+    features.forEach((feature) => this.addItem(feature));
+
+    this.renderPreview();
+    return this.wrapper;
+  }
+
+  save() {
+    const rows = Array.from(this.itemsContainer.querySelectorAll('.editorjs-key-features__item'));
+    const features = rows
+      .map((row) => (row.querySelector('[data-key="feature"]') as HTMLInputElement)?.value?.trim() || '')
+      .filter((feature) => !!feature);
+
+    return {
+      title: this.titleInput.value.trim() || 'Key features to check before booking:',
+      features
+    };
+  }
+
+  private addItem(value = '') {
+    const row = document.createElement('div');
+    row.className = 'editorjs-key-features__item';
+
+    const featureInput = createInput(value, 'e.g. Fast, reliable Wi-Fi');
+    featureInput.className = 'editorjs-custom__input editorjs-key-features__input';
+    featureInput.setAttribute('data-key', 'feature');
+    featureInput.addEventListener('input', () => this.renderPreview());
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'editorjs-key-features__remove';
+    removeButton.setAttribute('aria-label', 'Remove feature');
+    removeButton.title = 'Remove feature';
+    removeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    removeButton.addEventListener('click', () => {
+      if (this.itemsContainer.children.length > 1) {
+        row.remove();
+        this.renderPreview();
+      }
+    });
+
+    row.appendChild(featureInput);
+    row.appendChild(removeButton);
+    this.itemsContainer.appendChild(row);
+  }
+
+  private renderPreview() {
+    const title = this.titleInput.value.trim() || 'Key features to check before booking:';
+    const rows = Array.from(this.itemsContainer.querySelectorAll('.editorjs-key-features__item'));
+    const features = rows
+      .map((row) => (row.querySelector('[data-key="feature"]') as HTMLInputElement)?.value?.trim() || '')
+      .filter((feature) => !!feature);
+
+    this.previewTitle.textContent = title;
+    this.previewList.innerHTML = '';
+
+    if (!features.length) {
+      const emptyItem = document.createElement('li');
+      emptyItem.className = 'editorjs-key-features-preview__item editorjs-key-features-preview__item--empty';
+      emptyItem.textContent = 'Add features above to preview the checklist.';
+      this.previewList.appendChild(emptyItem);
+      return;
+    }
+
+    features.forEach((feature) => {
+      const item = document.createElement('li');
+      item.className = 'editorjs-key-features-preview__item';
+
+      const check = document.createElement('span');
+      check.className = 'editorjs-key-features-preview__check';
+      check.textContent = '✓';
+
+      const text = document.createElement('span');
+      text.className = 'editorjs-key-features-preview__text';
+      text.textContent = feature;
+
+      item.appendChild(check);
+      item.appendChild(text);
+      this.previewList.appendChild(item);
+    });
   }
 }

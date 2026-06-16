@@ -86,6 +86,12 @@
             </div>
           </div>
           <div class="col-md-12 form-group mb-3">
+            <label>Eyebrow Heading <span class="light-font">(optional)</span></label>
+            <input type="text" name="eyebrow_heading" class="form-control" [(ngModel)]="blogForm.eyebrow_heading"
+              placeholder="e.g. Business Travel in Chennai" />
+            <p class="light-font mt-2 mb-0">Short label shown above the blog title.</p>
+          </div>
+          <div class="col-md-12 form-group mb-3">
             <label>Title</label>
             <input type="text" name="name" class="form-control" [(ngModel)]="blogForm.name" (input)="onChangeTitle();" #name="ngModel" required />
           </div>
