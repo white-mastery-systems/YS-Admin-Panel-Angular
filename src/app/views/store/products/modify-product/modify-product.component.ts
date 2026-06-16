@@ -37,6 +37,12 @@ export class ModifyProductComponent implements OnInit {
   imageForm: any = { list: [] }; productUrl : string;
   videoForm: any = {}; videoLimitInKB: number = 10240; // 6144
   fileList: FormData; imgFile: any; imageChangedEvent: any; croppedFile: any;
+  aiTagLoader: boolean;
+  aiTagSuccess: string;
+  aiTagError: string;
+  aiCataloguePreview: any[] = [];
+  aiCatalogueWarning: string;
+  isTulsiAiStore: boolean = false;
 
   constructor(
     config: NgbModalConfig, public modalService: NgbModal, private router: Router, private activeRoute: ActivatedRoute,
@@ -57,10 +63,14 @@ export class ModifyProductComponent implements OnInit {
       });
       this.commonService.redirect = "/product-sections/products";
       this.commonService.secondary_header = "Update Product";
+      this.isTulsiAiStore = String(this.commonService.store_details?._id || '') === String(this.configData.tulsi_ai_catalog_store_id);
       this.aiStyleList = []; delete this.catSearch;
       if(this.commonService.ys_features.indexOf('vendors')!=-1 && this.commonService.store_details?.login_type!='vendor') this.vendorAdmin = true;
       if(this.commonService.ys_features.indexOf('variant_image_tag')!=-1) this.image_count = environment.variant_img_count;
       this.btnLoader = false; this.pageLoader = true;
+      this.aiTagLoader = false; this.aiTagSuccess = null; this.aiTagError = null;
+      this.aiCataloguePreview = [];
+      this.aiCatalogueWarning = null;
       this.maxRank = params.rank;
       this.addonList = []; this.tagList = []; this.noteList = [];
       this.taxRates = []; this.sizeCharts = [];  this.hlList = [];
@@ -728,6 +738,221 @@ export class ModifyProductComponent implements OnInit {
         }
       });
       resolve(tagList);
+    });
+  }
+
+  snapshotSelectedTags(): Set<string> {
+    const keys = new Set<string>();
+    this.tagList?.forEach(tagObject => {
+      tagObject.option_list?.forEach(option => {
+        if (option.tag_option_checked) {
+          keys.add(`${tagObject._id}:${option.name}`);
+        }
+      });
+    });
+    return keys;
+  }
+
+  snapshotSelectedCatalogs(): Set<string> {
+    const keys = new Set<string>();
+    this.categoryList?.forEach(catalogue => {
+      if (catalogue.selected) keys.add(String(catalogue._id));
+    });
+    return keys;
+  }
+
+  clearAiCatalogFlags() {
+    if (!this.categoryList?.length) return;
+    this.categoryList.forEach(catalogue => {
+      catalogue.ai_suggested = false;
+    });
+  }
+
+  getTagChipClass(option) {
+    if (option.tag_option_checked && option.ai_suggested) return 'active-ai';
+    if (option.tag_option_checked) return 'active';
+    return 'inactive';
+  }
+
+  getCatalogChipClass(catalogue) {
+    if (catalogue.selected && catalogue.ai_suggested) return 'active-ai';
+    if (catalogue.selected) return 'active';
+    return 'inactive';
+  }
+
+  onTagOptionToggle(option) {
+    option.ai_suggested = false;
+  }
+
+  onCatalogToggle(catalogue) {
+    catalogue.ai_suggested = false;
+  }
+
+  manualTagSnapshot: Set<string> = new Set();
+  manualCatalogSnapshot: Set<string> = new Set();
+
+  applyAiTagList(productTagList) {
+    const manualSnapshot = this.manualTagSnapshot || new Set();
+    this.tagListModify(this.tagList, productTagList).then((list) => {
+      this.tagList = list;
+      productTagList.forEach(entry => {
+        const groupId = Object.keys(entry)[0];
+        const values = entry[groupId] || [];
+        const tagObject = this.tagList.find(item => String(item._id) == String(groupId));
+        if (!tagObject) return;
+        tagObject.option_list.forEach(option => {
+          if (!values.includes(option.name)) return;
+          const key = `${groupId}:${option.name}`;
+          if (!manualSnapshot.has(key)) option.ai_suggested = true;
+        });
+      });
+      this.tagList = [...this.tagList];
+    });
+  }
+
+  hasAnalyzableProductImages(): boolean {
+    return (this.productForm?.image_list || []).some(entry => String(entry?.image || '').trim());
+  }
+
+  applyAiCatalogues(categoryIds, cataloguePreview) {
+    this.aiCataloguePreview = cataloguePreview || [];
+    this.aiCatalogueWarning = null;
+
+    if (!categoryIds?.length) {
+      this.aiCatalogueWarning = 'No catalogue mapping rules matched these tags. You can link catalogues manually below.';
+      return;
+    }
+
+    if (!this.categoryList?.length) {
+      this.aiCatalogueWarning = 'Catalogue list is not loaded yet. Scroll to Catalogs and refresh the page.';
+      return;
+    }
+
+    categoryIds.forEach(id => {
+      const catalogue = this.categoryList.find(item => String(item._id) == String(id));
+      if (!catalogue || catalogue.selected) return;
+      catalogue.selected = true;
+      catalogue.ai_suggested = true;
+    });
+    this.categoryList = [...this.categoryList];
+  }
+
+  applyCatalogueMapping(result) {
+    const categoryIds = result.category_id || result.category_ids || [];
+    const cataloguePreview = result.catalogue_preview || result.catalogues || [];
+    this.applyAiCatalogues(categoryIds, cataloguePreview);
+  }
+
+  evaluateCatalogueMapping(classification, tagList, onComplete?: () => void) {
+    const finish = () => { if (onComplete) onComplete(); };
+    const productName = this.productForm?.name || '';
+
+    this.peApi.EVALUATE_CATALOGUE_MAPPING({ classification, product_name: productName }).subscribe(evalResult => {
+      if (evalResult.status && evalResult.category_ids?.length) {
+        this.applyCatalogueMapping(evalResult);
+        finish();
+        return;
+      }
+      if (tagList?.length) {
+        const rebuilt = this.buildClassificationFromTagList(tagList);
+        this.peApi.EVALUATE_CATALOGUE_MAPPING({ classification: rebuilt, product_name: productName }).subscribe(secondTry => {
+          if (secondTry.status) this.applyCatalogueMapping(secondTry);
+          finish();
+        }, () => finish());
+        return;
+      }
+      this.applyAiCatalogues([], []);
+      finish();
+    }, () => {
+      this.applyAiCatalogues([], []);
+      finish();
+    });
+  }
+
+  finishAiTagSuccess(imagesAnalyzed?: number) {
+    let successMsg = 'AI suggested tags and catalogues have been added. Your existing manual selections were kept. Review below and click Save to confirm.';
+    if (imagesAnalyzed && imagesAnalyzed > 1) {
+      successMsg = `Analysed ${imagesAnalyzed} product images. ` + successMsg;
+    }
+    if (this.aiCataloguePreview.length) {
+      successMsg += ' Matching catalogues were also selected — review the Catalogs section before Save.';
+    }
+    this.aiTagSuccess = successMsg;
+  }
+
+  buildClassificationFromTagList(tagList) {
+    const groupToField = {
+      '5d3057b12d12374382fc07a0': 'body_colour',
+      '68b57aa65193047ad78f88f1': 'material',
+      '68b57a90deb5657a98b756f8': 'design',
+      '68b57ac09eca7d7ab4f87d68': 'border',
+      '68b57ad39eca7d7ab4f87d88': 'blouse',
+      '68b57aed08a8577ac2b9835d': 'zari_colour',
+      '68b57afd5193047ad78f8988': 'occasion',
+      '68b57b101d06ac7a92645291': 'weave',
+      '68b57b20931e697a9ef3c73b': 'pallu_colour',
+      '68b57b45ff43297aa6332686': 'blouse_colour'
+    };
+    const multiFields = ['border', 'occasion', 'weave'];
+    const classification: any = {};
+
+    (tagList || []).forEach(entry => {
+      const groupId = Object.keys(entry)[0];
+      const field = groupToField[groupId];
+      const values = entry[groupId] || [];
+      if (!field || !values.length) return;
+      classification[field] = multiFields.includes(field) ? values : values[0];
+    });
+
+    return classification;
+  }
+
+  onTagThisProduct() {
+    if (this.aiTagLoader || !this.productForm?._id) return;
+    if (!this.hasAnalyzableProductImages()) {
+      this.aiTagSuccess = null;
+      this.aiTagError = 'Please upload product images before using Tag this Product.';
+      return;
+    }
+    if (this.vendorAdmin && !this.productForm.vendor_id) {
+      this.aiTagSuccess = null;
+      this.aiTagError = 'Choose a vendor before using AI tagging.';
+      return;
+    }
+
+    this.aiTagLoader = true;
+    this.aiTagSuccess = null;
+    this.aiTagError = null;
+    this.aiCataloguePreview = [];
+    this.aiCatalogueWarning = null;
+    this.manualTagSnapshot = this.snapshotSelectedTags();
+    this.manualCatalogSnapshot = this.snapshotSelectedCatalogs();
+    this.clearAiCatalogFlags();
+
+    this.api.CLASSIFY_SAREE({ mode: 'admin', product_id: this.productForm._id }).subscribe(result => {
+      this.aiTagLoader = false;
+      if (result.status && result.tag_list?.length) {
+        this.productForm.tag_status = true;
+        this.applyAiTagList(result.tag_list);
+
+        if (result.category_id?.length || result.catalogue_preview?.length) {
+          this.applyCatalogueMapping(result);
+          this.finishAiTagSuccess(result.images_analyzed);
+        }
+        else if (result.classification) {
+          this.evaluateCatalogueMapping(result.classification, result.tag_list, () => this.finishAiTagSuccess(result.images_analyzed));
+        }
+        else {
+          this.applyAiCatalogues([], []);
+          this.finishAiTagSuccess(result.images_analyzed);
+        }
+      }
+      else {
+        this.aiTagError = result.message || 'AI tagging failed. Please try again or tag manually.';
+      }
+    }, () => {
+      this.aiTagLoader = false;
+      this.aiTagError = 'AI tagging failed. Please try again or tag manually.';
     });
   }
 

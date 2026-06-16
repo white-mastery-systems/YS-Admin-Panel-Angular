@@ -66,6 +66,8 @@ export class SidebarService {
   getSidePanelList() {
     this.sidePanelList = [];
     let routePermissionList = []; let userPermList = [];
+    const tulsiAiStoreId = environment.config_data.tulsi_ai_catalog_store_id;
+    const isTulsiAiStore = String(this.commonService.store_details?._id || '') === String(tulsiAiStoreId);
     // whats new
     let ysFeatures = this.commonService.ys_features;
     let subuserFeatures = this.commonService.subuser_features;
@@ -117,8 +119,14 @@ export class SidebarService {
         }
         if(ysFeatures.indexOf('product_filters')!=-1) {
           this.commonService.product_extras_list.push({ name: 'Product Tags', state: '/product-extras/product-tags', type: 'link', icon:'label' });
+          if (isTulsiAiStore) {
+            this.commonService.product_extras_list.push({ name: 'AI Catalogue Mapping', state: '/product-extras/catalogue-mapping', type: 'link', icon:'auto_awesome' });
+          }
           routePermissionList.push("tags");
           tempExtraList.push({ keyword: "tags", name: "Product Tags" });
+          if (isTulsiAiStore) {
+            tempExtraList.push({ keyword: "tags", name: "AI Catalogue Mapping" });
+          }
         }
         if(ysFeatures.indexOf('foot_note')!=-1) {
           this.commonService.product_extras_list.push({ name: 'Footnote', state: '/product-extras/footnote', type: 'link', icon:'description' });
@@ -565,6 +573,9 @@ export class SidebarService {
       }
       if(ysFeatures.indexOf('product_filters')!=-1 && subuserFeatures.indexOf('product_filters')!=-1) {
         this.commonService.product_extras_list.push({ name: 'Product Tags', state: '/product-extras/product-tags', type: 'link', icon:'label' });
+        if (isTulsiAiStore) {
+          this.commonService.product_extras_list.push({ name: 'AI Catalogue Mapping', state: '/product-extras/catalogue-mapping', type: 'link', icon:'auto_awesome' });
+        }
         routePermissionList.push("tags");
       }
       if(ysFeatures.indexOf('foot_note')!=-1 && subuserFeatures.indexOf('foot_note')!=-1) {
@@ -888,6 +899,9 @@ export class SidebarService {
         }
         if(ysFeatures.indexOf('product_filters')!=-1 && this.commonService.vendor_features.indexOf('product_filters')!=-1) {
           this.commonService.product_extras_list.push({ name: 'Product Tags', state: '/product-extras/product-tags', type: 'link', icon:'label' });
+          if (isTulsiAiStore) {
+            this.commonService.product_extras_list.push({ name: 'AI Catalogue Mapping', state: '/product-extras/catalogue-mapping', type: 'link', icon:'auto_awesome' });
+          }
           routePermissionList.push("tags");
         }
         if(ysFeatures.indexOf('foot_note')!=-1 && this.commonService.vendor_features.indexOf('foot_note')!=-1) {

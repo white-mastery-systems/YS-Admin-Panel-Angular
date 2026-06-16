@@ -45,6 +45,7 @@ export const environment = {
     dqj_id: "63baccac9892d776be5cae10",
     surgical_id: "65ce121adfcfaa780d5ff8ed",
     tulsi_madras_id: "607a6edd0e7a3b69278c05ea",
+    tulsi_ai_catalog_store_id: "5d30013a5c83a702392c4c8b",
     catalog_navigations: ["5d0ca4c89f21de0314f98f24", "5d30013a5c83a702392c4c8b", "667be4d64ad50b7759af6b20"],
     catalog_image: ["61f66d9edc229625753437a7", "5d30013a5c83a702392c4c8b", "667be4d64ad50b7759af6b20"],
     long_desc: ["65ce121adfcfaa780d5ff8ed", "667be4d64ad50b7759af6b20", "643cf7e21738c0521d8c060f"],
