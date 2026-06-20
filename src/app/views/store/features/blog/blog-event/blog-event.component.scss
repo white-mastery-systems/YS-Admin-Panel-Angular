@@ -204,6 +204,159 @@
   padding-bottom: 18px;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--iframe {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--image-cards {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__label {
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+  color: #21314c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__cards {
+  display: grid;
+  gap: 16px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card {
+  border: 1px solid #e6e9ef;
+  border-radius: 14px;
+  background: #fbfcfe;
+  padding: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card-title {
+  color: #21314c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-card,
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-item,
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__inline-btn {
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 10px;
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options {
+  width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
+  display: grid;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-input {
+  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-option:hover {
+  border-color: #ec848b;
+  background: #fff1f2;
+  color: #d6455d;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
+  grid-template-columns: minmax(0, 1fr) 160px minmax(0, 1.2fr) 96px;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features > .editorjs-custom__field {
   margin-bottom: 18px;
 }
@@ -476,6 +629,12 @@
   height: 44px;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-row .editorjs-custom__input {
+  width: 100%;
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__input:focus,
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__textarea:focus,
 :host ::ng-deep .editorjs-wrapper .editorjs-custom__select:focus {
@@ -640,6 +799,11 @@
   }
 
   :host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options-list,
+  :host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
     grid-template-columns: 1fr;
   }
 }

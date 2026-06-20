@@ -141,9 +141,7 @@ export class ExtraPageImageComponent implements OnInit {
             this.layoutDetails.text_list = [{}];
           }
           else if(this.layoutDetails.type=='hero_cta') {
-            if(!this.layoutDetails.cta_list?.length) {
-              this.layoutDetails.cta_list = [this.getDefaultHeroCtaItem(), this.getDefaultHeroCtaItem()];
-            }
+            this.layoutDetails.cta_list = this.sanitizeHeroCtaList(this.layoutDetails.cta_list || []);
           }
           else if(this.layoutDetails.type=='video_section' && !this.layoutDetails.video_details) {
             this.layoutDetails.video_details = {};
@@ -299,6 +297,7 @@ export class ExtraPageImageComponent implements OnInit {
       layoutData.store_id = this.commonService.store_details._id;
       layoutData.page_id = this.params.id;
       layoutData._id = this.layoutDetails._id;
+      layoutData.cta_list = this.sanitizeHeroCtaList(layoutData.cta_list);
       if(this.layoutDetails.cover_img_change && this.layoutDetails.cover_img) {
         delete layoutData.cover_img;
         this.fileList.append('attachments', this.layoutDetails.cover_img, 'fc_cover');
@@ -563,7 +562,7 @@ export class ExtraPageImageComponent implements OnInit {
       heading: '',
       description: '',
       icon_name: '',
-      btn_status: true,
+      btn_status: false,
       btn_text: '',
       btn_style: 'primary',
       btn_text_color: 'light',
@@ -571,6 +570,33 @@ export class ExtraPageImageComponent implements OnInit {
       btn_link: '',
       btn_list: []
     };
+  }
+
+  removeHeroCtaCard(index: number) {
+    if(!this.layoutDetails.cta_list?.length) return;
+    this.layoutDetails.cta_list.splice(index, 1);
+  }
+
+  sanitizeHeroCtaList(ctaList: any[]) {
+    if(!Array.isArray(ctaList)) return [];
+    return ctaList
+      .filter((cta) => {
+        const hasHeading = !!cta?.heading?.trim();
+        const hasDescription = !!cta?.description?.trim();
+        const hasButton = cta?.btn_status && (!!cta?.btn_text?.trim() || !!cta?.btn_link?.trim());
+        return hasHeading || hasDescription || hasButton;
+      })
+      .map((cta) => ({
+        heading: cta.heading || '',
+        description: cta.description || '',
+        icon_name: cta.icon_name || '',
+        btn_status: !!cta.btn_status,
+        btn_text: cta.btn_status ? (cta.btn_text || '') : '',
+        btn_style: cta.btn_style || 'primary',
+        btn_text_color: cta.btn_text_color || 'light',
+        btn_link_type: cta.btn_status ? (cta.btn_link_type || 'internal') : 'internal',
+        btn_link: cta.btn_status ? (cta.btn_link || '') : '',
+      }));
   }
 
   getDefaultAmenityItem() {

@@ -57,6 +57,36 @@ type HeadingData = {
   anchor?: string;
 };
 
+type IframeData = {
+  url?: string;
+};
+
+type ImageCardButtonData = {
+  label?: string;
+  link?: string;
+  link_type?: string;
+};
+
+type ImageCardItemData = {
+  rank?: number;
+  image?: string;
+  sub_heading?: string;
+  heading?: string;
+  options?: string[];
+  text_color?: string;
+  buttons?: ImageCardButtonData[];
+};
+
+type ImageCardsData = {
+  heading?: string;
+  sub_heading?: string;
+  cards?: ImageCardItemData[];
+};
+
+type ImageCardsToolConfig = {
+  uploadImage?: UploadImageFn;
+};
+
 type UploadImageFn = (file: File) => Promise<string>;
 
 function createField(labelText: string, input: HTMLElement): HTMLLabelElement {
@@ -109,6 +139,18 @@ function normalizeAnchor(anchor: string): string {
   const trimmed = (anchor || '').trim();
   if (!trimmed) return '';
   return trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+}
+
+function normalizeImageCardLinkType(value?: string): string {
+  if (value === 'external_link' || value === 'external') return 'external_link';
+  return 'internal_link';
+}
+
+function normalizeImageCardButtonLink(link?: string, linkType?: string): string {
+  const trimmed = (link || '').trim();
+  if (!trimmed) return '';
+  if (normalizeImageCardLinkType(linkType) === 'external_link') return trimmed;
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
 }
 
 export class TableOfContentsTool {
@@ -789,6 +831,368 @@ export class KeyFeaturesTool {
       item.appendChild(check);
       item.appendChild(text);
       this.previewList.appendChild(item);
+    });
+  }
+}
+
+export class IframeTool {
+  private data: IframeData;
+  private wrapper: HTMLDivElement;
+  private urlInput: HTMLTextAreaElement;
+
+  static get toolbox() {
+    return {
+      title: 'Iframe',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="3.5" width="15" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="5" y="6.5" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>'
+    };
+  }
+
+  constructor({ data }: { data: IframeData }) {
+    this.data = data || {};
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--iframe';
+
+    this.urlInput = createTextarea(this.data.url || '', 'https://www.google.com/maps/embed?pb=...');
+
+    const hint = document.createElement('p');
+    hint.className = 'editorjs-custom__hint';
+    hint.textContent = 'Paste the iframe embed URL (HTTPS only), e.g. Google Maps embed link.';
+
+    this.wrapper.appendChild(createField('Embed URL', this.urlInput));
+    this.wrapper.appendChild(hint);
+    return this.wrapper;
+  }
+
+  save() {
+    return {
+      url: this.urlInput.value.trim()
+    };
+  }
+}
+
+export class ImageCardsTool {
+  private data: ImageCardsData;
+  private config: ImageCardsToolConfig;
+  private wrapper: HTMLDivElement;
+  private headingInput: HTMLInputElement;
+  private subHeadingInput: HTMLInputElement;
+  private cardsContainer: HTMLDivElement;
+
+  static get toolbox() {
+    return {
+      title: 'Image Cards',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="4" width="7" height="12" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="10.5" y="4" width="7" height="12" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 12H7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M13 12H15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'
+    };
+  }
+
+  constructor({ data, config }: { data: ImageCardsData; config?: ImageCardsToolConfig }) {
+    this.data = data || {};
+    this.config = config || {};
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--image-cards';
+
+    this.headingInput = createInput(this.data.heading || '', 'Choose Your Stay');
+    this.subHeadingInput = createInput(this.data.sub_heading || '', 'Accommodation Options');
+
+    const sectionGrid = document.createElement('div');
+    sectionGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
+    sectionGrid.appendChild(createField('Sub heading', this.subHeadingInput));
+    sectionGrid.appendChild(createField('Heading', this.headingInput));
+
+    const cardsHeader = document.createElement('div');
+    cardsHeader.className = 'editorjs-image-cards__header';
+
+    const cardsLabel = document.createElement('span');
+    cardsLabel.className = 'editorjs-image-cards__label';
+    cardsLabel.textContent = 'Cards';
+
+    const addCardButton = document.createElement('button');
+    addCardButton.type = 'button';
+    addCardButton.className = 'editorjs-image-cards__add-btn';
+    addCardButton.innerHTML = '<span aria-hidden="true">+</span> Add card';
+    addCardButton.addEventListener('click', () => {
+      this.addCardPanel();
+    });
+
+    cardsHeader.appendChild(cardsLabel);
+    cardsHeader.appendChild(addCardButton);
+
+    this.cardsContainer = document.createElement('div');
+    this.cardsContainer.className = 'editorjs-image-cards__cards';
+
+    const cards = Array.isArray(this.data.cards) && this.data.cards.length
+      ? this.data.cards
+      : [{}];
+    cards.forEach((card) => this.addCardPanel(card));
+
+    this.wrapper.appendChild(sectionGrid);
+    this.wrapper.appendChild(cardsHeader);
+    this.wrapper.appendChild(this.cardsContainer);
+
+    return this.wrapper;
+  }
+
+  save() {
+    return {
+      heading: this.headingInput.value.trim(),
+      sub_heading: this.subHeadingInput.value.trim(),
+      cards: this.collectCards()
+    };
+  }
+
+  private addCardPanel(card: ImageCardItemData = {}) {
+    const panel = document.createElement('div');
+    panel.className = 'editorjs-image-cards__card';
+
+    const cardHeader = document.createElement('div');
+    cardHeader.className = 'editorjs-image-cards__card-header';
+
+    const cardTitle = document.createElement('span');
+    cardTitle.className = 'editorjs-image-cards__card-title';
+    cardTitle.textContent = `Card ${this.cardsContainer.children.length + 1}`;
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'editorjs-image-cards__remove-card';
+    removeButton.textContent = 'Remove';
+    removeButton.addEventListener('click', () => {
+      if (this.cardsContainer.children.length <= 1) return;
+      panel.remove();
+      this.renumberCards();
+    });
+
+    cardHeader.appendChild(cardTitle);
+    cardHeader.appendChild(removeButton);
+
+    const imageInput = document.createElement('input');
+    imageInput.type = 'hidden';
+    imageInput.value = card.image || '';
+    imageInput.setAttribute('data-key', 'image');
+
+    const uploadStatus = document.createElement('span');
+    uploadStatus.className = 'editorjs-custom__status';
+    uploadStatus.textContent = card.image ? 'Image uploaded' : '';
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/png,image/webp';
+    fileInput.className = 'editorjs-custom__file';
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file || !this.config.uploadImage) return;
+      uploadStatus.textContent = 'Uploading...';
+      try {
+        imageInput.value = await this.config.uploadImage(file);
+        uploadStatus.textContent = 'Image uploaded';
+      }
+      catch (error) {
+        uploadStatus.textContent = 'Upload failed';
+      }
+    });
+
+    const subHeadingInput = createInput(card.sub_heading || '', 'For Business & Leisure');
+    subHeadingInput.setAttribute('data-key', 'sub_heading');
+
+    const headingInput = createInput(card.heading || '', 'Hotel Rooms');
+    headingInput.setAttribute('data-key', 'heading');
+
+    const textColorSelect = createSelect([
+      { label: 'Light text', value: 'light' },
+      { label: 'Dark text', value: 'dark' }
+    ], card.text_color === 'dark' ? 'dark' : 'light');
+    textColorSelect.setAttribute('data-key', 'text_color');
+
+    const optionsContainer = document.createElement('div');
+    optionsContainer.className = 'editorjs-image-cards__options';
+    optionsContainer.setAttribute('data-key', 'options-container');
+
+    const optionsList = document.createElement('div');
+    optionsList.className = 'editorjs-image-cards__options-list';
+
+    const optionsHeader = document.createElement('div');
+    optionsHeader.className = 'editorjs-image-cards__subheader';
+    const optionsLabel = document.createElement('span');
+    optionsLabel.textContent = 'Options';
+    const addOptionButton = document.createElement('button');
+    addOptionButton.type = 'button';
+    addOptionButton.className = 'editorjs-image-cards__inline-btn';
+    addOptionButton.textContent = '+ Add option';
+    addOptionButton.addEventListener('click', () => {
+      this.addOptionRow(optionsList);
+    });
+    optionsHeader.appendChild(optionsLabel);
+    optionsHeader.appendChild(addOptionButton);
+    optionsContainer.appendChild(optionsHeader);
+    optionsContainer.appendChild(optionsList);
+
+    const options = Array.isArray(card.options) && card.options.length ? card.options : [''];
+    options.forEach((option) => this.addOptionRow(optionsList, option));
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.className = 'editorjs-image-cards__buttons';
+    buttonsContainer.setAttribute('data-key', 'buttons-container');
+
+    const buttonsHeader = document.createElement('div');
+    buttonsHeader.className = 'editorjs-image-cards__subheader';
+    const buttonsLabel = document.createElement('span');
+    buttonsLabel.textContent = 'Buttons';
+    const addButtonButton = document.createElement('button');
+    addButtonButton.type = 'button';
+    addButtonButton.className = 'editorjs-image-cards__inline-btn';
+    addButtonButton.textContent = '+ Add button';
+    addButtonButton.addEventListener('click', () => {
+      this.addButtonRow(buttonsContainer);
+    });
+    buttonsHeader.appendChild(buttonsLabel);
+    buttonsHeader.appendChild(addButtonButton);
+    buttonsContainer.appendChild(buttonsHeader);
+
+    const buttons = Array.isArray(card.buttons) && card.buttons.length ? card.buttons : [{ label: '', link: '' }];
+    buttons.forEach((button) => this.addButtonRow(buttonsContainer, button));
+
+    const uploadWrap = document.createElement('label');
+    uploadWrap.className = 'editorjs-custom__field';
+    const uploadCaption = document.createElement('span');
+    uploadCaption.className = 'editorjs-custom__caption';
+    uploadCaption.textContent = 'Upload image';
+    uploadWrap.appendChild(uploadCaption);
+    uploadWrap.appendChild(fileInput);
+    uploadWrap.appendChild(uploadStatus);
+
+    const detailsGrid = document.createElement('div');
+    detailsGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
+    detailsGrid.appendChild(createField('Card heading', headingInput));
+    detailsGrid.appendChild(createField('Card sub heading', subHeadingInput));
+    detailsGrid.appendChild(createField('Text color', textColorSelect));
+
+    panel.appendChild(cardHeader);
+    panel.appendChild(uploadWrap);
+    panel.appendChild(imageInput);
+    panel.appendChild(detailsGrid);
+    panel.appendChild(optionsContainer);
+    panel.appendChild(buttonsContainer);
+    this.cardsContainer.appendChild(panel);
+  }
+
+  private renumberCards() {
+    Array.from(this.cardsContainer.querySelectorAll('.editorjs-image-cards__card')).forEach((panel, index) => {
+      const title = panel.querySelector('.editorjs-image-cards__card-title');
+      if (title) title.textContent = `Card ${index + 1}`;
+    });
+  }
+
+  private addOptionRow(container: HTMLDivElement, value = '') {
+    const row = document.createElement('div');
+    row.className = 'editorjs-image-cards__option-row';
+
+    const input = createInput(value, 'Standard');
+    input.className = 'editorjs-custom__input editorjs-image-cards__option-input';
+    input.setAttribute('data-key', 'option');
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'editorjs-image-cards__remove-option';
+    removeButton.setAttribute('aria-label', 'Remove option');
+    removeButton.title = 'Remove option';
+    removeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    removeButton.addEventListener('click', () => {
+      const rows = container.querySelectorAll('.editorjs-image-cards__option-row');
+      if (rows.length <= 1) {
+        input.value = '';
+        return;
+      }
+      row.remove();
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeButton);
+    container.appendChild(row);
+  }
+
+  private addButtonRow(container: HTMLDivElement, button: ImageCardButtonData = {}) {
+    const row = document.createElement('div');
+    row.className = 'editorjs-image-cards__button-row';
+
+    const labelInput = createInput(button.label || '', 'T. Nagar');
+    labelInput.setAttribute('data-key', 'button-label');
+
+    const linkTypeSelect = createSelect([
+      { label: 'Internal link', value: 'internal_link' },
+      { label: 'External link', value: 'external_link' }
+    ], normalizeImageCardLinkType(button.link_type));
+    linkTypeSelect.setAttribute('data-key', 'button-link-type');
+
+    const linkInput = createInput(
+      button.link || '',
+      normalizeImageCardLinkType(button.link_type) === 'external_link'
+        ? 'https://example.com'
+        : '/location/hotel-in-t-nagar'
+    );
+    linkInput.setAttribute('data-key', 'button-link');
+
+    linkTypeSelect.addEventListener('change', () => {
+      linkInput.placeholder = linkTypeSelect.value === 'external_link'
+        ? 'https://example.com'
+        : '/location/hotel-in-t-nagar';
+    });
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'editorjs-image-cards__remove-item';
+    removeButton.textContent = 'Remove';
+    removeButton.addEventListener('click', () => {
+      const rows = container.querySelectorAll('.editorjs-image-cards__button-row');
+      if (rows.length <= 1) {
+        labelInput.value = '';
+        linkInput.value = '';
+        linkTypeSelect.value = 'internal_link';
+        linkInput.placeholder = '/location/hotel-in-t-nagar';
+        return;
+      }
+      row.remove();
+    });
+
+    row.appendChild(createField('Label', labelInput));
+    row.appendChild(createField('Link type', linkTypeSelect));
+    row.appendChild(createField('Link', linkInput));
+    row.appendChild(removeButton);
+    container.appendChild(row);
+  }
+
+  private collectCards(): ImageCardItemData[] {
+    return Array.from(this.cardsContainer.querySelectorAll('.editorjs-image-cards__card')).map((panel, index) => {
+      const image = (panel.querySelector('[data-key="image"]') as HTMLInputElement)?.value.trim() || '';
+      const sub_heading = (panel.querySelector('[data-key="sub_heading"]') as HTMLInputElement)?.value.trim() || '';
+      const heading = (panel.querySelector('[data-key="heading"]') as HTMLInputElement)?.value.trim() || '';
+      const text_color = (panel.querySelector('[data-key="text_color"]') as HTMLSelectElement)?.value === 'dark' ? 'dark' : 'light';
+      const options = Array.from(panel.querySelectorAll('[data-key="option"]'))
+        .map((input) => (input as HTMLInputElement).value.trim())
+        .filter((option) => !!option);
+      const buttons = Array.from(panel.querySelectorAll('.editorjs-image-cards__button-row'))
+        .map((row) => ({
+          label: (row.querySelector('[data-key="button-label"]') as HTMLInputElement)?.value.trim() || '',
+          link_type: normalizeImageCardLinkType(
+            (row.querySelector('[data-key="button-link-type"]') as HTMLSelectElement)?.value
+          ),
+          link: (row.querySelector('[data-key="button-link"]') as HTMLInputElement)?.value.trim() || ''
+        }))
+        .filter((button) => button.label || button.link);
+
+      return {
+        rank: index + 1,
+        image,
+        sub_heading,
+        heading,
+        options,
+        text_color,
+        buttons
+      };
     });
   }
 }

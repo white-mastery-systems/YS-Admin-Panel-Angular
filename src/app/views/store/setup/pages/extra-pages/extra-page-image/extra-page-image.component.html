@@ -1770,17 +1770,17 @@
       <div class="card p-3 mb-3">
         <div class="row pt-2 pb-2">
           <div class="col-md-12">
-            <p class="dark-font fw-600">CTA Cards</p>
+            <p class="dark-font fw-600 mb-0">CTA Cards <span class="light-font font-12">(Optional)</span></p>
           </div>
         </div>
         <div *ngFor="let cta of layoutDetails.cta_list; let ci=index;" class="poss-rel card card-in-card p-3 mb-3">
-          <span *ngIf="layoutDetails.cta_list?.length > 1" (click)="layoutDetails.cta_list.splice(ci, 1);"
+          <span (click)="removeHeroCtaCard(ci);"
             class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
           <p class="dark-font mb-3">Card {{ci + 1}}</p>
           <div class="row">
             <div class="col-md-12 form-group mb-3">
               <label>Card Heading</label>
-              <input type="text" [name]="'hero_cta_heading_'+ci" class="form-control" [(ngModel)]="cta.heading" required />
+              <input type="text" [name]="'hero_cta_heading_'+ci" class="form-control" [(ngModel)]="cta.heading" />
             </div>
             <div class="col-md-12 form-group mb-3">
               <label>Card Description</label>
@@ -1797,7 +1797,7 @@
             <ng-container *ngIf="cta.btn_status">
               <div class="col-md-6 form-group mb-3">
                 <label>Button Text</label>
-                <input type="text" [name]="'hero_cta_btn_text_'+ci" class="form-control" [(ngModel)]="cta.btn_text" maxlength="50" required />
+                <input type="text" [name]="'hero_cta_btn_text_'+ci" class="form-control" [(ngModel)]="cta.btn_text" maxlength="50" />
               </div>
               <div class="col-md-3 form-group mb-3">
                 <label>Button Style</label>
@@ -1830,11 +1830,12 @@
               <div class="col-md-12 form-group mb-3">
                 <label *ngIf="cta.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{cta.btn_link}}</label>
                 <label *ngIf="cta.btn_link_type=='external'">External Link</label>
-                <input type="text" [name]="'hero_cta_btn_link_'+ci" class="form-control" [(ngModel)]="cta.btn_link" required />
+                <input type="text" [name]="'hero_cta_btn_link_'+ci" class="form-control" [(ngModel)]="cta.btn_link" />
               </div>
             </ng-container>
           </div>
         </div>
+        <p *ngIf="!layoutDetails.cta_list?.length" class="light-font font-12 mb-2">No CTA cards added. You can save with only a cover image.</p>
         <div class="mb-2">
           <button type="button" class="light-button" (click)="layoutDetails.cta_list.push(getDefaultHeroCtaItem());">
             <span class="material-symbols-rounded">add</span>ADD CARD

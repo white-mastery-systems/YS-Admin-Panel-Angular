@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
-import { AnchorHeaderTool, ButtonTool, CtaBlockTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
+import { AnchorHeaderTool, ButtonTool, CtaBlockTool, IframeTool, ImageCardsTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
   selector: 'app-blog-event',
@@ -133,6 +133,12 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         if(invalidCarouselBlock !== -1) {
           this.blogForm.submit = false;
           this.blogForm.errorMsg = `Please select one catalog in Product Carousel block #${invalidCarouselBlock + 1}`;
+          return;
+        }
+        const invalidIframeBlock = this.getInvalidIframeBlockIndex(content);
+        if(invalidIframeBlock !== -1) {
+          this.blogForm.submit = false;
+          this.blogForm.errorMsg = `Please enter a valid HTTPS embed URL in Iframe block #${invalidIframeBlock + 1}`;
           return;
         }
       }
@@ -415,6 +421,15 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
               uploadByFile: async(file: File) => this.uploadEditorImageResult(file)
             }
           }
+        },
+        iframe: {
+          class: IframeTool as any
+        },
+        imageCards: {
+          class: ImageCardsTool as any,
+          config: {
+            uploadImage: async(file: File) => this.uploadEditorImage(file)
+          }
         }
       },
       onReady: () => {
@@ -491,6 +506,41 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         : [];
     });
 
+    blocks.forEach((block) => {
+      if(block?.type !== 'iframe') return;
+      block.data = block.data || {};
+      block.data.url = (block.data.url || '').trim();
+      delete block.data.height;
+    });
+
+    blocks.forEach((block) => {
+      if(block?.type !== 'imageCards') return;
+      block.data = block.data || {};
+      block.data.heading = (block.data.heading || '').trim();
+      block.data.sub_heading = (block.data.sub_heading || '').trim();
+      block.data.cards = Array.isArray(block.data.cards)
+        ? block.data.cards.map((card, index) => ({
+          rank: index + 1,
+          image: (card?.image || '').trim(),
+          sub_heading: (card?.sub_heading || '').trim(),
+          heading: (card?.heading || '').trim(),
+          options: Array.isArray(card?.options)
+            ? card.options.map((option) => (typeof option === 'string' ? option.trim() : '')).filter((option) => !!option)
+            : [],
+          text_color: card?.text_color === 'dark' ? 'dark' : 'light',
+          buttons: Array.isArray(card?.buttons)
+            ? card.buttons.map((button) => ({
+              label: (button?.label || '').trim(),
+              link_type: this.normalizeImageCardButtonLinkType(button?.link_type),
+              link: this.normalizeImageCardButtonLink(button?.link, button?.link_type)
+            })).filter((button) => button.label || button.link)
+            : []
+        })).filter((card) => (
+          card.image || card.sub_heading || card.heading || card.options.length || card.buttons.length
+        ))
+        : [];
+    });
+
     return {
       time: normalized.time || Date.now(),
       version: normalized.version || '2.29.1',
@@ -501,6 +551,27 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
   private getInvalidProductCarouselBlockIndex(content: any) {
     const blocks = Array.isArray(content?.blocks) ? content.blocks : [];
     return blocks.findIndex((block) => block?.type === 'productCarousel' && !(block?.data?.category_id || '').trim());
+  }
+
+  private getInvalidIframeBlockIndex(content: any) {
+    const blocks = Array.isArray(content?.blocks) ? content.blocks : [];
+    return blocks.findIndex((block) => {
+      if(block?.type !== 'iframe') return false;
+      const url = (block?.data?.url || '').trim();
+      return !url || !/^https:\/\//i.test(url);
+    });
+  }
+
+  private normalizeImageCardButtonLinkType(value?: string) {
+    if (value === 'external_link' || value === 'external') return 'external_link';
+    return 'internal_link';
+  }
+
+  private normalizeImageCardButtonLink(link?: string, linkType?: string) {
+    const trimmed = (link || '').trim();
+    if (!trimmed) return '';
+    if (this.normalizeImageCardButtonLinkType(linkType) === 'external_link') return trimmed;
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
   }
 
   private prepareEditorContentForView(content: any) {
@@ -521,6 +592,13 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         block.data.products = block.data.products.map((item) => ({
           ...item,
           image: item?.image ? this.toAbsoluteAssetUrl(item.image) : ''
+        }));
+      }
+
+      if(block?.type === 'imageCards' && Array.isArray(block?.data?.cards)) {
+        block.data.cards = block.data.cards.map((card) => ({
+          ...card,
+          image: card?.image ? this.toAbsoluteAssetUrl(card.image) : ''
         }));
       }
     });
