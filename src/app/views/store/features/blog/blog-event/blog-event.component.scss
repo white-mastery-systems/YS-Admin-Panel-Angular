@@ -301,6 +301,73 @@
   width: 100%;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__image-field {
+  margin-bottom: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-box {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  height: 160px;
+  border: 1px dashed #d7deea;
+  border-radius: 12px;
+  background: #f7f8fb;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-placeholder {
+  color: #8a94a6;
+  font-size: 13px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-image[hidden] {
+  display: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__file-input {
+  display: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__choose-btn {
+  border: 1px solid #ec848b;
+  border-radius: 10px;
+  background: #fff;
+  color: #c9565f;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  line-height: 1;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__choose-btn:hover {
+  background: #fff8f8;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

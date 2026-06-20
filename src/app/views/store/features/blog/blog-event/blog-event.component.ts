@@ -428,7 +428,8 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         imageCards: {
           class: ImageCardsTool as any,
           config: {
-            uploadImage: async(file: File) => this.uploadEditorImage(file)
+            uploadImage: async(file: File) => this.uploadEditorImage(file),
+            resolveImageUrl: (path: string) => this.toAbsoluteAssetUrl(path)
           }
         }
       },

@@ -85,6 +85,7 @@ type ImageCardsData = {
 
 type ImageCardsToolConfig = {
   uploadImage?: UploadImageFn;
+  resolveImageUrl?: (path: string) => string;
 };
 
 type UploadImageFn = (file: File) => Promise<string>;
@@ -977,24 +978,64 @@ export class ImageCardsTool {
 
     const uploadStatus = document.createElement('span');
     uploadStatus.className = 'editorjs-custom__status';
-    uploadStatus.textContent = card.image ? 'Image uploaded' : '';
 
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/jpeg,image/png,image/webp';
-    fileInput.className = 'editorjs-custom__file';
+    fileInput.className = 'editorjs-image-cards__file-input';
+
+    const previewBox = document.createElement('div');
+    previewBox.className = 'editorjs-image-cards__preview-box';
+
+    const previewPlaceholder = document.createElement('span');
+    previewPlaceholder.className = 'editorjs-image-cards__preview-placeholder';
+    previewPlaceholder.textContent = 'No image selected';
+
+    const imagePreview = document.createElement('img');
+    imagePreview.className = 'editorjs-image-cards__preview-image';
+    imagePreview.alt = 'Card image preview';
+    imagePreview.hidden = true;
+
+    previewBox.appendChild(previewPlaceholder);
+    previewBox.appendChild(imagePreview);
+
+    const chooseButton = document.createElement('button');
+    chooseButton.type = 'button';
+    chooseButton.className = 'editorjs-image-cards__choose-btn';
+    chooseButton.textContent = 'Choose image';
+    chooseButton.addEventListener('click', () => fileInput.click());
+
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files && fileInput.files[0];
       if (!file || !this.config.uploadImage) return;
       uploadStatus.textContent = 'Uploading...';
       try {
         imageInput.value = await this.config.uploadImage(file);
-        uploadStatus.textContent = 'Image uploaded';
+        uploadStatus.textContent = file.name;
+        this.renderCardImagePreview(imageInput, imagePreview, previewPlaceholder, uploadStatus, file.name);
       }
       catch (error) {
         uploadStatus.textContent = 'Upload failed';
+        this.renderCardImagePreview(imageInput, imagePreview, previewPlaceholder, uploadStatus);
       }
     });
+
+    const uploadActions = document.createElement('div');
+    uploadActions.className = 'editorjs-image-cards__upload-actions';
+    uploadActions.appendChild(chooseButton);
+    uploadActions.appendChild(uploadStatus);
+
+    const uploadSection = document.createElement('div');
+    uploadSection.className = 'editorjs-image-cards__image-field';
+
+    const uploadCaption = document.createElement('span');
+    uploadCaption.className = 'editorjs-custom__caption';
+    uploadCaption.textContent = 'Card image';
+
+    uploadSection.appendChild(uploadCaption);
+    uploadSection.appendChild(previewBox);
+    uploadSection.appendChild(fileInput);
+    uploadSection.appendChild(uploadActions);
 
     const subHeadingInput = createInput(card.sub_heading || '', 'For Business & Leisure');
     subHeadingInput.setAttribute('data-key', 'sub_heading');
@@ -1056,15 +1097,6 @@ export class ImageCardsTool {
     const buttons = Array.isArray(card.buttons) && card.buttons.length ? card.buttons : [{ label: '', link: '' }];
     buttons.forEach((button) => this.addButtonRow(buttonsContainer, button));
 
-    const uploadWrap = document.createElement('label');
-    uploadWrap.className = 'editorjs-custom__field';
-    const uploadCaption = document.createElement('span');
-    uploadCaption.className = 'editorjs-custom__caption';
-    uploadCaption.textContent = 'Upload image';
-    uploadWrap.appendChild(uploadCaption);
-    uploadWrap.appendChild(fileInput);
-    uploadWrap.appendChild(uploadStatus);
-
     const detailsGrid = document.createElement('div');
     detailsGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
     detailsGrid.appendChild(createField('Card heading', headingInput));
@@ -1072,12 +1104,56 @@ export class ImageCardsTool {
     detailsGrid.appendChild(createField('Text color', textColorSelect));
 
     panel.appendChild(cardHeader);
-    panel.appendChild(uploadWrap);
+    panel.appendChild(uploadSection);
     panel.appendChild(imageInput);
     panel.appendChild(detailsGrid);
     panel.appendChild(optionsContainer);
     panel.appendChild(buttonsContainer);
     this.cardsContainer.appendChild(panel);
+
+    if (card.image) {
+      const savedName = card.image.split('/').pop() || 'Saved image';
+      uploadStatus.textContent = savedName;
+    }
+    this.renderCardImagePreview(imageInput, imagePreview, previewPlaceholder, uploadStatus);
+  }
+
+  private resolveCardImage(path: string) {
+    const trimmed = (path || '').trim();
+    if (!trimmed) return '';
+    if (/^https?:\/\//i.test(trimmed) || /^data:/i.test(trimmed)) return trimmed;
+    return this.config.resolveImageUrl ? this.config.resolveImageUrl(trimmed) : trimmed;
+  }
+
+  private renderCardImagePreview(
+    imageInput: HTMLInputElement,
+    preview: HTMLImageElement,
+    placeholder: HTMLSpanElement,
+    status?: HTMLSpanElement,
+    fileName?: string
+  ) {
+    const src = this.resolveCardImage(imageInput.value);
+    if (!src) {
+      preview.removeAttribute('src');
+      preview.hidden = true;
+      placeholder.hidden = false;
+      placeholder.textContent = 'No image selected';
+      if (status && !fileName) status.textContent = '';
+      return;
+    }
+
+    placeholder.hidden = true;
+    preview.onerror = () => {
+      preview.hidden = true;
+      placeholder.hidden = false;
+      placeholder.textContent = 'Unable to load image';
+    };
+    preview.onload = () => {
+      preview.hidden = false;
+      placeholder.hidden = true;
+    };
+    preview.src = src;
+    if (status && fileName) status.textContent = fileName;
   }
 
   private renumberCards() {
