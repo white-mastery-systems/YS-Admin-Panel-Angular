@@ -460,9 +460,30 @@
                 *ngIf="layoutDetails?.type!='secondary' && layoutDetails?.type!='multiple_highlighted_section'">
                 <div *ngIf="layoutDetails?.type!='primary_slider' && layoutDetails?.type!='slider'"
                   class="col-md-12 form-group mb-3">
-                  <label>Title</label>
+                  <label>{{ layoutDetails?.type=='section' ? 'Heading' : 'Title' }}</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading"
                     maxlength="50" #heading="ngModel" required />
+                </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label>Sub-heading</label>
+                  <textarea class="form-control" aria-label="With textarea" name="section_sub_heading{{i}}"
+                    [(ngModel)]="x.content_details.sub_heading"></textarea>
+                </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label class="dark-font fw-600 mb-2 d-block">Options</label>
+                  <div *ngFor="let opt of x.content_details?.option_list; let oi=index;" class="poss-rel card card-in-card p-2 mb-2">
+                    <span *ngIf="x.content_details?.option_list?.length > 1" (click)="x.content_details.option_list.splice(oi, 1);"
+                      class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                    <input type="text" [name]="'sec_option_'+i+'_'+oi" class="form-control" [(ngModel)]="opt.name" placeholder="e.g. Premium" />
+                  </div>
+                  <button type="button" class="light-button" (click)="addSectionOption(x);">
+                    <span class="material-symbols-rounded">add</span> Add Option
+                  </button>
+                </div>
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label>Description</label>
+                  <textarea class="form-control" aria-label="With textarea" name="section_description{{i}}"
+                    [(ngModel)]="x.content_details.description"></textarea>
                 </div>
                 <ng-container *ngIf="layoutDetails?.type!='highlights'">
                   <div class="col-md-12 form-group mb-3">
@@ -492,6 +513,60 @@
           </div>
         </div>
         <!-- #Content -->
+
+        <!-- Section Buttons (multiple) -->
+        <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+          <div class="card w-100 p-3 mb-3">
+            <div class="row">
+              <div class="col-md-12 mb-2">
+                <p class="dark-font mb-0">Buttons</p>
+              </div>
+              <div class="col-md-12 px-0">
+                <div *ngFor="let btn of x.btn_list; let bi=index;" class="poss-rel card card-in-card p-3 mb-2 mx-3">
+                  <span *ngIf="x.btn_list.length>1" (click)="x.btn_list.splice(bi, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                  <div class="row">
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Button Text</label>
+                      <input type="text" [name]="'sec_btn_text_'+i+'_'+bi" class="form-control" [(ngModel)]="btn.btn_text" maxlength="50" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Button Style</label>
+                      <select [name]="'sec_btn_style_'+i+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_style">
+                        <option value="primary">Primary</option>
+                        <option value="secondary">Secondary</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Text Color</label>
+                      <select [name]="'sec_btn_text_color_'+i+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_text_color">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                      </select>
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Link Type</label>
+                      <select [name]="'sec_btn_link_type_'+i+'_'+bi" class="form-control select-arrow" [(ngModel)]="btn.btn_link_type">
+                        <option value="internal">Internal</option>
+                        <option value="external">External</option>
+                      </select>
+                    </div>
+                    <div class="col-md-12 form-group mb-0">
+                      <label *ngIf="btn.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{btn.btn_link}}</label>
+                      <label *ngIf="btn.btn_link_type=='external'">External Link</label>
+                      <input type="text" [name]="'sec_btn_link_'+i+'_'+bi" class="form-control" [(ngModel)]="btn.btn_link" required />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button type="button" class="light-button" (click)="addSectionButton(x);">
+                  <span class="material-symbols-rounded">add</span> Add Button
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- #Section Buttons -->
 
         <!-- Link -->
         <div *ngIf="layoutDetails?.type!='testimonial' && layoutDetails?.type!='shop_the_look'"

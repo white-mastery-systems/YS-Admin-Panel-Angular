@@ -26,6 +26,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
   editor: any;
   editorReady = false;
   pendingEditorInit = false;
+  readonly pageTitleMaxLength = 120;
 
   constructor(
     private router: Router, private activeRoute: ActivatedRoute, private api: FeaturesApiService, public commonService: CommonService
@@ -275,7 +276,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.blogForm.seo_details.page_url = this.commonService.urlFormat(this.blogForm.name);
       let tempName = this.blogForm.name.substring(0, 70);
       this.blogForm.seo_details.h1_tag = tempName;
-      this.blogForm.seo_details.page_title = 'Blogs - '+tempName;
+      this.blogForm.seo_details.page_title = ('Blogs - ' + this.blogForm.name).substring(0, this.pageTitleMaxLength);
     }
   }
   onChangeDesc() {

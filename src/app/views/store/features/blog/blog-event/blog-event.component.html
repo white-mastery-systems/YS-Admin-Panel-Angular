@@ -197,9 +197,9 @@
           <div class="col-md-12 form-group mb-3">
             <label>Page Title</label>
             <span *ngIf="blogForm.seo_details?.page_title?.length" class="label_hint">
-              {{blogForm.seo_details.page_title.length}} of 70 characters used
+              {{blogForm.seo_details.page_title.length}} of {{pageTitleMaxLength}} characters used
             </span>
-            <input type="text" name="page_title" class="form-control" [(ngModel)]="blogForm.seo_details.page_title" maxlength="70" required />
+            <input type="text" name="page_title" class="form-control" [(ngModel)]="blogForm.seo_details.page_title" [maxlength]="pageTitleMaxLength" required />
           </div>
           <div class="col-md-12 form-group mb-3">
             <label>Meta Description</label>

@@ -48,10 +48,19 @@ export class ExtraPageImageComponent implements OnInit {
             this.grid_details = this.commonService.grid_list.find(obj => obj.type==this.layoutDetails.section_grid_type);
             if(this.grid_details) {
               if(!this.layoutDetails.image_list.length) {
-                for(let i=1; i<=this.grid_details.resolutions.length; i++) this.layoutDetails.image_list.push({ rank: i, productList: [] });
+                for(let i=1; i<=this.grid_details.resolutions.length; i++) {
+                  this.layoutDetails.image_list.push({ rank: i, content_details: {}, btn_list: [], productList: [] });
+                }
               }
             }
-            else if(!this.layoutDetails.image_list.length) this.layoutDetails.image_list.push({ rank: 1, productList: [] });
+            else if(!this.layoutDetails.image_list.length) {
+              this.layoutDetails.image_list.push({ rank: 1, content_details: {}, btn_list: [], productList: [] });
+            }
+            this.layoutDetails.image_list.forEach(img => {
+              if(!Array.isArray(img.btn_list)) img.btn_list = [];
+              if(!img.content_details) img.content_details = {};
+              img.content_details.option_list = this.normalizeSectionOptionList(img.content_details.option_list);
+            });
           }
           else if(this.layoutDetails.type=='grid' && !this.layoutDetails.image_list.length) {
             let gridIndex = this.commonService.grid_list.findIndex(obj => obj.type==this.layoutDetails.grid_type);
@@ -238,6 +247,28 @@ export class ExtraPageImageComponent implements OnInit {
 		}
 	}
 
+  addSectionButton(img) {
+    if(!Array.isArray(img.btn_list)) img.btn_list = [];
+    img.btn_list.push({ btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' });
+  }
+
+  getDefaultSectionOption() {
+    return { name: '' };
+  }
+
+  normalizeSectionOptionList(list: any[] = []) {
+    return (Array.isArray(list) ? list : []).map(item => ({
+      ...this.getDefaultSectionOption(),
+      ...item
+    }));
+  }
+
+  addSectionOption(img) {
+    if(!img.content_details) img.content_details = {};
+    if(!Array.isArray(img.content_details.option_list)) img.content_details.option_list = [];
+    img.content_details.option_list.push(this.getDefaultSectionOption());
+  }
+
   addNewImg() {
     if(this.layoutDetails.type=='testimonial') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_details: {} });
@@ -266,6 +297,9 @@ export class ExtraPageImageComponent implements OnInit {
     }
     else if(this.layoutDetails.type=='multiple_highlighted_section') {
       this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_status: true, content_details: {} });
+    }
+    else if(this.layoutDetails.type=='section') {
+      this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, content_details: {}, btn_list: [] });
     }
     else if(this.layoutDetails.type=='content_grid') {
       this.layoutDetails.text_list.push({});
