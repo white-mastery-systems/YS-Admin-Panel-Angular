@@ -20,9 +20,9 @@
     <div class="row flex-xs-column-reverse">
       <div class="col-md-12 col-12">
         <div class="row justify-content-center">
-          <p>Photo Resolution: 900x600</p>
-          <div class="col-md-12 col-12 mb-4" align="center">
-             <div class="col-md-6">
+          <div class="col-md-6 mb-4" align="center">
+            <p class="mb-2">Cover Image — 900x600</p>
+             <div class="col-md-12">
               <div class="card p-3">
                 <div *ngIf="blogForm.image">
                   <span (click)="blogForm.img_change=null; blogForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
@@ -37,13 +37,34 @@
                   <label>
                     <div>
                       <i class="material-icons add-img">add_photo_alternate</i>
-                      <p>Click to upload image</p>
+                      <p>Click to upload cover image</p>
                     </div>
                     <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
                   </label>
                 </div>
               </div>
              </div>
+          </div>
+          <div class="col-md-6 mb-4" align="center">
+            <p class="mb-2">Thumbnail — 400x400</p>
+            <div class="col-md-12">
+              <div class="card p-3">
+                <div *ngIf="blogForm.thumbnail">
+                  <span (click)="blogForm.thumbnail_change=null; blogForm.thumbnail=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                  <img *ngIf="blogForm.thumbnail_change" [src]="blogForm.thumbnail" height="100px;" width="auto;">
+                  <img *ngIf="!blogForm.thumbnail_change" [src]="toAbsoluteAssetUrl(blogForm.thumbnail)" height="100px;" width="auto;">
+                </div>
+                <div *ngIf="!blogForm.thumbnail">
+                  <label>
+                    <div>
+                      <i class="material-icons add-img">add_photo_alternate</i>
+                      <p>Click to upload thumbnail</p>
+                    </div>
+                    <input type="file" name="thumbnail" style="display: none;" (change)="thumbnailChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

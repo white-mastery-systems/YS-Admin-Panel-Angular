@@ -66,6 +66,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
             this.setEditorMode(this.blogForm.editor_type);
             this.blogForm.created_on = new Date(this.blogForm.created_on);
             if(this.blogForm.image) this.blogForm.image = this.normalizeAssetPath(this.blogForm.image);
+            if(this.blogForm.thumbnail) this.blogForm.thumbnail = this.normalizeAssetPath(this.blogForm.thumbnail);
             if(this.blogForm.coverImage) this.blogForm.coverImage = this.normalizeAssetPath(this.blogForm.coverImage);
             if(this.blogForm.authorAvatar) this.blogForm.authorAvatar = this.normalizeAssetPath(this.blogForm.authorAvatar);
             if(!this.blogForm.seo_details) this.blogForm.seo_details = {};
@@ -157,6 +158,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         author: this.blogForm.author,
         createdOn: this.blogForm.created_on,
         coverImage: this.blogForm.image || '',
+        thumbnail: this.blogForm.thumbnail || '',
         imageAlt: this.blogForm.img_alt || '',
         authorAvatar: this.blogForm.authorAvatar || '',
         authorRole: this.blogForm.authorRole || '',
@@ -297,6 +299,35 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     else {
       this.applySelectedAuthorToForm();
+    }
+  }
+
+  thumbnailChangeListener(event) {
+    if(event.target.files && event.target.files[0]) {
+      let inFile = event.target.files[0];
+      if(["image/jpeg", "image/png", "image/webp"].indexOf(inFile.type) != -1) {
+      if(!this.isAdvanced && this.isEditorJsMode()) {
+        const formData = new FormData();
+        formData.append('image', inFile);
+        this.blogForm.thumbnailLoader = true;
+        this.api.BLOG_UPLOAD_IMAGE(formData).subscribe(result => {
+          this.blogForm.thumbnailLoader = false;
+          if(result.status && result.path) {
+            this.blogForm.thumbnail = result.path;
+            this.blogForm.thumbnail_change = false;
+          }
+          else this.blogForm.errorMsg = result.message || 'Unable to upload thumbnail';
+        });
+        return;
+      }
+      let reader = new FileReader();
+      reader.onload = (event: ProgressEvent) => {
+        this.blogForm.thumbnail = (<FileReader>event.target).result;
+        this.blogForm.thumbnail_change = true;
+      }
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    else console.log("Invaid file");
     }
   }
 

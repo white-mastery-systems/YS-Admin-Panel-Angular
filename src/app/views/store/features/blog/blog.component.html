@@ -63,8 +63,8 @@
           <div class="col-md-2 col-2 first_col px-0 cursor">            
             <div class="list-thumb d-flex align-self-center">
               <div class="col-md-12 col-12 col-xxl-12 px-0">
-                <img *ngIf="x.image" [src]="toAbsoluteAssetUrl(x.coverImage || x.image)" alt=""> 
-                <img *ngIf="!x.image" src="assets/images/default.png" alt=""> 
+                <img *ngIf="x.image || x.thumbnail" [src]="toAbsoluteAssetUrl(x.thumbnail || x.coverImage || x.image)" alt=""> 
+                <img *ngIf="!x.image && !x.thumbnail" src="assets/images/default.png" alt=""> 
               </div>
             </div>
           </div>

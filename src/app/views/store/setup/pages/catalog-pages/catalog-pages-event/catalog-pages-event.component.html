@@ -296,9 +296,10 @@
                   <ng-container *ngIf="x.type=='content_checklist_split'">{{ x.checklist_items?.length }} Items</ng-container>
                   <ng-container *ngIf="x.type=='image_icon_grid_split'">{{ x.icon_card_list?.length }} Cards</ng-container>
                   <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
-                  <ng-container *ngIf="x.type=='highlighted_section'">{{ x.features?.length }} Features</ng-container>
+                  <ng-container *ngIf="x.type=='highlighted_section'">{{ x.image_list?.[0]?.features?.length || 0 }} Features</ng-container>
+                  <ng-container *ngIf="x.type=='secondary'">{{ x.image_list?.[0]?.features?.length || 0 }} Features</ng-container>
                   <ng-container *ngIf="['blogs', 'content_section', 'cta', 'interactive_map', 'route_map'].indexOf(x.type)!=-1">-</ng-container>
-                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links', 'location_highlights', 'icon_card_grid', 'founder_faq_grid', 'content_checklist_split', 'image_icon_grid_split'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
+                  <ng-container *ngIf="['faq', 'amenities', 'feature_list', 'highlighted_section', 'secondary', 'blogs', 'content_section', 'cta', 'interactive_map', 'route_map', 'internal_links', 'location_highlights', 'icon_card_grid', 'founder_faq_grid', 'content_checklist_split', 'image_icon_grid_split'].indexOf(x.type)==-1">{{ x.image_list?.length }} Images</ng-container>
                 </p>
               <p class="w-20 m-b-0" *ngIf="commonService.desktop_device">
                 <span class="badge" [ngClass]="x.active_status? 'badge-green-background': 'badge-red-background'">

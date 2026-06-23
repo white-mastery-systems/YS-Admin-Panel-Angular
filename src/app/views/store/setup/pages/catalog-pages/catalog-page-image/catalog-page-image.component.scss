@@ -1,0 +1,21 @@
+.secondary-banner-preview {
+  max-width: 555px;
+  margin: 0 auto;
+
+  .desktop-layout-image-sec,
+  .desktop-layout-image-sec img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.highlighted-gallery-preview {
+  max-width: 280px;
+  margin: 0 auto;
+
+  .desktop-layout-image-sec,
+  .desktop-layout-image-sec img {
+    max-width: 100%;
+    height: auto;
+  }
+}

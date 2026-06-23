@@ -128,6 +128,12 @@ export class CatalogPageImageComponent implements OnInit {
             });
             if (!this.layoutDetails.image_list.length)
               this.layoutDetails.image_list.push({ rank: 1, content_details: { review_star: null } });
+          } else if (this.layoutDetails.type === 'secondary') {
+            this.maxImgCount = 1;
+            this.layoutDetails.image_list = this.normalizeSecondaryImageList(this.layoutDetails.image_list);
+            if (!this.layoutDetails.image_list.length) {
+              this.layoutDetails.image_list.push(this.getDefaultSecondaryImageItem(1));
+            }
           } else if (this.layoutDetails.type === 'highlighted_section' || this.layoutDetails.type === 'cta') {
             this.layoutDetails.image_list.forEach(el => {
               if (!el.content_details) el.content_details = {};
@@ -164,6 +170,9 @@ export class CatalogPageImageComponent implements OnInit {
               this.layoutDetails.feature_list = [this.getDefaultFeatureListItem()];
             }
             this.layoutDetails.feature_list = this.normalizeFeatureListItems(this.layoutDetails.feature_list);
+            if (this.layoutDetails.quote_text === undefined || this.layoutDetails.quote_text === null) {
+              this.layoutDetails.quote_text = '';
+            }
             // Backward compatibility: migrate segment-level card/button to first item.
             if (this.layoutDetails.features?.length) {
               this.layoutDetails.feature_list[0].features = this.normalizeFeatureCards(this.layoutDetails.features);
@@ -343,6 +352,56 @@ export class CatalogPageImageComponent implements OnInit {
       name: '',
       detail: ''
     };
+  }
+
+  getDefaultSecondaryImageItem(rank = 1) {
+    return {
+      rank,
+      content_status: false,
+      content_details: {
+        text_color: 'dark'
+      },
+      features: [],
+      link_status: false,
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  normalizeSecondaryImageList(items: any[] = []) {
+    const normalized = (Array.isArray(items) ? items : []).map((item, index) => {
+      const row = {
+        ...this.getDefaultSecondaryImageItem(index + 1),
+        ...item,
+        content_details: {
+          ...this.getDefaultSecondaryImageItem().content_details,
+          ...(item?.content_details || {})
+        }
+      };
+      row.features = this.normalizeFeatureCards(item?.features);
+      row.content_status = row.content_status === true;
+      return row;
+    });
+    return normalized.length ? normalized : [this.getDefaultSecondaryImageItem(1)];
+  }
+
+  addSecondaryFeature(imageItem: any) {
+    if (!Array.isArray(imageItem.features)) {
+      imageItem.features = [];
+    }
+    imageItem.features.push(this.getDefaultFeatureCard());
+  }
+
+  removeSecondaryFeature(imageItem: any, index: number) {
+    if (!Array.isArray(imageItem.features)) {
+      imageItem.features = [];
+      return;
+    }
+    imageItem.features.splice(index, 1);
   }
 
   normalizeFeatureCards(features: any[] = []) {
@@ -648,6 +707,14 @@ export class CatalogPageImageComponent implements OnInit {
     if (layoutData.type === 'image_icon_grid_split') {
       layoutData.footer_banner = { ...this.getDefaultFooterBanner(), ...(layoutData.footer_banner || {}) };
       layoutData.icon_card_list = this.normalizeIconCardList(layoutData.icon_card_list);
+    }
+
+    if (layoutData.type === 'secondary' && Array.isArray(layoutData.image_list)) {
+      layoutData.image_list = layoutData.image_list.map((item) => ({
+        ...item,
+        content_status: false,
+        content_details: { text_color: item?.content_details?.text_color === 'light' ? 'light' : 'dark' }
+      }));
     }
 
     let imageList = this.layoutDetails.image_list || [];

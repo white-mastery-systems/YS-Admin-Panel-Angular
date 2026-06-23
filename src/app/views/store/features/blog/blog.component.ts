@@ -58,6 +58,7 @@ export class BlogComponent implements OnInit {
         this.list = (result.list || []).map((item) => ({
           ...item,
           image: this.normalizeAssetPath(item.image),
+          thumbnail: this.normalizeAssetPath(item.thumbnail),
           coverImage: this.normalizeAssetPath(item.coverImage)
         }));
       }
@@ -97,6 +98,7 @@ export class BlogComponent implements OnInit {
         author: this.blogForm.author,
         createdOn: this.blogForm.created_on,
         coverImage: this.blogForm.coverImage || this.blogForm.image,
+        thumbnail: this.blogForm.thumbnail || '',
         imageAlt: this.blogForm.imageAlt || this.blogForm.img_alt,
         authorAvatar: this.blogForm.authorAvatar,
         authorRole: this.blogForm.authorRole,

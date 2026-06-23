@@ -374,6 +374,10 @@ export class CatalogPagesEventComponent implements OnInit {
       form.feature_list = [{ image: '', heading: '', sub_heading: '', description: '' }];
     }
 
+    if (type === 'feature_list' && (form.quote_text === undefined || form.quote_text === null)) {
+      form.quote_text = '';
+    }
+
     if (type === 'location_highlights') {
       if (!form.location_iframe) {
         form.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };

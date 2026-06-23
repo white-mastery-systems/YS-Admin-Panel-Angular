@@ -39,7 +39,7 @@
         <!-- Desktop Image -->
         <div *ngIf="layoutDetails?.type!='highlighted_section'" class="col-md-12 col-lg-6 d-flex">
           <div class="card card-in-card w-100 p-3 mb-3">
-            <div class="desktop-banner" align="center">
+            <div class="desktop-banner" [class.secondary-banner-preview]="layoutDetails?.type=='secondary'" align="center">
               <p *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">(Desktop) - 1850 x 690 pixels @72ppi</p>
                <p *ngIf="layoutDetails?.type=='testimonial' || layoutDetails?.type=='highlighted_section' || layoutDetails?.type=='secondary' || layoutDetails?.type=='featured_section' || layoutDetails?.type=='cta'">
                 {{ (layoutDetails?.type=='testimonial')? '72 x 72': (layoutDetails?.type=='highlighted_section')? '1025 x 575': (layoutDetails?.type=='secondary')? '1110 x 400': (layoutDetails?.type=='cta')? '1850 x 400': '600 x 600' }} pixels @72ppi
@@ -133,9 +133,9 @@
                     [name]="'hg_rank_'+i+'_'+gi" class="form-control" [(ngModel)]="gallery.rank"
                     (change)="onHighlightedGalleryRankChange(i)" appNumberOnly required />
                 </div>
-                <div class="col-md-12 d-flex">
+                <div class="col-md-12 col-lg-4 d-flex">
                   <div class="card card-in-card w-100 p-3 mb-3">
-                    <div class="desktop-banner" align="center">
+                    <div class="desktop-banner highlighted-gallery-preview" align="center">
                       <p>Image - 1025 x 575 pixels @72ppi</p>
                       <i *ngIf="!gallery.image" class="material-icons">add_photo_alternate</i>
                       <figure *ngIf="gallery.image" class="desktop-layout-image-sec">
@@ -207,7 +207,7 @@
         <!-- #Testimonial Content -->
 
         <!-- Content overlay -->
-        <div *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails?.type=='secondary' || layoutDetails?.type=='section' || layoutDetails?.type=='featured_section'"
+        <div *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails?.type=='section' || layoutDetails?.type=='featured_section'"
           class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
           <div class="card w-100 p-3 mb-3">
             <div class="row">
@@ -221,13 +221,13 @@
               </div>
             </div>
             <div *ngIf="x.content_status" class="row">
-              <ng-container *ngIf="layoutDetails?.type=='secondary' || layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">
+              <ng-container *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">
                 <div class="col-md-12 form-group mb-3">
                   <label>Heading</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading" #heading="ngModel" required />
                 </div>
                 <div class="col-md-12 form-group mb-3">
-                  <label>Sub-heading</label>
+                  <label>Sub Heading</label>
                   <textarea class="form-control" aria-label="With textarea" name="sub_heading{{i}}"
                     [(ngModel)]="x.content_details.sub_heading" #sub_heading="ngModel"></textarea>
                 </div>
@@ -240,7 +240,7 @@
                     <option value="dark">Dark</option>
                   </select>
                 </div>
-                <div *ngIf="layoutDetails?.type!='secondary'" class="col-md-12 form-group mb-3">
+                <div class="col-md-12 form-group mb-3">
                   <label>Position</label>
                   <select name="position{{i}}" class="form-control select-arrow" [(ngModel)]="x.position"
                     #position="ngModel" required>
@@ -249,7 +249,7 @@
                 </div>
               </ng-container>
               
-              <ng-container *ngIf="layoutDetails?.type!='secondary' && layoutDetails?.type!='primary_slider' && layoutDetails?.type!='slider'">
+              <ng-container *ngIf="layoutDetails?.type!='primary_slider' && layoutDetails?.type!='slider'">
                 <div class="col-md-12 form-group mb-3">
                   <label>Heading</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading"
@@ -344,7 +344,7 @@
         <!-- #CTA Button -->
 
         <!-- Link -->
-        <div *ngIf="layoutDetails?.type!='testimonial' && layoutDetails?.type!='cta'"
+        <div *ngIf="layoutDetails?.type!='testimonial' && layoutDetails?.type!='cta' && layoutDetails?.type!='secondary'"
           class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
           <div class="card w-100 p-3 mb-3">
             <div class="row">
@@ -536,6 +536,38 @@
         </div>
       </ng-container>
       <!-- #Highlighted Section per-item -->
+
+      <!-- Secondary Banner: feature points -->
+      <ng-container *ngIf="layoutDetails.type=='secondary'">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="dark-font fw-600 mb-0">Features</p>
+            <button type="button" class="light-button" (click)="addSecondaryFeature(x);">
+              <span class="material-symbols-rounded">add</span> Add Feature
+            </button>
+          </div>
+          <div *ngFor="let feat of x.features; let fi=index;" class="poss-rel card p-3 mb-3">
+            <span (click)="removeSecondaryFeature(x, fi);"
+              class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+            <p class="dark-font mb-3">Feature {{fi+1}}</p>
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Icon Name</label>
+                <input type="text" [name]="'sec_feat_icon_'+i+'_'+fi" class="form-control" [(ngModel)]="feat.icon_name" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Name</label>
+                <input type="text" [name]="'sec_feat_name_'+i+'_'+fi" class="form-control" [(ngModel)]="feat.name" />
+              </div>
+              <div class="col-md-12 form-group mb-0">
+                <label>Detail</label>
+                <textarea class="form-control" [name]="'sec_feat_detail_'+i+'_'+fi" rows="2" [(ngModel)]="feat.detail"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <!-- #Secondary Banner features -->
 
       </div>
 
@@ -763,6 +795,16 @@
         <button type="button" class="light-button" (click)="addFeatureItem();" [disabled]="layoutDetails.feature_list?.length >= maxImgCount">
           <span class="material-symbols-rounded">add</span> Add Item
         </button>
+      </div>
+
+      <div class="card p-3 mb-3">
+        <div class="row">
+          <div class="col-md-12 form-group mb-0">
+            <label>Quote Text</label>
+            <textarea class="form-control" name="fl_quote_text" rows="4" [(ngModel)]="layoutDetails.quote_text"
+              placeholder="Optional quote shown below the feature cards"></textarea>
+          </div>
+        </div>
       </div>
     </ng-container>
     <!-- #Feature List -->
@@ -1761,7 +1803,7 @@
     </div>
 
     <!-- Add image button (not shown for section grid, amenities, feature_list, hero_cta) -->
-    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'highlighted_section' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split'" class="mb-3">
+    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'highlighted_section' && layoutDetails.type !== 'secondary' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split'" class="mb-3">
       <button type="button" class="light-button" (click)="addNewImg();"
         [disabled]="layoutDetails.image_list?.length >= maxImgCount">
         <span class="material-symbols-rounded">add</span> {{(layoutDetails.type=='primary_slider' || layoutDetails.type=='slider')? 'Add Slide': 'Add Image'}}
