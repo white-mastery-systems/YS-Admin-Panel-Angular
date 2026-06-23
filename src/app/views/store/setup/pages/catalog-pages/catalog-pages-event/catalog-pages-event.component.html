@@ -320,7 +320,7 @@
                       <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                         'visibility'}}</span> Details
                     </button>
-                    <button *ngIf="['faq', 'blogs', 'content_section', 'interactive_map', 'route_map'].indexOf(x.type)==-1" class="dropdown-item d-flex"
+                    <button *ngIf="['blogs', 'content_section', 'interactive_map', 'route_map'].indexOf(x.type)==-1" class="dropdown-item d-flex"
                       routerLink="/setup/pages/catalog-pages/modify/{{params.id}}/{{x._id}}">
                       <span class="material-symbols-rounded mr-2">image</span> Images
                     </button>
@@ -449,35 +449,6 @@
                 <label>Content</label>
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
                   [ngModelOptions]="{standalone: true}"></quill-editor>
-              </div>
-            </ng-container>
-
-            <!-- FAQ Segment Fields -->
-            <ng-container *ngIf="addForm.type=='faq'">
-              <div class="col-md-12 px-0">
-                <div class="row px-3">
-                  <div class="col-md-6 form-group mb-3" *ngFor="let x of addForm.faq_list; let fi=index;">
-                    <div class="card p-3">
-                      <div class="row poss-rel">
-                        <span (click)="addForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                        <div class="col-md-12 form-group mb-3">
-                          <label>Question</label>
-                          <input type="text" name="af_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
-                        </div>
-                        <div class="col-md-12 form-group mb-0">
-                          <label>Answer</label>
-                          <textarea class="form-control" name="af_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12 mb-3">
-                <button class="light-button" type="button"
-                  (click)="addForm.faq_list.push({ ques: '', answer: '', rank: addForm.faq_list.length + 1 });">
-                  <span class="material-symbols-rounded">add</span> NEW FAQ
-                </button>
               </div>
             </ng-container>
 
@@ -733,35 +704,6 @@
                 <label>Content</label>
                 <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
                   [ngModelOptions]="{standalone: true}"></quill-editor>
-              </div>
-            </ng-container>
-
-            <!-- FAQ Segment Edit Fields -->
-            <ng-container *ngIf="editForm.type=='faq'">
-              <div class="col-md-12 px-0">
-                <div class="row px-3">
-                  <div class="col-md-6 form-group mb-3" *ngFor="let x of editForm.faq_list; let fi=index;">
-                    <div class="card p-3">
-                      <div class="row poss-rel">
-                        <span (click)="editForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                        <div class="col-md-12 form-group mb-3">
-                          <label>Question</label>
-                          <input type="text" name="ef_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
-                        </div>
-                        <div class="col-md-12 form-group mb-0">
-                          <label>Answer</label>
-                          <textarea class="form-control" name="ef_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12 mb-3">
-                <button class="light-button" type="button"
-                  (click)="editForm.faq_list.push({ ques: '', answer: '', rank: editForm.faq_list.length + 1 });">
-                  <span class="material-symbols-rounded">add</span> NEW FAQ
-                </button>
               </div>
             </ng-container>
 

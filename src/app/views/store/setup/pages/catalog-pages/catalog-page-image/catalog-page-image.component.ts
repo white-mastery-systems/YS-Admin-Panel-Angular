@@ -51,6 +51,13 @@ export class CatalogPageImageComponent implements OnInit {
                 if (item.icon_name === undefined) item.icon_name = '';
               });
             }
+          } else if (this.layoutDetails.type === 'faq') {
+            this.maxImgCount = 20;
+            this.layoutDetails.image_list = [];
+            if (!this.layoutDetails.faq_list?.length) {
+              this.layoutDetails.faq_list = [this.getDefaultFaqItem()];
+            }
+            this.layoutDetails.faq_list = this.normalizeFaqItems(this.layoutDetails.faq_list);
           } else if (this.layoutDetails.type === 'founder_faq_grid') {
             if (!this.layoutDetails.founder_intro) {
               this.layoutDetails.founder_intro = this.getDefaultFounderIntro();
@@ -328,6 +335,26 @@ export class CatalogPageImageComponent implements OnInit {
 
   addFeatureItem() {
     this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
+  }
+
+  getDefaultFaqItem(rank = 1) {
+    return {
+      ques: '',
+      answer: '',
+      rank
+    };
+  }
+
+  normalizeFaqItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultFaqItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    }));
+  }
+
+  addFaqItem() {
+    this.layoutDetails.faq_list.push(this.getDefaultFaqItem(this.layoutDetails.faq_list.length + 1));
   }
 
   addFeatureListCard(item: any) {
@@ -699,6 +726,27 @@ export class CatalogPageImageComponent implements OnInit {
   async onUpdateLayout() {
     this.btnLoader = true;
     let layoutData = structuredClone(this.layoutDetails);
+
+    if (layoutData.type === 'faq') {
+      layoutData.type = 'faq';
+      layoutData.faq_list = this.normalizeFaqItems(layoutData.faq_list);
+      delete layoutData.image_list;
+      layoutData.store_id = this.commonService.store_details._id;
+      layoutData.page_id = this.params.id;
+      layoutData._id = this.layoutDetails._id;
+      this.fileList = new FormData();
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.setup.SEGMENT_IMAGE_CATALOG_PAGE(this.fileList).subscribe(result => {
+        this.btnLoader = false;
+        if (result.status) {
+          this.router.navigate(['/setup/pages/catalog-pages/modify/' + this.params.id]);
+        } else {
+          this.layoutDetails.errorMsg = result.message;
+          console.log('response', result);
+        }
+      });
+      return;
+    }
 
     this.fileList = new FormData();
 

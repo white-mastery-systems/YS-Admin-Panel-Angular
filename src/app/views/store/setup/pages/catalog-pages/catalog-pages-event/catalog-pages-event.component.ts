@@ -258,6 +258,9 @@ export class CatalogPagesEventComponent implements OnInit {
       delete updatePayload.sub_heading;
       delete updatePayload.description;
     }
+    if (updatePayload.type === 'faq') {
+      delete updatePayload.faq_list;
+    }
     this.api.UPDATE_SEGMENT_CATALOG_PAGE(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if (result.status) {
@@ -429,8 +432,8 @@ export class CatalogPagesEventComponent implements OnInit {
       }
     }
 
-    if (type === 'faq' && (!form.faq_list || !form.faq_list.length)) {
-      form.faq_list = [{ ques: '', answer: '', rank: 1 }];
+    if (type === 'faq') {
+      form.faq_list = [];
     }
 
     if (type === 'blogs') {
