@@ -330,6 +330,21 @@ export class CatalogPageImageComponent implements OnInit {
     this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
   }
 
+  addFeatureListCard(item: any) {
+    if (!Array.isArray(item.features)) {
+      item.features = [];
+    }
+    item.features.push(this.getDefaultFeatureCard());
+  }
+
+  removeFeatureListCard(item: any, index: number) {
+    if (!Array.isArray(item.features)) {
+      item.features = [];
+      return;
+    }
+    item.features.splice(index, 1);
+  }
+
   addIconCardItem() {
     this.layoutDetails.icon_card_list.push(this.getDefaultIconCardItem(this.layoutDetails.icon_card_list.length + 1));
   }
@@ -357,6 +372,7 @@ export class CatalogPageImageComponent implements OnInit {
   getDefaultSecondaryImageItem(rank = 1) {
     return {
       rank,
+      position: 'left',
       content_status: false,
       content_details: {
         text_color: 'dark'
@@ -384,6 +400,7 @@ export class CatalogPageImageComponent implements OnInit {
       };
       row.features = this.normalizeFeatureCards(item?.features);
       row.content_status = row.content_status === true;
+      row.position = item?.position === 'right' ? 'right' : 'left';
       return row;
     });
     return normalized.length ? normalized : [this.getDefaultSecondaryImageItem(1)];
@@ -417,7 +434,7 @@ export class CatalogPageImageComponent implements OnInit {
       heading: '',
       sub_heading: '',
       description: '',
-      features: [this.getDefaultFeatureCard()],
+      features: [],
       btn_status: false,
       btn_text: '',
       btn_style: 'primary',

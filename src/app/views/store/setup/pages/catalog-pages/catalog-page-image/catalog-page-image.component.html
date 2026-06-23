@@ -74,6 +74,23 @@
         </div>
         <!-- #Desktop Image -->
 
+        <!-- Secondary Banner Image Position -->
+        <div *ngIf="layoutDetails?.type=='secondary'"
+          class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+          <div class="card w-100 p-3 mb-3">
+            <div class="row">
+              <div class="col-md-12 form-group mb-0">
+                <label>Image Position</label>
+                <select name="sec_position{{i}}" class="form-control select-arrow" [(ngModel)]="x.position" required>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- #Secondary Banner Image Position -->
+
         <!-- Mobile Image -->
         <div class="col-md-12 col-lg-6 d-flex" *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails?.type=='cta'">
           <div class="card card-in-card w-100 p-3 mb-3">
@@ -707,7 +724,7 @@
             </div>
           </div>
           <div *ngFor="let feature of x.features; let fi=index;" class="poss-rel card card-in-card p-3 mb-3">
-            <span *ngIf="x.features?.length > 1" (click)="x.features.splice(fi, 1);"
+            <span (click)="removeFeatureListCard(x, fi);"
               class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
             <p class="dark-font mb-3">Feature {{fi + 1}}</p>
             <div class="row">
@@ -726,7 +743,7 @@
             </div>
           </div>
           <div class="mb-0">
-            <button type="button" class="light-button" (click)="x.features.push(getDefaultFeatureCard());">
+            <button type="button" class="light-button" (click)="addFeatureListCard(x);">
               <span class="material-symbols-rounded">add</span> Add Feature
             </button>
           </div>
