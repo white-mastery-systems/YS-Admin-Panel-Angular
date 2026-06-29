@@ -18,7 +18,7 @@
 
   <form autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
-    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'faq' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split'">
+    <ng-container *ngIf="layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'faq' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split' && layoutDetails.type !== 'table_grid'">
     <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" 
@@ -1308,6 +1308,105 @@
     </ng-container>
     <!-- #Content Checklist Split -->
 
+    <!-- Table Grid -->
+    <ng-container *ngIf="layoutDetails.type=='table_grid'">
+      <div class="card p-3 mb-3">
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <p class="dark-font fw-600">Columns</p>
+          </div>
+        </div>
+        <div *ngFor="let column of layoutDetails.table_columns; let ci=index;" class="poss-rel card card-in-card p-3 mb-3">
+          <span *ngIf="layoutDetails.table_columns?.length > 2" (click)="removeTableGridColumn(ci);"
+            class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'tg_col_active_'+ci" [(ngModel)]="column.active_status"
+                  (ngModelChange)="layoutDetails.table_rows = normalizeTableGridRows(layoutDetails.table_columns, layoutDetails.table_rows)">
+                <span>Enable Column</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <input type="hidden" [name]="'tg_col_key_'+ci" [(ngModel)]="column.key" />
+            <div class="col-md-12 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" min="1" [name]="'tg_col_rank_'+ci" class="form-control" [(ngModel)]="column.rank" appNumberOnly required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Sub-heading</label>
+              <input type="text" [name]="'tg_col_sub_heading_'+ci" class="form-control" [(ngModel)]="column.sub_heading" />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Heading</label>
+              <input type="text" [name]="'tg_col_heading_'+ci" class="form-control" [(ngModel)]="column.heading" />
+            </div>
+            <div class="col-md-12 form-group mb-0">
+              <label>Icon Name</label>
+              <input type="text" [name]="'tg_col_icon_'+ci" class="form-control" [(ngModel)]="column.icon_name" />
+            </div>
+          </div>
+        </div>
+        <div class="mb-0">
+          <button type="button" class="light-button" (click)="addTableGridColumn();">
+            <span class="material-symbols-rounded">add</span> Add Column
+          </button>
+        </div>
+      </div>
+
+      <div class="card p-3 mb-3">
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <p class="dark-font fw-600">Rows</p>
+          </div>
+        </div>
+        <div *ngFor="let row of layoutDetails.table_rows; let ri=index;" class="poss-rel card card-in-card p-3 mb-3">
+          <span *ngIf="layoutDetails.table_rows?.length > 1" (click)="removeTableGridRow(ri);"
+            class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'tg_row_active_'+ri" [(ngModel)]="row.active_status">
+                <span>Enable Row</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <input type="hidden" [name]="'tg_row_key_'+ri" [(ngModel)]="row.key" />
+            <div class="col-md-12 form-group mb-3">
+              <label>Rank</label>
+              <input type="number" min="1" [name]="'tg_row_rank_'+ri" class="form-control" [(ngModel)]="row.rank" appNumberOnly required />
+            </div>
+            <div class="col-md-12">
+              <p class="light-font font-12 mb-2">Row Cells</p>
+              <div *ngFor="let cell of row.cells; let ci=index;" class="card card-in-card p-3 mb-3">
+                <div class="row">
+                  <input type="hidden" [name]="'tg_cell_column_key_'+ri+'_'+ci" [(ngModel)]="cell.column_key" />
+                  <div class="col-md-4 form-group mb-3">
+                    <label>Icon Name</label>
+                    <input type="text" [name]="'tg_cell_icon_'+ri+'_'+ci" class="form-control" [(ngModel)]="cell.icon_name" />
+                  </div>
+                  <div class="col-md-4 form-group mb-3">
+                    <label>Heading</label>
+                    <input type="text" [name]="'tg_cell_heading_'+ri+'_'+ci" class="form-control" [(ngModel)]="cell.heading" />
+                  </div>
+                  <div class="col-md-4 form-group mb-0">
+                    <label>Sub-heading</label>
+                    <input type="text" [name]="'tg_cell_sub_heading_'+ri+'_'+ci" class="form-control" [(ngModel)]="cell.sub_heading" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mb-0">
+          <button type="button" class="light-button" (click)="addTableGridRow();">
+            <span class="material-symbols-rounded">add</span> Add Row
+          </button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- #Table Grid -->
+
     <!-- Location Highlights -->
     <ng-container *ngIf="layoutDetails.type=='location_highlights'">
       <div class="card p-3 mb-3">
@@ -1857,7 +1956,7 @@
     </div>
 
     <!-- Add image button (not shown for section grid, amenities, feature_list, hero_cta) -->
-    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'faq' && layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'highlighted_section' && layoutDetails.type !== 'secondary' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split'" class="mb-3">
+    <div *ngIf="layoutDetails.type !== 'section' && layoutDetails.type !== 'amenities' && layoutDetails.type !== 'feature_list' && layoutDetails.type !== 'faq' && layoutDetails.type !== 'hero_cta' && layoutDetails.type !== 'internal_links' && layoutDetails.type !== 'highlighted_section' && layoutDetails.type !== 'secondary' && layoutDetails.type !== 'location_highlights' && layoutDetails.type !== 'icon_card_grid' && layoutDetails.type !== 'founder_faq_grid' && layoutDetails.type !== 'content_checklist_split' && layoutDetails.type !== 'image_icon_grid_split' && layoutDetails.type !== 'table_grid'" class="mb-3">
       <button type="button" class="light-button" (click)="addNewImg();"
         [disabled]="layoutDetails.image_list?.length >= maxImgCount">
         <span class="material-symbols-rounded">add</span> {{(layoutDetails.type=='primary_slider' || layoutDetails.type=='slider')? 'Add Slide': 'Add Image'}}

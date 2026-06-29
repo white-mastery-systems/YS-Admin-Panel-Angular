@@ -54,7 +54,8 @@ export class CatalogPagesEventComponent implements OnInit {
     { name: 'Icon Card Grid', value: 'icon_card_grid' },
     { name: 'Founder FAQ Grid', value: 'founder_faq_grid' },
     { name: 'Content Checklist Split', value: 'content_checklist_split' },
-    { name: 'Image Icon Grid Split', value: 'image_icon_grid_split' }
+    { name: 'Image Icon Grid Split', value: 'image_icon_grid_split' },
+    { name: 'Table Grid', value: 'table_grid' }
   ];
 
   constructor(
@@ -233,6 +234,10 @@ export class CatalogPagesEventComponent implements OnInit {
         if (!this.editForm.checklist_items) this.editForm.checklist_items = [];
         if (!this.editForm.footer_banner) this.editForm.footer_banner = {};
         if (!this.editForm.location_iframe) this.editForm.location_iframe = {};
+        if (this.editForm.type === 'table_grid') {
+          this.editForm.table_columns = this.normalizeTableGridColumns(this.editForm.table_columns);
+          this.editForm.table_rows = this.normalizeTableGridRows(this.editForm.table_columns, this.editForm.table_rows);
+        }
         if (this.editForm.type === 'internal_links') {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
         }
@@ -361,6 +366,105 @@ export class CatalogPagesEventComponent implements OnInit {
     return segment?.cta_list?.length || 0;
   }
 
+  getDefaultTableGridColumn(rank = 1) {
+    return {
+      key: `col_${Date.now()}_${rank}`,
+      rank,
+      sub_heading: '',
+      heading: '',
+      icon_name: '',
+      active_status: false
+    };
+  }
+
+  getDefaultTableGridColumns() {
+    return [
+      this.getDefaultTableGridColumn(1),
+      { ...this.getDefaultTableGridColumn(2), key: `col_${Date.now()}_2` }
+    ];
+  }
+
+  buildTableGridRowCells(columns: any[] = []) {
+    return (columns || []).map((column) => ({
+      column_key: column.key,
+      icon_name: '',
+      heading: '',
+      sub_heading: ''
+    }));
+  }
+
+  getDefaultTableGridRow(columns: any[] = [], rank = 1) {
+    return {
+      key: `row_${Date.now()}_${rank}`,
+      rank,
+      active_status: false,
+      cells: this.buildTableGridRowCells(columns)
+    };
+  }
+
+  getDefaultTableGridRows(columns: any[] = []) {
+    return [this.getDefaultTableGridRow(columns, 1)];
+  }
+
+  normalizeTableGridColumns(columns: any[] = []) {
+    const source = Array.isArray(columns) ? columns : [];
+    const usedKeys = new Set<string>();
+
+    return source.map((column, index) => {
+      let key = (column?.key || '').toString().trim();
+      if (!key) key = `col_${index + 1}`;
+      while (usedKeys.has(key)) {
+        key = `${key}_${index + 1}`;
+      }
+      usedKeys.add(key);
+
+      return {
+        key,
+        rank: Number(column?.rank) > 0 ? Number(column.rank) : index + 1,
+        sub_heading: column?.sub_heading || '',
+        heading: column?.heading || '',
+        icon_name: column?.icon_name || '',
+        active_status: column?.active_status !== false
+      };
+    }).sort((a, b) => a.rank - b.rank)
+      .map((column, index) => ({ ...column, rank: index + 1 }));
+  }
+
+  normalizeTableGridRows(columns: any[] = [], rows: any[] = []) {
+    const normalizedColumns = this.normalizeTableGridColumns(columns);
+    const columnKeys = normalizedColumns.map((column) => column.key);
+    const source = Array.isArray(rows) ? rows : [];
+    const usedKeys = new Set<string>();
+
+    return source.map((row, index) => {
+      let key = (row?.key || '').toString().trim();
+      if (!key) key = `row_${index + 1}`;
+      while (usedKeys.has(key)) {
+        key = `${key}_${index + 1}`;
+      }
+      usedKeys.add(key);
+
+      const sourceCells = Array.isArray(row?.cells) ? row.cells : [];
+      const cells = columnKeys.map((columnKey) => {
+        const existingCell = sourceCells.find((cell) => cell?.column_key === columnKey);
+        return {
+          column_key: columnKey,
+          icon_name: existingCell?.icon_name || '',
+          heading: existingCell?.heading || '',
+          sub_heading: existingCell?.sub_heading || ''
+        };
+      });
+
+      return {
+        key,
+        rank: Number(row?.rank) > 0 ? Number(row.rank) : index + 1,
+        active_status: row?.active_status !== false,
+        cells
+      };
+    }).sort((a, b) => a.rank - b.rank)
+      .map((row, index) => ({ ...row, rank: index + 1 }));
+  }
+
   onChangeSegmentType(type, form) {
     delete form.section_grid_type;
     form.grid_list = [];
@@ -432,6 +536,11 @@ export class CatalogPagesEventComponent implements OnInit {
       }
     }
 
+    if (type === 'table_grid') {
+      form.table_columns = [];
+      form.table_rows = [];
+    }
+
     if (type === 'faq') {
       form.faq_list = [];
     }
@@ -488,3 +597,4 @@ export class CatalogPagesEventComponent implements OnInit {
   }
 
 }
+

@@ -111,6 +111,9 @@ export class CatalogPageImageComponent implements OnInit {
             if (this.layoutDetails.cover_img_alt === undefined) {
               this.layoutDetails.cover_img_alt = '';
             }
+          } else if (this.layoutDetails.type === 'table_grid') {
+            this.layoutDetails.table_columns = this.normalizeTableGridColumns(this.layoutDetails.table_columns);
+            this.layoutDetails.table_rows = this.normalizeTableGridRows(this.layoutDetails.table_columns, this.layoutDetails.table_rows);
           } else if (this.layoutDetails.type === 'location_highlights') {
             if (!this.layoutDetails.location_iframe) {
               this.layoutDetails.location_iframe = { iframe_url: '', heading: '', sub_heading: '', description: '' };
@@ -386,6 +389,117 @@ export class CatalogPageImageComponent implements OnInit {
 
   addChecklistItem() {
     this.layoutDetails.checklist_items.push(this.getDefaultChecklistItem(this.layoutDetails.checklist_items.length + 1));
+  }
+
+  getDefaultTableGridColumn(rank = 1, active = false) {
+    return {
+      key: `col_${Date.now()}_${rank}`,
+      rank,
+      sub_heading: '',
+      heading: '',
+      icon_name: '',
+      active_status: active
+    };
+  }
+
+  getDefaultTableGridRow(columns: any[] = [], rank = 1, active = false) {
+    return {
+      key: `row_${Date.now()}_${rank}`,
+      rank,
+      active_status: active,
+      cells: this.buildTableGridCells(columns)
+    };
+  }
+
+  buildTableGridCells(columns: any[] = []) {
+    return (columns || [])
+      .map((column) => ({
+        column_key: column.key,
+        icon_name: '',
+        heading: '',
+        sub_heading: ''
+      }));
+  }
+
+  normalizeTableGridColumns(items: any[] = []) {
+    const source = Array.isArray(items) ? items : [];
+    const usedKeys = new Set<string>();
+    return source.map((item, index) => {
+      let key = (item?.key || '').toString().trim();
+      if (!key) key = `col_${index + 1}`;
+      while (usedKeys.has(key)) {
+        key = `${key}_${index + 1}`;
+      }
+      usedKeys.add(key);
+      return {
+        key,
+        rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1,
+        sub_heading: item?.sub_heading || '',
+        heading: item?.heading || '',
+        icon_name: item?.icon_name || '',
+        active_status: item?.active_status !== false
+      };
+    }).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({ ...item, rank: index + 1 }));
+  }
+
+  normalizeTableGridRows(columns: any[] = [], items: any[] = []) {
+    const normalizedColumns = this.normalizeTableGridColumns(columns);
+    const columnKeys = normalizedColumns.map((column) => column.key);
+    const source = Array.isArray(items) ? items : [];
+    const usedKeys = new Set<string>();
+    return source.map((item, index) => {
+      let key = (item?.key || '').toString().trim();
+      if (!key) key = `row_${index + 1}`;
+      while (usedKeys.has(key)) {
+        key = `${key}_${index + 1}`;
+      }
+      usedKeys.add(key);
+      const rowCells = Array.isArray(item?.cells) ? item.cells : [];
+      const cells = columnKeys.map((columnKey) => {
+        const existing = rowCells.find((cell) => cell?.column_key === columnKey);
+        return {
+          column_key: existing?.column_key || columnKey,
+          icon_name: existing?.icon_name || '',
+          heading: existing?.heading || '',
+          sub_heading: existing?.sub_heading || ''
+        };
+      });
+      return {
+        key,
+        rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1,
+        active_status: item?.active_status !== false,
+        cells
+      };
+    }).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({ ...item, rank: index + 1 }));
+  }
+
+  addTableGridColumn() {
+    const nextRank = (this.layoutDetails.table_columns?.length || 0) + 1;
+    const nextColumn = this.getDefaultTableGridColumn(nextRank, true);
+    this.layoutDetails.table_columns = [...(this.layoutDetails.table_columns || []), nextColumn];
+    this.layoutDetails.table_rows = this.normalizeTableGridRows(this.layoutDetails.table_columns, this.layoutDetails.table_rows);
+  }
+
+  addTableGridRow() {
+    const nextRank = (this.layoutDetails.table_rows?.length || 0) + 1;
+    const nextRow = this.getDefaultTableGridRow(this.layoutDetails.table_columns, nextRank, true);
+    this.layoutDetails.table_rows = [...(this.layoutDetails.table_rows || []), nextRow];
+    this.layoutDetails.table_rows = this.normalizeTableGridRows(this.layoutDetails.table_columns, this.layoutDetails.table_rows);
+  }
+
+  removeTableGridColumn(index: number) {
+    if (!Array.isArray(this.layoutDetails.table_columns) || this.layoutDetails.table_columns.length <= 2) return;
+    this.layoutDetails.table_columns.splice(index, 1);
+    this.layoutDetails.table_columns = this.normalizeTableGridColumns(this.layoutDetails.table_columns);
+    this.layoutDetails.table_rows = this.normalizeTableGridRows(this.layoutDetails.table_columns, this.layoutDetails.table_rows);
+  }
+
+  removeTableGridRow(index: number) {
+    if (!Array.isArray(this.layoutDetails.table_rows) || this.layoutDetails.table_rows.length <= 1) return;
+    this.layoutDetails.table_rows.splice(index, 1);
+    this.layoutDetails.table_rows = this.normalizeTableGridRows(this.layoutDetails.table_columns, this.layoutDetails.table_rows);
   }
 
   getDefaultFeatureCard() {
@@ -774,6 +888,11 @@ export class CatalogPageImageComponent implements OnInit {
       layoutData.icon_card_list = this.normalizeIconCardList(layoutData.icon_card_list);
     }
 
+    if (layoutData.type === 'table_grid') {
+      layoutData.table_columns = this.normalizeTableGridColumns(layoutData.table_columns);
+      layoutData.table_rows = this.normalizeTableGridRows(layoutData.table_columns, layoutData.table_rows);
+    }
+
     if (layoutData.type === 'secondary' && Array.isArray(layoutData.image_list)) {
       layoutData.image_list = layoutData.image_list.map((item) => ({
         ...item,
@@ -956,3 +1075,4 @@ export class CatalogPageImageComponent implements OnInit {
   }
 
 }
+
