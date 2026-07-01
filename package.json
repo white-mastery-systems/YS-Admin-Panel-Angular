@@ -45,7 +45,7 @@
     "capacitor-blob-writer": "^1.1.4",
     "classlist.js": "^1.1.20150312",
     "core-js": "3.6.4",
-    "echarts": "4.6.0",
+    "echarts": "6.1.0",
     "feather-icons": "4.7.3",
     "file-saver": "^2.0.5",
     "hammerjs": "^2.0.8",
