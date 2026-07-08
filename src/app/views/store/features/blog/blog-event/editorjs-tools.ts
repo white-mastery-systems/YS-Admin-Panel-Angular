@@ -44,6 +44,8 @@ type ProductCarouselData = {
   category_id?: string;
   categoryLink?: string;
   productLimit?: number | string;
+  buttonLabel?: string;
+  buttonLink?: string;
 };
 
 type KeyFeaturesData = {
@@ -470,6 +472,8 @@ export class ProductCarouselTool {
   private categorySearchInput: HTMLInputElement;
   private categoryListWrap: HTMLDivElement;
   private productLimitInput: HTMLInputElement;
+  private buttonLabelInput: HTMLInputElement;
+  private buttonLinkInput: HTMLInputElement;
   private selectedCategoryId: string;
 
   static get toolbox() {
@@ -495,6 +499,8 @@ export class ProductCarouselTool {
     this.categoryListWrap = document.createElement('div');
     this.categoryListWrap.className = 'editorjs-catalog-picker__list';
     this.productLimitInput = createInput(String(this.data.productLimit ?? 8), '8');
+    this.buttonLabelInput = createInput(this.data.buttonLabel || '', 'View All');
+    this.buttonLinkInput = createInput(this.data.buttonLink || '', '/collection/sarees');
 
     this.categorySearchInput.addEventListener('input', () => this.renderCatalogList());
 
@@ -507,6 +513,13 @@ export class ProductCarouselTool {
     this.wrapper.appendChild(createField('Subtitle', this.subtitleInput));
     this.wrapper.appendChild(pickerWrap);
     this.wrapper.appendChild(createField('Product limit', this.productLimitInput));
+
+    const buttonGrid = document.createElement('div');
+    buttonGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
+    buttonGrid.appendChild(createField('Button label', this.buttonLabelInput));
+    buttonGrid.appendChild(createField('Button link', this.buttonLinkInput));
+    this.wrapper.appendChild(buttonGrid);
+
     this.renderCatalogList();
 
     return this.wrapper;
@@ -520,7 +533,9 @@ export class ProductCarouselTool {
       title: this.titleInput.value.trim(),
       subtitle: this.subtitleInput.value.trim(),
       category_id: this.selectedCategoryId,
-      productLimit
+      productLimit,
+      buttonLabel: this.buttonLabelInput.value.trim(),
+      buttonLink: this.buttonLinkInput.value.trim()
     };
   }
 

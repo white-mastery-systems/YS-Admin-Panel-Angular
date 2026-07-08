@@ -547,6 +547,19 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
 
     blocks.forEach((block) => {
+      if(block?.type !== 'productCarousel') return;
+      block.data = block.data || {};
+      block.data.title = (block.data.title || '').trim();
+      block.data.subtitle = (block.data.subtitle || '').trim();
+      block.data.category_id = (block.data.category_id || '').trim();
+      const parsedLimit = Number(block.data.productLimit || 0);
+      block.data.productLimit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 8;
+      block.data.buttonLabel = (block.data.buttonLabel || '').trim();
+      block.data.buttonLink = this.normalizeCarouselButtonLink(block.data.buttonLink);
+      delete block.data.products;
+    });
+
+    blocks.forEach((block) => {
       if(block?.type !== 'imageCards') return;
       block.data = block.data || {};
       block.data.heading = (block.data.heading || '').trim();
@@ -604,6 +617,13 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     const trimmed = (link || '').trim();
     if (!trimmed) return '';
     if (this.normalizeImageCardButtonLinkType(linkType) === 'external_link') return trimmed;
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
+  }
+
+  private normalizeCarouselButtonLink(link?: string) {
+    const trimmed = (link || '').trim();
+    if (!trimmed) return '';
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
     return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
   }
 
