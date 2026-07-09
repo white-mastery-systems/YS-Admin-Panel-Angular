@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
-import { AnchorHeaderTool, ButtonTool, CtaBlockTool, IframeTool, ImageCardsTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, TableOfContentsTool } from './editorjs-tools';
+import { AnchorHeaderTool, ButtonTool, CtaBlockTool, IframeTool, ImageCardsTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, ProductListTool, PRODUCT_LIST_MAX_SELECTION, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
   selector: 'app-blog-event',
@@ -141,6 +141,15 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         if(invalidIframeBlock !== -1) {
           this.blogForm.submit = false;
           this.blogForm.errorMsg = `Please enter a valid HTTPS embed URL in Iframe block #${invalidIframeBlock + 1}`;
+          return;
+        }
+        const invalidProductListBlock = this.getInvalidProductListBlockIndex(content);
+        if(invalidProductListBlock !== -1) {
+          this.blogForm.submit = false;
+          const ids = content?.blocks?.[invalidProductListBlock]?.data?.product_ids || [];
+          this.blogForm.errorMsg = ids.length > PRODUCT_LIST_MAX_SELECTION
+            ? `Product List block #${invalidProductListBlock + 1} can have at most ${PRODUCT_LIST_MAX_SELECTION} products`
+            : `Please select at least one product in Product List block #${invalidProductListBlock + 1}`;
           return;
         }
       }
@@ -446,6 +455,14 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
             uploadImage: async(file: File) => this.uploadEditorImage(file)
           }
         },
+        productList: {
+          class: ProductListTool as any,
+          config: {
+            maxSelection: PRODUCT_LIST_MAX_SELECTION,
+            searchProducts: async(query: string, limit: number) => this.searchBlogProducts(query, limit),
+            resolveProductsByIds: async(ids: string[]) => this.resolveBlogProductsByIds(ids)
+          }
+        },
         image: {
           class: ImageTool as any,
           config: {
@@ -587,6 +604,27 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         : [];
     });
 
+    blocks.forEach((block) => {
+      if(block?.type !== 'productList') return;
+      block.data = block.data || {};
+      block.data.heading = (block.data.heading || '').trim();
+      block.data.sub_heading = (block.data.sub_heading || '').trim();
+      block.data.catalog_id = (block.data.catalog_id || '').trim();
+      block.data.product_ids = Array.isArray(block.data.product_ids)
+        ? block.data.product_ids
+          .map((id) => String(id || '').trim())
+          .filter((id) => !!id)
+          .filter((id, index, list) => list.indexOf(id) === index)
+          .slice(0, PRODUCT_LIST_MAX_SELECTION)
+        : [];
+      block.data.layout = block.data.layout === 'slider' ? 'slider' : 'grid';
+      const parsedLimit = Number(block.data.limit || 0);
+      block.data.limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, PRODUCT_LIST_MAX_SELECTION) : 8;
+      block.data.buttonLabel = (block.data.buttonLabel || '').trim();
+      block.data.buttonLink = this.normalizeCarouselButtonLink(block.data.buttonLink);
+      delete block.data.products;
+    });
+
     return {
       time: normalized.time || Date.now(),
       version: normalized.version || '2.29.1',
@@ -608,6 +646,16 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  private getInvalidProductListBlockIndex(content: any) {
+    const blocks = Array.isArray(content?.blocks) ? content.blocks : [];
+    return blocks.findIndex((block) => {
+      if(block?.type !== 'productList') return false;
+      const ids = Array.isArray(block?.data?.product_ids) ? block.data.product_ids : [];
+      if(!ids.length) return true;
+      return ids.length > PRODUCT_LIST_MAX_SELECTION;
+    });
+  }
+
   private normalizeImageCardButtonLinkType(value?: string) {
     if (value === 'external_link' || value === 'external') return 'external_link';
     return 'internal_link';
@@ -625,6 +673,41 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (!trimmed) return '';
     if (/^https?:\/\//i.test(trimmed)) return trimmed;
     return trimmed.startsWith('/') ? trimmed : `/${trimmed.replace(/^\/+/, '')}`;
+  }
+
+  private async searchBlogProducts(query: string, limit = 20) {
+    const payload: any = {
+      category_id: 'all',
+      product_type: 'in',
+      skip: 0,
+      limit: limit > 0 ? limit : 20,
+      sort_by: 'created_desc'
+    };
+    if((query || '').trim()) payload.search = query.trim();
+    const result = await firstValueFrom(this.api.BLOG_PRODUCT_LIST(payload));
+    if(!result?.status || !Array.isArray(result?.list)) return [];
+    return result.list.map((item) => ({
+      _id: item?._id,
+      name: item?.name || '',
+      sku: item?.sku || '',
+      discounted_price: item?.discounted_price ?? 0,
+      selling_price: item?.selling_price ?? 0,
+      image: item?.image_list?.[0]?.image || ''
+    })).filter((item) => !!item._id);
+  }
+
+  private async resolveBlogProductsByIds(ids: string[]) {
+    const normalizedIds = Array.isArray(ids)
+      ? ids.map((id) => String(id || '').trim()).filter((id) => !!id)
+      : [];
+    if(!normalizedIds.length) return [];
+    const result = await firstValueFrom(this.api.BLOG_MULTI_PRODUCT_LIST({ ids: normalizedIds }));
+    if(!result?.status || !Array.isArray(result?.list)) return [];
+    return result.list.map((item) => ({
+      _id: item?._id,
+      name: item?.name || '',
+      sku: item?.sku || ''
+    })).filter((item) => !!item._id);
   }
 
   private prepareEditorContentForView(content: any) {

@@ -99,6 +99,14 @@ export class FeaturesApiService {
     let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.post<any>(environment.ws_url+'/store/blog/upload', x, httpOptions);
   }
+  BLOG_PRODUCT_LIST(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/product_list', x, httpOptions);
+  }
+  BLOG_MULTI_PRODUCT_LIST(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/multi_product_list', x, httpOptions);
+  }
 
   // Blog segments
   ADD_BLOG_SEGMENT(x) {

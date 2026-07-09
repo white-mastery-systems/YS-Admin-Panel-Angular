@@ -199,6 +199,11 @@
   padding-bottom: 18px;
 }
 
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--product-list {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
 :host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features {
   padding-top: 18px;
   padding-bottom: 18px;
@@ -631,6 +636,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-product-list__results {
+  margin-top: 10px;
+  max-height: 220px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-product-list__selected {
+  display: grid;
+  gap: 10px;
 }
 
 :host ::ng-deep .editorjs-wrapper .editorjs-catalog-chip {

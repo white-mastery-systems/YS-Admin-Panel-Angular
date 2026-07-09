@@ -48,6 +48,26 @@ type ProductCarouselData = {
   buttonLink?: string;
 };
 
+type ProductListPickerItem = {
+  _id: string;
+  name?: string;
+  sku?: string;
+  discounted_price?: number | string;
+  selling_price?: number | string;
+  image?: string;
+};
+
+type ProductListData = {
+  heading?: string;
+  sub_heading?: string;
+  catalog_id?: string;
+  product_ids?: string[];
+  layout?: string;
+  limit?: number | string;
+  buttonLabel?: string;
+  buttonLink?: string;
+};
+
 type KeyFeaturesData = {
   title?: string;
   features?: string[];
@@ -91,6 +111,12 @@ type ImageCardsToolConfig = {
 };
 
 type UploadImageFn = (file: File) => Promise<string>;
+type SearchProductsFn = (query: string, limit: number) => Promise<ProductListPickerItem[]>;
+type ResolveProductsByIdsFn = (ids: string[]) => Promise<ProductListPickerItem[]>;
+
+export const PRODUCT_LIST_MAX_SELECTION = 30;
+export const PRODUCT_LIST_DEFAULT_LIMIT = 8;
+export const PRODUCT_LIST_SEARCH_LIMIT = 20;
 
 function createField(labelText: string, input: HTMLElement): HTMLLabelElement {
   const label = document.createElement('label');
@@ -560,6 +586,231 @@ export class ProductCarouselTool {
       });
       this.categoryListWrap.appendChild(item);
     });
+  }
+}
+
+export class ProductListTool {
+  private data: ProductListData;
+  private config: { searchProducts?: SearchProductsFn; maxSelection?: number; resolveProductsByIds?: ResolveProductsByIdsFn };
+  private wrapper: HTMLDivElement;
+  private headingInput: HTMLInputElement;
+  private subHeadingInput: HTMLInputElement;
+  private catalogIdInput: HTMLInputElement;
+  private searchInput: HTMLInputElement;
+  private selectedWrap: HTMLDivElement;
+  private resultsWrap: HTMLDivElement;
+  private selectionHint: HTMLSpanElement;
+  private layoutSelect: HTMLSelectElement;
+  private limitInput: HTMLInputElement;
+  private buttonLabelInput: HTMLInputElement;
+  private buttonLinkInput: HTMLInputElement;
+  private selectedProducts: ProductListPickerItem[] = [];
+  private searchSeq = 0;
+  private maxSelection: number;
+
+  static get toolbox() {
+    return {
+      title: 'Product List',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.6" y="3.2" width="14.8" height="13.6" rx="2.4" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 7.2H13.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6.2 10H13.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6.2 12.8H10.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    };
+  }
+
+  constructor({ data, config }: { data: ProductListData; config?: { searchProducts?: SearchProductsFn; maxSelection?: number; resolveProductsByIds?: ResolveProductsByIdsFn } }) {
+    this.data = data || {};
+    this.config = config || {};
+    this.maxSelection = Number(this.config.maxSelection) > 0 ? Number(this.config.maxSelection) : PRODUCT_LIST_MAX_SELECTION;
+    const productIds = Array.isArray(this.data.product_ids) ? this.data.product_ids : [];
+    const existingProducts = Array.isArray((this.data as any)?.products) ? (this.data as any).products : [];
+    const productMap = new Map<string, ProductListPickerItem>(
+      existingProducts
+        .filter((item) => item?._id || item?.product_id)
+        .map((item) => [String(item._id || item.product_id), {
+          _id: String(item._id || item.product_id),
+          name: item?.name || item?.title || '',
+          sku: item?.sku || ''
+        } as ProductListPickerItem])
+    );
+    this.selectedProducts = productIds
+      .map((id) => String(id || '').trim())
+      .filter((id) => !!id)
+      .map((id): ProductListPickerItem => productMap.get(id) || ({ _id: id }));
+  }
+
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.className = 'editorjs-custom editorjs-custom--product-list';
+
+    this.headingInput = createInput(this.data.heading || '', 'Recommended products');
+    this.subHeadingInput = createInput(this.data.sub_heading || '', 'Picked for this blog');
+    this.catalogIdInput = createInput(this.data.catalog_id || '', 'Optional catalog id');
+    this.searchInput = createInput('', 'Search products by name / SKU');
+    this.selectedWrap = document.createElement('div');
+    this.selectedWrap.className = 'editorjs-product-list__selected';
+    this.resultsWrap = document.createElement('div');
+    this.resultsWrap.className = 'editorjs-product-list__results';
+    this.layoutSelect = createSelect([
+      { label: 'Grid', value: 'grid' },
+      { label: 'Slider', value: 'slider' }
+    ], this.data.layout === 'slider' ? 'slider' : 'grid');
+    this.limitInput = createInput(String(this.data.limit ?? PRODUCT_LIST_DEFAULT_LIMIT), String(PRODUCT_LIST_DEFAULT_LIMIT));
+    this.buttonLabelInput = createInput(this.data.buttonLabel || '', 'View all');
+    this.buttonLinkInput = createInput(this.data.buttonLink || '', '/products');
+
+    this.selectionHint = document.createElement('span');
+    this.selectionHint.className = 'editorjs-custom__hint';
+
+    const pickerWrap = document.createElement('div');
+    pickerWrap.className = 'editorjs-catalog-picker';
+    pickerWrap.appendChild(createField('Search products', this.searchInput));
+    pickerWrap.appendChild(this.resultsWrap);
+
+    this.searchInput.addEventListener('input', () => this.performSearch());
+
+    this.wrapper.appendChild(createField('Heading', this.headingInput));
+    this.wrapper.appendChild(createField('Sub heading', this.subHeadingInput));
+    this.wrapper.appendChild(createField('Catalog id (optional)', this.catalogIdInput));
+    this.wrapper.appendChild(createField('Selected products', this.selectedWrap));
+    this.wrapper.appendChild(this.selectionHint);
+    this.wrapper.appendChild(pickerWrap);
+
+    const displayGrid = document.createElement('div');
+    displayGrid.className = 'editorjs-custom__grid editorjs-custom__grid--two';
+    displayGrid.appendChild(createField('Layout', this.layoutSelect));
+    displayGrid.appendChild(createField('Limit', this.limitInput));
+    displayGrid.appendChild(createField('Button label', this.buttonLabelInput));
+    displayGrid.appendChild(createField('Button link', this.buttonLinkInput));
+    this.wrapper.appendChild(displayGrid);
+
+    this.renderSelected();
+    this.hydrateSelectedProducts();
+    this.performSearch();
+    return this.wrapper;
+  }
+
+  save() {
+    const parsedLimit = Number(this.limitInput.value || 0);
+    const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, this.maxSelection) : PRODUCT_LIST_DEFAULT_LIMIT;
+    return {
+      heading: this.headingInput.value.trim(),
+      sub_heading: this.subHeadingInput.value.trim(),
+      catalog_id: this.catalogIdInput.value.trim(),
+      product_ids: this.selectedProducts.map((item) => item._id),
+      layout: this.layoutSelect.value === 'slider' ? 'slider' : 'grid',
+      limit,
+      buttonLabel: this.buttonLabelInput.value.trim(),
+      buttonLink: this.buttonLinkInput.value.trim()
+    };
+  }
+
+  private async performSearch() {
+    if (!this.config.searchProducts) {
+      this.resultsWrap.innerHTML = '<small class="editorjs-custom__hint">Product search is not configured.</small>';
+      return;
+    }
+    const seq = ++this.searchSeq;
+    const query = this.searchInput.value.trim();
+    const list = await this.config.searchProducts(query, PRODUCT_LIST_SEARCH_LIMIT).catch(() => []);
+    if (seq !== this.searchSeq) return;
+    this.renderResults(Array.isArray(list) ? list : []);
+  }
+
+  private renderResults(list: ProductListPickerItem[]) {
+    this.resultsWrap.innerHTML = '';
+    if (!list.length) {
+      this.resultsWrap.innerHTML = '<small class="editorjs-custom__hint">No products found.</small>';
+      return;
+    }
+
+    list.forEach((item) => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'editorjs-catalog-chip';
+      const title = item?.name ? item.name : item._id;
+      const sku = item?.sku ? ` (${item.sku})` : '';
+      row.textContent = `${title}${sku}`;
+      row.addEventListener('click', () => {
+        if (this.selectedProducts.find((prod) => prod._id === item._id)) return;
+        if (this.selectedProducts.length >= this.maxSelection) {
+          this.renderSelectionHint(`You can select up to ${this.maxSelection} products.`);
+          return;
+        }
+        this.selectedProducts.push({
+          _id: item._id,
+          name: item.name || '',
+          sku: item.sku || ''
+        });
+        this.renderSelected();
+      });
+      this.resultsWrap.appendChild(row);
+    });
+  }
+
+  private renderSelected() {
+    this.selectedWrap.innerHTML = '';
+    this.renderSelectionHint();
+    if (!this.selectedProducts.length) {
+      this.selectedWrap.innerHTML = '<small class="editorjs-custom__hint">No products selected.</small>';
+      return;
+    }
+
+    this.selectedProducts.forEach((item, index) => {
+      const row = document.createElement('div');
+      row.className = 'editorjs-custom__row editorjs-custom__carousel-row';
+
+      const title = document.createElement('div');
+      title.textContent = `${index + 1}. ${(item.name || item._id)}${item.sku ? ` (${item.sku})` : ''}`;
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'editorjs-custom__button editorjs-custom__button--danger';
+      removeButton.textContent = 'Remove';
+      removeButton.addEventListener('click', () => {
+        this.selectedProducts = this.selectedProducts.filter((prod) => prod._id !== item._id);
+        this.renderSelected();
+      });
+
+      row.appendChild(title);
+      row.appendChild(removeButton);
+      this.selectedWrap.appendChild(row);
+    });
+  }
+
+  private renderSelectionHint(message?: string) {
+    if (!this.selectionHint) return;
+    if (message) {
+      this.selectionHint.textContent = message;
+      return;
+    }
+    this.selectionHint.textContent = `${this.selectedProducts.length}/${this.maxSelection} selected. Website shows up to ${this.limitInput?.value || PRODUCT_LIST_DEFAULT_LIMIT} products.`;
+  }
+
+  private async hydrateSelectedProducts() {
+    if (!this.config.resolveProductsByIds || !this.selectedProducts.length) return;
+    const unresolvedIds = this.selectedProducts
+      .filter((item) => !item?.name)
+      .map((item) => String(item?._id || '').trim())
+      .filter((id) => !!id);
+    if (!unresolvedIds.length) return;
+
+    const resolved = await this.config.resolveProductsByIds(unresolvedIds).catch(() => []);
+    if (!Array.isArray(resolved) || !resolved.length) return;
+
+    const map = new Map(
+      resolved
+        .filter((item) => item?._id)
+        .map((item) => [String(item._id), item])
+    );
+
+    this.selectedProducts = this.selectedProducts.map((item) => {
+      const enriched = map.get(String(item._id || ''));
+      if (!enriched) return item;
+      return {
+        ...item,
+        name: enriched.name || item.name || '',
+        sku: enriched.sku || item.sku || ''
+      };
+    });
+    this.renderSelected();
   }
 }
 
