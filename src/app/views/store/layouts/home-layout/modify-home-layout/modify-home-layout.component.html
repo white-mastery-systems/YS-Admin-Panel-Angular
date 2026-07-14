@@ -17,7 +17,7 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='feature_split' || layoutDetails.type=='feature_list') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='feature_split' || layoutDetails.type=='feature_list' || layoutDetails.type=='icon_card_grid') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
@@ -260,11 +260,15 @@
                 </div>
               </ng-container>
               <ng-container *ngIf="layoutDetails?.type!='secondary' && layoutDetails?.type!='multiple_highlighted_section' && layoutDetails?.type!='hero_cta'">
+                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                  <label>Icon Name</label>
+                  <input type="text" name="section_icon_name{{i}}" class="form-control" [(ngModel)]="x.content_details.icon_name" placeholder="e.g. hotel" />
+                </div>
                 <div *ngIf="layoutDetails?.type!='primary_slider' && layoutDetails?.type!='slider'" class="col-md-12 form-group mb-3">
                   <label>{{ layoutDetails?.type=='section' ? 'Heading' : 'Title' }}</label>
                   <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.content_details.heading" maxlength="50" #heading="ngModel" required />
                 </div>
-                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                <div *ngIf="layoutDetails?.type=='section' || layoutDetails?.type=='featured_section'" class="col-md-12 form-group mb-3">
                   <label>Sub-heading</label>
                   <textarea class="form-control" aria-label="With textarea" name="section_sub_heading{{i}}" [(ngModel)]="x.content_details.sub_heading"></textarea>
                 </div>
@@ -279,7 +283,7 @@
                     <span class="material-symbols-rounded">add</span> Add Option
                   </button>
                 </div>
-                <div *ngIf="layoutDetails?.type=='section'" class="col-md-12 form-group mb-3">
+                <div *ngIf="layoutDetails?.type=='section' || layoutDetails?.type=='featured_section'" class="col-md-12 form-group mb-3">
                   <label>Description</label>
                   <textarea class="form-control" aria-label="With textarea" name="section_description{{i}}" [(ngModel)]="x.content_details.description"></textarea>
                 </div>
@@ -296,10 +300,6 @@
                     <select name="position{{i}}" class="form-control select-arrow" [(ngModel)]="x.position" #position="ngModel" required>
                       <option [ngValue]="x.value" *ngFor="let x of positionList">{{x.name}}</option>
                     </select>
-                  </div>
-                  <div *ngIf="commonService.store_details?.type=='estates' && layoutDetails?.type=='featured_section'" class="col-md-12 form-group mb-3">
-                    <label>Content</label>
-                    <textarea class="form-control" aria-label="With textarea" name="description{{i}}" [(ngModel)]="x.content_details.description" #description="ngModel"></textarea>
                   </div>
                 </ng-container>
               </ng-container>
@@ -1776,6 +1776,110 @@
       </div>
     </ng-container>
 
+    <!-- Icon Card Grid -->
+    <ng-container *ngIf="layoutDetails.type=='icon_card_grid'">
+      <div *ngFor="let x of layoutDetails.icon_card_list; let i=index;" class="poss-rel card p-3 mb-3">
+        <span *ngIf="layoutDetails.icon_card_list?.length > 1" (click)="layoutDetails.icon_card_list.splice(i, 1);"
+          class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+
+        <div class="row pt-3 pb-3">
+          <div class="col-md-8">
+            <p class="dark-font mb-0">Card {{i + 1}}</p>
+          </div>
+          <div class="col-md-4 form-group mb-0">
+            <label>Rank</label>
+            <input type="number" min="1" [name]="'icg_rank_'+i" class="form-control" [(ngModel)]="x.rank" appNumberOnly required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" [name]="'icg_active_status_'+i" [(ngModel)]="x.active_status">
+              <span>Enable Card</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Icon Name</label>
+            <input type="text" [name]="'icg_icon_name_'+i" class="form-control" [(ngModel)]="x.icon_name" placeholder="e.g. diamond" />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Heading</label>
+            <input type="text" [name]="'icg_heading_'+i" class="form-control" [(ngModel)]="x.heading" required />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Description</label>
+            <textarea class="form-control" [name]="'icg_description_'+i" rows="3" [(ngModel)]="x.description"></textarea>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-0">
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <p class="dark-font fw-600">CTA Button</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" [name]="'icg_btn_status_'+i" [(ngModel)]="x.btn_status"
+                  (change)="x.btn_link_type=x.btn_status ? (x.btn_link_type || 'internal') : 'internal'; x.btn_link=x.btn_status ? x.btn_link : '';">
+                <span>Enable Button</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+          <div *ngIf="x.btn_status" class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Button Text</label>
+              <input type="text" [name]="'icg_btn_text_'+i" class="form-control" [(ngModel)]="x.btn_text" maxlength="50" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Button Style</label>
+              <select [name]="'icg_btn_style_'+i" class="form-control select-arrow" [(ngModel)]="x.btn_style">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Text Color</label>
+              <select [name]="'icg_btn_text_color_'+i" class="form-control select-arrow" [(ngModel)]="x.btn_text_color">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'icg_btn_link_type_'+i" [(ngModel)]="x.btn_link_type" value="internal">
+                <span>Internal Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label class="radio radio-primary">
+                <input type="radio" [name]="'icg_btn_link_type_'+i" [(ngModel)]="x.btn_link_type" value="external">
+                <span>External Link</span>
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-md-12 form-group mb-0">
+              <label *ngIf="x.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{x.btn_link}}</label>
+              <label *ngIf="x.btn_link_type=='external'">External Link</label>
+              <input type="text" [name]="'icg_btn_link_'+i" class="form-control" [(ngModel)]="x.btn_link" required />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button type="button" class="light-button" (click)="addIconCardItem();" [disabled]="layoutDetails.icon_card_list?.length >= maxImgCount">
+          <span class="material-symbols-rounded">add</span> Add Card
+        </button>
+      </div>
+    </ng-container>
+    <!-- #Icon Card Grid -->
+
     <!-- secondary banner cards -->
     <div *ngIf="layoutDetails.type=='secondary'" class="card p-3 mb-3">
       <div class="row">
@@ -1817,7 +1921,7 @@
       </div>
     </div>
 
-    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'featured_cards', 'feature_split', 'feature_list', 'internal_links', 'dual_map', 'store_locator', 'hero_cta'].indexOf(layoutDetails.type)==-1"  class="row m-0">
+    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'icon_card_grid', 'featured_cards', 'feature_split', 'feature_list', 'internal_links', 'dual_map', 'store_locator', 'hero_cta'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">
           <span class="material-symbols-rounded">ADD</span>NEW

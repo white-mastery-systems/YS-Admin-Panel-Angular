@@ -40,6 +40,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
           this.layoutDetails = result.data;
           if(this.layoutDetails.type=="highlights") this.maxImgCount = 30;
           else if(this.layoutDetails.type=="amenities") this.maxImgCount = 50;
+          else if(this.layoutDetails.type=="icon_card_grid") this.maxImgCount = 50;
           else if(this.layoutDetails.type=="feature_list") this.maxImgCount = 50;
           else if(this.layoutDetails.type=="featured_cards") this.maxImgCount = 10;
           else if(this.layoutDetails.type=="cta") this.maxImgCount = 1;
@@ -127,6 +128,12 @@ export class ModifyHomeLayoutComponent implements OnInit {
               this.layoutDetails.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
             }
           }
+          else if(this.layoutDetails.type=='icon_card_grid') {
+            if(!this.layoutDetails.icon_card_list?.length) {
+              this.layoutDetails.icon_card_list = [this.getDefaultIconCardItem()];
+            }
+            this.layoutDetails.icon_card_list = this.normalizeIconCardList(this.layoutDetails.icon_card_list);
+          }
           else if(this.layoutDetails.type=='featured_cards') {
             if(!this.layoutDetails.featured_cards_list?.length) {
               // backward-compatible: if old fields exist, wrap them as a single group
@@ -202,7 +209,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               }];
             }
           }
-          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid' && this.layoutDetails.type!='feature_list') {
+          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid' && this.layoutDetails.type!='feature_list' && this.layoutDetails.type!='amenities' && this.layoutDetails.type!='icon_card_grid' && this.layoutDetails.type!='internal_links' && this.layoutDetails.type!='dual_map' && this.layoutDetails.type!='store_locator' && this.layoutDetails.type!='feature_split') {
             if(this.layoutDetails.type=='multiple_highlighted_section') this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {}, productList: [] });
             else this.layoutDetails.image_list.push({ rank: 1, points_list: [], productList: [] });
           }
@@ -408,6 +415,11 @@ export class ModifyHomeLayoutComponent implements OnInit {
         this.callUpdateApi();
       });
     }
+    else if(layoutData.type=='icon_card_grid') {
+      layoutData.icon_card_list = this.normalizeIconCardList(layoutData.icon_card_list);
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
+    }
     else if(layoutData.type=='multi_categories') {
       await Promise.all(
         layoutData.multicategory_list.map(async (catData, i) => {
@@ -530,6 +542,39 @@ export class ModifyHomeLayoutComponent implements OnInit {
   addFeatureItem() {
     if(!Array.isArray(this.layoutDetails.feature_list)) this.layoutDetails.feature_list = [];
     this.layoutDetails.feature_list.push(this.getDefaultFeatureListItem());
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  normalizeIconCardList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultIconCardItem(index + 1),
+      ...item,
+      rank: Number(item?.rank) > 0 ? Number(item.rank) : index + 1
+    })).sort((a, b) => a.rank - b.rank)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+  }
+
+  addIconCardItem() {
+    if(!Array.isArray(this.layoutDetails.icon_card_list)) this.layoutDetails.icon_card_list = [];
+    this.layoutDetails.icon_card_list.push(this.getDefaultIconCardItem(this.layoutDetails.icon_card_list.length + 1));
   }
 
   addFeaturedCardsFeature(groupIndex: number) {

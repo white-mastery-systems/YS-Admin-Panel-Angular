@@ -26,6 +26,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Featured Sections", value: "featured_section" },
     { name: "Featured Products", value: "featured_product" },
     { name: "Amenities", value: "amenities" },
+    { name: "Icon Card Grid", value: "icon_card_grid" },
     { name: "Featured Cards", value: "featured_cards" },
     { name: "Feature Split", value: "feature_split" },
     { name: "Feature List", value: "feature_list" },
@@ -196,6 +197,11 @@ export class HomeLayoutComponent implements OnInit {
           this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
           if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
         }
+        else if(this.editForm.type=='icon_card_grid') {
+          if(!this.editForm.icon_card_list?.length) {
+            this.editForm.icon_card_list = [this.getDefaultIconCardItem()];
+          }
+        }
 			}
 			else console.log("response", result);
 		});
@@ -218,6 +224,10 @@ export class HomeLayoutComponent implements OnInit {
       delete updatePayload.heading;
       delete updatePayload.sub_heading;
       delete updatePayload.description;
+    }
+    // Icon cards are edited in segment image view only.
+    if(updatePayload.type === 'icon_card_grid') {
+      delete updatePayload.icon_card_list;
     }
 		this.api.UPDATE_LAYOUT(updatePayload).subscribe(result => {
       this.editForm.submit = false;
@@ -299,6 +309,9 @@ export class HomeLayoutComponent implements OnInit {
     }
     else if(x=='amenities') {
       this.addForm.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
+    }
+    else if(x=='icon_card_grid') {
+      this.addForm.icon_card_list = [];
     }
     else if(x=='featured_cards') {
       const defaultCta = { btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' };
@@ -481,6 +494,22 @@ export class HomeLayoutComponent implements OnInit {
 
   getDefaultMapFeature() {
     return { icon_name: '', name: '' };
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
   }
 
   getDefaultDualMapItem() {
