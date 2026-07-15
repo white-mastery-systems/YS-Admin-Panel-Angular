@@ -2001,8 +2001,9 @@
     <div *ngIf="layoutDetails.type=='video_section'" class="card p-3 mb-3">
       <div class="row">
         <!-- thumbnail -->
-        <div class="col-md-6 col-lg-6 d-flex">
+        <div class="col-md-4 col-lg-4 d-flex">
           <div class="card card-in-card w-100 p-3 mb-3">
+            <label class="mb-2">Thumbnail</label>
             <div class="desktop-banner" align="center">
               <i class="material-icons" *ngIf="!layoutDetails.video_details.thumbnail">add_photo_alternate</i>
               <ng-container *ngIf="layoutDetails.video_details?.thumbnail">
@@ -2024,9 +2025,10 @@
             </div>
           </div>
         </div>
-        <!-- video -->
-        <div class="col-md-6 col-lg-6 d-flex">
+        <!-- desktop video -->
+        <div class="col-md-4 col-lg-4 d-flex">
           <div class="card card-in-card w-100 p-3 mb-3">
+            <label class="mb-2">Desktop Video</label>
             <div class="desktop-banner" align="center">
               <i class="material-icons" *ngIf="!layoutDetails.video_details.src">video_call</i>
               <ng-container *ngIf="layoutDetails.video_details?.src">
@@ -2046,6 +2048,33 @@
               </div>
             </div>
             <div *ngIf="layoutDetails.video_details.vid_err_msg" class="mt-2">
+              <p class="mb-0 error-msg">Accept file size upto 5 MB</p>
+            </div>
+          </div>
+        </div>
+        <!-- mobile video -->
+        <div class="col-md-4 col-lg-4 d-flex">
+          <div class="card card-in-card w-100 p-3 mb-3">
+            <label class="mb-2">Mobile Video</label>
+            <div class="desktop-banner" align="center">
+              <i class="material-icons" *ngIf="!layoutDetails.video_details.mobile_src">video_call</i>
+              <ng-container *ngIf="layoutDetails.video_details?.mobile_src">
+                <video *ngIf="layoutDetails.video_details.mobile_video_change" controls muted style="width:100%!important;">
+                  <source [src]="layoutDetails.video_details.temp_mobile_video" type="video/mp4" />
+                </video>
+                <video *ngIf="!layoutDetails.video_details.mobile_video_change" controls muted style="width:100%!important;">
+                  <source [src]="imgBaseUrl+layoutDetails.video_details.mobile_src" type="video/mp4" />
+                </video>
+              </ng-container>
+            </div>
+            <div class="h-100 d-flex align-items-end">
+              <div class="custom-file mt-2">
+                <input type="file" name="mobile_src" class="custom-file-input"
+                  (change)="mobileVideoFileChangeListener($event);" accept="video/mp4, video/webm">
+                <label class="custom-file-label">Choose file</label>
+              </div>
+            </div>
+            <div *ngIf="layoutDetails.video_details.mobile_vid_err_msg" class="mt-2">
               <p class="mb-0 error-msg">Accept file size upto 5 MB</p>
             </div>
           </div>

@@ -234,6 +234,15 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="addForm.type=='featured_section'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="featured_section_type" class="form-control select-arrow" [(ngModel)]="addForm.featured_section_type"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div *ngIf="addForm.type=='site_gallery'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -245,7 +254,7 @@
                 </select>
               </div>
               <div class="form-group mb-3"
-                [ngClass]="(addForm.type=='blogs' || addForm.type=='site_gallery' || addForm.type=='featured_product' || addForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(addForm.type=='blogs' || addForm.type=='site_gallery' || addForm.type=='featured_product' || addForm.type=='instagram' || addForm.type=='featured_section')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading"
                   #heading="ngModel" />
@@ -589,6 +598,15 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="editForm.type=='featured_section'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="e_featured_section_type" class="form-control select-arrow" [(ngModel)]="editForm.featured_section_type"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div *ngIf="editForm.type=='site_gallery'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -600,7 +618,7 @@
                 </select>
               </div>
               <div class="form-group mb-3"
-                [ngClass]="(editForm.type=='blogs' || editForm.type=='site_gallery' || editForm.type=='featured_product' || editForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(editForm.type=='blogs' || editForm.type=='site_gallery' || editForm.type=='featured_product' || editForm.type=='instagram' || editForm.type=='featured_section')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
                   #heading="ngModel" />

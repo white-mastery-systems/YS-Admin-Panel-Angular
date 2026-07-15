@@ -163,6 +163,9 @@ export class HomeLayoutComponent implements OnInit {
         if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
         else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
         else if(this.editForm.type=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
+        else if(this.editForm.type=='featured_section' && !this.editForm.featured_section_type) {
+          this.editForm.featured_section_type = 'slider';
+        }
         else if(this.editForm.type=='scrolling_text') {
           this.editForm.text_list?.forEach(el => {
             this.editForm.options.push({ display: el.name, value: el.name });
@@ -349,6 +352,9 @@ export class HomeLayoutComponent implements OnInit {
       this.addForm.btn_status = true;
       this.addForm.btn_text = 'View All';
       this.addForm.text_align = 'left';
+    }
+    else if(x=='featured_section') {
+      this.addForm.featured_section_type = 'slider';
     }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;

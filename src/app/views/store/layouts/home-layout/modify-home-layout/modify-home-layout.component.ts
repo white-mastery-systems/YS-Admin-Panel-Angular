@@ -343,11 +343,13 @@ export class ModifyHomeLayoutComponent implements OnInit {
     else if(layoutData.type=='video_section') {
       layoutData.video_details = {};
       for(let key in this.layoutDetails.video_details) {
-        if(this.layoutDetails.video_details.hasOwnProperty(key) && key!='thumbnail' && key!='src' && key!='temp_image' && key!='temp_video')
+        if(this.layoutDetails.video_details.hasOwnProperty(key) && key!='thumbnail' && key!='src' && key!='mobile_src' && key!='temp_image' && key!='temp_video' && key!='temp_mobile_video')
           layoutData.video_details[key] = this.layoutDetails.video_details[key];
       }
       if(this.layoutDetails.video_details.video_change) this.fileList.append('video', this.layoutDetails.video_details.src);
       else layoutData.video_details.src = this.layoutDetails.video_details.src;
+      if(this.layoutDetails.video_details.mobile_video_change) this.fileList.append('mobile_video', this.layoutDetails.video_details.mobile_src);
+      else layoutData.video_details.mobile_src = this.layoutDetails.video_details.mobile_src;
       if(this.layoutDetails.video_details.img_change) this.fileList.append('thumbnail', this.layoutDetails.video_details.thumbnail);
       else layoutData.video_details.thumbnail = this.layoutDetails.video_details.thumbnail;
       this.fileList.append('data', JSON.stringify(layoutData));
@@ -1179,6 +1181,24 @@ export class ModifyHomeLayoutComponent implements OnInit {
           this.layoutDetails.video_details.video_change = true;
         }
         else this.layoutDetails.video_details.vid_err_msg = true;
+      }
+      reader.readAsDataURL(fileData);
+    }
+  }
+
+  mobileVideoFileChangeListener(event) {
+    delete this.layoutDetails.video_details.mobile_vid_err_msg;
+    if(event.target.files && event.target.files[0]) {
+      let reader = new FileReader();
+      let fileData = event.target.files[0];
+      let fileInKB = Math.round(fileData.size/ 1024);
+      reader.onload = (event: ProgressEvent) => {
+        if(fileInKB<=this.videoLimitInKB) {
+          this.layoutDetails.video_details.temp_mobile_video = (<FileReader>event.target).result;
+          this.layoutDetails.video_details.mobile_src = fileData;
+          this.layoutDetails.video_details.mobile_video_change = true;
+        }
+        else this.layoutDetails.video_details.mobile_vid_err_msg = true;
       }
       reader.readAsDataURL(fileData);
     }
