@@ -22,7 +22,13 @@ export class BlogComponent implements OnInit {
   imgBaseUrl = environment.img_baseurl;
   seoForm: any = {}; popupLoader: boolean;
   isAdvanced: boolean;
-  
+  importLoader: boolean;
+  importError: string;
+  importEditorType: string = 'basic';
+  importFile: File = null;
+  importFileName: string = '';
+  readonly blogDocMaxBytes = 10 * 1024 * 1024;
+
   constructor(
     config: NgbModalConfig, public modalService: NgbModal, private api: FeaturesApiService,
     public commonService: CommonService, private storeApi: StoreApiService, private router: Router
@@ -78,6 +84,62 @@ export class BlogComponent implements OnInit {
       this.router.navigate(['/setting/advanced-blogs/'+x._id]);
     }
     else this.router.navigate(['/setting/blogs/'+(x.slug || x._id)]);
+  }
+
+  // Feature A — import a .docx/.md and create a blog draft, then open it for review.
+  openImportDialog(modalName) {
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = '';
+    this.importLoader = false;
+    this.importEditorType = this.importEditorType || 'basic';
+    this.modalService.open(modalName, { centered: true });
+  }
+
+  onImportFileSelect(event) {
+    const file = event?.target?.files?.[0];
+    if(event?.target) event.target.value = '';
+    if(!file) return;
+    const lowerName = file.name.toLowerCase();
+    const allowed = ['.docx', '.md', '.markdown', '.txt'];
+    if(!allowed.some((ext) => lowerName.endsWith(ext))) {
+      this.importError = 'Please select a .docx or .md file';
+      this.importFile = null;
+      this.importFileName = '';
+      return;
+    }
+    if(file.size > this.blogDocMaxBytes) {
+      this.importError = `Document is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maximum allowed size is 10 MB.`;
+      this.importFile = null;
+      this.importFileName = '';
+      return;
+    }
+    this.importError = '';
+    this.importFile = file;
+    this.importFileName = file.name;
+  }
+
+  submitImport(modal) {
+    if(!this.importFile) { this.importError = 'Please choose a file'; return; }
+    this.importError = '';
+    this.importLoader = true;
+    const formData = new FormData();
+    formData.append('file', this.importFile);
+    formData.append('editor_type', this.importEditorType || 'basic');
+    this.api.IMPORT_BLOG_DOC(formData).subscribe(result => {
+      this.importLoader = false;
+      if(result.status) {
+        if(modal) modal.close();
+        this.router.navigate(['/setting/blogs/'+(result.slug || result.blog_id)]);
+      }
+      else {
+        this.importError = result.message || 'Unable to import document';
+        console.log("import", result);
+      }
+    }, () => {
+      this.importLoader = false;
+      this.importError = 'Unable to import document';
+    });
   }
 
   // UPDATE STATUS

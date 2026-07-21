@@ -40,6 +40,7 @@ export class ExtraPagesEventComponent implements OnInit {
     { name: "Social Video", value: "social_video" },
     { name: "Content Grid", value: "content_grid" },
     { name: "Content Section", value: "content_section" },
+    { name: "Rich Text", value: "rich_text" },
     { name: "Icon Card Grid", value: "icon_card_grid" },
     { name: "Contact Info", value: "contact_info" },
     { name: "CTA", value: "cta" }
@@ -202,6 +203,10 @@ export class ExtraPagesEventComponent implements OnInit {
       delete updatePayload.heading;
       delete updatePayload.sub_heading;
       delete updatePayload.description;
+    }
+    // Content for rich_text is edited in segment image view only.
+    if (updatePayload.type === 'rich_text') {
+      delete updatePayload.content;
     }
     if (updatePayload.type === 'cta') {
       delete updatePayload.image_list;

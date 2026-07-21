@@ -17,7 +17,7 @@ export class ExtraPagesComponent implements OnInit {
   page = 1; pageSize = 10;
   list: any = []; deleteForm: any;
   pageLoader: boolean; search_bar: string;
-  addForm: any = {};
+  addForm: any = {}; editForm: any = {};
 
 	constructor(config: NgbModalConfig, public modalService: NgbModal, private router: Router, private api: SetupService, public commonService: CommonService) {
     config.backdrop = 'static'; config.keyboard = false;
@@ -49,6 +49,17 @@ export class ExtraPagesComponent implements OnInit {
 		});
   }
 
+  // ENABLE / DISABLE
+  onToggleStatus(x) {
+    let newStatus = x.active_status === false;
+    x.status_submit = true;
+    this.api.UPDATE_EXTRA_PAGE({ _id: x._id, active_status: newStatus }).subscribe(result => {
+      x.status_submit = false;
+      if(result.status) x.active_status = newStatus;
+      else console.log("response", result);
+    });
+  }
+
   //Add New page 
   onAdd() {
     this.addForm.submit = true;
@@ -61,6 +72,27 @@ export class ExtraPagesComponent implements OnInit {
       }
       else {
         this.addForm.err_msg = result.message;
+        console.log("response", result);
+      }
+    });
+  }
+
+  // EDIT NAME
+  onEditName(x, modalName) {
+    this.editForm = { _id: x._id, name: x.name };
+    this.modalService.open(modalName, { centered: true });
+  }
+
+  onUpdateName() {
+    this.editForm.submit = true;
+    this.api.UPDATE_EXTRA_PAGE({ _id: this.editForm._id, name: this.editForm.name }).subscribe(result => {
+      this.editForm.submit = false;
+      if(result.status) {
+        document.getElementById('closeModal').click();
+        this.ngOnInit();
+      }
+      else {
+        this.editForm.err_msg = result.message;
         console.log("response", result);
       }
     });

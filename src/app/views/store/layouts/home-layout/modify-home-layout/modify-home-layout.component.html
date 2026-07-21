@@ -17,9 +17,9 @@
   </ng-container>
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
-    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='feature_split' || layoutDetails.type=='feature_list' || layoutDetails.type=='icon_card_grid') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
+    <div *ngFor="let x of ((layoutDetails.type=='internal_links' || layoutDetails.type=='dual_map' || layoutDetails.type=='store_locator' || layoutDetails.type=='story_section' || layoutDetails.type=='feature_split' || layoutDetails.type=='feature_list' || layoutDetails.type=='icon_card_grid') ? [] : layoutDetails.image_list); let i=index;" class="poss-rel card p-3 mb-3">
 
-      <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+      <span *ngIf="['primary_slider', 'section', 'dual_image_highlight'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <span *ngIf="layoutDetails.type=='primary_slider' && i>0" (click)="layoutDetails.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
       <div class="row pt-3 pb-3">
         <div class="col-md-6">
@@ -41,6 +41,7 @@
                   {{ (layoutDetails?.type=='testimonial')? '72 x 72': (layoutDetails?.type=='highlighted_section')? '1025 x 575': (layoutDetails?.type=='secondary')? '1110 x 400': '600 x 600' }} pixels @72ppi
                 </p>
                 <p *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">(Desktop) - 1850 x 690 pixels @72ppi</p>
+                <p *ngIf="layoutDetails?.type=='dual_image_highlight'">{{ (x.rank==1)? '(Background) - 750 x 875 pixels @72ppi': '(Foreground) - 575 x 675 pixels @72ppi' }}</p>
                 <p *ngIf="layoutDetails?.type=='cta'">(Desktop) - 1850 x 400 pixels @72ppi</p>
                 <p *ngIf="layoutDetails?.type=='section' && grid_details.resolutions && grid_details.resolutions[i]?.value">{{grid_details.resolutions[i].value}}</p>
                 <i *ngIf="!x.desktop_img" class="material-icons">add_photo_alternate</i>
@@ -383,7 +384,7 @@
         <!-- #Highlighted Section Description -->
 
         <!-- Link -->
-        <div *ngIf="layoutDetails?.type!='shop_the_look'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+        <div *ngIf="layoutDetails?.type!='shop_the_look' && layoutDetails?.type!='dual_image_highlight'" class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
           <div class="card w-100 p-3 mb-3">
             <div class="row">
               <div *ngIf="layoutDetails.type=='highlighted_section' || layoutDetails.type=='multiple_highlighted_section'" class="col-md-12 form-group mb-3">
@@ -391,6 +392,14 @@
                 <select name="position{{i}}" class="form-control select-arrow" [(ngModel)]="x.position" #position="ngModel" required>
                   <option value="left">Left</option>
                   <option value="right">Right</option>
+                </select>
+              </div>
+              <div *ngIf="layoutDetails.type=='secondary'" class="col-md-12 form-group mb-3">
+                <label>Image Position</label>
+                <select name="img_position{{i}}" class="form-control select-arrow" [(ngModel)]="x.img_position" #img_position="ngModel" required>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="top">Top</option>
                 </select>
               </div>
               <div class="col-md-12 form-group mb-3">
@@ -1776,6 +1785,106 @@
       </div>
     </ng-container>
 
+    <!-- Story Section -->
+    <ng-container *ngIf="layoutDetails.type=='story_section'">
+      <!-- Icon Image -->
+      <div class="card p-3 mb-3">
+        <div class="row pt-2 pb-2">
+          <div class="col-md-12">
+            <p class="dark-font">Icon Image (200 x 200 px)</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-6 d-flex">
+            <div class="card card-in-card w-100 p-3 mb-3">
+              <div class="desktop-banner" align="center">
+                <i *ngIf="!layoutDetails.cover_img && !layoutDetails.temp_cover_img" class="material-icons">add_photo_alternate</i>
+                <figure *ngIf="layoutDetails.cover_img || layoutDetails.temp_cover_img" class="desktop-layout-image-sec">
+                  <img *ngIf="layoutDetails.temp_cover_img" [src]="layoutDetails.temp_cover_img" alt="Icon" style="max-height:120px;">
+                  <img *ngIf="!layoutDetails.temp_cover_img && layoutDetails.cover_img" [src]="imgBaseUrl + layoutDetails.cover_img" alt="Icon" style="max-height:120px;">
+                </figure>
+              </div>
+              <div class="custom-file mt-2">
+                <input type="file" name="story_icon" class="custom-file-input"
+                  (change)="fileChangeListener('fc_cover', 0, $event)" accept="image/gif, image/jpeg, image/png, image/webp">
+                <label class="custom-file-label">Choose file</label>
+              </div>
+              <div *ngIf="layoutDetails.cover_img_err" class="mt-2">
+                <p class="mb-0 error-msg">Accept file size upto {{fileLimitInKB}} KB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="card p-3 mb-3">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <p class="dark-font mb-0">Content</p>
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Heading</label>
+            <input type="text" name="ss_heading" class="form-control" [(ngModel)]="layoutDetails.heading" />
+          </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Sub-heading</label>
+            <input type="text" name="ss_sub_heading" class="form-control" [(ngModel)]="layoutDetails.sub_heading" />
+          </div>
+          <div class="col-md-12 form-group mb-0">
+            <label>Description</label>
+            <textarea class="form-control" name="ss_description" rows="3" [(ngModel)]="layoutDetails.description"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="card p-3 mb-3">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="ss_btn_status" [(ngModel)]="layoutDetails.btn_status">
+              <span class="dark-font">Enable Button</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <ng-container *ngIf="layoutDetails.btn_status">
+            <div class="col-md-6 form-group mb-3">
+              <label>Button Text</label>
+              <input type="text" name="ss_btn_text" class="form-control" [(ngModel)]="layoutDetails.btn_text" maxlength="50" required />
+            </div>
+            <div class="col-md-3 form-group mb-3">
+              <label>Button Style</label>
+              <select name="ss_btn_style" class="form-control select-arrow" [(ngModel)]="layoutDetails.btn_style">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+              </select>
+            </div>
+            <div class="col-md-3 form-group mb-3">
+              <label>Button Text Color</label>
+              <select name="ss_btn_text_color" class="form-control select-arrow" [(ngModel)]="layoutDetails.btn_text_color">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group mb-3">
+              <label>Link Type</label>
+              <select name="ss_btn_link_type" class="form-control select-arrow" [(ngModel)]="layoutDetails.btn_link_type">
+                <option value="internal">Internal</option>
+                <option value="external">External</option>
+              </select>
+            </div>
+            <div class="col-md-8 form-group mb-0">
+              <label *ngIf="layoutDetails.btn_link_type=='internal'">{{commonService.store_details?.base_url}}{{layoutDetails.btn_link}}</label>
+              <label *ngIf="layoutDetails.btn_link_type=='external'">External Link</label>
+              <input type="text" name="ss_btn_link" class="form-control" [(ngModel)]="layoutDetails.btn_link" required />
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <!-- #Story Section -->
+
     <!-- Icon Card Grid -->
     <ng-container *ngIf="layoutDetails.type=='icon_card_grid'">
       <div *ngFor="let x of layoutDetails.icon_card_list; let i=index;" class="poss-rel card p-3 mb-3">
@@ -1921,7 +2030,7 @@
       </div>
     </div>
 
-    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'icon_card_grid', 'featured_cards', 'feature_split', 'feature_list', 'internal_links', 'dual_map', 'store_locator', 'hero_cta'].indexOf(layoutDetails.type)==-1"  class="row m-0">
+    <div *ngIf="layoutDetails?.image_list?.length<maxImgCount && ['section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'amenities', 'icon_card_grid', 'featured_cards', 'feature_split', 'feature_list', 'internal_links', 'dual_map', 'store_locator', 'story_section', 'hero_cta', 'dual_image_highlight'].indexOf(layoutDetails.type)==-1"  class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">
           <span class="material-symbols-rounded">ADD</span>NEW

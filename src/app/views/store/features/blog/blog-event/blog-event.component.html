@@ -17,6 +17,33 @@
   </ng-container>
 
   <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+    <div class="row" *ngIf="blogForm.form_type === 'edit' && !isAdvanced">
+      <div class="col-md-12 form-group mb-4">
+        <div class="card p-3 blog-reimport-panel">
+          <label class="mb-1">Replace content from doc</label>
+          <p class="light-font font-10 mb-2">
+            Upload a revised <code>.md</code> or <code>.docx</code> to refresh body content, FAQs, tags, and SEO fields from the doc metadata.
+            Keeps publish status, created date, cover, thumbnail, and images already placed in matching slots (unless you opt in below).
+            <strong>Click Update at the bottom to save.</strong>
+          </p>
+          <label class="checkbox checkbox-primary mb-2 d-block">
+            <input class="form-check-input" type="checkbox" name="reimport_update_slug" [(ngModel)]="reimportUpdateSlug" />
+            <span>Update page URL from doc (<code>URL:</code> line or canonical link in metadata)</span>
+            <span class="checkmark"></span>
+          </label>
+          <div class="blog-reimport-row">
+            <input #reimportInput id="blog-reimport-input" type="file" accept=".docx,.md,.markdown,.txt" hidden (change)="onReimportFileSelect($event)" />
+            <label for="blog-reimport-input" class="btn btn-outline-primary btn-sm mb-0">Choose revised doc</label>
+            <button type="button" class="btn btn-primary btn-sm" [disabled]="reimportLoader || !reimportFile" (click)="submitReimportDoc()">
+              {{ reimportLoader ? 'Replacing...' : 'Replace from doc' }}
+            </button>
+          </div>
+          <p class="light-font font-10 mb-0 mt-2" *ngIf="reimportFileName">{{ reimportFileName }}</p>
+          <p class="text-success mb-0 mt-2" *ngIf="reimportSuccess">{{ reimportSuccess }}</p>
+          <p class="text-danger mb-0 mt-2" *ngIf="reimportError">{{ reimportError }}</p>
+        </div>
+      </div>
+    </div>
     <div class="row flex-xs-column-reverse">
       <div class="col-md-12 col-12">
         <div class="row justify-content-center">
@@ -139,6 +166,42 @@
               <label>Tags</label>
               <tag-input class="w-100" name="tags_list" [(ngModel)]="blogForm.tags_list" placeholder=""
                 [secondaryPlaceholder]="'Enter tags'" [separatorKeyCodes]="[188]"></tag-input>
+            </div>
+            <div class="col-md-12 form-group mb-3" *ngIf="isEditorJsMode() && imageSlotList.length">
+              <label>Bulk image upload</label>
+              <p class="light-font font-10 mb-2">
+                Put <code>[IMAGE: slot-name]</code> markers in the doc. Name each file after the slot
+                (e.g. <code>chennai-apps.jpg</code>). Cover image uses <code>cover.jpg</code> or the
+                <code>Cover:</code> metadata filename.
+              </p>
+              <div class="blog-image-slot-list mb-2">
+                <div class="blog-image-slot-item" *ngFor="let slot of imageSlotList">
+                  <span class="blog-image-slot-label">{{ slot.label || slot.name }}</span>
+                  <span class="blog-image-slot-hint">{{ slotFilenameHint(slot) }}</span>
+                </div>
+              </div>
+              <div class="blog-image-upload-row">
+                <input #bulkImageInput id="blog-bulk-image-input" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" multiple hidden (change)="onBulkImageSelect($event)" />
+                <input #bulkFolderInput id="blog-bulk-folder-input" type="file" webkitdirectory directory multiple hidden (change)="onBulkFolderSelect($event)" />
+                <button type="button" class="btn btn-outline-primary btn-sm" (click)="bulkImageInput.click()">Choose images</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openBulkFolderPicker(bulkFolderInput)">Choose folder</button>
+                <button type="button" class="btn btn-primary btn-sm" [disabled]="bulkImageLoader || !bulkImageFiles.length" (click)="submitBulkImages()">
+                  {{ bulkImageLoader ? 'Uploading...' : 'Upload & place' }}
+                </button>
+              </div>
+              <p class="light-font font-10 mb-0 mt-2" *ngIf="!bulkImageFiles.length">
+                Step 1: choose image files or a folder. Step 2: click <strong>Upload &amp; place</strong>.
+                <strong>Choose folder</strong> picks every image in the folder (subfolders included). Your browser may show a one-time security confirmation — this is normal.
+              </p>
+              <ul class="blog-image-selected-files mb-0 mt-2" *ngIf="bulkImageFiles.length">
+                <li *ngFor="let file of bulkImageFiles">{{ bulkImageDisplayName(file) }} ({{ (file.size / 1024) | number:'1.0-0' }} KB)</li>
+              </ul>
+              <p class="light-font font-10 mb-0 mt-2 text-success" *ngIf="bulkImageInfo">{{ bulkImageInfo }}</p>
+              <p class="text-danger mb-0 mt-2" *ngIf="bulkImageError">{{ bulkImageError }}</p>
+              <div class="blog-image-upload-report mt-2" *ngIf="bulkImageReport">
+                <p class="mb-1" *ngFor="let row of bulkImageReport.placed"><span class="text-success">✓</span> {{ row.file }} → {{ row.slotLabel || row.slot }}</p>
+                <p class="mb-1" *ngFor="let row of bulkImageReport.unmatched"><span class="text-warning">⚠</span> {{ row.file }} — no matching slot</p>
+              </div>
             </div>
             <div class="col-md-12 form-group mb-3" *ngIf="isEditorJsMode()">
               <label>EditorJS Content</label>

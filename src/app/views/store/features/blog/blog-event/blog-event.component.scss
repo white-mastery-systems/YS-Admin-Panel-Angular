@@ -43,6 +43,62 @@
   overflow: visible;
 }
 
+.blog-image-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blog-image-slot-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.blog-image-slot-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.blog-image-slot-hint {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+.blog-image-upload-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-reimport-panel {
+  border: 1px solid #f0c4c7;
+  background: #fff8f8;
+}
+
+.blog-reimport-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-image-selected-files {
+  padding-left: 18px;
+  font-size: 12px;
+  color: #444;
+}
+
+.blog-image-upload-report {
+  font-size: 13px;
+}
+
 :host ::ng-deep .editorjs-wrapper .codex-editor {
   position: relative;
 }

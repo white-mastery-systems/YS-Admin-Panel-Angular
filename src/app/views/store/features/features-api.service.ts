@@ -99,6 +99,22 @@ export class FeaturesApiService {
     let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.post<any>(environment.ws_url+'/store/blog/upload', x, httpOptions);
   }
+  BLOG_IMAGE_SLOTS(blogId) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/blog/image-slots?blog_id='+blogId, httpOptions);
+  }
+  BLOG_PLACE_IMAGES(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/images/place', x, httpOptions);
+  }
+  IMPORT_BLOG_DOC(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/import-doc', x, httpOptions);
+  }
+  REIMPORT_BLOG_DOC(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/reimport-doc', x, httpOptions);
+  }
   BLOG_PRODUCT_LIST(x) {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.post<any>(environment.ws_url+'/store/product_list', x, httpOptions);

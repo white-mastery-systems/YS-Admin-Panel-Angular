@@ -176,8 +176,8 @@
                   <ng-container *ngIf="x.type=='hero_cta' || x.type=='cta'">{{ x.cta_list?.length }} Cards</ng-container>
                   <ng-container *ngIf="x.type=='video_section'">{{ x.video_details?.src ? '1 Video' : '-' }}</ng-container>
                   <ng-container *ngIf="x.type=='featured_product'">{{ x.product_list?.length }} Tiles</ng-container>
-                  <ng-container *ngIf="x.type=='flexible' || x.type=='shopping_assistant' || x.type=='blogs' || x.type=='instagram' || x.type=='content_section'">-</ng-container>
-                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'video_section', 'content_grid', 'featured_product', 'flexible', 'shopping_assistant', 'blogs', 'instagram', 'hero_cta', 'cta', 'amenities', 'feature_list', 'faq', 'internal_links', 'dual_map', 'content_section', 'icon_card_grid', 'contact_info'].indexOf(x.type)==-1">
+                  <ng-container *ngIf="x.type=='flexible' || x.type=='shopping_assistant' || x.type=='blogs' || x.type=='instagram' || x.type=='content_section' || x.type=='rich_text'">-</ng-container>
+                  <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'video_section', 'content_grid', 'featured_product', 'flexible', 'shopping_assistant', 'blogs', 'instagram', 'hero_cta', 'cta', 'amenities', 'feature_list', 'faq', 'internal_links', 'dual_map', 'content_section', 'icon_card_grid', 'contact_info', 'rich_text'].indexOf(x.type)==-1">
                     {{ x.image_list?.length }} Tiles
                   </ng-container>
                 </p>

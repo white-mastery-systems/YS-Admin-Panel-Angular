@@ -52,21 +52,40 @@
         <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
           <div class="col-md-8 col-6 first_col px-0 header-font">
             <p class="w-30 w-sm-100">Name</p>
-            <p class="w-30 w-sm-100">Type</p>
-            <p class="w-40 w-sm-100 m-b-0">Customizations</p>
+            <p class="w-15 w-sm-100">Type</p>
+            <p class="w-40 w-sm-100">Customizations</p>
+            <p class="w-15 w-sm-100 m-b-0">Status</p>
           </div>
         </div>
         <div class="list-item data-list-card"
           *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
           [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+          <div class="ribbon-band" *ngIf="!commonService.desktop_device"
+            [ngClass]="x.active_status!==false? 'green-band': 'red-band'">
+            {{x.active_status!==false? 'Enabled': 'Disabled'}}
+          </div>
           <div class="col-md-8 col-8 first_col px-0">
-            <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-30 w-sm-100 dark-font">{{x.type}}</p>
-            <p class="w-40 w-sm-100 m-b-0 light-font" style="word-break: break-word;">
+            <p class="w-30 w-sm-100 dark-font pr-2" style="word-break: break-word;">{{x.name}}</p>
+            <p class="w-15 w-sm-100 dark-font">{{x.type}}</p>
+            <p class="w-40 w-sm-100 m-b-0 light-font pr-2" style="word-break: break-word;">
               {{commonService.store_details?.base_url}}/pages/{{x.page_url}}</p>
+            <p class="w-15 w-sm-100 m-b-0" *ngIf="commonService.desktop_device">
+              <span class="badge" [ngClass]="x.active_status!==false? 'badge-green-background': 'badge-red-background'">
+                {{x.active_status!==false? 'Enabled': 'Disabled'}}
+              </span>
+            </p>
           </div>
           <div class="col-md-4 col-4">
             <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"
+                (click)="onEditName(x, editNameModal);">
+                <span class="material-symbols-rounded">edit</span> {{commonService.desktop_device? 'Edit':''}}
+              </button>
+              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"
+                [disabled]="x.status_submit" (click)="onToggleStatus(x);">
+                <span class="material-symbols-rounded">{{x.active_status!==false? 'toggle_on': 'toggle_off'}}</span>
+                {{commonService.desktop_device? (x.active_status!==false? 'Disable': 'Enable'):''}}
+              </button>
               <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'"
                 (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
                 <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':''}}
@@ -204,6 +223,37 @@
         </button>
         <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="addForm.submit"
           [ladda]="addForm.submit">Add</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- EDIT NAME MODAL -->
+<ng-template #editNameModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateName();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <h4 class="modal-title popup_text">Edit Page Name</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="edit_name" class="form-control" [(ngModel)]="editForm.name" required />
+          </div>
+          <div *ngIf="editForm.err_msg" class="col-12 mt-3 text-danger">
+            {{editForm.err_msg}}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+          (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="editForm.submit"
+          [ladda]="editForm.submit">Update</button>
       </div>
     </div>
   </form>

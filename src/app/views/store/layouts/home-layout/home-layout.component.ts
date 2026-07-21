@@ -31,6 +31,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Feature Split", value: "feature_split" },
     { name: "Feature List", value: "feature_list" },
     { name: "CTA", value: "cta" },
+    { name: "Story Section", value: "story_section" },
     { name: "Dual Map", value: "dual_map" },
     { name: "Store Locator", value: "store_locator" },
     { name: "FAQ", value: "faq" },
@@ -39,6 +40,7 @@ export class HomeLayoutComponent implements OnInit {
     { name: "Multi-Highlighted Section", value: "multiple_highlighted_section" },
     { name: "Multi-Tab Featured Products", value: "multiple_featured_product" },
     { name: "Secondary Banner", value: "secondary" },
+    { name: "Dual Image Highlight", value: "dual_image_highlight" },
     { name: "Flexible Segment", value: "flexible" },
     { name: "Scrolling Text", value: "scrolling_text" },
     { name: "Social Video", value: "social_video" },
@@ -163,8 +165,19 @@ export class HomeLayoutComponent implements OnInit {
         if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
         else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
         else if(this.editForm.type=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
-        else if(this.editForm.type=='featured_section' && !this.editForm.featured_section_type) {
-          this.editForm.featured_section_type = 'slider';
+        else if(this.editForm.type=='featured_section') {
+          if(!this.editForm.featured_section_type) this.editForm.featured_section_type = 'slider';
+          if(this.editForm.btn_status===undefined) this.editForm.btn_status = false;
+          if(!this.editForm.btn_text) this.editForm.btn_text = '';
+          if(!this.editForm.btn_link_type) this.editForm.btn_link_type = 'internal';
+          if(!this.editForm.btn_link) this.editForm.btn_link = '';
+        }
+        else if(this.editForm.type=='dual_image_highlight') {
+          if(this.editForm.btn_status===undefined) this.editForm.btn_status = false;
+          if(!this.editForm.btn_text) this.editForm.btn_text = '';
+          if(!this.editForm.btn_icon_name) this.editForm.btn_icon_name = '';
+          if(!this.editForm.btn_link_type) this.editForm.btn_link_type = 'internal';
+          if(!this.editForm.btn_link) this.editForm.btn_link = '';
         }
         else if(this.editForm.type=='scrolling_text') {
           this.editForm.text_list?.forEach(el => {
@@ -302,7 +315,7 @@ export class HomeLayoutComponent implements OnInit {
     this.addForm.grid_list = []; this.gridList = [];
     delete this.addForm.section_grid_type;
     this.addForm.multitab_list = [{}];
-    if(x=='hero_cta') {
+    if(x=='hero_cta' || x=='story_section') {
       this.addForm.btn_status = false;
       this.addForm.btn_text = '';
       this.addForm.btn_style = 'primary';

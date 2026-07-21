@@ -64,6 +64,16 @@ export class ModifyHomeLayoutComponent implements OnInit {
             if(!this.layoutDetails.image_list?.length) {
               this.layoutDetails.image_list = [{ rank: 1, content_details: {}, productList: [] }];
             }
+            this.layoutDetails.image_list.forEach(img => {
+              if(!img.img_position) img.img_position = (['left', 'right', 'top'].indexOf(img.position)!=-1)? img.position: 'right';
+            });
+          }
+          else if(this.layoutDetails.type=='dual_image_highlight') {
+            if(!Array.isArray(this.layoutDetails.image_list)) this.layoutDetails.image_list = [];
+            while(this.layoutDetails.image_list.length < 2) {
+              this.layoutDetails.image_list.push({ rank: this.layoutDetails.image_list.length+1, points_list: [], productList: [] });
+            }
+            this.layoutDetails.image_list = this.layoutDetails.image_list.slice(0, 2);
           }
           else if(this.layoutDetails.type=='content_grid' && !this.layoutDetails.text_list.length) {
             this.layoutDetails.text_list.push({});
@@ -191,6 +201,18 @@ export class ModifyHomeLayoutComponent implements OnInit {
             }
             this.layoutDetails.feature_list = this.normalizeFeatureListItems(this.layoutDetails.feature_list);
           }
+          else if(this.layoutDetails.type=='story_section') {
+            if(!this.layoutDetails.cover_img) this.layoutDetails.cover_img = '';
+            if(!this.layoutDetails.heading) this.layoutDetails.heading = '';
+            if(!this.layoutDetails.sub_heading) this.layoutDetails.sub_heading = '';
+            if(!this.layoutDetails.description) this.layoutDetails.description = '';
+            if(this.layoutDetails.btn_status===undefined) this.layoutDetails.btn_status = false;
+            if(!this.layoutDetails.btn_text) this.layoutDetails.btn_text = '';
+            if(!this.layoutDetails.btn_style) this.layoutDetails.btn_style = 'primary';
+            if(!this.layoutDetails.btn_text_color) this.layoutDetails.btn_text_color = 'light';
+            if(!this.layoutDetails.btn_link_type) this.layoutDetails.btn_link_type = 'internal';
+            if(!this.layoutDetails.btn_link) this.layoutDetails.btn_link = '';
+          }
           else if(this.layoutDetails.type=='cta') {
             if(!this.layoutDetails.image_list?.length) {
               this.layoutDetails.image_list = [{ rank: 1, points_list: [], productList: [] }];
@@ -209,7 +231,7 @@ export class ModifyHomeLayoutComponent implements OnInit {
               }];
             }
           }
-          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid' && this.layoutDetails.type!='feature_list' && this.layoutDetails.type!='amenities' && this.layoutDetails.type!='icon_card_grid' && this.layoutDetails.type!='internal_links' && this.layoutDetails.type!='dual_map' && this.layoutDetails.type!='store_locator' && this.layoutDetails.type!='feature_split') {
+          else if(!this.layoutDetails.image_list.length && this.layoutDetails.type!='video_section' && this.layoutDetails.type!='content_grid' && this.layoutDetails.type!='feature_list' && this.layoutDetails.type!='amenities' && this.layoutDetails.type!='icon_card_grid' && this.layoutDetails.type!='internal_links' && this.layoutDetails.type!='dual_map' && this.layoutDetails.type!='store_locator' && this.layoutDetails.type!='story_section' && this.layoutDetails.type!='feature_split') {
             if(this.layoutDetails.type=='multiple_highlighted_section') this.layoutDetails.image_list.push({ rank: 1, content_status: true, content_details: {}, productList: [] });
             else this.layoutDetails.image_list.push({ rank: 1, points_list: [], productList: [] });
           }
@@ -383,6 +405,20 @@ export class ModifyHomeLayoutComponent implements OnInit {
         this.fileList.append('data', JSON.stringify(layoutData));
         this.callUpdateApi();
       });
+    }
+    else if(layoutData.type=='story_section') {
+      delete layoutData.temp_cover_img;
+      delete layoutData.cover_img_change;
+      if(this.layoutDetails.cover_img_change) {
+        delete layoutData.cover_img;
+        layoutData.icon_img_change = true;
+        this.fileList.append('attachments', this.layoutDetails.cover_img, 'story_icon');
+      }
+      else {
+        layoutData.cover_img = this.layoutDetails.cover_img || '';
+      }
+      this.fileList.append('data', JSON.stringify(layoutData));
+      this.callUpdateApi();
     }
     else if(layoutData.type=='hero_cta') {
       if(this.layoutDetails.cover_img_change) {

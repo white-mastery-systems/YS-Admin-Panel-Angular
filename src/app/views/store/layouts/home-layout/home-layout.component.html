@@ -108,12 +108,13 @@
               <ng-container *ngIf="x.type=='icon_card_grid'">{{ x.icon_card_list?.length }} Cards</ng-container>
               <ng-container *ngIf="x.type=='dual_map'">{{ x.map_list?.length }} Maps</ng-container>
               <ng-container *ngIf="x.type=='store_locator'">1 Tile</ng-container>
+              <ng-container *ngIf="x.type=='story_section'">1 Tile</ng-container>
               <ng-container *ngIf="x.type=='featured_cards'">{{ x.featured_cards_list?.length }} Groups</ng-container>
               <ng-container *ngIf="x.type=='feature_split'">{{ getFeatureSplitCount(x) }} Features</ng-container>
               <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
-              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'icon_card_grid', 'dual_map', 'store_locator', 'featured_cards', 'feature_split', 'feature_list', 'faq', 'internal_links'].indexOf(x.type)==-1">
+              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'icon_card_grid', 'dual_map', 'store_locator', 'story_section', 'featured_cards', 'feature_split', 'feature_list', 'faq', 'internal_links'].indexOf(x.type)==-1">
                 {{ x.image_list?.length }} Tiles
               </ng-container>
             </p>
@@ -342,12 +343,76 @@
                 <input type="text" name="fp_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" />
               </div>
             </ng-container>
+            <ng-container *ngIf="addForm.type=='featured_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="fs_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="fs_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="fs_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="fs_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" required />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='dual_image_highlight'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="dih_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="dih_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Icon Name</label>
+                  <input type="text" name="dih_btn_icon_name" class="form-control" [(ngModel)]="addForm.btn_icon_name" placeholder="e.g. whatsapp" />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="dih_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="dih_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" required />
+                </div>
+              </ng-container>
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Background and foreground images can be uploaded in the segment image view.</p>
+              </div>
+            </ng-container>
             <!-- flexible -->
             <div *ngIf="addForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
               <label>Content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
             </div>
+            <ng-container *ngIf="addForm.type=='story_section'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icon image, content, and button can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
             <ng-container *ngIf="addForm.type=='hero_cta'">
               <div class="col-md-12 form-group mb-3">
                 <label class="checkbox checkbox-primary">
@@ -706,12 +771,76 @@
                 <input type="text" name="efp_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" />
               </div>
             </ng-container>
+            <ng-container *ngIf="editForm.type=='featured_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="efs_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="efs_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="efs_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="efs_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" required />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='dual_image_highlight'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="edih_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="edih_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Icon Name</label>
+                  <input type="text" name="edih_btn_icon_name" class="form-control" [(ngModel)]="editForm.btn_icon_name" placeholder="e.g. whatsapp" />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="edih_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="edih_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" required />
+                </div>
+              </ng-container>
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Background and foreground images can be uploaded in the segment image view.</p>
+              </div>
+            </ng-container>
             <!-- flexible -->
             <div *ngIf="editForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
               <label>content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
             </div>
+            <ng-container *ngIf="editForm.type=='story_section'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icon image, content, and button can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
             <ng-container *ngIf="editForm.type=='hero_cta'">
               <div class="col-md-12 form-group mb-3">
                 <label class="checkbox checkbox-primary">

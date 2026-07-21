@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { FeaturesApiService } from '../../features-api.service';
@@ -27,9 +27,24 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
   editorReady = false;
   pendingEditorInit = false;
   readonly pageTitleMaxLength = 120;
+  imageSlotList: any[] = [];
+  bulkImageFiles: File[] = [];
+  bulkImageLoader = false;
+  bulkImageError = '';
+  bulkImageInfo = '';
+  bulkImageReport: any = null;
+  reimportFile: File = null;
+  reimportFileName = '';
+  reimportLoader = false;
+  reimportError = '';
+  reimportSuccess = '';
+  reimportUpdateSlug = false;
+  readonly blogDocMaxBytes = 10 * 1024 * 1024;
+  private readonly bulkImagePattern = /\.(jpe?g|png|webp)$/i;
 
   constructor(
-    private router: Router, private activeRoute: ActivatedRoute, private api: FeaturesApiService, public commonService: CommonService
+    private router: Router, private activeRoute: ActivatedRoute, private api: FeaturesApiService, public commonService: CommonService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -77,6 +92,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
               });
             }
             if(this.blogForm.faqs?.length) this.blogForm.faq_status = true;
+            this.loadImageSlots();
             if(!this.isAdvanced) {
               this.blogForm.tags_list = (this.blogForm.tags || []).map((tag) => ({ display: tag, value: tag }));
               if(this.isEditorJsMode()) {
@@ -181,7 +197,8 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
         seo_details: this.blogForm.seo_details,
         faq_title: this.blogForm.faq_title,
         faqs: this.blogForm.faqs,
-        category_id: this.blogForm.category_id
+        category_id: this.blogForm.category_id,
+        image_slots: this.blogForm.image_slots || []
       };
       if(this.blogForm.form_type === 'edit' && this.blogForm._id) {
         payload._id = this.blogForm._id;
@@ -750,6 +767,238 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     const base = (this.imgBaseUrl || '').replace(/\/+$/, '');
     const path = input.replace(/^\/+/, '');
     return base ? `${base}/${path}` : `/${path}`;
+  }
+
+  loadImageSlots() {
+    this.imageSlotList = this.filterExplicitImageSlots(this.blogForm?.image_slots);
+    if(!this.blogForm?._id) return;
+    this.api.BLOG_IMAGE_SLOTS(this.blogForm._id).subscribe((result) => {
+      if(result?.status && Array.isArray(result.slots)) {
+        this.imageSlotList = result.slots;
+        this.blogForm.image_slots = result.slots;
+      }
+    });
+  }
+
+  onReimportFileSelect(event) {
+    const file = event?.target?.files?.[0];
+    if(event?.target) event.target.value = '';
+    this.reimportError = '';
+    this.reimportSuccess = '';
+    if(!file) {
+      this.reimportFile = null;
+      this.reimportFileName = '';
+      return;
+    }
+    const lowerName = file.name.toLowerCase();
+    const allowed = ['.docx', '.md', '.markdown', '.txt'];
+    if(!allowed.some((ext) => lowerName.endsWith(ext))) {
+      this.reimportError = 'Please select a .docx or .md file';
+      this.reimportFile = null;
+      this.reimportFileName = '';
+      return;
+    }
+    if(file.size > this.blogDocMaxBytes) {
+      this.reimportError = `Document is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maximum allowed size is 10 MB.`;
+      this.reimportFile = null;
+      this.reimportFileName = '';
+      return;
+    }
+    this.reimportFile = file;
+    this.reimportFileName = file.name;
+    this.cdr.detectChanges();
+  }
+
+  submitReimportDoc() {
+    if(!this.blogForm?._id) {
+      this.reimportError = 'Save the blog before re-importing a document';
+      return;
+    }
+    if(!this.reimportFile) {
+      this.reimportError = 'Choose a revised .docx or .md file';
+      return;
+    }
+
+    this.reimportLoader = true;
+    this.reimportError = '';
+    this.reimportSuccess = '';
+    const formData = new FormData();
+    formData.append('file', this.reimportFile);
+    formData.append('blog_id', this.blogForm._id);
+    if(this.reimportUpdateSlug) formData.append('update_slug', 'true');
+    this.api.REIMPORT_BLOG_DOC(formData).subscribe((result) => {
+      this.reimportLoader = false;
+      if(result?.status) {
+        this.reimportFile = null;
+        this.reimportFileName = '';
+        this.reimportSuccess = result.message || 'Document applied. Click Update to save.';
+        this.applyReimportPreview(result.data || result);
+      }
+      else {
+        this.reimportError = result?.message || 'Unable to re-import document';
+      }
+    }, () => {
+      this.reimportLoader = false;
+      this.reimportError = 'Unable to re-import document';
+    });
+  }
+
+  private applyReimportPreview(data: any) {
+    if(!data) return;
+    this.blogForm.name = data.name || this.blogForm.name;
+    this.blogForm.description = data.description || '';
+    this.blogForm.tags = data.tags || [];
+    this.blogForm.tags_list = (data.tags || []).map((tag) => ({ display: tag, value: tag }));
+    this.blogForm.readTime = data.readTime || '';
+    this.blogForm.faq_title = data.faq_title || '';
+    this.blogForm.faqs = data.faqs || [];
+    this.blogForm.faq_status = !!(data.faqs && data.faqs.length);
+    this.blogForm.image_slots = data.image_slots || [];
+    this.blogForm.seo_details = data.seo_details || this.blogForm.seo_details;
+    if(data.slug) this.blogForm.slug = data.slug;
+    if(data.author_id !== undefined) this.blogForm.author_id = data.author_id;
+    if(data.author !== undefined) this.blogForm.author = data.author;
+    if(data.seo_details?.meta_keywords?.length) {
+      this.blogForm.seo_details.meta_keyword_list = data.seo_details.meta_keywords.map((obj) => ({ display: obj, value: obj }));
+    }
+    if(this.isEditorJsMode()) {
+      this.blogForm.content = this.prepareEditorContentForView(data.content || this.getDefaultContent());
+      this.destroyEditor();
+      this.pendingEditorInit = true;
+    }
+    this.imageSlotList = this.filterExplicitImageSlots(this.blogForm.image_slots);
+    this.syncSelectedAuthor();
+    this.cdr.detectChanges();
+  }
+
+  private filterExplicitImageSlots(slots) {
+    return (Array.isArray(slots) ? slots : []).filter((s) => {
+      if(!s || !s.name) return false;
+      return s.source === 'marker' || s.source === 'cover' || s.name === 'cover';
+    });
+  }
+
+  onBulkImageSelect(event) {
+    const input = event?.target as HTMLInputElement;
+    const picked = input?.files?.length ? Array.from(input.files) : [];
+    if (input) input.value = '';
+    this.applyBulkImageSelection(picked, false);
+  }
+
+  onBulkFolderSelect(event) {
+    const input = event?.target as HTMLInputElement;
+    const picked = input?.files?.length ? Array.from(input.files) : [];
+    if (input) input.value = '';
+    this.applyBulkImageSelection(picked, true);
+  }
+
+  openBulkFolderPicker(folderInput: HTMLInputElement) {
+    const showDirectoryPicker = (window as any).showDirectoryPicker;
+    if (typeof showDirectoryPicker !== 'function') {
+      if (folderInput) folderInput.click();
+      return;
+    }
+
+    showDirectoryPicker.call(window)
+      .then((dirHandle: any) => this.readAllFilesFromDirectory(dirHandle))
+      .then((files) => this.applyBulkImageSelection(files, true))
+      .catch((err: any) => {
+        if (err?.name === 'AbortError') return;
+        if (folderInput) folderInput.click();
+      });
+  }
+
+  private async readAllFilesFromDirectory(dirHandle: any): Promise<File[]> {
+    const files: File[] = [];
+    for await (const [, entry] of dirHandle.entries()) {
+      if (entry.kind === 'file') {
+        files.push(await entry.getFile());
+      }
+      else if (entry.kind === 'directory') {
+        files.push(...await this.readAllFilesFromDirectory(entry));
+      }
+    }
+    return files;
+  }
+
+  private applyBulkImageSelection(picked: File[], fromFolder: boolean) {
+    const images = picked.filter((file) => this.isAllowedBulkImage(file));
+    const skipped = picked.length - images.length;
+
+    this.bulkImageError = '';
+    this.bulkImageInfo = '';
+    this.bulkImageReport = null;
+    this.bulkImageFiles = images;
+
+    if(!images.length) {
+      this.bulkImageError = fromFolder
+        ? 'No JPG, PNG, or WebP images found in that folder.'
+        : 'No files selected. Use JPG, PNG, or WebP images named after a slot above.';
+    }
+    else if(skipped > 0) {
+      this.bulkImageInfo = `${skipped} non-image file(s) skipped. ${images.length} image(s) ready to upload.`;
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  private isAllowedBulkImage(file: File) {
+    const name = (file?.name || '').toLowerCase();
+    if(this.bulkImagePattern.test(name)) return true;
+    const type = (file?.type || '').toLowerCase();
+    return type === 'image/jpeg' || type === 'image/jpg' || type === 'image/png' || type === 'image/webp';
+  }
+
+  bulkImageDisplayName(file: File) {
+    const relative = (file as File & { webkitRelativePath?: string }).webkitRelativePath;
+    return (relative || file?.name || '').trim();
+  }
+
+  submitBulkImages() {
+    if(!this.blogForm?._id) {
+      this.bulkImageError = 'Save the blog draft before uploading images';
+      return;
+    }
+    if(!this.bulkImageFiles.length) {
+      this.bulkImageError = 'Choose one or more image files';
+      return;
+    }
+    this.bulkImageLoader = true;
+    this.bulkImageError = '';
+    this.bulkImageInfo = '';
+    const formData = new FormData();
+    formData.append('blog_id', this.blogForm._id);
+    this.bulkImageFiles.forEach((file) => formData.append('attachments', file));
+    this.api.BLOG_PLACE_IMAGES(formData).subscribe((result) => {
+      this.bulkImageLoader = false;
+      if(result?.status) {
+        this.bulkImageReport = result;
+        this.bulkImageFiles = [];
+        this.api.BLOG_DETAILS_BY_SLUG(this.blogForm.slug || this.blogForm._id).subscribe((reload) => {
+          if(!reload?.status) return;
+          this.blogForm.content = reload.data.content;
+          this.blogForm.description = reload.data.description;
+          if(reload.data.image) this.blogForm.image = this.normalizeAssetPath(reload.data.image);
+          if(reload.data.coverImage) this.blogForm.coverImage = this.normalizeAssetPath(reload.data.coverImage);
+          if(this.isEditorJsMode()) {
+            this.blogForm.content = this.prepareEditorContentForView(this.blogForm.content || this.getDefaultContent());
+            this.destroyEditor();
+            this.pendingEditorInit = true;
+          }
+        });
+      }
+      else {
+        this.bulkImageError = result?.message || 'Unable to place images';
+      }
+    }, () => {
+      this.bulkImageLoader = false;
+      this.bulkImageError = 'Unable to place images';
+    });
+  }
+
+  slotFilenameHint(slot) {
+    const name = (slot?.name || '').trim().replace(/-(jpe?g|png|webp|gif)$/i, '');
+    return name ? `${name}.jpg or ${name}.png` : '';
   }
 
   private normalizeAssetPath(value: string) {

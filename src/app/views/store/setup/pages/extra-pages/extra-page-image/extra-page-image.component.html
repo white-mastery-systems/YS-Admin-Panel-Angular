@@ -285,7 +285,7 @@
 
   <form *ngIf="layoutDetails.type!='multi_categories'" autocomplete="off" (ngSubmit)="onUpdateLayout();" ngNativeValidate ngbAutofocus>
 
-    <ng-container *ngIf="layoutDetails.type!='shopping_assistant' && layoutDetails.type!='hero_cta' && layoutDetails.type!='cta' && layoutDetails.type!='amenities' && layoutDetails.type!='feature_list' && layoutDetails.type!='faq' && layoutDetails.type!='internal_links' && layoutDetails.type!='dual_map' && layoutDetails.type!='content_section' && layoutDetails.type!='icon_card_grid' && layoutDetails.type!='contact_info' && layoutDetails.type!='featured_cards'">
+    <ng-container *ngIf="layoutDetails.type!='shopping_assistant' && layoutDetails.type!='hero_cta' && layoutDetails.type!='cta' && layoutDetails.type!='amenities' && layoutDetails.type!='feature_list' && layoutDetails.type!='faq' && layoutDetails.type!='internal_links' && layoutDetails.type!='dual_map' && layoutDetails.type!='content_section' && layoutDetails.type!='icon_card_grid' && layoutDetails.type!='contact_info' && layoutDetails.type!='featured_cards' && layoutDetails.type!='rich_text'">
       <div *ngFor="let x of layoutDetails.image_list; let i=index;" class="poss-rel card p-3 mb-3">
 
       <span *ngIf="['primary_slider', 'section'].indexOf(layoutDetails.type)==-1 && layoutDetails.image_list?.length>1"
@@ -1387,6 +1387,20 @@
     </ng-container>
     <!-- #Content Section -->
 
+    <!-- Rich Text -->
+    <ng-container *ngIf="layoutDetails.type=='rich_text'">
+      <div class="card p-3 mb-3">
+        <div class="row">
+          <div class="col-md-12 form-group mb-3 quill-mb-5">
+            <label>Content</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="layoutDetails.content"
+              [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- #Rich Text -->
+
     <!-- Internal Links -->
     <ng-container *ngIf="layoutDetails.type=='internal_links'">
       <div class="card p-3 mb-3">
@@ -1920,7 +1934,7 @@
     </ng-container>
 
     <div
-      *ngIf="((layoutDetails?.type!='content_grid' && layoutDetails?.type!='amenities' && layoutDetails?.type!='feature_list' && layoutDetails?.type!='faq' && layoutDetails?.type!='internal_links' && layoutDetails?.type!='dual_map' && layoutDetails?.image_list?.length<maxImgCount) || ((layoutDetails?.type=='content_grid' || layoutDetails?.type=='amenities') && layoutDetails?.text_list?.length<maxImgCount)) && ['grid', 'section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'hero_cta', 'cta', 'amenities', 'feature_list', 'faq', 'internal_links', 'dual_map', 'content_section', 'icon_card_grid', 'contact_info', 'featured_cards'].indexOf(layoutDetails.type)==-1"
+      *ngIf="((layoutDetails?.type!='content_grid' && layoutDetails?.type!='amenities' && layoutDetails?.type!='feature_list' && layoutDetails?.type!='faq' && layoutDetails?.type!='internal_links' && layoutDetails?.type!='dual_map' && layoutDetails?.image_list?.length<maxImgCount) || ((layoutDetails?.type=='content_grid' || layoutDetails?.type=='amenities') && layoutDetails?.text_list?.length<maxImgCount)) && ['grid', 'section', 'highlighted_section', 'secondary', 'shopping_assistant', 'video_section', 'hero_cta', 'cta', 'amenities', 'feature_list', 'faq', 'internal_links', 'dual_map', 'content_section', 'icon_card_grid', 'contact_info', 'featured_cards', 'rich_text'].indexOf(layoutDetails.type)==-1"
       class="row m-0">
       <div class="col-md-4">
         <button type="button" class="light-button" (click)="addNewImg();">

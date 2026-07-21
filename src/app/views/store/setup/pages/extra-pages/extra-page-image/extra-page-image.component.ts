@@ -140,6 +140,9 @@ export class ExtraPageImageComponent implements OnInit {
               if(!this.layoutDetails.btn_text_color) this.layoutDetails.btn_text_color = 'light';
               if(!this.layoutDetails.btn_link_type) this.layoutDetails.btn_link_type = 'internal';
             }
+            else if(this.layoutDetails.type=='rich_text') {
+              if(!this.layoutDetails.content) this.layoutDetails.content = '';
+            }
             else if(this.layoutDetails.type=='feature_list') {
               if(!this.layoutDetails.feature_list?.length) {
                 this.layoutDetails.feature_list = [this.getDefaultFeatureListItem()];
@@ -425,6 +428,13 @@ export class ExtraPageImageComponent implements OnInit {
         this.callUpdateApi();
       }
       else if(layoutData.type=='content_section') {
+        layoutData.store_id = this.commonService.store_details._id;
+        layoutData.page_id = this.params.id;
+        layoutData._id = this.layoutDetails._id;
+        this.fileList.append('data', JSON.stringify(layoutData));
+        this.callUpdateApi();
+      }
+      else if(layoutData.type=='rich_text') {
         layoutData.store_id = this.commonService.store_details._id;
         layoutData.page_id = this.params.id;
         layoutData._id = this.layoutDetails._id;
