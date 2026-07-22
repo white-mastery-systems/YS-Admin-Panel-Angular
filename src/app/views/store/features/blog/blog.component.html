@@ -40,7 +40,7 @@
           <span class="material-symbols-rounded">visibility</span>View Page
         </button>
         <button type="button" class="mr-3" (click)="openSettingModal(settingModal);"><span class="material-symbols-rounded">settings</span> SEO Setting</button>
-        <button *ngIf="!isAdvanced" type="button" class="mr-3" (click)="openImportDialog(importModal);">
+        <button *ngIf="!isAdvanced && commonService.master_token" type="button" class="mr-3" (click)="openImportDialog(importModal);">
           <span class="material-symbols-rounded">upload_file</span>Import Doc
         </button>
         <button class="highbutton" type="button" (click)="onAdd();"><span class="material-symbols-rounded">add</span>Create Blog</button>
