@@ -825,6 +825,7 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     const formData = new FormData();
     formData.append('file', this.reimportFile);
     formData.append('blog_id', this.blogForm._id);
+    formData.append('editor_type', this.normalizeEditorType(this.blogForm.editor_type || 'basic'));
     if(this.reimportUpdateSlug) formData.append('update_slug', 'true');
     this.api.REIMPORT_BLOG_DOC(formData).subscribe((result) => {
       this.reimportLoader = false;
@@ -846,7 +847,18 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
   private applyReimportPreview(data: any) {
     if(!data) return;
     this.blogForm.name = data.name || this.blogForm.name;
-    this.blogForm.description = data.description || '';
+    if(data.editor_type) {
+      this.blogForm.editor_type = this.normalizeEditorType(data.editor_type);
+      this.setEditorMode(this.blogForm.editor_type);
+    }
+    if(this.isEditorJsMode()) {
+      this.blogForm.content = this.prepareEditorContentForView(data.content || this.getDefaultContent());
+      this.destroyEditor();
+      this.pendingEditorInit = true;
+    }
+    else {
+      this.blogForm.description = data.description || '';
+    }
     this.blogForm.tags = data.tags || [];
     this.blogForm.tags_list = (data.tags || []).map((tag) => ({ display: tag, value: tag }));
     this.blogForm.readTime = data.readTime || '';
@@ -860,11 +872,6 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     if(data.author !== undefined) this.blogForm.author = data.author;
     if(data.seo_details?.meta_keywords?.length) {
       this.blogForm.seo_details.meta_keyword_list = data.seo_details.meta_keywords.map((obj) => ({ display: obj, value: obj }));
-    }
-    if(this.isEditorJsMode()) {
-      this.blogForm.content = this.prepareEditorContentForView(data.content || this.getDefaultContent());
-      this.destroyEditor();
-      this.pendingEditorInit = true;
     }
     this.imageSlotList = this.filterExplicitImageSlots(this.blogForm.image_slots);
     this.syncSelectedAuthor();
