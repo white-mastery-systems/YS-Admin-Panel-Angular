@@ -129,6 +129,7 @@ export class BlogComponent implements OnInit {
     this.api.IMPORT_BLOG_DOC(formData).subscribe(result => {
       this.importLoader = false;
       if(result.status) {
+        if(result.author) this.commonService.mergeBlogAuthor(result.author);
         if(modal) modal.close();
         this.router.navigate(['/setting/blogs/'+(result.slug || result.blog_id)]);
       }
@@ -149,39 +150,14 @@ export class BlogComponent implements OnInit {
     this.modalService.open(modalName, { centered: true });
   }
   onUpdateStatus() {
-    let reqData: any = { _id: this.blogForm._id, status: this.blogForm.change_status+"d" };
-    if(!this.isAdvanced && this.isAdvancedEditorType(this.blogForm.editor_type)) {
-      reqData = {
-        editor_type: 'advanced',
-        slug: this.blogForm.slug,
-        title: this.blogForm.name,
-        eyebrow_heading: this.blogForm.eyebrow_heading || '',
-        author_id: this.blogForm.author_id,
-        author: this.blogForm.author,
-        createdOn: this.blogForm.created_on,
-        coverImage: this.blogForm.coverImage || this.blogForm.image,
-        thumbnail: this.blogForm.thumbnail || '',
-        imageAlt: this.blogForm.imageAlt || this.blogForm.img_alt,
-        authorAvatar: this.blogForm.authorAvatar,
-        authorRole: this.blogForm.authorRole,
-        authorBio: this.blogForm.authorBio,
-        authorLink: this.blogForm.authorLink,
-        readTime: this.blogForm.readTime,
-        tags: this.blogForm.tags || [],
-        published: this.blogForm.change_status=='enable',
-        content: this.blogForm.content,
-        seo_details: this.blogForm.seo_details,
-        faq_title: this.blogForm.faq_title,
-        faqs: this.blogForm.faqs
-      };
-    }
-    else if(!this.isAdvanced) {
-      reqData = {
-        ...this.blogForm,
-        status: this.blogForm.change_status+"d",
-        published: this.blogForm.change_status=='enable'
-      };
-    }
+    // List API omits content/description — never send a full EditorJS upsert from Enable/Disable.
+    const published = this.blogForm.change_status === 'enable';
+    const reqData: any = {
+      _id: this.blogForm._id,
+      status: published ? 'enabled' : 'disabled',
+      published,
+      status_only: true
+    };
     this.api.UPDATE_BLOG(reqData).subscribe(result => {
 			if(result.status) {
         document.getElementById('closeModal').click();

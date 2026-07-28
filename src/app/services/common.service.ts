@@ -298,6 +298,19 @@ export class CommonService {
     localStorage.setItem(key, this.encryptData(value));
   }
 
+  // Insert/refresh a blog author in the cached list (memory + localStorage) so a
+  // newly created author (e.g. auto-created on doc import) shows in the dropdown
+  // immediately, without waiting for the list cache to be rebuilt elsewhere.
+  mergeBlogAuthor(author: any) {
+    if(!author || !author._id) return;
+    const list = Array.isArray(this.blog_author_list) ? [...this.blog_author_list] : [];
+    const idx = list.findIndex((a) => a && a._id === author._id);
+    if(idx === -1) list.push(author);
+    else list[idx] = { ...list[idx], ...author };
+    this.blog_author_list = list.sort((a, b) => 0 - (a.name > b.name ? -1 : 1));
+    this.updateLocalData('blog_author_list', this.blog_author_list);
+  }
+
   onActivate(event) {
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
  }

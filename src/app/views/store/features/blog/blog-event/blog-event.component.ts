@@ -870,6 +870,11 @@ export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {
     if(data.slug) this.blogForm.slug = data.slug;
     if(data.author_id !== undefined) this.blogForm.author_id = data.author_id;
     if(data.author !== undefined) this.blogForm.author = data.author;
+    // Doc may have created a new author server-side — make sure it's in the dropdown list.
+    if(data.author_id) {
+      this.commonService.mergeBlogAuthor({ _id: data.author_id, name: data.author });
+      this.authorList = this.commonService.blog_author_list;
+    }
     if(data.seo_details?.meta_keywords?.length) {
       this.blogForm.seo_details.meta_keyword_list = data.seo_details.meta_keywords.map((obj) => ({ display: obj, value: obj }));
     }
