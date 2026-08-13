@@ -134,7 +134,7 @@ export class StoreSettingComponent implements OnInit {
 
   onOpenLivePricingModal(modalName) {
     this.popupLoader = true;
-    this.livePricingForm = { enabled: false, gold_18kt: 0, gold_22kt: 0, diamond: 0, platinum: 0 };
+    this.livePricingForm = { enabled: false, gold_18kt: 0, gold_22kt: 0, silver: 0, platinum: 0 };
     this.modalService.open(modalName, { windowClass: 'scroll-modal-xl', scrollable: true });
     this.api.STORE_PROPERTY_DETAILS().subscribe((result) => {
       if (result.status) {
@@ -151,7 +151,7 @@ export class StoreSettingComponent implements OnInit {
       "live_pricing.enabled": this.livePricingForm.enabled,
       "live_pricing.gold_18kt": this.livePricingForm.gold_18kt || 0,
       "live_pricing.gold_22kt": this.livePricingForm.gold_22kt || 0,
-      "live_pricing.diamond": this.livePricingForm.diamond || 0,
+      "live_pricing.silver": this.livePricingForm.silver || 0,
       "live_pricing.platinum": this.livePricingForm.platinum || 0,
       "live_pricing.last_updated": new Date()
     }).subscribe((result) => {
