@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="col-6 col-md-4 px-2 mb-3">
+    <div class="col-6 col-md-4 px-2 mb-3" *ngIf="commonService.route_permission_list.indexOf('catalog_page')!=-1">
       <div class="card p-3 d-flex justify-content-start align-items-center flex-row" routerLink="/setup/pages/catalog-pages">
         <div class="icons mb-0">
           <span class="material-symbols-rounded">auto_stories</span>

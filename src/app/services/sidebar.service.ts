@@ -358,8 +358,10 @@ export class SidebarService {
           routePermissionList.push("extra_pages");
           tempWebList.push({ keyword: "extra_pages", name: "Extra Pages" });
         }
-        routePermissionList.push("catalog_page");
-        tempWebList.push({ keyword: "catalog_page", name: "Catalog Pages" });
+        if(environment.config_data.catalog_pages.indexOf(this.commonService.store_details._id)!=-1) {
+          routePermissionList.push("catalog_page");
+          tempWebList.push({ keyword: "catalog_page", name: "Catalog Pages" });
+        }
         tempWebList.push({ keyword: "footer_configuration", name: "Footer Configuration" });
         if(ysFeatures.indexOf('catalog_page_content')!=-1) {
           webList.push({ name: 'Footer SEO Links', type: 'link', icon: 'track_changes', state: '/setup/footer-seo-links' });
