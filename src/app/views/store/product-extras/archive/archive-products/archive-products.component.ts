@@ -11,10 +11,11 @@ import { FieldSearchPipe } from '../../../../../shared/pipes/field-search.pipe';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-archive-products',
-  templateUrl: './archive-products.component.html',
-  styleUrls: ['./archive-products.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-archive-products',
+    templateUrl: './archive-products.component.html',
+    styleUrls: ['./archive-products.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ArchiveProductsComponent implements OnInit {

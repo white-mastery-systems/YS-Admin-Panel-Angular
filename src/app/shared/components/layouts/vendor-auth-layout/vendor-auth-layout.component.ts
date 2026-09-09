@@ -6,9 +6,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-vendor-auth-layout',
-  templateUrl: './vendor-auth-layout.component.html',
-  styleUrls: ['./vendor-auth-layout.component.scss']
+    selector: 'app-vendor-auth-layout',
+    templateUrl: './vendor-auth-layout.component.html',
+    styleUrls: ['./vendor-auth-layout.component.scss'],
+    standalone: false
 })
 
 export class VendorAuthLayoutComponent implements OnInit {

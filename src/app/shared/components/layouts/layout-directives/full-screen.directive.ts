@@ -2,8 +2,9 @@ import { Directive, HostListener } from '@angular/core';
   
   
   @Directive({
-    selector: '[fullScreenWindow]'
-  })
+    selector: '[fullScreenWindow]',
+    standalone: false
+})
   export class FullScreenWindowDirective {
     // Full screen
     private cancelFullScreen(el) {

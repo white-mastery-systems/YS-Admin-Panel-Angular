@@ -9,10 +9,11 @@ import { Share } from '@capacitor/share';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-catalogs',
-  templateUrl: './catalogs.component.html',
-  styleUrls: ['./catalogs.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-catalogs',
+    templateUrl: './catalogs.component.html',
+    styleUrls: ['./catalogs.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CatalogsComponent implements OnInit {

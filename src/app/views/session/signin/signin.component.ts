@@ -15,7 +15,8 @@ import { environment } from 'src/environments/environment';
     selector: 'app-signin',
     templateUrl: './signin.component.html',
     styleUrls: ['./signin.component.scss'],
-    animations: [SharedAnimations]
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SigninComponent implements OnInit {

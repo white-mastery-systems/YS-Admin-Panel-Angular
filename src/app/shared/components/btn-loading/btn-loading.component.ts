@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'btn-loading',
-  templateUrl: './btn-loading.component.html',
-  styleUrls: ['./btn-loading.component.scss']
+    selector: 'btn-loading',
+    templateUrl: './btn-loading.component.html',
+    styleUrls: ['./btn-loading.component.scss'],
+    standalone: false
 })
 export class BtnLoadingComponent implements OnInit {
   @Input('loading') loading: boolean;

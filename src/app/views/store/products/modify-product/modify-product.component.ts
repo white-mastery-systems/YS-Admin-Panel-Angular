@@ -12,10 +12,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ProductExtrasApiService } from '../../product-extras/product-extras-api.service';
 
 @Component({
-  selector: 'app-modify-product',
-  templateUrl: './modify-product.component.html',
-  styleUrls: ['./modify-product.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-modify-product',
+    templateUrl: './modify-product.component.html',
+    styleUrls: ['./modify-product.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ModifyProductComponent implements OnInit {

@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-dinamic-offer-event',
-  templateUrl: './dinamic-offer-event.component.html',
-  styleUrls: ['./dinamic-offer-event.component.scss']
+    selector: 'app-dinamic-offer-event',
+    templateUrl: './dinamic-offer-event.component.html',
+    styleUrls: ['./dinamic-offer-event.component.scss'],
+    standalone: false
 })
 
 export class DinamicOfferEventComponent implements OnInit {

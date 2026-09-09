@@ -7,10 +7,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-vendor-settlement',
-  templateUrl: './vendor-settlement.component.html',
-  styleUrls: ['./vendor-settlement.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-settlement',
+    templateUrl: './vendor-settlement.component.html',
+    styleUrls: ['./vendor-settlement.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorSettlementComponent implements OnInit {

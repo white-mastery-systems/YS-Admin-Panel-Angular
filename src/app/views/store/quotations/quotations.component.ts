@@ -8,10 +8,11 @@ import { ExcelService } from '../../../services/excel.service';
 import { FieldSearchPipe } from '../../../shared/pipes/field-search.pipe';
 
 @Component({
-  selector: 'app-quotations',
-  templateUrl: './quotations.component.html',
-  styleUrls: ['./quotations.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-quotations',
+    templateUrl: './quotations.component.html',
+    styleUrls: ['./quotations.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class QuotationsComponent implements OnInit {

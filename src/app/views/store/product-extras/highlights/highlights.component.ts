@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-highlights',
-  templateUrl: './highlights.component.html',
-  styleUrls: ['./highlights.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-highlights',
+    templateUrl: './highlights.component.html',
+    styleUrls: ['./highlights.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class HighlightsComponent implements OnInit {

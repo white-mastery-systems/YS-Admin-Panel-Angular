@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-giftcard',
-  templateUrl: './giftcard.component.html',
-  styleUrls: ['./giftcard.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-giftcard',
+    templateUrl: './giftcard.component.html',
+    styleUrls: ['./giftcard.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class GiftcardComponent implements OnInit {

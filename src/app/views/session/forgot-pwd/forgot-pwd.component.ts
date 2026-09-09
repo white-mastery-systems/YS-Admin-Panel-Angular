@@ -3,10 +3,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import { ApiService } from '../../../services/api.service';
 
 @Component({
-  selector: 'app-forgot-pwd',
-  templateUrl: './forgot-pwd.component.html',
-  styleUrls: ['./forgot-pwd.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-forgot-pwd',
+    templateUrl: './forgot-pwd.component.html',
+    styleUrls: ['./forgot-pwd.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ForgotPwdComponent implements OnInit {

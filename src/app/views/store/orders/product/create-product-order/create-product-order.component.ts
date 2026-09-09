@@ -10,10 +10,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 @Component({
-  selector: 'app-create-product-order',
-  templateUrl: './create-product-order.component.html',
-  styleUrls: ['./create-product-order.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-create-product-order',
+    templateUrl: './create-product-order.component.html',
+    styleUrls: ['./create-product-order.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CreateProductOrderComponent implements OnInit {

@@ -9,10 +9,11 @@ import { DeploymentService } from '../deployment/deployment.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-products',
-  templateUrl: './products.component.html',
-  styleUrls: ['./products.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-products',
+    templateUrl: './products.component.html',
+    styleUrls: ['./products.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ProductsComponent implements OnInit {

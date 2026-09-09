@@ -12,9 +12,10 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-vendors-dashboard',
-  templateUrl: './vendors-dashboard.component.html',
-  styleUrls: ['./vendors-dashboard.component.scss']
+    selector: 'app-vendors-dashboard',
+    templateUrl: './vendors-dashboard.component.html',
+    styleUrls: ['./vendors-dashboard.component.scss'],
+    standalone: false
 })
 
 export class VendorsDashboardComponent implements OnInit {

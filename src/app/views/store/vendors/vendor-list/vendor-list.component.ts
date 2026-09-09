@@ -9,10 +9,11 @@ import { SetupService } from '../../setup/setup.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-vendor-list',
-  templateUrl: './vendor-list.component.html',
-  styleUrls: ['./vendor-list.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-list',
+    templateUrl: './vendor-list.component.html',
+    styleUrls: ['./vendor-list.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorListComponent implements OnInit {

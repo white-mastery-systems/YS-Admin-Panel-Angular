@@ -8,10 +8,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-foot-note',
-  templateUrl: './foot-note.component.html',
-  styleUrls: ['./foot-note.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-foot-note',
+    templateUrl: './foot-note.component.html',
+    styleUrls: ['./foot-note.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class FootNoteComponent implements OnInit {

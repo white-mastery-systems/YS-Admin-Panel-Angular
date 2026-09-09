@@ -6,9 +6,10 @@ import { environment } from '../../../../../../../environments/environment';
 import { FeaturesApiService } from '../../../features-api.service';
 
 @Component({
-  selector: 'app-blog-segment-details',
-  templateUrl: './blog-segment-details.component.html',
-  styleUrls: ['./blog-segment-details.component.scss']
+    selector: 'app-blog-segment-details',
+    templateUrl: './blog-segment-details.component.html',
+    styleUrls: ['./blog-segment-details.component.scss'],
+    standalone: false
 })
 
 export class BlogSegmentDetailsComponent implements OnInit {

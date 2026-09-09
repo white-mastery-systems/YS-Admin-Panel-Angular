@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-create-new-page',
-  templateUrl: './create-new-page.component.html',
-  styleUrls: ['./create-new-page.component.scss']
+    selector: 'app-create-new-page',
+    templateUrl: './create-new-page.component.html',
+    styleUrls: ['./create-new-page.component.scss'],
+    standalone: false
 })
 export class CreateNewPageComponent implements OnInit {
 

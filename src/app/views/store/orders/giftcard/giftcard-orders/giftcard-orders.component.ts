@@ -9,10 +9,11 @@ import { ExcelService } from '../../../../../services/excel.service';
 import { GridSearchPipe } from '../../../../../shared/pipes/grid-search.pipe';
 
 @Component({
-  selector: 'app-giftcard-orders',
-  templateUrl: './giftcard-orders.component.html',
-  styleUrls: ['./giftcard-orders.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-giftcard-orders',
+    templateUrl: './giftcard-orders.component.html',
+    styleUrls: ['./giftcard-orders.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class GiftcardOrdersComponent implements OnInit {

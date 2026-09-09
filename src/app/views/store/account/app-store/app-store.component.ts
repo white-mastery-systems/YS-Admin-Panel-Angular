@@ -6,9 +6,10 @@ import { AccountService } from '../account.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-app-store',
-  templateUrl: './app-store.component.html',
-  styleUrls: ['./app-store.component.scss']
+    selector: 'app-app-store',
+    templateUrl: './app-store.component.html',
+    styleUrls: ['./app-store.component.scss'],
+    standalone: false
 })
 
 export class AppStoreComponent implements OnInit {

@@ -3,9 +3,10 @@ import { StoreApiService } from '../../../../services/store-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-store-seo',
-  templateUrl: './store-seo.component.html',
-  styleUrls: ['./store-seo.component.scss']
+    selector: 'app-store-seo',
+    templateUrl: './store-seo.component.html',
+    styleUrls: ['./store-seo.component.scss'],
+    standalone: false
 })
 
 export class StoreSeoComponent implements OnInit {

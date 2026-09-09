@@ -6,10 +6,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-grid-card-list',
-  templateUrl: './grid-card-list.component.html',
-  styleUrls: ['./grid-card-list.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-grid-card-list',
+    templateUrl: './grid-card-list.component.html',
+    styleUrls: ['./grid-card-list.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class GridCardListComponent implements OnInit {

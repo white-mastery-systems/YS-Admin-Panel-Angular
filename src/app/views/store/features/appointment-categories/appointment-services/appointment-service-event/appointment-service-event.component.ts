@@ -7,9 +7,10 @@ import { FeaturesApiService } from '../../../features-api.service';
 import { environment } from '../../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-appointment-service-event',
-  templateUrl: './appointment-service-event.component.html',
-  styleUrls: ['./appointment-service-event.component.scss']
+    selector: 'app-appointment-service-event',
+    templateUrl: './appointment-service-event.component.html',
+    styleUrls: ['./appointment-service-event.component.scss'],
+    standalone: false
 })
 
 export class AppointmentServiceEventComponent implements OnInit {

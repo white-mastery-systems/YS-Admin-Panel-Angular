@@ -7,10 +7,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-model-history',
-  templateUrl: './model-history.component.html',
-  styleUrls: ['./model-history.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-model-history',
+    templateUrl: './model-history.component.html',
+    styleUrls: ['./model-history.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ModelHistoryComponent implements OnInit {

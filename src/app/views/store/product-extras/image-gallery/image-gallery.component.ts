@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ProductExtrasApiService } from '../product-extras-api.service';
 
 @Component({
-  selector: 'app-image-gallery',
-  templateUrl: './image-gallery.component.html',
-  styleUrls: ['./image-gallery.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-image-gallery',
+    templateUrl: './image-gallery.component.html',
+    styleUrls: ['./image-gallery.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ImageGalleryComponent implements OnInit {

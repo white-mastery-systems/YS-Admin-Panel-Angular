@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-recipe-event',
-  templateUrl: './recipe-event.component.html',
-  styleUrls: ['./recipe-event.component.scss']
+    selector: 'app-recipe-event',
+    templateUrl: './recipe-event.component.html',
+    styleUrls: ['./recipe-event.component.scss'],
+    standalone: false
 })
 
 export class RecipeEventComponent implements OnInit {

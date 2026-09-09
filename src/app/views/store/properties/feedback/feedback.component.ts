@@ -5,10 +5,11 @@ import { StoreApiService } from '../../../../services/store-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-feedback',
-  templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class FeedbackComponent implements OnInit {

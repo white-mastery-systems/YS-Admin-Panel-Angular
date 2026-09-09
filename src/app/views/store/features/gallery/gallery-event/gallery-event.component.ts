@@ -8,10 +8,11 @@ import { FeaturesApiService } from '../../features-api.service';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-gallery-event',
-  templateUrl: './gallery-event.component.html',
-  styleUrls: ['./gallery-event.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-gallery-event',
+    templateUrl: './gallery-event.component.html',
+    styleUrls: ['./gallery-event.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class GalleryEventComponent implements OnInit {

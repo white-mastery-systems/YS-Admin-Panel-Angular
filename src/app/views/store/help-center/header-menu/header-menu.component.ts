@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-header-menu',
-  templateUrl: './header-menu.component.html',
-  styleUrls: ['./header-menu.component.scss']
+    selector: 'app-header-menu',
+    templateUrl: './header-menu.component.html',
+    styleUrls: ['./header-menu.component.scss'],
+    standalone: false
 })
 export class HeaderMenuComponent implements OnInit {
 

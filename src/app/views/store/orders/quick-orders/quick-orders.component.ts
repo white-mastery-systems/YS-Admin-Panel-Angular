@@ -7,10 +7,11 @@ import { environment } from 'src/environments/environment';
 import { Share } from '@capacitor/share';
 
 @Component({
-  selector: 'app-quick-orders',
-  templateUrl: './quick-orders.component.html',
-  styleUrls: ['./quick-orders.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-quick-orders',
+    templateUrl: './quick-orders.component.html',
+    styleUrls: ['./quick-orders.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class QuickOrdersComponent implements OnInit {

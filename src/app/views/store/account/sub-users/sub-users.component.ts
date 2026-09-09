@@ -6,10 +6,11 @@ import { AccountService } from '../account.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-sub-users',
-  templateUrl: './sub-users.component.html',
-  styleUrls: ['./sub-users.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-sub-users',
+    templateUrl: './sub-users.component.html',
+    styleUrls: ['./sub-users.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SubUsersComponent implements OnInit {

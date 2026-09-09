@@ -3,9 +3,10 @@ import { SetupService } from '../../setup.service';
 import { CommonService } from '../../../../../services/common.service';
 
 @Component({
-  selector: 'app-contact-page',
-  templateUrl: './contact-page.component.html',
-  styleUrls: ['./contact-page.component.scss']
+    selector: 'app-contact-page',
+    templateUrl: './contact-page.component.html',
+    styleUrls: ['./contact-page.component.scss'],
+    standalone: false
 })
 
 export class ContactPageComponent implements OnInit {

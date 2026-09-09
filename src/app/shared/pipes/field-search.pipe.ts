@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'fieldSearch'
+    name: 'fieldSearch',
+    standalone: false
 })
 export class FieldSearchPipe implements PipeTransform {
 

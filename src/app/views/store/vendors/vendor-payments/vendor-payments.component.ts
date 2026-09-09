@@ -5,10 +5,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-vendor-payments',
-  templateUrl: './vendor-payments.component.html',
-  styleUrls: ['./vendor-payments.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-payments',
+    templateUrl: './vendor-payments.component.html',
+    styleUrls: ['./vendor-payments.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorPaymentsComponent implements OnInit {

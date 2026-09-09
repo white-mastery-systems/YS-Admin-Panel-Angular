@@ -6,9 +6,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-logo-management',
-  templateUrl: './logo-management.component.html',
-  styleUrls: ['./logo-management.component.scss']
+    selector: 'app-logo-management',
+    templateUrl: './logo-management.component.html',
+    styleUrls: ['./logo-management.component.scss'],
+    standalone: false
 })
 
 export class LogoManagementComponent implements OnInit {

@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-catalog-navigations',
-  templateUrl: './catalog-navigations.component.html',
-  styleUrls: ['./catalog-navigations.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-catalog-navigations',
+    templateUrl: './catalog-navigations.component.html',
+    styleUrls: ['./catalog-navigations.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CatalogNavigationsComponent implements OnInit {

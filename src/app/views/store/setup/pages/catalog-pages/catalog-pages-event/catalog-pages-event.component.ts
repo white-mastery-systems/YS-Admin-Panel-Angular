@@ -7,10 +7,11 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-catalog-pages-event',
-  templateUrl: './catalog-pages-event.component.html',
-  styleUrls: ['./catalog-pages-event.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-catalog-pages-event',
+    templateUrl: './catalog-pages-event.component.html',
+    styleUrls: ['./catalog-pages-event.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CatalogPagesEventComponent implements OnInit {

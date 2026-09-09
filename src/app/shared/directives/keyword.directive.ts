@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appKeyword]'
+    selector: '[appKeyword]',
+    standalone: false
 })
 
 export class KeywordDirective {

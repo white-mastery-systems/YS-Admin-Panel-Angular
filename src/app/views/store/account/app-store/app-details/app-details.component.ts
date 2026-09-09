@@ -9,9 +9,10 @@ import { AccountService } from '../../account.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-app-details',
-  templateUrl: './app-details.component.html',
-  styleUrls: ['./app-details.component.scss']
+    selector: 'app-app-details',
+    templateUrl: './app-details.component.html',
+    styleUrls: ['./app-details.component.scss'],
+    standalone: false
 })
 
 export class AppDetailsComponent implements OnInit {

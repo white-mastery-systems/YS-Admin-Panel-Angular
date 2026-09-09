@@ -5,9 +5,10 @@ import { StoreApiService } from 'src/app/services/store-api.service';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-import-catalogs',
-  templateUrl: './import-catalogs.component.html',
-  styleUrls: ['./import-catalogs.component.scss']
+    selector: 'app-import-catalogs',
+    templateUrl: './import-catalogs.component.html',
+    styleUrls: ['./import-catalogs.component.scss'],
+    standalone: false
 })
 
 export class ImportCatalogsComponent {

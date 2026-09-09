@@ -3,9 +3,10 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-welcome-screen',
-  templateUrl: './welcome-screen.component.html',
-  styleUrls: ['./welcome-screen.component.scss']
+    selector: 'app-welcome-screen',
+    templateUrl: './welcome-screen.component.html',
+    styleUrls: ['./welcome-screen.component.scss'],
+    standalone: false
 })
 
 export class WelcomeScreenComponent implements OnInit {

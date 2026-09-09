@@ -5,10 +5,11 @@ import { CommonService } from '../../../../services/common.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-import-history',
-  templateUrl: './import-history.component.html',
-  styleUrls: ['./import-history.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-import-history',
+    templateUrl: './import-history.component.html',
+    styleUrls: ['./import-history.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ImportHistoryComponent implements OnInit {

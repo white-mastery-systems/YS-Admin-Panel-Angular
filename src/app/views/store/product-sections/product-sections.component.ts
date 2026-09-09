@@ -4,9 +4,10 @@ import { CommonService } from '../../../services/common.service';
 declare const $: any;
 
 @Component({
-  selector: 'app-product-sections',
-  templateUrl: './product-sections.component.html',
-  styleUrls: ['./product-sections.component.scss']
+    selector: 'app-product-sections',
+    templateUrl: './product-sections.component.html',
+    styleUrls: ['./product-sections.component.scss'],
+    standalone: false
 })
 
 export class ProductSectionsComponent implements OnInit {

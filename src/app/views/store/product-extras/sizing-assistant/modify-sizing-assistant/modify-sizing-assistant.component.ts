@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-modify-sizing-assistant',
-  templateUrl: './modify-sizing-assistant.component.html',
-  styleUrls: ['./modify-sizing-assistant.component.scss']
+    selector: 'app-modify-sizing-assistant',
+    templateUrl: './modify-sizing-assistant.component.html',
+    styleUrls: ['./modify-sizing-assistant.component.scss'],
+    standalone: false
 })
 export class ModifySizingAssistantComponent implements OnInit {
 

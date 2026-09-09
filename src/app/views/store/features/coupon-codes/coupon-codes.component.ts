@@ -5,10 +5,11 @@ import { FeaturesApiService } from '../features-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-coupon-codes',
-  templateUrl: './coupon-codes.component.html',
-  styleUrls: ['./coupon-codes.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-coupon-codes',
+    templateUrl: './coupon-codes.component.html',
+    styleUrls: ['./coupon-codes.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CouponCodesComponent implements OnInit {

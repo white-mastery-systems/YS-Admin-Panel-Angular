@@ -4,9 +4,10 @@ import { StoreApiService } from '../../../../services/store-api.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-store-popup',
-  templateUrl: './store-popup.component.html',
-  styleUrls: ['./store-popup.component.scss']
+    selector: 'app-store-popup',
+    templateUrl: './store-popup.component.html',
+    styleUrls: ['./store-popup.component.scss'],
+    standalone: false
 })
 
 export class StorePopupComponent implements OnInit {

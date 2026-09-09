@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-shop-assistant',
-  templateUrl: './shop-assistant.component.html',
-  styleUrls: ['./shop-assistant.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-shop-assistant',
+    templateUrl: './shop-assistant.component.html',
+    styleUrls: ['./shop-assistant.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ShopAssistantComponent implements OnInit {

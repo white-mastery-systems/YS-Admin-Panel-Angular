@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-payment-methods',
-  templateUrl: './payment-methods.component.html',
-  styleUrls: ['./payment-methods.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-payment-methods',
+    templateUrl: './payment-methods.component.html',
+    styleUrls: ['./payment-methods.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class PaymentMethodsComponent implements OnInit {

@@ -5,9 +5,10 @@ import { CommonService } from '../../../../services/common.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-announcement-bar',
-  templateUrl: './announcement-bar.component.html',
-  styleUrls: ['./announcement-bar.component.scss']
+    selector: 'app-announcement-bar',
+    templateUrl: './announcement-bar.component.html',
+    styleUrls: ['./announcement-bar.component.scss'],
+    standalone: false
 })
 
 export class AnnouncementBarComponent implements OnInit {

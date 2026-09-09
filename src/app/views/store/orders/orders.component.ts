@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 declare const $: any;
 
 @Component({
-  selector: 'app-orders',
-  templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.scss']
+    selector: 'app-orders',
+    templateUrl: './orders.component.html',
+    styleUrls: ['./orders.component.scss'],
+    standalone: false
 })
 
 export class OrdersComponent implements OnInit {

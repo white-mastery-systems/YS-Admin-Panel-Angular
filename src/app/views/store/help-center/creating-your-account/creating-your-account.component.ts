@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-creating-your-account',
-  templateUrl: './creating-your-account.component.html',
-  styleUrls: ['./creating-your-account.component.scss']
+    selector: 'app-creating-your-account',
+    templateUrl: './creating-your-account.component.html',
+    styleUrls: ['./creating-your-account.component.scss'],
+    standalone: false
 })
 export class CreatingYourAccountComponent implements OnInit {
 

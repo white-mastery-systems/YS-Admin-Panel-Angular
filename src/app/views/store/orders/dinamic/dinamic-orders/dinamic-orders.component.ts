@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-dinamic-orders',
-  templateUrl: './dinamic-orders.component.html',
-  styleUrls: ['./dinamic-orders.component.scss']
+    selector: 'app-dinamic-orders',
+    templateUrl: './dinamic-orders.component.html',
+    styleUrls: ['./dinamic-orders.component.scss'],
+    standalone: false
 })
 export class DinamicOrdersComponent implements OnInit {
 

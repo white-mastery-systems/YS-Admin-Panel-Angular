@@ -4,9 +4,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { ProductExtrasApiService } from '../../product-extras-api.service';
 
 @Component({
-  selector: 'app-modify-size-chart',
-  templateUrl: './modify-size-chart.component.html',
-  styleUrls: ['./modify-size-chart.component.scss']
+    selector: 'app-modify-size-chart',
+    templateUrl: './modify-size-chart.component.html',
+    styleUrls: ['./modify-size-chart.component.scss'],
+    standalone: false
 })
 
 export class ModifySizeChartComponent implements OnInit {

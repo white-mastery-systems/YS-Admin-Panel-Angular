@@ -4,9 +4,10 @@ import { StoreApiService } from '../../../../services/store-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-footer-content',
-  templateUrl: './footer-content.component.html',
-  styleUrls: ['./footer-content.component.scss']
+    selector: 'app-footer-content',
+    templateUrl: './footer-content.component.html',
+    styleUrls: ['./footer-content.component.scss'],
+    standalone: false
 })
 
 export class FooterContentComponent implements OnInit {

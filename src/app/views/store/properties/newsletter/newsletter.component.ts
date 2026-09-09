@@ -6,10 +6,11 @@ import { ExcelService } from '../../../../services/excel.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-newsletter',
-  templateUrl: './newsletter.component.html',
-  styleUrls: ['./newsletter.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-newsletter',
+    templateUrl: './newsletter.component.html',
+    styleUrls: ['./newsletter.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class NewsletterComponent implements OnInit {

@@ -6,9 +6,10 @@ import { CommonService } from 'src/app/services/common.service';
 import { DeploymentService } from '../../deployment/deployment.service';
 
 @Component({
-  selector: 'app-vendor-billing',
-  templateUrl: './vendor-billing.component.html',
-  styleUrls: ['./vendor-billing.component.scss']
+    selector: 'app-vendor-billing',
+    templateUrl: './vendor-billing.component.html',
+    styleUrls: ['./vendor-billing.component.scss'],
+    standalone: false
 })
 
 export class VendorBillingComponent implements OnInit {

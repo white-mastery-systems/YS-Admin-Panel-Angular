@@ -9,10 +9,11 @@ import { FeaturesApiService } from '../../features-api.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-modify-coupon-code',
-  templateUrl: './modify-coupon-code.component.html',
-  styleUrls: ['./modify-coupon-code.component.scss'],
-  providers: [AmazingTimePickerService]
+    selector: 'app-modify-coupon-code',
+    templateUrl: './modify-coupon-code.component.html',
+    styleUrls: ['./modify-coupon-code.component.scss'],
+    providers: [AmazingTimePickerService],
+    standalone: false
 })
 
 export class ModifyCouponCodeComponent implements OnInit {

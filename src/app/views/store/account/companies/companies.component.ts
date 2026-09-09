@@ -7,10 +7,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-companies',
-  templateUrl: './companies.component.html',
-  styleUrls: ['./companies.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-companies',
+    templateUrl: './companies.component.html',
+    styleUrls: ['./companies.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CompaniesComponent implements OnInit {

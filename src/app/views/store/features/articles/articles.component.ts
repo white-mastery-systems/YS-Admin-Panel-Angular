@@ -7,10 +7,11 @@ import { environment } from 'src/environments/environment';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-articles',
-  templateUrl: './articles.component.html',
-  styleUrls: ['./articles.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-articles',
+    templateUrl: './articles.component.html',
+    styleUrls: ['./articles.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class ArticlesComponent {
 

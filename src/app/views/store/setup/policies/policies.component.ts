@@ -4,9 +4,10 @@ import { SetupService } from '../setup.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-policies',
-  templateUrl: './policies.component.html',
-  styleUrls: ['./policies.component.scss']
+    selector: 'app-policies',
+    templateUrl: './policies.component.html',
+    styleUrls: ['./policies.component.scss'],
+    standalone: false
 })
 
 export class PoliciesComponent implements OnInit {

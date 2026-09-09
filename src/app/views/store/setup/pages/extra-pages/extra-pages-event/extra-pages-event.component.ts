@@ -7,10 +7,11 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-extra-pages-event',
-  templateUrl: './extra-pages-event.component.html',
-  styleUrls: ['./extra-pages-event.component.scss'],
-  animations: [SharedAnimations],
+    selector: 'app-extra-pages-event',
+    templateUrl: './extra-pages-event.component.html',
+    styleUrls: ['./extra-pages-event.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ExtraPagesEventComponent implements OnInit {

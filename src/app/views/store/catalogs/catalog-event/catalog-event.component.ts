@@ -7,9 +7,10 @@ import { CommonService } from '../../../../services/common.service';
 import { SetupService } from '../../setup/setup.service';
 
 @Component({
-  selector: 'app-catalog-event',
-  templateUrl: './catalog-event.component.html',
-  styleUrls: ['./catalog-event.component.scss']
+    selector: 'app-catalog-event',
+    templateUrl: './catalog-event.component.html',
+    styleUrls: ['./catalog-event.component.scss'],
+    standalone: false
 })
 
 export class CatalogEventComponent implements OnInit {

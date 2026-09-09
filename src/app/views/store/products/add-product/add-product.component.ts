@@ -12,10 +12,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-add-product',
-  templateUrl: './add-product.component.html',
-  styleUrls: ['./add-product.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-add-product',
+    templateUrl: './add-product.component.html',
+    styleUrls: ['./add-product.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AddProductComponent implements OnInit {

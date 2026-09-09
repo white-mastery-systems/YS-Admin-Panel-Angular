@@ -7,10 +7,11 @@ import { environment } from '../../../../../environments/environment';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-product-reviews',
-  templateUrl: './product-reviews.component.html',
-  styleUrls: ['./product-reviews.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-product-reviews',
+    templateUrl: './product-reviews.component.html',
+    styleUrls: ['./product-reviews.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ProductReviewsComponent implements OnInit {

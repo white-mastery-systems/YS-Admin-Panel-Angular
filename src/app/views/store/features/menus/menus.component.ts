@@ -8,10 +8,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-menus',
-  templateUrl: './menus.component.html',
-  styleUrls: ['./menus.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-menus',
+    templateUrl: './menus.component.html',
+    styleUrls: ['./menus.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class MenusComponent implements OnInit {

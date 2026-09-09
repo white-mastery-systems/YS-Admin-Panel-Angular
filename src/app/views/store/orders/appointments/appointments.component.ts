@@ -5,10 +5,11 @@ import { CommonService } from '../../../../services/common.service';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-appointments',
-  templateUrl: './appointments.component.html',
-  styleUrls: ['./appointments.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-appointments',
+    templateUrl: './appointments.component.html',
+    styleUrls: ['./appointments.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AppointmentsComponent implements OnInit {

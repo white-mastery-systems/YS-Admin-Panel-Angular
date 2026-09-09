@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-product-taxonomy',
-  templateUrl: './product-taxonomy.component.html',
-  styleUrls: ['./product-taxonomy.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-product-taxonomy',
+    templateUrl: './product-taxonomy.component.html',
+    styleUrls: ['./product-taxonomy.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ProductTaxonomyComponent implements OnInit {

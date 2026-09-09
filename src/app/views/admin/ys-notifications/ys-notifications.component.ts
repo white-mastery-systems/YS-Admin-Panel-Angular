@@ -5,10 +5,11 @@ import { AdminApiService } from 'src/app/services/admin-api.service';
 import { CommonService } from 'src/app/services/common.service';
 
 @Component({
-  selector: 'app-ys-notifications',
-  templateUrl: './ys-notifications.component.html',
-  styleUrls: ['./ys-notifications.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-notifications',
+    templateUrl: './ys-notifications.component.html',
+    styleUrls: ['./ys-notifications.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsNotificationsComponent implements OnInit {

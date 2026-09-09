@@ -6,10 +6,11 @@ import { SetupService } from '../setup.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-currency-types',
-  templateUrl: './currency-types.component.html',
-  styleUrls: ['./currency-types.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-currency-types',
+    templateUrl: './currency-types.component.html',
+    styleUrls: ['./currency-types.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CurrencyTypesComponent implements OnInit {

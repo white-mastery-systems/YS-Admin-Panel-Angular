@@ -5,10 +5,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-blog-catalogs',
-  templateUrl: './blog-catalogs.component.html',
-  styleUrls: ['./blog-catalogs.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-blog-catalogs',
+    templateUrl: './blog-catalogs.component.html',
+    styleUrls: ['./blog-catalogs.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class BlogCatalogsComponent implements OnInit {
 

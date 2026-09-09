@@ -8,10 +8,11 @@ import { environment } from '../../../../../../environments/environment';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-signup-user-details',
-  templateUrl: './signup-user-details.component.html',
-  styleUrls: ['./signup-user-details.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-signup-user-details',
+    templateUrl: './signup-user-details.component.html',
+    styleUrls: ['./signup-user-details.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SignupUserDetailsComponent implements OnInit {

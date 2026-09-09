@@ -7,10 +7,11 @@ import { FeaturesApiService } from '../../../features-api.service';
 import { CommonService } from '../../../../../../services/common.service';
 
 @Component({
-  selector: 'app-menu-categories',
-  templateUrl: './menu-categories.component.html',
-  styleUrls: ['./menu-categories.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-menu-categories',
+    templateUrl: './menu-categories.component.html',
+    styleUrls: ['./menu-categories.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class MenuCategoriesComponent implements OnInit {

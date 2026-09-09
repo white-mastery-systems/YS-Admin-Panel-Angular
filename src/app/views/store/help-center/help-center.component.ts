@@ -4,9 +4,10 @@ import { environment } from '../../../../environments/environment';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-help-center',
-  templateUrl: './help-center.component.html',
-  styleUrls: ['./help-center.component.scss']
+    selector: 'app-help-center',
+    templateUrl: './help-center.component.html',
+    styleUrls: ['./help-center.component.scss'],
+    standalone: false
 })
 
 export class HelpCenterComponent implements OnInit {

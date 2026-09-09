@@ -9,10 +9,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-guest-users',
-  templateUrl: './guest-users.component.html',
-  styleUrls: ['./guest-users.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-guest-users',
+    templateUrl: './guest-users.component.html',
+    styleUrls: ['./guest-users.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class GuestUsersComponent implements OnInit {

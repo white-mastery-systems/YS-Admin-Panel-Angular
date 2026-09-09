@@ -6,10 +6,11 @@ import { FeaturesApiService } from '../features-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-collections',
-  templateUrl: './collections.component.html',
-  styleUrls: ['./collections.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-collections',
+    templateUrl: './collections.component.html',
+    styleUrls: ['./collections.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CollectionsComponent implements OnInit {

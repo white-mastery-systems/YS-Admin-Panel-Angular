@@ -5,9 +5,10 @@ import { StoreApiService } from '../../../../../services/store-api.service';
 import { SetupService } from '../../setup.service';
 
 @Component({
-  selector: 'app-footer-seo-link-events',
-  templateUrl: './footer-seo-link-events.component.html',
-  styleUrls: ['./footer-seo-link-events.component.scss']
+    selector: 'app-footer-seo-link-events',
+    templateUrl: './footer-seo-link-events.component.html',
+    styleUrls: ['./footer-seo-link-events.component.scss'],
+    standalone: false
 })
 
 export class FooterSeoLinkEventsComponent implements OnInit {

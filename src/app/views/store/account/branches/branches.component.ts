@@ -5,10 +5,11 @@ import { AccountService } from '../account.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-branches',
-  templateUrl: './branches.component.html',
-  styleUrls: ['./branches.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-branches',
+    templateUrl: './branches.component.html',
+    styleUrls: ['./branches.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class BranchesComponent implements OnInit {

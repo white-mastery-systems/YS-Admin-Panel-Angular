@@ -6,9 +6,10 @@ import { environment } from '../../../../../../environments/environment';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
-  selector: 'app-ad-details',
-  templateUrl: './ad-details.component.html',
-  styleUrls: ['./ad-details.component.scss']
+    selector: 'app-ad-details',
+    templateUrl: './ad-details.component.html',
+    styleUrls: ['./ad-details.component.scss'],
+    standalone: false
 })
 
 export class AdDetailsComponent implements OnInit {

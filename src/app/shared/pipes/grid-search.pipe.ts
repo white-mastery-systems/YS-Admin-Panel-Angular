@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'gridSearch'
+    name: 'gridSearch',
+    standalone: false
 })
 
 export class GridSearchPipe implements PipeTransform {

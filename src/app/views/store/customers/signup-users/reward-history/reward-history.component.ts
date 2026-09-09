@@ -6,10 +6,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-reward-history',
-  templateUrl: './reward-history.component.html',
-  styleUrls: ['./reward-history.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-reward-history',
+    templateUrl: './reward-history.component.html',
+    styleUrls: ['./reward-history.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class RewardHistoryComponent implements OnInit {

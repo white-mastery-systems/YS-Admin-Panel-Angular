@@ -9,9 +9,10 @@ import { SidebarService } from '../../../../../services/sidebar.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-app-store-payments',
-  templateUrl: './app-store-payments.component.html',
-  styleUrls: ['./app-store-payments.component.scss']
+    selector: 'app-app-store-payments',
+    templateUrl: './app-store-payments.component.html',
+    styleUrls: ['./app-store-payments.component.scss'],
+    standalone: false
 })
 export class AppStorePaymentsComponent implements OnInit {
 

@@ -5,9 +5,10 @@ import { CommonService } from 'src/app/services/common.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-addon-products-events',
-  templateUrl: './addon-products-events.component.html',
-  styleUrls: ['./addon-products-events.component.scss']
+    selector: 'app-addon-products-events',
+    templateUrl: './addon-products-events.component.html',
+    styleUrls: ['./addon-products-events.component.scss'],
+    standalone: false
 })
 
 export class AddonProductsEventsComponent {

@@ -8,10 +8,11 @@ import { ExcelService } from '../../../services/excel.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-ys-clients',
-  templateUrl: './ys-clients.component.html',
-  styleUrls: ['./ys-clients.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-clients',
+    templateUrl: './ys-clients.component.html',
+    styleUrls: ['./ys-clients.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsClientsComponent implements OnInit {

@@ -9,10 +9,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-signup-users',
-  templateUrl: './signup-users.component.html',
-  styleUrls: ['./signup-users.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-signup-users',
+    templateUrl: './signup-users.component.html',
+    styleUrls: ['./signup-users.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SignupUsersComponent implements OnInit {

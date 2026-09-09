@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-customer-enquiries',
-  templateUrl: './customer-enquiries.component.html',
-  styleUrls: ['./customer-enquiries.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-customer-enquiries',
+    templateUrl: './customer-enquiries.component.html',
+    styleUrls: ['./customer-enquiries.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CustomerEnquiriesComponent implements OnInit {

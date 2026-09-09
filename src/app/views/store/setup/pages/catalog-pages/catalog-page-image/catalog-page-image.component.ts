@@ -5,9 +5,10 @@ import { environment } from '../../../../../../../environments/environment';
 import { SetupService } from '../../../setup.service';
 
 @Component({
-  selector: 'app-catalog-page-image',
-  templateUrl: './catalog-page-image.component.html',
-  styleUrls: ['./catalog-page-image.component.scss']
+    selector: 'app-catalog-page-image',
+    templateUrl: './catalog-page-image.component.html',
+    styleUrls: ['./catalog-page-image.component.scss'],
+    standalone: false
 })
 
 export class CatalogPageImageComponent implements OnInit {

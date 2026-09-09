@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-dinamic-offers',
-  templateUrl: './dinamic-offers.component.html',
-  styleUrls: ['./dinamic-offers.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-dinamic-offers',
+    templateUrl: './dinamic-offers.component.html',
+    styleUrls: ['./dinamic-offers.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class DinamicOffersComponent implements OnInit {

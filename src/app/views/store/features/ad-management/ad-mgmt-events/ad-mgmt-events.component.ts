@@ -5,9 +5,10 @@ import { environment } from '../../../../../../environments/environment';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
-  selector: 'app-ad-mgmt-events',
-  templateUrl: './ad-mgmt-events.component.html',
-  styleUrls: ['./ad-mgmt-events.component.scss']
+    selector: 'app-ad-mgmt-events',
+    templateUrl: './ad-mgmt-events.component.html',
+    styleUrls: ['./ad-mgmt-events.component.scss'],
+    standalone: false
 })
 
 export class AdMgmtEventsComponent implements OnInit {

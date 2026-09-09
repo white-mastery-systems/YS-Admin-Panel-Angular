@@ -7,10 +7,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-appointment-services',
-  templateUrl: './appointment-services.component.html',
-  styleUrls: ['./appointment-services.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-appointment-services',
+    templateUrl: './appointment-services.component.html',
+    styleUrls: ['./appointment-services.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AppointmentServicesComponent implements OnInit {

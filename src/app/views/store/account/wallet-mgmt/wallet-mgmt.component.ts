@@ -7,10 +7,11 @@ import { environment } from '../../../../../environments/environment';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-wallet-mgmt',
-  templateUrl: './wallet-mgmt.component.html',
-  styleUrls: ['./wallet-mgmt.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-wallet-mgmt',
+    templateUrl: './wallet-mgmt.component.html',
+    styleUrls: ['./wallet-mgmt.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class WalletMgmtComponent implements OnInit {

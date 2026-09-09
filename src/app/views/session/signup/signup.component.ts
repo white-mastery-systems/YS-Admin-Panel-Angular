@@ -7,10 +7,11 @@ import { ApiService } from '../../../services/api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-signup',
+    templateUrl: './signup.component.html',
+    styleUrls: ['./signup.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SignupComponent implements OnInit {

@@ -11,10 +11,11 @@ import { CommonService } from '../../../services/common.service';
 import { SocketService } from '../../../services/socket.service';
 
 @Component({
-  selector: 'app-control-panel',
-  templateUrl: './control-panel.component.html',
-  styleUrls: ['./control-panel.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-control-panel',
+    templateUrl: './control-panel.component.html',
+    styleUrls: ['./control-panel.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ControlPanelComponent implements OnInit {

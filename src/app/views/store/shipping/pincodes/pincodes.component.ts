@@ -7,9 +7,10 @@ import { ExcelService } from '../../../../services/excel.service';
 type AOA = any[][];
 
 @Component({
-  selector: 'app-pincodes',
-  templateUrl: './pincodes.component.html',
-  styleUrls: ['./pincodes.component.scss']
+    selector: 'app-pincodes',
+    templateUrl: './pincodes.component.html',
+    styleUrls: ['./pincodes.component.scss'],
+    standalone: false
 })
 
 export class PincodesComponent implements OnInit {

@@ -8,10 +8,11 @@ import { CommonService } from 'src/app/services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-ys-announcements',
-  templateUrl: './ys-announcements.component.html',
-  styleUrls: ['./ys-announcements.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-announcements',
+    templateUrl: './ys-announcements.component.html',
+    styleUrls: ['./ys-announcements.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsAnnouncementsComponent implements OnInit {

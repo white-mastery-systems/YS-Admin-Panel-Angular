@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { CustomerApiService } from '../../../../../services/customer-api.service';
 
 @Component({
-  selector: 'app-guest-user-details',
-  templateUrl: './guest-user-details.component.html',
-  styleUrls: ['./guest-user-details.component.scss']
+    selector: 'app-guest-user-details',
+    templateUrl: './guest-user-details.component.html',
+    styleUrls: ['./guest-user-details.component.scss'],
+    standalone: false
 })
 
 export class GuestUserDetailsComponent implements OnInit {

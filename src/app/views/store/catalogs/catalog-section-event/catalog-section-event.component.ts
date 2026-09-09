@@ -6,9 +6,10 @@ import { StoreApiService } from '../../../../services/store-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-catalog-section-event',
-  templateUrl: './catalog-section-event.component.html',
-  styleUrls: ['./catalog-section-event.component.scss']
+    selector: 'app-catalog-section-event',
+    templateUrl: './catalog-section-event.component.html',
+    styleUrls: ['./catalog-section-event.component.scss'],
+    standalone: false
 })
 
 export class CatalogSectionEventComponent implements OnInit {
