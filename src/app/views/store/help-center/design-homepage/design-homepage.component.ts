@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-design-homepage',
-  templateUrl: './design-homepage.component.html',
-  styleUrls: ['./design-homepage.component.scss']
+    selector: 'app-design-homepage',
+    templateUrl: './design-homepage.component.html',
+    styleUrls: ['./design-homepage.component.scss'],
+    standalone: false
 })
 export class DesignHomepageComponent implements OnInit {
 

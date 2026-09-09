@@ -5,10 +5,11 @@ import { ProductExtrasApiService } from '../product-extras-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-colors',
-  templateUrl: './colors.component.html',
-  styleUrls: ['./colors.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-colors',
+    templateUrl: './colors.component.html',
+    styleUrls: ['./colors.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ColorsComponent implements OnInit {

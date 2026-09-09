@@ -7,10 +7,11 @@ import { ProductExtrasApiService } from '../product-extras-api.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-image-tags',
-  templateUrl: './image-tags.component.html',
-  styleUrls: ['./image-tags.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-image-tags',
+    templateUrl: './image-tags.component.html',
+    styleUrls: ['./image-tags.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ImageTagsComponent implements OnInit {

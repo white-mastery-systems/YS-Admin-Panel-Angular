@@ -5,9 +5,10 @@ import { CommonService } from 'src/app/services/common.service';
 import { CustomerApiService } from 'src/app/services/customer-api.service';
 
 @Component({
-  selector: 'app-companies-event',
-  templateUrl: './companies-event.component.html',
-  styleUrls: ['./companies-event.component.scss']
+    selector: 'app-companies-event',
+    templateUrl: './companies-event.component.html',
+    styleUrls: ['./companies-event.component.scss'],
+    standalone: false
 })
 
 export class CompaniesEventComponent implements OnInit {

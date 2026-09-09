@@ -5,9 +5,10 @@ import { environment } from 'src/environments/environment';
 declare var $;
 
 @Component({
-  selector: 'app-deploy-domain',
-  templateUrl: './deploy-domain.component.html',
-  styleUrls: ['./deploy-domain.component.scss']
+    selector: 'app-deploy-domain',
+    templateUrl: './deploy-domain.component.html',
+    styleUrls: ['./deploy-domain.component.scss'],
+    standalone: false
 })
 
 export class DeployDomainComponent implements OnInit {

@@ -6,9 +6,10 @@ import { CommonService } from '../../../../services/common.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-my-profile',
-  templateUrl: './my-profile.component.html',
-  styleUrls: ['./my-profile.component.scss']
+    selector: 'app-my-profile',
+    templateUrl: './my-profile.component.html',
+    styleUrls: ['./my-profile.component.scss'],
+    standalone: false
 })
 
 export class MyProfileComponent implements OnInit {

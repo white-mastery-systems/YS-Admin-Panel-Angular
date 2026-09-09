@@ -5,9 +5,10 @@ import { AdminApiService } from 'src/app/services/admin-api.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-modify-ys-themes',
-  templateUrl: './modify-ys-themes.component.html',
-  styleUrls: ['./modify-ys-themes.component.scss']
+    selector: 'app-modify-ys-themes',
+    templateUrl: './modify-ys-themes.component.html',
+    styleUrls: ['./modify-ys-themes.component.scss'],
+    standalone: false
 })
 
 export class ModifyYsThemesComponent implements OnInit {

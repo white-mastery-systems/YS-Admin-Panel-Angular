@@ -5,10 +5,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-article-catalogs',
-  templateUrl: './article-catalogs.component.html',
-  styleUrls: ['./article-catalogs.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-article-catalogs',
+    templateUrl: './article-catalogs.component.html',
+    styleUrls: ['./article-catalogs.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class ArticleCatalogsComponent {
 

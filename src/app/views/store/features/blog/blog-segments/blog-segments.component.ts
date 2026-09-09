@@ -7,10 +7,11 @@ import { StoreApiService } from '../../../../../services/store-api.service';
 import { CommonService } from '../../../../../services/common.service';
 
 @Component({
-  selector: 'app-blog-segments',
-  templateUrl: './blog-segments.component.html',
-  styleUrls: ['./blog-segments.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-blog-segments',
+    templateUrl: './blog-segments.component.html',
+    styleUrls: ['./blog-segments.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class BlogSegmentsComponent implements OnInit {

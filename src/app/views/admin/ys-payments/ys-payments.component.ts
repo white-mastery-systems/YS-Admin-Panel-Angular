@@ -6,10 +6,11 @@ import { CommonService } from '../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-ys-payments',
-  templateUrl: './ys-payments.component.html',
-  styleUrls: ['./ys-payments.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-payments',
+    templateUrl: './ys-payments.component.html',
+    styleUrls: ['./ys-payments.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsPaymentsComponent implements OnInit {

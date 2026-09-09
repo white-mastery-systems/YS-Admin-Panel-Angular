@@ -6,9 +6,10 @@ import { StoreApiService } from 'src/app/services/store-api.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-menu-brands',
-  templateUrl: './menu-brands.component.html',
-  styleUrls: ['./menu-brands.component.scss']
+    selector: 'app-menu-brands',
+    templateUrl: './menu-brands.component.html',
+    styleUrls: ['./menu-brands.component.scss'],
+    standalone: false
 })
 
 export class MenuBrandsComponent implements OnInit {

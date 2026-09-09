@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-modify-addons',
-  templateUrl: './modify-addons.component.html',
-  styleUrls: ['./modify-addons.component.scss']
+    selector: 'app-modify-addons',
+    templateUrl: './modify-addons.component.html',
+    styleUrls: ['./modify-addons.component.scss'],
+    standalone: false
 })
 
 export class ModifyAddonsComponent implements OnInit {

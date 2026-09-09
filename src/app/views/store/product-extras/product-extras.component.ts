@@ -4,9 +4,10 @@ import { CommonService } from '../../../services/common.service';
 
 
 @Component({
-  selector: 'app-product-extras',
-  templateUrl: './product-extras.component.html',
-  styleUrls: ['./product-extras.component.scss']
+    selector: 'app-product-extras',
+    templateUrl: './product-extras.component.html',
+    styleUrls: ['./product-extras.component.scss'],
+    standalone: false
 })
 
 export class ProductExtrasComponent implements OnInit {

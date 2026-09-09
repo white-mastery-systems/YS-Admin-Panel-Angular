@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-abandoned-details',
-  templateUrl: './abandoned-details.component.html',
-  styleUrls: ['./abandoned-details.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-abandoned-details',
+    templateUrl: './abandoned-details.component.html',
+    styleUrls: ['./abandoned-details.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AbandonedDetailsComponent implements OnInit {

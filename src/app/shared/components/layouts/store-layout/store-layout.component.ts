@@ -14,9 +14,10 @@ import { CommonService } from '../../../../services/common.service';
 declare const $: any;
 
 @Component({
-  selector: 'app-store-layout',
-  templateUrl: './store-layout.component.html',
-  styleUrls: ['./store-layout.component.scss']
+    selector: 'app-store-layout',
+    templateUrl: './store-layout.component.html',
+    styleUrls: ['./store-layout.component.scss'],
+    standalone: false
 })
 
 export class StoreLayoutComponent implements OnInit {

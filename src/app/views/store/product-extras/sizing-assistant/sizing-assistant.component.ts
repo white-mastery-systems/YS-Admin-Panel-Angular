@@ -6,10 +6,11 @@ import { ProductExtrasApiService } from '../product-extras-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-sizing-assistant',
-  templateUrl: './sizing-assistant.component.html',
-  styleUrls: ['./sizing-assistant.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-sizing-assistant',
+    templateUrl: './sizing-assistant.component.html',
+    styleUrls: ['./sizing-assistant.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SizingAssistantComponent implements OnInit {

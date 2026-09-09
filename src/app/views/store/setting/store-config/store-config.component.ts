@@ -5,9 +5,10 @@ import { SidebarService } from '../../../../services/sidebar.service';
 import { DeploymentService } from '../../deployment/deployment.service';
 
 @Component({
-  selector: 'app-store-config',
-  templateUrl: './store-config.component.html',
-  styleUrls: ['./store-config.component.scss']
+    selector: 'app-store-config',
+    templateUrl: './store-config.component.html',
+    styleUrls: ['./store-config.component.scss'],
+    standalone: false
 })
 
 export class StoreConfigComponent implements OnInit {

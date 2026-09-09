@@ -5,9 +5,10 @@ import { AdminApiService } from '../../../../services/admin-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-modify-ys-clients',
-  templateUrl: './modify-ys-clients.component.html',
-  styleUrls: ['./modify-ys-clients.component.scss']
+    selector: 'app-modify-ys-clients',
+    templateUrl: './modify-ys-clients.component.html',
+    styleUrls: ['./modify-ys-clients.component.scss'],
+    standalone: false
 })
 
 export class ModifyYsClientsComponent implements OnInit {

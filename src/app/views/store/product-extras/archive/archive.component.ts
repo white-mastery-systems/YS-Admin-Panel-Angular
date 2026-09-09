@@ -6,10 +6,11 @@ import { ProductExtrasApiService } from '../product-extras-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-archive',
-  templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-archive',
+    templateUrl: './archive.component.html',
+    styleUrls: ['./archive.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class ArchiveComponent implements OnInit {
 

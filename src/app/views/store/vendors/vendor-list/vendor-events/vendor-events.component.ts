@@ -6,9 +6,10 @@ import { DeploymentService } from '../../../deployment/deployment.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-vendor-events',
-  templateUrl: './vendor-events.component.html',
-  styleUrls: ['./vendor-events.component.scss']
+    selector: 'app-vendor-events',
+    templateUrl: './vendor-events.component.html',
+    styleUrls: ['./vendor-events.component.scss'],
+    standalone: false
 })
 
 export class VendorEventsComponent implements OnInit {

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-product-management',
-  templateUrl: './product-management.component.html',
-  styleUrls: ['./product-management.component.scss']
+    selector: 'app-product-management',
+    templateUrl: './product-management.component.html',
+    styleUrls: ['./product-management.component.scss'],
+    standalone: false
 })
 export class ProductManagementComponent implements OnInit {
 

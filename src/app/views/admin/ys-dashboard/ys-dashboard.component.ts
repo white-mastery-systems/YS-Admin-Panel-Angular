@@ -6,9 +6,10 @@ import { CommonService } from '../../../services/common.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-ys-dashboard',
-  templateUrl: './ys-dashboard.component.html',
-  styleUrls: ['./ys-dashboard.component.scss']
+    selector: 'app-ys-dashboard',
+    templateUrl: './ys-dashboard.component.html',
+    styleUrls: ['./ys-dashboard.component.scss'],
+    standalone: false
 })
 export class YsDashboardComponent implements OnInit {
 

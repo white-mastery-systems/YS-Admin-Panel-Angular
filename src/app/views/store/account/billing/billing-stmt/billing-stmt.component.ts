@@ -6,10 +6,11 @@ import { DeploymentService } from '../../../deployment/deployment.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-billing-stmt',
-  templateUrl: './billing-stmt.component.html',
-  styleUrls: ['./billing-stmt.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-billing-stmt',
+    templateUrl: './billing-stmt.component.html',
+    styleUrls: ['./billing-stmt.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class BillingStmtComponent implements OnInit {

@@ -6,10 +6,11 @@ import { SetupService } from '../../setup.service';
 import { CommonService } from '../../../../../services/common.service';
 
 @Component({
-  selector: 'app-catalog-pages',
-  templateUrl: './catalog-pages.component.html',
-  styleUrls: ['./catalog-pages.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-catalog-pages',
+    templateUrl: './catalog-pages.component.html',
+    styleUrls: ['./catalog-pages.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CatalogPagesComponent implements OnInit {

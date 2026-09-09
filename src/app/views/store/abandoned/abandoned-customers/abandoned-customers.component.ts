@@ -9,10 +9,11 @@ import * as moment from 'moment-timezone';
 import countryList from 'src/assets/json/country-list.json';
 
 @Component({
-  selector: 'app-abandoned-customers',
-  templateUrl: './abandoned-customers.component.html',
-  styleUrls: ['./abandoned-customers.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-abandoned-customers',
+    templateUrl: './abandoned-customers.component.html',
+    styleUrls: ['./abandoned-customers.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AbandonedCustomersComponent implements OnInit, OnDestroy {

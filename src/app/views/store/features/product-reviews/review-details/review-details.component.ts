@@ -9,10 +9,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-review-details',
-  templateUrl: './review-details.component.html',
-  styleUrls: ['./review-details.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-review-details',
+    templateUrl: './review-details.component.html',
+    styleUrls: ['./review-details.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ReviewDetailsComponent implements OnInit {

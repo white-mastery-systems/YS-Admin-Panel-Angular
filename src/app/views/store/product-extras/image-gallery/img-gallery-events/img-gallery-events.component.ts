@@ -8,10 +8,11 @@ import { ProductExtrasApiService } from '../../product-extras-api.service';
 import { ExcelService } from '../../../../../services/excel.service';
 
 @Component({
-  selector: 'app-img-gallery-events',
-  templateUrl: './img-gallery-events.component.html',
-  styleUrls: ['./img-gallery-events.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-img-gallery-events',
+    templateUrl: './img-gallery-events.component.html',
+    styleUrls: ['./img-gallery-events.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ImgGalleryEventsComponent implements OnInit {

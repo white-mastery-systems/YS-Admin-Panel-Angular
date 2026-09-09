@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-upload-website-logo',
-  templateUrl: './upload-website-logo.component.html',
-  styleUrls: ['./upload-website-logo.component.scss']
+    selector: 'app-upload-website-logo',
+    templateUrl: './upload-website-logo.component.html',
+    styleUrls: ['./upload-website-logo.component.scss'],
+    standalone: false
 })
 export class UploadWebsiteLogoComponent implements OnInit {
 

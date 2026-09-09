@@ -6,10 +6,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { FeaturesApiService } from '../../features-api.service';
 
 @Component({
-  selector: 'app-blog-authors',
-  templateUrl: './blog-authors.component.html',
-  styleUrls: ['./blog-authors.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-blog-authors',
+    templateUrl: './blog-authors.component.html',
+    styleUrls: ['./blog-authors.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class BlogAuthorsComponent implements OnInit {
 

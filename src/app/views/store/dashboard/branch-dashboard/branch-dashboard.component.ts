@@ -12,9 +12,10 @@ export type ChartOptions = {
 };
 
 @Component({
-  selector: 'app-branch-dashboard',
-  templateUrl: './branch-dashboard.component.html',
-  styleUrls: ['./branch-dashboard.component.scss']
+    selector: 'app-branch-dashboard',
+    templateUrl: './branch-dashboard.component.html',
+    styleUrls: ['./branch-dashboard.component.scss'],
+    standalone: false
 })
 
 export class BranchDashboardComponent implements OnInit {

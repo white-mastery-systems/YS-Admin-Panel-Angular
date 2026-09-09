@@ -6,10 +6,11 @@ import { DeploymentService } from '../../deployment/deployment.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-shipping-methods',
-  templateUrl: './shipping-methods.component.html',
-  styleUrls: ['./shipping-methods.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-shipping-methods',
+    templateUrl: './shipping-methods.component.html',
+    styleUrls: ['./shipping-methods.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ShippingMethodsComponent implements OnInit {

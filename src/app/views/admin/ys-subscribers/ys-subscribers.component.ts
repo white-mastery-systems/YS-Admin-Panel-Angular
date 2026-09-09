@@ -4,10 +4,11 @@ import { AdminApiService } from '../../../services/admin-api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-ys-subscribers',
-  templateUrl: './ys-subscribers.component.html',
-  styleUrls: ['./ys-subscribers.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-subscribers',
+    templateUrl: './ys-subscribers.component.html',
+    styleUrls: ['./ys-subscribers.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class YsSubscribersComponent implements OnInit {
 

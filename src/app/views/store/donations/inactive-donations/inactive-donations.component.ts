@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-inactive-donations',
-  templateUrl: './inactive-donations.component.html',
-  styleUrls: ['./inactive-donations.component.scss']
+    selector: 'app-inactive-donations',
+    templateUrl: './inactive-donations.component.html',
+    styleUrls: ['./inactive-donations.component.scss'],
+    standalone: false
 })
 export class InactiveDonationsComponent implements OnInit {
 

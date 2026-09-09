@@ -8,11 +8,12 @@ import { CommonService } from 'src/app/services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-ad-management',
-  templateUrl: './ad-management.component.html',
-  styleUrls: ['./ad-management.component.scss'],
-  animations: [SharedAnimations],
-  providers: [AmazingTimePickerService]
+    selector: 'app-ad-management',
+    templateUrl: './ad-management.component.html',
+    styleUrls: ['./ad-management.component.scss'],
+    animations: [SharedAnimations],
+    providers: [AmazingTimePickerService],
+    standalone: false
 })
 
 export class AdManagementComponent implements OnInit {

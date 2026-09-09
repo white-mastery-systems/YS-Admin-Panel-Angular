@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-promo-codes',
-  templateUrl: './promo-codes.component.html',
-  styleUrls: ['./promo-codes.component.scss']
+    selector: 'app-promo-codes',
+    templateUrl: './promo-codes.component.html',
+    styleUrls: ['./promo-codes.component.scss'],
+    standalone: false
 })
 export class PromoCodesComponent implements OnInit {
 

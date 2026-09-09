@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-delete-product',
-  templateUrl: './delete-product.component.html',
-  styleUrls: ['./delete-product.component.scss']
+    selector: 'app-delete-product',
+    templateUrl: './delete-product.component.html',
+    styleUrls: ['./delete-product.component.scss'],
+    standalone: false
 })
 export class DeleteProductComponent implements OnInit {
 

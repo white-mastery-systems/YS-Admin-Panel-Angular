@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-measurement-events',
-  templateUrl: './measurement-events.component.html',
-  styleUrls: ['./measurement-events.component.scss']
+    selector: 'app-measurement-events',
+    templateUrl: './measurement-events.component.html',
+    styleUrls: ['./measurement-events.component.scss'],
+    standalone: false
 })
 
 export class MeasurementEventsComponent implements OnInit {

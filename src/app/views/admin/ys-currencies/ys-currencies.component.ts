@@ -3,10 +3,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-ys-currencies',
-  templateUrl: './ys-currencies.component.html',
-  styleUrls: ['./ys-currencies.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-currencies',
+    templateUrl: './ys-currencies.component.html',
+    styleUrls: ['./ys-currencies.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsCurrenciesComponent implements OnInit {

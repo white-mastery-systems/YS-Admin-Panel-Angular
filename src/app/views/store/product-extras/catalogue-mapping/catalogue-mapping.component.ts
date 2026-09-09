@@ -6,9 +6,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-catalogue-mapping',
-  templateUrl: './catalogue-mapping.component.html',
-  styleUrls: ['./catalogue-mapping.component.scss']
+    selector: 'app-catalogue-mapping',
+    templateUrl: './catalogue-mapping.component.html',
+    styleUrls: ['./catalogue-mapping.component.scss'],
+    standalone: false
 })
 
 export class CatalogueMappingComponent implements OnInit {

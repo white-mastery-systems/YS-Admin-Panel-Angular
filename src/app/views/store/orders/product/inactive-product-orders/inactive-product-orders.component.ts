@@ -5,10 +5,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-inactive-product-orders',
-  templateUrl: './inactive-product-orders.component.html',
-  styleUrls: ['./inactive-product-orders.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-inactive-product-orders',
+    templateUrl: './inactive-product-orders.component.html',
+    styleUrls: ['./inactive-product-orders.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class InactiveProductOrdersComponent implements OnInit {

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-live-orders',
-  templateUrl: './live-orders.component.html',
-  styleUrls: ['./live-orders.component.scss']
+    selector: 'app-live-orders',
+    templateUrl: './live-orders.component.html',
+    styleUrls: ['./live-orders.component.scss'],
+    standalone: false
 })
 export class LiveOrdersComponent implements OnInit {
 

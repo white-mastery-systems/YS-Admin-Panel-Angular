@@ -5,10 +5,11 @@ import { CommonService } from 'src/app/services/common.service';
 import { StoreApiService } from 'src/app/services/store-api.service';
 
 @Component({
-  selector: 'app-notification-setup',
-  templateUrl: './notification-setup.component.html',
-  styleUrls: ['./notification-setup.component.scss'],
-  providers: [AmazingTimePickerService]
+    selector: 'app-notification-setup',
+    templateUrl: './notification-setup.component.html',
+    styleUrls: ['./notification-setup.component.scss'],
+    providers: [AmazingTimePickerService],
+    standalone: false
 })
 
 export class NotificationSetupComponent implements OnInit {

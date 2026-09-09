@@ -6,10 +6,11 @@ import { SetupService } from '../../setup.service';
 import { CommonService } from '../../../../../services/common.service';
 
 @Component({
-  selector: 'app-extra-pages',
-  templateUrl: './extra-pages.component.html',
-  styleUrls: ['./extra-pages.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-extra-pages',
+    templateUrl: './extra-pages.component.html',
+    styleUrls: ['./extra-pages.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ExtraPagesComponent implements OnInit {

@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-web-stories',
-  templateUrl: './web-stories.component.html',
-  styleUrls: ['./web-stories.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-web-stories',
+    templateUrl: './web-stories.component.html',
+    styleUrls: ['./web-stories.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class WebStoriesComponent implements OnInit {
 

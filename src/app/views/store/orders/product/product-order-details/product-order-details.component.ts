@@ -16,10 +16,11 @@ import ghanaInterDestinations from '../../../../../../assets/json/ghana-inter-de
 import * as JsBarcode from 'jsbarcode';
 
 @Component({
-  selector: 'app-product-order-details',
-  templateUrl: './product-order-details.component.html',
-  styleUrls: ['./product-order-details.component.scss'],
-  providers: [AmazingTimePickerService]
+    selector: 'app-product-order-details',
+    templateUrl: './product-order-details.component.html',
+    styleUrls: ['./product-order-details.component.scss'],
+    providers: [AmazingTimePickerService],
+    standalone: false
 })
 
 export class ProductOrderDetailsComponent implements OnInit {

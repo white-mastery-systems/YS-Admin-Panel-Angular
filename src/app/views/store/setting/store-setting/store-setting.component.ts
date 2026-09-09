@@ -7,9 +7,10 @@ import { DeploymentService } from '../../deployment/deployment.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-store-setting',
-  templateUrl: './store-setting.component.html',
-  styleUrls: ['./store-setting.component.scss']
+    selector: 'app-store-setting',
+    templateUrl: './store-setting.component.html',
+    styleUrls: ['./store-setting.component.scss'],
+    standalone: false
 })
 
 export class StoreSettingComponent implements OnInit {

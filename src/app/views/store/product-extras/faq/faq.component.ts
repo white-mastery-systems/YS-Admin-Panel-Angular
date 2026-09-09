@@ -6,10 +6,11 @@ import { ProductExtrasApiService } from '../product-extras-api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-faq',
-  templateUrl: './faq.component.html',
-  styleUrls: ['./faq.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-faq',
+    templateUrl: './faq.component.html',
+    styleUrls: ['./faq.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class FaqComponent implements OnInit {

@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-web-stories-event',
-  templateUrl: './web-stories-event.component.html',
-  styleUrls: ['./web-stories-event.component.scss']
+    selector: 'app-web-stories-event',
+    templateUrl: './web-stories-event.component.html',
+    styleUrls: ['./web-stories-event.component.scss'],
+    standalone: false
 })
 export class WebStoriesEventComponent implements OnInit {
 

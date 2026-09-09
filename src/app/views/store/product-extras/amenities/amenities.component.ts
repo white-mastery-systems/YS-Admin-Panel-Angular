@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-amenities',
-  templateUrl: './amenities.component.html',
-  styleUrls: ['./amenities.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-amenities',
+    templateUrl: './amenities.component.html',
+    styleUrls: ['./amenities.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AmenitiesComponent implements OnInit {

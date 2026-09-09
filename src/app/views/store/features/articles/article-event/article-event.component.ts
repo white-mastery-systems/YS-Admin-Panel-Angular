@@ -5,9 +5,10 @@ import { FeaturesApiService } from '../../features-api.service';
 import { CommonService } from 'src/app/services/common.service';
 
 @Component({
-  selector: 'app-article-event',
-  templateUrl: './article-event.component.html',
-  styleUrls: ['./article-event.component.scss']
+    selector: 'app-article-event',
+    templateUrl: './article-event.component.html',
+    styleUrls: ['./article-event.component.scss'],
+    standalone: false
 })
 export class ArticleEventComponent {
 

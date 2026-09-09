@@ -4,10 +4,11 @@ import { ApiService } from '../../../services/api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-vendor-forgot-pwd',
-  templateUrl: './vendor-forgot-pwd.component.html',
-  styleUrls: ['./vendor-forgot-pwd.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-forgot-pwd',
+    templateUrl: './vendor-forgot-pwd.component.html',
+    styleUrls: ['./vendor-forgot-pwd.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorForgotPwdComponent implements OnInit {

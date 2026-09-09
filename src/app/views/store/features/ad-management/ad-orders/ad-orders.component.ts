@@ -6,10 +6,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-ad-orders',
-  templateUrl: './ad-orders.component.html',
-  styleUrls: ['./ad-orders.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ad-orders',
+    templateUrl: './ad-orders.component.html',
+    styleUrls: ['./ad-orders.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AdOrdersComponent implements OnInit {

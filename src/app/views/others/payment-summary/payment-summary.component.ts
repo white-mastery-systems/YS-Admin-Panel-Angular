@@ -5,9 +5,10 @@ import { CommonService } from '../../../services/common.service';
 import { SidebarService } from '../../../services/sidebar.service';
 
 @Component({
-  selector: 'app-payment-summary',
-  templateUrl: './payment-summary.component.html',
-  styleUrls: ['./payment-summary.component.scss']
+    selector: 'app-payment-summary',
+    templateUrl: './payment-summary.component.html',
+    styleUrls: ['./payment-summary.component.scss'],
+    standalone: false
 })
 
 export class PaymentSummaryComponent implements OnInit {

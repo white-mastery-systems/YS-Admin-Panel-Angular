@@ -11,10 +11,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import { Share } from '@capacitor/share';
 
 @Component({
-  selector: 'app-quick-order-details',
-  templateUrl: './quick-order-details.component.html',
-  styleUrls: ['./quick-order-details.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-quick-order-details',
+    templateUrl: './quick-order-details.component.html',
+    styleUrls: ['./quick-order-details.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class QuickOrderDetailsComponent implements OnInit {

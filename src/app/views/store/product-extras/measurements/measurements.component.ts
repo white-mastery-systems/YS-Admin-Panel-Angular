@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-measurements',
-  templateUrl: './measurements.component.html',
-  styleUrls: ['./measurements.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-measurements',
+    templateUrl: './measurements.component.html',
+    styleUrls: ['./measurements.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class MeasurementsComponent implements OnInit {

@@ -6,10 +6,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-ys-themes',
-  templateUrl: './ys-themes.component.html',
-  styleUrls: ['./ys-themes.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-themes',
+    templateUrl: './ys-themes.component.html',
+    styleUrls: ['./ys-themes.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsThemesComponent implements OnInit {

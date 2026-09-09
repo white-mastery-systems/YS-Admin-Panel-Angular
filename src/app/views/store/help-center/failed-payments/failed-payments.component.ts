@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-failed-payments',
-  templateUrl: './failed-payments.component.html',
-  styleUrls: ['./failed-payments.component.scss']
+    selector: 'app-failed-payments',
+    templateUrl: './failed-payments.component.html',
+    styleUrls: ['./failed-payments.component.scss'],
+    standalone: false
 })
 export class FailedPaymentsComponent implements OnInit {
 

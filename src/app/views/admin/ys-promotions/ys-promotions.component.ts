@@ -6,10 +6,11 @@ import { CommonService } from 'src/app/services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-ys-promotions',
-  templateUrl: './ys-promotions.component.html',
-  styleUrls: ['./ys-promotions.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-promotions',
+    templateUrl: './ys-promotions.component.html',
+    styleUrls: ['./ys-promotions.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsPromotionsComponent implements OnInit {

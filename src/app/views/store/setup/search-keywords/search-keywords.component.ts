@@ -3,9 +3,10 @@ import { CommonService } from '../../../../services/common.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-search-keywords',
-  templateUrl: './search-keywords.component.html',
-  styleUrls: ['./search-keywords.component.scss']
+    selector: 'app-search-keywords',
+    templateUrl: './search-keywords.component.html',
+    styleUrls: ['./search-keywords.component.scss'],
+    standalone: false
 })
 
 export class SearchKeywordsComponent implements OnInit {

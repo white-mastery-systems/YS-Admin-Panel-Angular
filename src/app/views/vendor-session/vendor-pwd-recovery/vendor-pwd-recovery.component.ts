@@ -5,10 +5,11 @@ import { ApiService } from '../../../services/api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-vendor-pwd-recovery',
-  templateUrl: './vendor-pwd-recovery.component.html',
-  styleUrls: ['./vendor-pwd-recovery.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-pwd-recovery',
+    templateUrl: './vendor-pwd-recovery.component.html',
+    styleUrls: ['./vendor-pwd-recovery.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorPwdRecoveryComponent implements OnInit {

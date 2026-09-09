@@ -7,9 +7,10 @@ import { environment } from '../../../../../../environments/environment';
 import { AnchorHeaderTool, ButtonTool, CtaBlockTool, IframeTool, ImageCardsTool, KeyFeaturesTool, ProductCarouselTool, ProductCtaTool, ProductListTool, PRODUCT_LIST_MAX_SELECTION, TableOfContentsTool } from './editorjs-tools';
 
 @Component({
-  selector: 'app-blog-event',
-  templateUrl: './blog-event.component.html',
-  styleUrls: ['./blog-event.component.scss']
+    selector: 'app-blog-event',
+    templateUrl: './blog-event.component.html',
+    styleUrls: ['./blog-event.component.scss'],
+    standalone: false
 })
 
 export class BlogEventComponent implements OnInit, AfterViewChecked, OnDestroy {

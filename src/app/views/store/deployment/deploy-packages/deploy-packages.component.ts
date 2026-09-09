@@ -8,9 +8,10 @@ import { DeploymentService } from '../../deployment/deployment.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-deploy-packages',
-  templateUrl: './deploy-packages.component.html',
-  styleUrls: ['./deploy-packages.component.scss']
+    selector: 'app-deploy-packages',
+    templateUrl: './deploy-packages.component.html',
+    styleUrls: ['./deploy-packages.component.scss'],
+    standalone: false
 })
 
 export class DeployPackagesComponent implements OnInit {

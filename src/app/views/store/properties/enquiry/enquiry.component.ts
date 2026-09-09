@@ -4,9 +4,10 @@ import { ApiService } from '../../../../services/api.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-enquiry',
-  templateUrl: './enquiry.component.html',
-  styleUrls: ['./enquiry.component.scss']
+    selector: 'app-enquiry',
+    templateUrl: './enquiry.component.html',
+    styleUrls: ['./enquiry.component.scss'],
+    standalone: false
 })
 
 export class EnquiryComponent implements OnInit {

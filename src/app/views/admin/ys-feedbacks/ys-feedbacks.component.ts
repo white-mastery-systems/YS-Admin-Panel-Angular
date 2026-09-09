@@ -6,10 +6,11 @@ import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-ys-feedbacks',
-  templateUrl: './ys-feedbacks.component.html',
-  styleUrls: ['./ys-feedbacks.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-feedbacks',
+    templateUrl: './ys-feedbacks.component.html',
+    styleUrls: ['./ys-feedbacks.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsFeedbacksComponent implements OnInit {

@@ -7,10 +7,11 @@ import { CommonService } from '../../../services/common.service';
 import { SidebarService } from '../../../services/sidebar.service';
 
 @Component({
-  selector: 'app-vendor-signin',
-  templateUrl: './vendor-signin.component.html',
-  styleUrls: ['./vendor-signin.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-vendor-signin',
+    templateUrl: './vendor-signin.component.html',
+    styleUrls: ['./vendor-signin.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class VendorSigninComponent implements OnInit {

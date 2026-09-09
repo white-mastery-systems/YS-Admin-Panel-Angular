@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { FeaturesApiService } from '../../features-api.service';
 
 @Component({
-  selector: 'app-modify-collections',
-  templateUrl: './modify-collections.component.html',
-  styleUrls: ['./modify-collections.component.scss']
+    selector: 'app-modify-collections',
+    templateUrl: './modify-collections.component.html',
+    styleUrls: ['./modify-collections.component.scss'],
+    standalone: false
 })
 
 export class ModifyCollectionsComponent implements OnInit {

@@ -14,11 +14,12 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
-  selector: 'app-product-orders',
-  templateUrl: './product-orders.component.html',
-  styleUrls: ['./product-orders.component.scss'],
-  animations: [SharedAnimations],
-  providers: [AmazingTimePickerService]
+    selector: 'app-product-orders',
+    templateUrl: './product-orders.component.html',
+    styleUrls: ['./product-orders.component.scss'],
+    animations: [SharedAnimations],
+    providers: [AmazingTimePickerService],
+    standalone: false
 })
 
 export class ProductOrdersComponent implements OnInit {

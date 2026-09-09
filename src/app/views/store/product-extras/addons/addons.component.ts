@@ -9,10 +9,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-addons',
-  templateUrl: './addons.component.html',
-  styleUrls: ['./addons.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-addons',
+    templateUrl: './addons.component.html',
+    styleUrls: ['./addons.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 export class AddonsComponent implements OnInit {
 

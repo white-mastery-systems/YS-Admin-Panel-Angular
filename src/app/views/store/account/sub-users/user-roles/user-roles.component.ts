@@ -6,10 +6,11 @@ import { AccountService } from '../../account.service';
 import { CommonService } from '../../../../../services/common.service';
 
 @Component({
-  selector: 'app-user-roles',
-  templateUrl: './user-roles.component.html',
-  styleUrls: ['./user-roles.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-user-roles',
+    templateUrl: './user-roles.component.html',
+    styleUrls: ['./user-roles.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class UserRolesComponent implements OnInit {

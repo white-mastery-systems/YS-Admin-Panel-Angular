@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../../../../services/common.service';
 @Component({
-  selector: 'app-setup-shipping',
-  templateUrl: './setup-shipping.component.html',
-  styleUrls: ['./setup-shipping.component.scss']
+    selector: 'app-setup-shipping',
+    templateUrl: './setup-shipping.component.html',
+    styleUrls: ['./setup-shipping.component.scss'],
+    standalone: false
 })
 export class SetupShippingComponent implements OnInit {
 

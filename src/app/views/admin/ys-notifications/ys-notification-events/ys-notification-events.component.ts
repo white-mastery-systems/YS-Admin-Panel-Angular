@@ -7,9 +7,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-ys-notification-events',
-  templateUrl: './ys-notification-events.component.html',
-  styleUrls: ['./ys-notification-events.component.scss']
+    selector: 'app-ys-notification-events',
+    templateUrl: './ys-notification-events.component.html',
+    styleUrls: ['./ys-notification-events.component.scss'],
+    standalone: false
 })
 
 export class YsNotificationEventsComponent implements OnInit {

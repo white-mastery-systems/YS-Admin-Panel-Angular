@@ -6,10 +6,11 @@ import { StoreApiService } from '../../../services/store-api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-courier-partners',
-  templateUrl: './courier-partners.component.html',
-  styleUrls: ['./courier-partners.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-courier-partners',
+    templateUrl: './courier-partners.component.html',
+    styleUrls: ['./courier-partners.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class CourierPartnersComponent implements OnInit {

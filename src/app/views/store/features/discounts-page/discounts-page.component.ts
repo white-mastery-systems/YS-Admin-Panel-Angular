@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-discounts-page',
-  templateUrl: './discounts-page.component.html',
-  styleUrls: ['./discounts-page.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-discounts-page',
+    templateUrl: './discounts-page.component.html',
+    styleUrls: ['./discounts-page.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class DiscountsPageComponent implements OnInit {

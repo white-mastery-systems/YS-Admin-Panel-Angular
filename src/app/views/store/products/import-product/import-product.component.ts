@@ -7,9 +7,10 @@ import { ProductExtrasApiService } from '../../product-extras/product-extras-api
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-import-product',
-  templateUrl: './import-product.component.html',
-  styleUrls: ['./import-product.component.scss']
+    selector: 'app-import-product',
+    templateUrl: './import-product.component.html',
+    styleUrls: ['./import-product.component.scss'],
+    standalone: false
 })
 export class ImportProductComponent implements OnInit {
 

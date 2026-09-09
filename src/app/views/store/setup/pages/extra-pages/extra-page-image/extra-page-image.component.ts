@@ -6,9 +6,10 @@ import { environment } from '../../../../../../../environments/environment';
 import { SetupService } from '../../../setup.service';
 
 @Component({
-  selector: 'app-extra-page-image',
-  templateUrl: './extra-page-image.component.html',
-  styleUrls: ['./extra-page-image.component.scss']
+    selector: 'app-extra-page-image',
+    templateUrl: './extra-page-image.component.html',
+    styleUrls: ['./extra-page-image.component.scss'],
+    standalone: false
 })
 
 export class ExtraPageImageComponent implements OnInit {

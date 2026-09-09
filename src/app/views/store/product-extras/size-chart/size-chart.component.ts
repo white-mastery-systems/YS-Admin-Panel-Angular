@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-size-chart',
-  templateUrl: './size-chart.component.html',
-  styleUrls: ['./size-chart.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-size-chart',
+    templateUrl: './size-chart.component.html',
+    styleUrls: ['./size-chart.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class SizeChartComponent implements OnInit {

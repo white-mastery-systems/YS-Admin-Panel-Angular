@@ -5,9 +5,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-modify-ys-features',
-  templateUrl: './modify-ys-features.component.html',
-  styleUrls: ['./modify-ys-features.component.scss']
+    selector: 'app-modify-ys-features',
+    templateUrl: './modify-ys-features.component.html',
+    styleUrls: ['./modify-ys-features.component.scss'],
+    standalone: false
 })
 
 export class ModifyYsFeaturesComponent implements OnInit {

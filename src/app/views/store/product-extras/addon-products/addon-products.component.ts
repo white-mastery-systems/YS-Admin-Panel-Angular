@@ -7,10 +7,11 @@ import { environment } from 'src/environments/environment';
 import { SharedAnimations } from 'src/app/shared/animations/shared-animations';
 
 @Component({
-  selector: 'app-addon-products',
-  templateUrl: './addon-products.component.html',
-  styleUrls: ['./addon-products.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-addon-products',
+    templateUrl: './addon-products.component.html',
+    styleUrls: ['./addon-products.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class AddonProductsComponent implements OnInit {

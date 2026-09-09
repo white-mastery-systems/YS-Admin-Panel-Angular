@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-product-tags',
-  templateUrl: './product-tags.component.html',
-  styleUrls: ['./product-tags.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-product-tags',
+    templateUrl: './product-tags.component.html',
+    styleUrls: ['./product-tags.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class ProductTagsComponent implements OnInit {

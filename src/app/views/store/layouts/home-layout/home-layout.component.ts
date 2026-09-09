@@ -6,10 +6,11 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-home-layout',
-  templateUrl: './home-layout.component.html',
-  styleUrls: ['./home-layout.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-home-layout',
+    templateUrl: './home-layout.component.html',
+    styleUrls: ['./home-layout.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class HomeLayoutComponent implements OnInit {

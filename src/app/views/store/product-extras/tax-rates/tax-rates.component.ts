@@ -7,10 +7,11 @@ import { CommonService } from '../../../../services/common.service';
 import { ExcelService } from '../../../../services/excel.service';
 
 @Component({
-  selector: 'app-tax-rates',
-  templateUrl: './tax-rates.component.html',
-  styleUrls: ['./tax-rates.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-tax-rates',
+    templateUrl: './tax-rates.component.html',
+    styleUrls: ['./tax-rates.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class TaxRatesComponent implements OnInit {

@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-abandoned',
-  templateUrl: './abandoned.component.html',
-  styleUrls: ['./abandoned.component.scss']
+    selector: 'app-abandoned',
+    templateUrl: './abandoned.component.html',
+    styleUrls: ['./abandoned.component.scss'],
+    standalone: false
 })
 
 export class AbandonedComponent implements OnInit {

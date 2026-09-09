@@ -5,10 +5,11 @@ import { CommonService } from '../../../../../services/common.service';
 import { SetupService } from '../../setup.service';
 
 @Component({
-  selector: 'app-store-locator',
-  templateUrl: './store-locator.component.html',
-  styleUrls: ['./store-locator.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-store-locator',
+    templateUrl: './store-locator.component.html',
+    styleUrls: ['./store-locator.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class StoreLocatorComponent implements OnInit {

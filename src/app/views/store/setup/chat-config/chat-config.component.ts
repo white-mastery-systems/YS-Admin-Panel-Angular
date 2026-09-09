@@ -3,9 +3,10 @@ import { CommonService } from '../../../../services/common.service';
 import { StoreApiService } from '../../../../services/store-api.service';
 
 @Component({
-  selector: 'app-chat-config',
-  templateUrl: './chat-config.component.html',
-  styleUrls: ['./chat-config.component.scss']
+    selector: 'app-chat-config',
+    templateUrl: './chat-config.component.html',
+    styleUrls: ['./chat-config.component.scss'],
+    standalone: false
 })
 
 export class ChatConfigComponent implements OnInit {

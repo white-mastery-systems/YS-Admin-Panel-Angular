@@ -5,9 +5,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-vendor-profile',
-  templateUrl: './vendor-profile.component.html',
-  styleUrls: ['./vendor-profile.component.scss']
+    selector: 'app-vendor-profile',
+    templateUrl: './vendor-profile.component.html',
+    styleUrls: ['./vendor-profile.component.scss'],
+    standalone: false
 })
 
 export class VendorProfileComponent implements OnInit {

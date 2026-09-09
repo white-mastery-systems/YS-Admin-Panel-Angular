@@ -6,9 +6,10 @@ import { CommonService } from '../../../../services/common.service';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-vs-order-details',
-  templateUrl: './vs-order-details.component.html',
-  styleUrls: ['./vs-order-details.component.scss']
+    selector: 'app-vs-order-details',
+    templateUrl: './vs-order-details.component.html',
+    styleUrls: ['./vs-order-details.component.scss'],
+    standalone: false
 })
 
 export class VsOrderDetailsComponent implements OnInit {

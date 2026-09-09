@@ -6,10 +6,11 @@ import { SetupService } from '../setup.service';
 import { CommonService } from '../../../../services/common.service';
 
 @Component({
-  selector: 'app-footer-seo-links',
-  templateUrl: './footer-seo-links.component.html',
-  styleUrls: ['./footer-seo-links.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-footer-seo-links',
+    templateUrl: './footer-seo-links.component.html',
+    styleUrls: ['./footer-seo-links.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class FooterSeoLinksComponent implements OnInit {

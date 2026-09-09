@@ -5,9 +5,10 @@ import { CommonService } from '../../../../../services/common.service';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-modify-home-layout',
-  templateUrl: './modify-home-layout.component.html',
-  styleUrls: ['./modify-home-layout.component.scss']
+    selector: 'app-modify-home-layout',
+    templateUrl: './modify-home-layout.component.html',
+    styleUrls: ['./modify-home-layout.component.scss'],
+    standalone: false
 })
 
 export class ModifyHomeLayoutComponent implements OnInit {

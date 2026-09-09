@@ -5,10 +5,11 @@ import { AdminApiService } from '../../../services/admin-api.service';
 import { CommonService } from '../../../services/common.service';
 
 @Component({
-  selector: 'app-ys-features',
-  templateUrl: './ys-features.component.html',
-  styleUrls: ['./ys-features.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-ys-features',
+    templateUrl: './ys-features.component.html',
+    styleUrls: ['./ys-features.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class YsFeaturesComponent implements OnInit {

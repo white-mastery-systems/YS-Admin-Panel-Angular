@@ -9,10 +9,11 @@ import { CommonService } from '../../../../services/common.service';
 import { element } from 'protractor';
 
 @Component({
-  selector: 'app-delivery-methods',
-  templateUrl: './delivery-methods.component.html',
-  styleUrls: ['./delivery-methods.component.scss'],
-  animations: [SharedAnimations]
+    selector: 'app-delivery-methods',
+    templateUrl: './delivery-methods.component.html',
+    styleUrls: ['./delivery-methods.component.scss'],
+    animations: [SharedAnimations],
+    standalone: false
 })
 
 export class DeliveryMethodsComponent implements OnInit {
