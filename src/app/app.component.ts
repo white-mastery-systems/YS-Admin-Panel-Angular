@@ -23,13 +23,13 @@ import { SocketService } from './services/socket.service';
 
 export class AppComponent {
   
-  @HostListener('window:scroll', ['$event'])
+  @HostListener('window:scroll')
   getScrollPosition() {
     this.commonService.scroll_y_pos = window.pageYOffset;
     this.commonService.screen_width = window.innerWidth;
     this.commonService.screen_height = window.innerHeight;
   }
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   getScreenProperties() {
     this.commonService.scroll_y_pos = window.pageYOffset;
     this.commonService.screen_width = window.innerWidth;

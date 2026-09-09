@@ -21,7 +21,7 @@ import { ModifyProductComponent } from './modify-product.component';
     SharedModule,
     ColorPickerModule,
     ModifyProductRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

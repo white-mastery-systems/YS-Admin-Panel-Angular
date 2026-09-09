@@ -1,85 +1,94 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="addForm={ rank: maxRank+1 }; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but" (click)="addForm={ rank: maxRank+1 }; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
       <span class="material-symbols-rounded">add</span>
+    </div>
   </div>
-</div>
-<div *ngIf="!pageLoader && commonService.ys_features.indexOf('multi_menu')!=-1">
-  <ng-container *ngIf="commonService.desktop_device">
-  <div class="breadcrumb">
-    <h1>
-      <a routerLink="/features/menus">{{ selectedMenu.name }}</a> >
-      <a routerLink="/features/menus/{{selectedSection._id}}">{{ selectedSection.name }}</a> >
-      <a routerLink="/features/menus/{{selectedSection._id}}/{{selectedCategory._id}}">{{ selectedCategory.name }}</a> >
-      Sub-Categories
-    </h1>
-  </div>
-</ng-container>
-
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
+}
+@if (!pageLoader && commonService.ys_features.indexOf('multi_menu')!=-1) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb">
+        <h1>
+          <a routerLink="/features/menus">{{ selectedMenu.name }}</a> >
+          <a routerLink="/features/menus/{{selectedSection._id}}">{{ selectedSection.name }}</a> >
+          <a routerLink="/features/menus/{{selectedSection._id}}/{{selectedCategory._id}}">{{ selectedCategory.name }}</a> >
+          Sub-Categories
+        </h1>
       </div>
-      <div class="col-md-6 d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button class="highbutton" type="button" (click)="addForm={ rank: maxRank+1 }; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
-          <span class="material-symbols-rounded">add</span>Add Sub-Category
-        </button>
-      </div>    
-    </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-8 col-4 first_col px-0 header-font">
-            <p class="w-100 w-sm-100 m-b-0">Sub-Category Name</p>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
           </div>
         </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-8 col-6 first_col px-0">
-            <p class="w-100 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 d-flex justify-content-end">
+            <button class="highbutton" type="button" (click)="addForm={ rank: maxRank+1 }; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+              <span class="material-symbols-rounded">add</span>Add Sub-Category
+            </button>
           </div>
-          <div class="col-md-4 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">              
-              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>  
-              <button [ngClass]="commonService.desktop_device? 'light-button ': 'iconbutton'" (click)="onEdit(x, editModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'edit': 'chevron_right'}}</span> {{commonService.desktop_device? 'edit': ''}}
-              </button>         
-            </div>            
-          </div>
-        </div>
-      </div>      
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        }
       </div>
     </div>
-  
-
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-8 col-4 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100 m-b-0">Sub-Category Name</p>
+                </div>
+              </div>
+            }
+            @for (x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-8 col-6 first_col px-0">
+                  <p class="w-100 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+                </div>
+                <div class="col-md-4 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button ': 'iconbutton'" (click)="onEdit(x, editModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'edit': 'chevron_right'}}</span> {{commonService.desktop_device? 'edit': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- ADD MODAL -->
 <ng-template #addModal let-modal>
@@ -89,7 +98,7 @@
         <h4>
           <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
           <span class="popup_text">New Sub-Category</span>
-         </h4>   
+        </h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -102,230 +111,268 @@
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addForm.rank" #rank="ngModel" min="1"
                 max="{{maxRank+1}}" appNumberOnly required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label class="checkbox checkbox-primary">
-                <input class="form-check-input" type="checkbox" name="link_status" [(ngModel)]="addForm.link_status"
-                  (change)="addForm.link_type='category';" #link_status="ngModel">
-                <span>Enable Link</span>
-                <span class="checkmark"></span>
-              </label>
-            </div>
-            <ng-container *ngIf="addForm.link_status">
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="category">
-                  <span>Link to Catalog</span>
-                  <span class="checkmark"></span>
-                </label>
               </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="product">
-                  <span>Link to Product</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="internal">
-                  <span>Link to Internal Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="external">
-                  <span>Link to External Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div *ngIf="addForm.link_type=='category' || addForm.link_type=='product'"
-                class="col-md-12 form-group mb-3">
-                <label>{{addForm.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
-                <select name="category_id" class="form-control select-arrow" [(ngModel)]="addForm.category_id"
-                (change)="productList=[]" #category_id="ngModel" required>
-                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
-                </select>
-              </div>
-              <ng-container *ngIf="addForm.link_type=='product'">
-                <div class="col-md-9 form-group mb-3">
-                  <input type="text" name="search_bar" placeholder="Search" (input)="productList=[]" class="form-control" [(ngModel)]="addForm.search_bar" />
-                </div>
-                <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
-                  <button [disabled]="!addForm.category_id || addForm.search_bar?.length<3" type="button"
-                  (click)="searchProduct(addForm.category_id, addForm.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
-                </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label>Link to Product
-                    <i *ngIf="searchLoader" class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
-                    <ng-container *ngIf="!searchLoader && addForm.category_id && addForm.search_bar?.length>=3">
-                      ({{productList.length}} products found)
-                    </ng-container>
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="link_status" [(ngModel)]="addForm.link_status"
+                    (change)="addForm.link_type='category';" #link_status="ngModel">
+                    <span>Enable Link</span>
+                    <span class="checkmark"></span>
                   </label>
-                  <select name="product_id" class="form-control select-arrow" [(ngModel)]="addForm.product_id" required>
-                    <option [ngValue]="x._id"
-                      *ngFor="let x of productList;">{{x.name}}</option>
-                  </select>
                 </div>
-              </ng-container>
-              <div *ngIf="addForm.link_type=='internal' || addForm.link_type=='external'"
-                class="col-md-12 form-group mb-3">
-                <label
-                  *ngIf="addForm.link_type=='internal'">{{commonService.store_details?.base_url}}{{addForm.link}}</label>
-                <label *ngIf="addForm.link_type=='external'">External Link</label>
-                <input type="text" name="link" class="form-control" [(ngModel)]="addForm.link" #int_link="ngModel"
-                  required />
+                @if (addForm.link_status) {
+                  <div class="col-md-6 form-group mb-3">
+                    <label class="radio radio-primary">
+                      <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="category">
+                      <span>Link to Catalog</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label class="radio radio-primary">
+                      <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="product">
+                      <span>Link to Product</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label class="radio radio-primary">
+                      <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="internal">
+                      <span>Link to Internal Link</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label class="radio radio-primary">
+                      <input type="radio" name="link_type" [(ngModel)]="addForm.link_type" value="external">
+                      <span>Link to External Link</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  @if (addForm.link_type=='category' || addForm.link_type=='product') {
+                    <div
+                      class="col-md-12 form-group mb-3">
+                      <label>{{addForm.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
+                      <select name="category_id" class="form-control select-arrow" [(ngModel)]="addForm.category_id"
+                        (change)="productList=[]" #category_id="ngModel" required>
+                        @for (x of commonService.catalog_list | orderAsc: 'name'; track x) {
+                          <option [ngValue]="x._id">{{x.name}}</option>
+                        }
+                      </select>
+                    </div>
+                  }
+                  @if (addForm.link_type=='product') {
+                    <div class="col-md-9 form-group mb-3">
+                      <input type="text" name="search_bar" placeholder="Search" (input)="productList=[]" class="form-control" [(ngModel)]="addForm.search_bar" />
+                    </div>
+                    <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
+                      <button [disabled]="!addForm.category_id || addForm.search_bar?.length<3" type="button"
+                      (click)="searchProduct(addForm.category_id, addForm.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Link to Product
+                        @if (searchLoader) {
+                          <i class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
+                        }
+                        @if (!searchLoader && addForm.category_id && addForm.search_bar?.length>=3) {
+                          ({{productList.length}} products found)
+                        }
+                      </label>
+                      <select name="product_id" class="form-control select-arrow" [(ngModel)]="addForm.product_id" required>
+                        @for (x of productList; track x) {
+                          <option [ngValue]="x._id"
+                          >{{x.name}}</option>
+                        }
+                      </select>
+                    </div>
+                  }
+                  @if (addForm.link_type=='internal' || addForm.link_type=='external') {
+                    <div
+                      class="col-md-12 form-group mb-3">
+                      @if (addForm.link_type=='internal') {
+                        <label
+                        >{{commonService.store_details?.base_url}}{{addForm.link}}</label>
+                      }
+                      @if (addForm.link_type=='external') {
+                        <label>External Link</label>
+                      }
+                      <input type="text" name="link" class="form-control" [(ngModel)]="addForm.link" #int_link="ngModel"
+                        required />
+                      </div>
+                    }
+                  }
+                </div>
               </div>
-            </ng-container>
+              @if (addForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ addForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="submit" class="btn btn-wide btn-primary">Add</button>
+            </div>
           </div>
-        </div>
-        <div *ngIf="addForm.errorMsg">
-          <p class="text-danger">{{ addForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary">Add</button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+        </form>
+      </ng-template>
 
-<!-- EDIT MODAL -->
-<ng-template #editModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onUpdate()" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">{{ editForm?.name }}</span>
-         </h4>   
-      </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>Name</label>
-              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
+      <!-- EDIT MODAL -->
+      <ng-template #editModal let-modal>
+        <form autocomplete="off" (ngSubmit)="onUpdate()" ngNativeValidate ngbAutofocus>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>
+                <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                <span class="popup_text">{{ editForm?.name }}</span>
+              </h4>
             </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Rank</label>
-              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
-                max="{{maxRank}}" appNumberOnly required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label class="checkbox checkbox-primary">
-                <input class="form-check-input" type="checkbox" name="link_status" [(ngModel)]="editForm.link_status"
-                  (change)="editForm.link_type='category';" #link_status="ngModel">
-                <span>Enable Link</span>
-                <span class="checkmark"></span>
-              </label>
-            </div>
-            <ng-container *ngIf="editForm.link_status">
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="category">
-                  <span>Link to Catalog</span>
-                  <span class="checkmark"></span>
-                </label>
+            @if (popupLoader) {
+              <div class="modal-body">
+                <app-popup-spinner></app-popup-spinner>
               </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="product">
-                  <span>Link to Product</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="internal">
-                  <span>Link to Internal Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="external">
-                  <span>Link to External Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div *ngIf="editForm.link_type=='category' || editForm.link_type=='product'"
-                class="col-md-12 form-group mb-3">
-                <label>{{editForm.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
-                <select name="category_id" class="form-control select-arrow" [(ngModel)]="editForm.category_id"
-                (change)="productList=[]" #category_id="ngModel" required>
-                  <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
-                </select>
-              </div>
-              <ng-container *ngIf="editForm.link_type=='product'">
-                <div class="col-md-9 form-group mb-3">
-                  <input type="text" name="search_bar" placeholder="Search" (input)="productList=[]" class="form-control" [(ngModel)]="editForm.search_bar" />
+            }
+            @if (!popupLoader) {
+              <div class="modal-body">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Name</label>
+                      <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Rank</label>
+                      <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
+                        max="{{maxRank}}" appNumberOnly required />
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label class="checkbox checkbox-primary">
+                          <input class="form-check-input" type="checkbox" name="link_status" [(ngModel)]="editForm.link_status"
+                            (change)="editForm.link_type='category';" #link_status="ngModel">
+                            <span>Enable Link</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        @if (editForm.link_status) {
+                          <div class="col-md-6 form-group mb-3">
+                            <label class="radio radio-primary">
+                              <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="category">
+                              <span>Link to Catalog</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label class="radio radio-primary">
+                              <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="product">
+                              <span>Link to Product</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label class="radio radio-primary">
+                              <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="internal">
+                              <span>Link to Internal Link</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label class="radio radio-primary">
+                              <input type="radio" name="link_type" [(ngModel)]="editForm.link_type" value="external">
+                              <span>Link to External Link</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          @if (editForm.link_type=='category' || editForm.link_type=='product') {
+                            <div
+                              class="col-md-12 form-group mb-3">
+                              <label>{{editForm.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
+                              <select name="category_id" class="form-control select-arrow" [(ngModel)]="editForm.category_id"
+                                (change)="productList=[]" #category_id="ngModel" required>
+                                @for (x of commonService.catalog_list | orderAsc: 'name'; track x) {
+                                  <option [ngValue]="x._id">{{x.name}}</option>
+                                }
+                              </select>
+                            </div>
+                          }
+                          @if (editForm.link_type=='product') {
+                            <div class="col-md-9 form-group mb-3">
+                              <input type="text" name="search_bar" placeholder="Search" (input)="productList=[]" class="form-control" [(ngModel)]="editForm.search_bar" />
+                            </div>
+                            <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
+                              <button [disabled]="!editForm.category_id || editForm.search_bar?.length<3" type="button"
+                              (click)="searchProduct(editForm.category_id, editForm.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                              <label>Link to Product
+                                @if (searchLoader) {
+                                  <i class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
+                                }
+                                @if (!searchLoader && editForm.category_id && editForm.search_bar?.length>=3) {
+                                  ({{productList.length}} products found)
+                                }
+                              </label>
+                              <select name="product_id" class="form-control select-arrow" [(ngModel)]="editForm.product_id" required>
+                                @for (x of productList; track x) {
+                                  <option [ngValue]="x._id"
+                                  >{{x.name}}</option>
+                                }
+                              </select>
+                            </div>
+                          }
+                          @if (editForm.link_type=='internal' || editForm.link_type=='external') {
+                            <div
+                              class="col-md-12 form-group mb-3">
+                              @if (editForm.link_type=='internal') {
+                                <label
+                                >{{commonService.store_details?.base_url}}{{editForm.link}}</label>
+                              }
+                              @if (editForm.link_type=='external') {
+                                <label>External Link</label>
+                              }
+                              <input type="text" name="link" class="form-control" [(ngModel)]="editForm.link" #int_link="ngModel"
+                                required />
+                              </div>
+                            }
+                          }
+                        </div>
+                      </div>
+                      @if (editForm.errorMsg) {
+                        <div>
+                          <p class="text-danger">{{ editForm.errorMsg }}</p>
+                        </div>
+                      }
+                    </div>
+                  }
+                  <div class="modal-footer">
+                    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                      (click)="modal.dismiss('Cross click')">
+                      <span class="black-outline-txt">Cancel</span>
+                    </button>
+                    <button type="submit" class="btn btn-wide btn-primary">Update</button>
+                  </div>
                 </div>
-                <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
-                  <button [disabled]="!editForm.category_id || editForm.search_bar?.length<3" type="button"
-                  (click)="searchProduct(editForm.category_id, editForm.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
-                </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label>Link to Product
-                    <i *ngIf="searchLoader" class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
-                    <ng-container *ngIf="!searchLoader && editForm.category_id && editForm.search_bar?.length>=3">
-                      ({{productList.length}} products found)
-                    </ng-container>
-                  </label>
-                  <select name="product_id" class="form-control select-arrow" [(ngModel)]="editForm.product_id" required>
-                    <option [ngValue]="x._id"
-                      *ngFor="let x of productList;">{{x.name}}</option>
-                  </select>
-                </div>
-              </ng-container>
-              <div *ngIf="editForm.link_type=='internal' || editForm.link_type=='external'"
-                class="col-md-12 form-group mb-3">
-                <label
-                  *ngIf="editForm.link_type=='internal'">{{commonService.store_details?.base_url}}{{editForm.link}}</label>
-                <label *ngIf="editForm.link_type=='external'">External Link</label>
-                <input type="text" name="link" class="form-control" [(ngModel)]="editForm.link" #int_link="ngModel"
-                  required />
-              </div>
-            </ng-container>
-          </div>
-        </div>
-        <div *ngIf="editForm.errorMsg">
-          <p class="text-danger">{{ editForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary">Update</button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+              </form>
+            </ng-template>
 
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
-        sub-category?</strong></p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+            <!-- DELETE MODAL -->
+            <ng-template #deleteModal let-modal>
+              <div class="modal-body">
+                <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
+              sub-category?</strong></p>
+              @if (deleteForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">No</span>
+              </button>
+              <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+                <span class="orng-outline-txt">Yes</span>
+              </button>
+            </div>
+          </ng-template>

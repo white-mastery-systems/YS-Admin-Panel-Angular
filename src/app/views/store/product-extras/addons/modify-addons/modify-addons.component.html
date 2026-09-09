@@ -1,293 +1,328 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-  <div class="breadcrumb">
-    <div class="d-flex align-items-center">
-      <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-      <h1 *ngIf="!router.url.includes('modify')">New Add-On</h1>
-      <h1 *ngIf="router.url.includes('modify')">{{addonForm.name}}</h1>
-   </div>   
-  </div>
-</ng-container>
-<form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-
+@if (pageLoader) {
   <div class="row">
-    <div class="col-md-12 d-flex justify-content-center">
-        <div class="col-md-6 col-12 px-5 mb-2">
+    <app-spinner></app-spinner>
+  </div>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          @if (!router.url.includes('modify')) {
+            <h1>New Add-On</h1>
+          }
+          @if (router.url.includes('modify')) {
+            <h1>{{addonForm.name}}</h1>
+          }
+        </div>
+      </div>
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="col-md-6 col-12 px-5 mb-2">
             <h6 class="mb-3 pt-3 dark-font text-center">ADDONS IMAGE</h6>
             <div class="card">
-            <div class="p-3" align="center">
-              <div *ngIf="addonForm.image" class="py-2">
-                <span (click)="addonForm.img_change=null; addonForm.image=null" class="material-icons float-right round-img-icon ab-item-close top5" aria-hidden="true">close</span>
-                <img *ngIf="addonForm.image && addonForm?.img_change" [src]="addonForm.image" height="100px;" width="auto;">
-                <img *ngIf="addonForm.image && !addonForm?.img_change" [src]="imgBaseUrl+addonForm.image" height="100px;" width="auto;">
-              </div>
-              <div *ngIf="!addonForm.image">
-                <label>
-                  <div>
-                    <i class="material-icons add-img">add_photo_alternate</i>
-                    <p>Click to upload image</p>
+              <div class="p-3" align="center">
+                @if (addonForm.image) {
+                  <div class="py-2">
+                    <span (click)="addonForm.img_change=null; addonForm.image=null" class="material-icons float-right round-img-icon ab-item-close top5" aria-hidden="true">close</span>
+                    @if (addonForm.image && addonForm?.img_change) {
+                      <img [src]="addonForm.image" height="100px;" width="auto;">
+                    }
+                    @if (addonForm.image && !addonForm?.img_change) {
+                      <img [src]="imgBaseUrl+addonForm.image" height="100px;" width="auto;">
+                    }
                   </div>
-                  <input type="file" name="image" style="display: none;" (change)="mainFileChangeListener($event)" accept="image/jpeg, image/png, image/webp"
+                }
+                @if (!addonForm.image) {
+                  <div>
+                    <label>
+                      <div>
+                        <i class="material-icons add-img">add_photo_alternate</i>
+                        <p>Click to upload image</p>
+                      </div>
+                      <input type="file" name="image" style="display: none;" (change)="mainFileChangeListener($event)" accept="image/jpeg, image/png, image/webp"
+                        />
+                      </label>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="row">
+              <div class="col-md-6 form-group mb-3">
+                <label>Name</label>
+                <input type="text" name="addon_name" class="form-control" [(ngModel)]="addonForm.name" #name="ngModel" required
                   />
-                </label>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Price</label>
+                  <input type="tel" name="addon_price" class="form-control" [(ngModel)]="addonForm.price" appNumberOnly required />
+                </div>
+                @if (commonService.store_details?._id==configData.chettinad_id) {
+                  <div class="col-md-6 form-group mb-3">
+                    <label>Shipping Weight (in Kg, 500g = 0.5)</label>
+                    <input type="tel" name="addon_weight" class="form-control" [(ngModel)]="addonForm.weight" appNumberOnly required />
+                  </div>
+                }
+                <div class="col-md-6 form-group mb-3">
+                  <label>Min Stock Requirement</label>
+                  <input type="tel" name="min_stock" class="form-control" [(ngModel)]="addonForm.min_stock" #min_stock="ngModel"
+                    appNumberOnly required />
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label>Rank</label>
+                    <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addonForm.rank" #rank="ngModel" min="1" max="{{maxRank}}"
+                      appNumberOnly required />
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-md-4"></div> -->
               </div>
-            </div>
-            </div>
-          </div>
-
-    </div>
-    <div class="col-md-12 col-12">
-      <div class="row">
-      <div class="col-md-6 form-group mb-3">
-        <label>Name</label>
-        <input type="text" name="addon_name" class="form-control" [(ngModel)]="addonForm.name" #name="ngModel" required
-        />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Price</label>
-        <input type="tel" name="addon_price" class="form-control" [(ngModel)]="addonForm.price" appNumberOnly required />
-      </div>
-      <div *ngIf="commonService.store_details?._id==configData.chettinad_id" class="col-md-6 form-group mb-3">
-        <label>Shipping Weight (in Kg, 500g = 0.5)</label>
-        <input type="tel" name="addon_weight" class="form-control" [(ngModel)]="addonForm.weight" appNumberOnly required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Min Stock Requirement</label>
-        <input type="tel" name="min_stock" class="form-control" [(ngModel)]="addonForm.min_stock" #min_stock="ngModel"
-          appNumberOnly required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Rank</label>
-        <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addonForm.rank" #rank="ngModel" min="1" max="{{maxRank}}"
-          appNumberOnly required />
-      </div>
-      </div>
-    </div>
-
-    <!-- <div class="col-md-4"></div> -->
-   
-  </div>
-  
-  <!-- customization notes -->
-  <div [ngClass]="addonForm.notes_status? ' col-md-12 col-12 p-0 mb-3': ''">
-    <div class="row">
-      <div class="form-group mb-3 px-3">
-        <label class="checkbox checkbox-primary">
-          <input class="form-check-input" type="checkbox" name="notes_status" [(ngModel)]="addonForm.notes_status" (change)="(!addonForm.notes_list?.length)? addonForm.notes_list=[{}]: '';" #notes_status="ngModel">
-          <span>Include Customization Notes</span>
-          <span class="checkmark"></span>
-        </label>
-      </div>
-    </div>
-    <div class="card mb-3 p-3" *ngIf="addonForm.notes_status && addonForm.notes_list">
-      <div class="row">
-        <div class="col-md-6 form-group mb-3">
-          <label>Title</label>
-          <input type="text" name="notes_title" class="form-control" [(ngModel)]="addonForm.notes_title" #notes_title="ngModel" required />
-        </div>
-        
-        <div class="col-md-12">
-          <p><b class="add-another">Note:</b> Please select the checkbox, if the option is mandatory</p>
-        </div>
-        <div *ngFor="let x of addonForm.notes_list; let i=index;" class="col-md-6">
-          <div class="card card-in-card mb-3 p-3">
-            <span *ngIf="addonForm.notes_list.length>1" (click)="addonForm.notes_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
-            <div class="row d-flex">
-              <div class="col-md-10 col-10">
-                <label>{{i+1}}) Option Name</label>
-                <input type="text" name="notes_option{{i}}" class="form-control" [(ngModel)]="x.name" #notes_option="ngModel" required />
+              <!-- customization notes -->
+              <div [ngClass]="addonForm.notes_status? ' col-md-12 col-12 p-0 mb-3': ''">
+                <div class="row">
+                  <div class="form-group mb-3 px-3">
+                    <label class="checkbox checkbox-primary">
+                      <input class="form-check-input" type="checkbox" name="notes_status" [(ngModel)]="addonForm.notes_status" (change)="(!addonForm.notes_list?.length)? addonForm.notes_list=[{}]: '';" #notes_status="ngModel">
+                      <span>Include Customization Notes</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+                @if (addonForm.notes_status && addonForm.notes_list) {
+                  <div class="card mb-3 p-3">
+                    <div class="row">
+                      <div class="col-md-6 form-group mb-3">
+                        <label>Title</label>
+                        <input type="text" name="notes_title" class="form-control" [(ngModel)]="addonForm.notes_title" #notes_title="ngModel" required />
+                      </div>
+                      <div class="col-md-12">
+                        <p><b class="add-another">Note:</b> Please select the checkbox, if the option is mandatory</p>
+                      </div>
+                      @for (x of addonForm.notes_list; track x; let i = $index) {
+                        <div class="col-md-6">
+                          <div class="card card-in-card mb-3 p-3">
+                            @if (addonForm.notes_list.length>1) {
+                              <span (click)="addonForm.notes_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                            }
+                            <div class="row d-flex">
+                              <div class="col-md-10 col-10">
+                                <label>{{i+1}}) Option Name</label>
+                                <input type="text" name="notes_option{{i}}" class="form-control" [(ngModel)]="x.name" #notes_option="ngModel" required />
+                              </div>
+                              <div class="col-md-2 col-2 d-flex justify-content-center align-items-center">
+                                <label class="checkbox checkbox-primary mt-3">
+                                  <input class="form-check-input" type="checkbox" name="notes_req{{i}}" [(ngModel)]="x.required" #notes_req="ngModel">
+                                  <span class="checkmark"></span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      <div class="col-md-12 col-12 d-flex  align-items-center ">
+                        <!-- <button type="button" class="btn btn-wide black-outline-btn float-right" (click)="addonForm.notes_list.push({});">ADD OPTION</button> -->
+                        <button class="light-button"  (click)="addonForm.notes_list.push({});" type="button">
+                          <span class="material-symbols-rounded "
+                          >add</span>ADD OPTION
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
-              <div class="col-md-2 col-2 d-flex justify-content-center align-items-center">
-                <label class="checkbox checkbox-primary mt-3">
-                  <input class="form-check-input" type="checkbox" name="notes_req{{i}}" [(ngModel)]="x.required" #notes_req="ngModel">
-                  <span class="checkmark"></span>
-                </label>
-              </div>
+              <!-- measurement -->
+              @if (commonService.ys_features.indexOf('measurements')!=-1 && measurementList?.length) {
+                <div [ngClass]="addonForm.mm_status? 'col-md-12 col-12 mb-3 px-0': ''">
+                  <div class="row">
+                    <div class="form-group mb-3 px-3">
+                      <label class="checkbox checkbox-primary">
+                        <input class="form-check-input" type="checkbox" name="mm_status" [(ngModel)]="addonForm.mm_status" #mm_status="ngModel">
+                        <span>Include Measurements</span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                  @if (addonForm.mm_status) {
+                    <div class="card card-in-card mb-3 p-3">
+                      <div class="row">
+                        <div class="form-group col-md-12 mt-1 mb-1">
+                          <label class="checkbox checkbox-primary">
+                            <input class="form-check-input" type="checkbox" name="select_all" [(ngModel)]="addonForm.select_all" (change)="selectAllmmSets(addonForm.select_all);"
+                              #select_all="ngModel">
+                              <span>Select All</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          @for (x of measurementList | numOrderAsc:'rank'; track x; let i = $index) {
+                            <div class="form-group col-md-3 mt-1 mb-1">
+                              <label class="checkbox checkbox-success">
+                                <input class="form-check-input" type="checkbox" name="mm_checked{{i+1}}" [(ngModel)]="x.mm_checked" #mm_checked="ngModel">
+                                <span>{{x.name}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                <!-- Customization List -->
+                @for (x of addonForm.custom_list; track x; let i = $index) {
+                  <div class="card col-md-12 col-12 mb-3 p-3">
+                    <div>
+                      <span (click)="addonForm.custom_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                    </div>
+                    <div class="row">
+                      <div class="form-group mb-3" [ngClass]="(commonService.store_details?.type=='quot_based')? 'col-md-3': 'col-md-6'">
+                        <label>Customization Title</label>
+                        <input type="text" name="custom_name{{i+1}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" required />
+                      </div>
+                      @if (commonService.store_details?.type=='quot_based') {
+                        <div class="col-md-3 form-group mt-4 mb-3">
+                          <label class="checkbox checkbox-primary">
+                            <input class="form-check-input" type="checkbox" name="qty_scale{{i+1}}" [(ngModel)]="x.qty_scale">
+                            <span>Enable Quantity Scale</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      }
+                      <div class="form-group mb-3" [ngClass]="x.type=='mandatory' || x.type=='limited'? 'col-md-3': 'col-md-6'">
+                        <label>Choice Type</label>
+                        <select name="type{{i+1}}" class="form-control" (change)="x.limit=0;" [(ngModel)]="x.type" #type="ngModel" required>
+                          <option value="either_or">Choose One</option>
+                          <option value="multiple">Unlimited Choice</option>
+                          <option value="limited">Limited Choice</option>
+                          <option value="mandatory">Mandatory Choice</option>
+                        </select>
+                      </div>
+                      @if (x.type=='mandatory' || x.type=='limited') {
+                        <div class="col-md-3 form-group mb-3">
+                          <label>Limit @if (x.limit) {
+                            <span> ({{x.limit}} out of {{x.option_list.length}})</span>
+                          } </label>
+                          <input type="number" (wheel)="commonService.handleWheel($event)" name="limit{{i+1}}" class="form-control" [(ngModel)]="x.limit" #limit="ngModel" max="{{x.option_list.length}}" required />
+                        </div>
+                      }
+                      <!-- Option List -->
+                      @for (y of x.option_list; track y; let j = $index) {
+                        <div class="col-md-6 col-lg-6">
+                          <div class="card card-in-card p-3 mb-3">
+                            @if (x.option_list.length > 1) {
+                              <span (click)="x.option_list.splice(j, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+                            }
+                            <div class="mb-2" align="center">
+                              <label>
+                                @if (!y.image) {
+                                  <div>
+                                    <i class="material-icons add-img">add_photo_alternate</i>
+                                    <p class="m-b-0">Click to upload image </p>
+                                    <p>(Resolution: 150 x 150)</p>
+                                  </div>
+                                }
+                                @if (y.image && y?.img_change) {
+                                  <img [src]="y.image" height="100px;" width="auto;">
+                                }
+                                @if (y.image && !y?.img_change) {
+                                  <img [src]="imgBaseUrl+y.image" height="100px;" width="auto;">
+                                }
+                                <input type="file" name="y.image{{i+1}}{{j+1}}" style="display: none;" (change)="fileChangeListener(i, j, $event)" accept="image/jpeg, image/png, image/webp"
+                                  />
+                                </label>
+                              </div>
+                              <div class="row">
+                                <div [ngClass]="(i>0)? 'col-md-6': 'col-md-12'">
+                                  <div class="form-group">
+                                    <label>Option Title</label>
+                                    <input type="text" name="option_name{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.name" #name="ngModel" required />
+                                  </div>
+                                </div>
+                                @if (i>0) {
+                                  <div class="col-md-6 form-group">
+                                    <label>Option Link To</label>
+                                    <select name="link_to{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.link_to" #link_to="ngModel" required>
+                                      <option value="all">All</option>
+                                      @for (z of addonForm.custom_list[i-1].option_list; track z; let k = $index) {
+                                        <option [ngValue]="z.name">{{z.name}}</option>
+                                      }
+                                    </select>
+                                  </div>
+                                }
+                                <div class="col-md-12">
+                                  <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="tel" name="option_price{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.price" appNumberOnly required />
+                                  </div>
+                                </div>
+                                @if (commonService.store_details?._id==configData.chettinad_id) {
+                                  <div class="col-md-12">
+                                    <div class="form-group">
+                                      <label>Shipping Weight (in Kg, 500g = 0.5)</label>
+                                      <input type="tel" name="option_weight{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.weight" appNumberOnly required />
+                                    </div>
+                                  </div>
+                                }
+                                <div class="col-md-12">
+                                  <div class="form-group">
+                                    <label>Extra Stock Requirement</label>
+                                    <input type="tel" name="additional_qty{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.additional_qty" #additional_qty="ngModel"
+                                      appNumberOnly required />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          <div class="col-md-12 p-0 mt-1">
+                            <div class="col-md-6 col-lg-6 z-i-0 text-center ">
+                              <!-- <span class="black-outline-btn x-close" (click)="x.option_list.push({ price: 0, additional_qty: 0 });">
+                              ADD OPTION
+                            </span> -->
+                            <button class="light-button" (click)="x.option_list.push({ price: 0, additional_qty: 0 });" type="button">
+                              <span class="material-symbols-rounded "
+                              >add</span>ADD OPTION
+                            </button>
+                          </div>
+                        </div>
+                        <!-- #Option List -->
+                      </div>
+                    </div>
+                  }
+                  <div class="row">
+                    <div class="col-md-12 mt-2">
+                      <!-- <span class="black-outline-btn x-close" (click)="addonForm.custom_list.push({ option_list: [{ price: 0, additional_qty: 0 }] });">
+                      <b>{{ (addonForm?.custom_list?.length)? 'ADD CUSTOMIZATION': 'ADD CUSTOMIZATION' }}</b>
+                    </span> -->
+                    <button class="light-button" (click)="addonForm.custom_list.push({ option_list: [{ price: 0, additional_qty: 0 }] });" type="button">
+                      <span class="material-symbols-rounded "
+                      >add</span>ADD CUSTOMIZATION
+                    </button>
+                  </div>
+                </div>
+                <!-- #Customization List -->
+                <!-- <div class="separator-breadcrumb border-top mt-5"></div> -->
+                <div class="page_fixedfooter">
+                  @if (addonForm.errorMsg) {
+                    <div class="col-md-12 mt-3 mb-3">
+                      <p class="text-danger" align="center">{{ addonForm.errorMsg }}</p>
+                    </div>
+                  }
+                  <div align="center" class="col-md-12 z-i-0">
+                    <button type="button" routerLink="/product-extras/addons" class="btn btn-wide black-outline-btn">
+                      <span class="black-outline-txt">Cancel</span>
+                    </button>&nbsp; &nbsp; &nbsp;
+                    <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
+                      {{router.url.includes('modify')? 'Update': 'Save'}}
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-          </div>
-        </div>
-        <div class="col-md-12 col-12 d-flex  align-items-center ">
-          <!-- <button type="button" class="btn btn-wide black-outline-btn float-right" (click)="addonForm.notes_list.push({});">ADD OPTION</button> -->
-          <button class="light-button"  (click)="addonForm.notes_list.push({});" type="button">
-            <span class="material-symbols-rounded "
-               >add</span>ADD OPTION
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- measurement -->
-  <ng-container *ngIf="commonService.ys_features.indexOf('measurements')!=-1 && measurementList?.length">
-    <div [ngClass]="addonForm.mm_status? 'col-md-12 col-12 mb-3 px-0': ''">
-      <div class="row">
-        <div class="form-group mb-3 px-3">
-          <label class="checkbox checkbox-primary">
-            <input class="form-check-input" type="checkbox" name="mm_status" [(ngModel)]="addonForm.mm_status" #mm_status="ngModel">
-            <span>Include Measurements</span>
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      </div>
-      <div class="card card-in-card mb-3 p-3" *ngIf="addonForm.mm_status">
-        <div class="row">
-          <div class="form-group col-md-12 mt-1 mb-1">
-            <label class="checkbox checkbox-primary">
-              <input class="form-check-input" type="checkbox" name="select_all" [(ngModel)]="addonForm.select_all" (change)="selectAllmmSets(addonForm.select_all);"
-                #select_all="ngModel">
-              <span>Select All</span>
-              <span class="checkmark"></span>
-            </label>
-          </div>
-          <div class="form-group col-md-3 mt-1 mb-1" *ngFor="let x of measurementList | numOrderAsc:'rank'; let i=index;">
-            <label class="checkbox checkbox-success">
-              <input class="form-check-input" type="checkbox" name="mm_checked{{i+1}}" [(ngModel)]="x.mm_checked" #mm_checked="ngModel">
-              <span>{{x.name}}</span>
-              <span class="checkmark"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- Customization List -->
-  <div class="card col-md-12 col-12 mb-3 p-3" *ngFor="let x of addonForm.custom_list; let i=index;">
-
-    <div>
-      <span (click)="addonForm.custom_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
-    </div>
-
-    <div class="row">
-      <div class="form-group mb-3" [ngClass]="(commonService.store_details?.type=='quot_based')? 'col-md-3': 'col-md-6'">
-        <label>Customization Title</label>
-        <input type="text" name="custom_name{{i+1}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" required />
-      </div>
-      <div *ngIf="commonService.store_details?.type=='quot_based'" class="col-md-3 form-group mt-4 mb-3">
-        <label class="checkbox checkbox-primary">
-          <input class="form-check-input" type="checkbox" name="qty_scale{{i+1}}" [(ngModel)]="x.qty_scale">
-          <span>Enable Quantity Scale</span>
-          <span class="checkmark"></span>
-        </label>
-      </div>
-      <div class="form-group mb-3" [ngClass]="x.type=='mandatory' || x.type=='limited'? 'col-md-3': 'col-md-6'">
-        <label>Choice Type</label>
-        <select name="type{{i+1}}" class="form-control" (change)="x.limit=0;" [(ngModel)]="x.type" #type="ngModel" required>
-          <option value="either_or">Choose One</option>
-          <option value="multiple">Unlimited Choice</option>
-          <option value="limited">Limited Choice</option>
-          <option value="mandatory">Mandatory Choice</option>
-        </select>
-      </div>
-      <div *ngIf="x.type=='mandatory' || x.type=='limited'" class="col-md-3 form-group mb-3">
-        <label>Limit <span *ngIf="x.limit"> ({{x.limit}} out of {{x.option_list.length}})</span> </label>
-        <input type="number" (wheel)="commonService.handleWheel($event)" name="limit{{i+1}}" class="form-control" [(ngModel)]="x.limit" #limit="ngModel" max="{{x.option_list.length}}" required />
-      </div>
-      <!-- Option List -->
-      <div class="col-md-6 col-lg-6" *ngFor="let y of x.option_list; let j=index;">
-        <div class="card card-in-card p-3 mb-3">
-
-          <ng-container *ngIf="x.option_list.length > 1">
-            <span (click)="x.option_list.splice(j, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
-          </ng-container>
-
-          <div class="mb-2" align="center">
-            <label>
-              <div *ngIf="!y.image">
-                <i class="material-icons add-img">add_photo_alternate</i>
-                <p class="m-b-0">Click to upload image </p>
-                <p>(Resolution: 150 x 150)</p>
-              </div>
-              <img *ngIf="y.image && y?.img_change" [src]="y.image" height="100px;" width="auto;">
-              <img *ngIf="y.image && !y?.img_change" [src]="imgBaseUrl+y.image" height="100px;" width="auto;">
-              <input type="file" name="y.image{{i+1}}{{j+1}}" style="display: none;" (change)="fileChangeListener(i, j, $event)" accept="image/jpeg, image/png, image/webp"
-              />
-            </label>
-          </div>
-
-          <div class="row">
-            <div [ngClass]="(i>0)? 'col-md-6': 'col-md-12'">
-              <div class="form-group">
-                <label>Option Title</label>
-                <input type="text" name="option_name{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.name" #name="ngModel" required />
-              </div>
-            </div>
-            <div *ngIf="i>0" class="col-md-6 form-group">
-              <label>Option Link To</label>
-              <select name="link_to{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.link_to" #link_to="ngModel" required>
-                <option value="all">All</option>
-                <option *ngFor="let z of addonForm.custom_list[i-1].option_list; let k=index;" [ngValue]="z.name">{{z.name}}</option>
-              </select>
-            </div>
-            <div class="col-md-12">
-              <div class="form-group">
-                <label>Price</label>
-                <input type="tel" name="option_price{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.price" appNumberOnly required />
-              </div>
-            </div>
-            <div *ngIf="commonService.store_details?._id==configData.chettinad_id" class="col-md-12">
-              <div class="form-group">
-                <label>Shipping Weight (in Kg, 500g = 0.5)</label>
-                <input type="tel" name="option_weight{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.weight" appNumberOnly required />
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="form-group">
-                <label>Extra Stock Requirement</label>
-                <input type="tel" name="additional_qty{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.additional_qty" #additional_qty="ngModel"
-                  appNumberOnly required />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-12 p-0 mt-1">
-        <div class="col-md-6 col-lg-6 z-i-0 text-center ">
-          <!-- <span class="black-outline-btn x-close" (click)="x.option_list.push({ price: 0, additional_qty: 0 });">
-            ADD OPTION
-          </span> -->
-          <button class="light-button" (click)="x.option_list.push({ price: 0, additional_qty: 0 });" type="button">
-            <span class="material-symbols-rounded "
-               >add</span>ADD OPTION
-          </button>
-        </div>
-      </div>
-      <!-- #Option List -->
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12 mt-2">
-      <!-- <span class="black-outline-btn x-close" (click)="addonForm.custom_list.push({ option_list: [{ price: 0, additional_qty: 0 }] });">
-        <b>{{ (addonForm?.custom_list?.length)? 'ADD CUSTOMIZATION': 'ADD CUSTOMIZATION' }}</b>
-      </span> -->
-
-      <button class="light-button" (click)="addonForm.custom_list.push({ option_list: [{ price: 0, additional_qty: 0 }] });" type="button">
-        <span class="material-symbols-rounded "
-           >add</span>ADD CUSTOMIZATION
-      </button>
-    </div>
-  </div>
-  <!-- #Customization List -->
-
-  <!-- <div class="separator-breadcrumb border-top mt-5"></div> -->
-  <div class="page_fixedfooter">
-    <div *ngIf="addonForm.errorMsg" class="col-md-12 mt-3 mb-3">
-      <p class="text-danger" align="center">{{ addonForm.errorMsg }}</p>
-    </div>
-    <div align="center" class="col-md-12 z-i-0">
-      <button type="button" routerLink="/product-extras/addons" class="btn btn-wide black-outline-btn">
-        <span class="black-outline-txt">Cancel</span>
-      </button>&nbsp; &nbsp; &nbsp;
-      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
-          {{router.url.includes('modify')? 'Update': 'Save'}}
-      </button>
-    </div>
-  </div>
-</form>
-
-</div>
+          }

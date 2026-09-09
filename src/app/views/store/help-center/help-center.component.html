@@ -1,165 +1,183 @@
 <div class="keee">
 
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>Support</h1>
+  @if (commonService.desktop_device) {
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <h1>Support</h1>
+        </div>
       </div>
     </div>
-  </div>
+  }
 
-  <div *ngIf="commonService.store_details?.login_type!='vendor' || configData.oneafrica != commonService.store_details?._id" class="row mt-3">
-    <div class="col-md-4">
-      <div class="help-center">
-        <div *ngIf="!commonService.desktop_device && !help_nav" class="help-nav-collapsed">
-          <span class="material-symbols-rounded" (click)="help_nav=true;">menu</span>
-        </div>
-
-        <div class="help-nav hl-plus-border-radius" *ngIf="commonService.desktop_device || help_nav">
-          <ul class="help-groups">
-            <ng-container *ngIf="this.commonService.store_details.login_type=='vendor'">
-              <li *ngIf="this.commonService.store_details.login_type=='vendor'" class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/dashboard" (click)="onClick()">Dashboard</a>
-              </li>
-              <li *ngIf="this.commonService.store_details.login_type=='vendor'" class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/products" (click)="onClick()">Add product</a>
-              </li>
-              <li *ngIf="this.commonService.store_details.login_type=='vendor'" class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/live-orders" (click)="onClick()">Live Orders</a>
-              </li>
-              <li *ngIf="this.commonService.store_details.login_type=='vendor'" class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/settlements" (click)="onClick()">Settlements</a>
-              </li>
-              <li *ngIf="this.commonService.store_details.login_type=='vendor'" class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/profile" (click)="onClick()">Profile</a>
-              </li>
-            </ng-container>
-            
-            <ng-container *ngIf="this.commonService.store_details.login_type!='vendor'">
-              <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/creating-your-account" (click)="onClick()">Creating your Account</a>
-              </li>
-              <li class="help-group-item" id="domain" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/domain" (click)="onClick()">Domain</a>
-              </li>
-              <li class="help-group-item" id="design">
-                <a>Website Design</a>
-                <ul class="help-items">
-                  <li id="design-design-homepage" class="help-item ">
-                    <a routerLink="/support/design-website/design-homepage" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Design Homepage</a>
+  @if (commonService.store_details?.login_type!='vendor' || configData.oneafrica != commonService.store_details?._id) {
+    <div class="row mt-3">
+      <div class="col-md-4">
+        <div class="help-center">
+          @if (!commonService.desktop_device && !help_nav) {
+            <div class="help-nav-collapsed">
+              <span class="material-symbols-rounded" (click)="help_nav=true;">menu</span>
+            </div>
+          }
+          @if (commonService.desktop_device || help_nav) {
+            <div class="help-nav hl-plus-border-radius">
+              <ul class="help-groups">
+                @if (this.commonService.store_details.login_type=='vendor') {
+                  @if (this.commonService.store_details.login_type=='vendor') {
+                    <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                      <a routerLink="/support/dashboard" (click)="onClick()">Dashboard</a>
+                    </li>
+                  }
+                  @if (this.commonService.store_details.login_type=='vendor') {
+                    <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                      <a routerLink="/support/products" (click)="onClick()">Add product</a>
+                    </li>
+                  }
+                  @if (this.commonService.store_details.login_type=='vendor') {
+                    <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                      <a routerLink="/support/live-orders" (click)="onClick()">Live Orders</a>
+                    </li>
+                  }
+                  @if (this.commonService.store_details.login_type=='vendor') {
+                    <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                      <a routerLink="/support/settlements" (click)="onClick()">Settlements</a>
+                    </li>
+                  }
+                  @if (this.commonService.store_details.login_type=='vendor') {
+                    <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                      <a routerLink="/support/profile" (click)="onClick()">Profile</a>
+                    </li>
+                  }
+                }
+                @if (this.commonService.store_details.login_type!='vendor') {
+                  <li class="help-group-item" id="signup" [routerLinkActive]="'is-active'">
+                    <a routerLink="/support/creating-your-account" (click)="onClick()">Creating your Account</a>
                   </li>
-                  <li id="design-create-new-page" class="help-item ">
-                    <a routerLink="/support/design-website/create-new-page" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Create new Page</a>
+                  <li class="help-group-item" id="domain" [routerLinkActive]="'is-active'">
+                    <a routerLink="/support/domain" (click)="onClick()">Domain</a>
                   </li>
-                  <li id="design-upload-website-logo" class="help-item ">
-                    <a routerLink="/support/design-website/upload-website-logo" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Upload Website Logo</a>
+                  <li class="help-group-item" id="design">
+                    <a>Website Design</a>
+                    <ul class="help-items">
+                      <li id="design-design-homepage" class="help-item ">
+                        <a routerLink="/support/design-website/design-homepage" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Design Homepage</a>
+                      </li>
+                      <li id="design-create-new-page" class="help-item ">
+                        <a routerLink="/support/design-website/create-new-page" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Create new Page</a>
+                      </li>
+                      <li id="design-upload-website-logo" class="help-item ">
+                        <a routerLink="/support/design-website/upload-website-logo" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Upload Website Logo</a>
+                      </li>
+                    </ul>
                   </li>
-                </ul>
-              </li>
-              <li class="help-group-item" id="navigation">
-                <a>Menu & Catalog</a>
-                <ul class="help-items">
-                  <li id="navigation-product-categories" class="help-item ">
-                    <a routerLink="/support/navigation/product-categories" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Product Catalog</a>
+                  <li class="help-group-item" id="navigation">
+                    <a>Menu & Catalog</a>
+                    <ul class="help-items">
+                      <li id="navigation-product-categories" class="help-item ">
+                        <a routerLink="/support/navigation/product-categories" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Product Catalog</a>
+                      </li>
+                      <li id="navigation-header-menu" class="help-item ">
+                        <a routerLink="/support/navigation/header-menu" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Header Menu</a>
+                      </li>
+                      <li id="navigation-footer-links" class="help-item ">
+                        <a routerLink="/support/navigation/footer-links" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Footer Links</a>
+                      </li>
+                    </ul>
                   </li>
-                  <li id="navigation-header-menu" class="help-item ">
-                    <a routerLink="/support/navigation/header-menu" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Header Menu</a>
+                  <li class="help-group-item" id="navigation">
+                    <a>Product Management</a>
+                    <ul class="help-items">
+                      <li id="navigation-product-categories" class="help-item ">
+                        <a routerLink="/support/products" [routerLinkActive]="'is-active'" (click)="onClick()">Add Product</a>
+                      </li>
+                      <li id="navigation-header-menu" class="help-item ">
+                        <a routerLink="/support/edit-products" [routerLinkActive]="'is-active'" (click)="onClick()">Edit
+                        Product</a>
+                      </li>
+                      <li id="navigation-footer-links" class="help-item ">
+                        <a routerLink="/support/delete-products" [routerLinkActive]="'is-active'" (click)="onClick()">Delete
+                        Product</a>
+                      </li>
+                    </ul>
                   </li>
-                  <li id="navigation-footer-links" class="help-item ">
-                    <a routerLink="/support/navigation/footer-links" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Footer Links</a>
+                  <li class="help-group-item" id="promo_code" [routerLinkActive]="'is-active'">
+                    <a routerLink="/support/promo-codes" (click)="onClick()">Promo Codes</a>
                   </li>
-                </ul>
-              </li>
-              <li class="help-group-item" id="navigation">
-                <a>Product Management</a>
-                <ul class="help-items">
-                  <li id="navigation-product-categories" class="help-item ">
-                    <a routerLink="/support/products" [routerLinkActive]="'is-active'" (click)="onClick()">Add Product</a>
+                  <li class="help-group-item" id="navigation">
+                    <a>Order Management</a>
+                    <ul class="help-items">
+                      <li id="navigation-product-categories" class="help-item ">
+                        <a routerLink="/support/live-orders" [routerLinkActive]="'is-active'" (click)="onClick()">Live
+                        Orders</a>
+                      </li>
+                      <li id="navigation-header-menu" class="help-item ">
+                        <a routerLink="/support/abandoned-orders" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Abandoned Cart Orders</a>
+                      </li>
+                      <li id="navigation-footer-links" class="help-item ">
+                        <a routerLink="/support/quick-orders" [routerLinkActive]="'is-active'" (click)="onClick()">Quick
+                        Orders</a>
+                      </li>
+                      <li id="navigation-footer-links" class="help-item ">
+                        <a routerLink="/support/failed-payments" [routerLinkActive]="'is-active'" (click)="onClick()">Failed
+                        Payments</a>
+                      </li>
+                    </ul>
                   </li>
-                  <li id="navigation-header-menu" class="help-item ">
-                    <a routerLink="/support/edit-products" [routerLinkActive]="'is-active'" (click)="onClick()">Edit
-                      Product</a>
+                  <li class="help-group-item" id="shipping" [routerLinkActive]="'is-active'">
+                    <a routerLink="/support/customers" (click)="onClick()">Customers</a>
                   </li>
-                  <li id="navigation-footer-links" class="help-item ">
-                    <a routerLink="/support/delete-products" [routerLinkActive]="'is-active'" (click)="onClick()">Delete
-                      Product</a>
+                  <li class="help-group-item" id="design">
+                    <a>Settings</a>
+                    <ul class="help-items">
+                      <li id="design-design-homepage" class="help-item ">
+                        <a routerLink="/support/setup-tax" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Setup Tax</a>
+                      </li>
+                      <li id="design-create-new-page" class="help-item ">
+                        <a routerLink="/support/setup-shipping" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Setup shipping</a>
+                      </li>
+                      <li id="design-upload-website-logo" class="help-item ">
+                        <a routerLink="/support/setup-payment" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Setup Payment</a>
+                      </li>
+                      <li id="design-upload-website-logo" class="help-item ">
+                        <a routerLink="/support/store-settings" [routerLinkActive]="'is-active'"
+                        (click)="onClick()">Store Settings</a>
+                      </li>
+                    </ul>
                   </li>
-                </ul>
-              </li>
-              <li class="help-group-item" id="promo_code" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/promo-codes" (click)="onClick()">Promo Codes</a>
-              </li>
-              <li class="help-group-item" id="navigation">
-                <a>Order Management</a>
-                <ul class="help-items">
-                  <li id="navigation-product-categories" class="help-item ">
-                    <a routerLink="/support/live-orders" [routerLinkActive]="'is-active'" (click)="onClick()">Live
-                      Orders</a>
+                  <li class="help-group-item" id="shipping" [routerLinkActive]="'is-active'">
+                    <a routerLink="/support/bulk-upload" (click)="onClick()">Bulk Upload</a>
                   </li>
-                  <li id="navigation-header-menu" class="help-item ">
-                    <a routerLink="/support/abandoned-orders" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Abandoned Cart Orders</a>
-                  </li>
-                  <li id="navigation-footer-links" class="help-item ">
-                    <a routerLink="/support/quick-orders" [routerLinkActive]="'is-active'" (click)="onClick()">Quick
-                      Orders</a>
-                  </li>
-                  <li id="navigation-footer-links" class="help-item ">
-                    <a routerLink="/support/failed-payments" [routerLinkActive]="'is-active'" (click)="onClick()">Failed
-                      Payments</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="help-group-item" id="shipping" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/customers" (click)="onClick()">Customers</a>
-              </li>
-              <li class="help-group-item" id="design">
-                <a>Settings</a>
-                <ul class="help-items">
-                  <li id="design-design-homepage" class="help-item ">
-                    <a routerLink="/support/setup-tax" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Setup Tax</a>
-                  </li>
-                  <li id="design-create-new-page" class="help-item ">
-                    <a routerLink="/support/setup-shipping" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Setup shipping</a>
-                  </li>
-                  <li id="design-upload-website-logo" class="help-item ">
-                    <a routerLink="/support/setup-payment" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Setup Payment</a>
-                  </li>
-                  <li id="design-upload-website-logo" class="help-item ">
-                    <a routerLink="/support/store-settings" [routerLinkActive]="'is-active'"
-                      (click)="onClick()">Store Settings</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="help-group-item" id="shipping" [routerLinkActive]="'is-active'">
-                <a routerLink="/support/bulk-upload" (click)="onClick()">Bulk Upload</a>
-              </li>
-            </ng-container>
-            
-            <!-- <li class="help-group-item" id="settings" [routerLinkActive]="'is-active'">
-              <a (click)="onClick()">Settings</a>
-            </li> -->
-          </ul>
-        </div>
+                }
+                <!-- <li class="help-group-item" id="settings" [routerLinkActive]="'is-active'">
+                <a (click)="onClick()">Settings</a>
+              </li> -->
+            </ul>
+          </div>
+        }
       </div>
     </div>
     <div class="col-md-8">
-      <div class="px-2 mt-4" *ngIf="commonService.desktop_device || !help_nav">
-        <router-outlet (activate)="commonService.onActivate($event)"></router-outlet>
-      </div>
+      @if (commonService.desktop_device || !help_nav) {
+        <div class="px-2 mt-4">
+          <router-outlet (activate)="commonService.onActivate($event)"></router-outlet>
+        </div>
+      }
     </div>
   </div>
+}
 
-  <div *ngIf="commonService.store_details?.login_type=='vendor' && configData.oneafrica == commonService.store_details?._id" class="row mt-3">
+@if (commonService.store_details?.login_type=='vendor' && configData.oneafrica == commonService.store_details?._id) {
+  <div class="row mt-3">
     <div class="col-md-6">
       <a style="color: #ec848b; font-weight: bold;" href="https://yourstore.io/login/assets/doc/english.pdf" target="_blank">
         <div class="card p-4 mb-4 text-center">
@@ -175,5 +193,6 @@
       </a>
     </div>
   </div>
+}
 
 </div>

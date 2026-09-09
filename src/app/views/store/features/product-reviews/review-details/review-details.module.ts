@@ -15,7 +15,7 @@ import { ReviewDetailsComponent } from './review-details.component';
     QuillModule.forRoot(environment.quill_config),
     SharedModule,
     ReviewDetailsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

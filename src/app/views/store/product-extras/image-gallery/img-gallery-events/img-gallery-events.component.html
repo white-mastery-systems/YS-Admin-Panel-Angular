@@ -1,134 +1,162 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but mr-3" *ngIf="galDetails.list?.length && !imgList.length" (click)="exportAsXLSX();">
-      <span class="material-symbols-rounded">file_upload</span>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-  <div class="add_but">
-    <label style="margin-bottom: -5px;">
-    <input type="file" style="display: none;" name="image" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" multiple/>
-    <span class="material-symbols-rounded">add</span>
-    </label>
-</div>
-</div>
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>          
-       </div>
-      </div>  
-      <div class="col-md-12">
-        <p>(Images exceeding 3MB in size will not get uploaded)</p>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    @if (galDetails.list?.length && !imgList.length) {
+      <div class="add_but mr-3" (click)="exportAsXLSX();">
+        <span class="material-symbols-rounded">file_upload</span>
       </div>
+    }
+    <div class="add_but">
+      <label style="margin-bottom: -5px;">
+        <input type="file" style="display: none;" name="image" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" multiple/>
+        <span class="material-symbols-rounded">add</span>
+      </label>
     </div>
   </div>
-
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <!-- search box -->
-      <div class="col-md-6 col-12">
-        <p *ngIf="!commonService.desktop_device">(Images exceeding 3MB in size will not get uploaded)</p>
-        <div *ngIf="!imgList.length" class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button *ngIf="galDetails.list?.length && !imgList.length" type="button" (click)="exportAsXLSX();" class="mr-3">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-        <label>
-          <input type="file" style="display: none;" name="image" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" multiple/>
-          <div class="button-label">
-            <span class="material-symbols-rounded">add</span>Images
-          </div>
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Data list -->
-  <ng-container *ngIf="!imgList.length">
-    <div *ngIf="(galDetails.list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-      <div class="data-list-card-wrapper">
-        <div class="data-list-card-inner">
-          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-            <div class="col-md-10 col-10 first_col px-0 header-font">
-              <p class="w-30 w-sm-100">Image</p>
-              <p class="w-70 w-sm-100 m-b-0">Name</p>
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
-          <div class="list-item data-list-card" *ngFor="let x of galDetails.list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-            <div class="col-md-10 col-10 first_col px-0 cursor">
-              <div class="w-30 w-sm-100 list-thumb d-flex align-self-center">
-                <img [src]="imgBaseUrl+x.image">
+          <div class="col-md-12">
+            <p>(Images exceeding 3MB in size will not get uploaded)</p>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <!-- search box -->
+        <div class="col-md-6 col-12">
+          @if (!commonService.desktop_device) {
+            <p>(Images exceeding 3MB in size will not get uploaded)</p>
+          }
+          @if (!imgList.length) {
+            <div class="form-group search_bar m-0">
+              <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+              <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+            </div>
+          }
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            @if (galDetails.list?.length && !imgList.length) {
+              <button type="button" (click)="exportAsXLSX();" class="mr-3">
+                <span class="material-symbols-rounded">file_upload</span> Export
+              </button>
+            }
+            <label>
+              <input type="file" style="display: none;" name="image" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" multiple/>
+              <div class="button-label">
+                <span class="material-symbols-rounded">add</span>Images
               </div>
-              <p class="w-70 w-sm-100 light-font breakword">{{x.name}}</p>
+            </label>
+          </div>
+        }
+      </div>
+    </div>
+    <!-- Data list -->
+    @if (!imgList.length) {
+      @if ((galDetails.list | fieldSearch:'name':search_bar)?.length) {
+        <div class="list-horizontal">
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div class="list-item data-list-card">
+                  <div class="col-md-10 col-10 first_col px-0 header-font">
+                    <p class="w-30 w-sm-100">Image</p>
+                    <p class="w-70 w-sm-100 m-b-0">Name</p>
+                  </div>
+                </div>
+              }
+              @for (x of galDetails.list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+                <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  <div class="col-md-10 col-10 first_col px-0 cursor">
+                    <div class="w-30 w-sm-100 list-thumb d-flex align-self-center">
+                      <img [src]="imgBaseUrl+x.image">
+                    </div>
+                    <p class="w-70 w-sm-100 light-font breakword">{{x.name}}</p>
+                  </div>
+                  <div class="col-md-2 col-2">
+                    <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });" [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'">
+                        <span class="material-symbols-rounded" >delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
-            <div class="col-md-2 col-2">
-              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">              
-                <button (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });" [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'">
-                  <span class="material-symbols-rounded" >delete</span> {{commonService.desktop_device? 'Remove': ''}}
-                </button>
-              </div>
+          </div>
+          <!-- PAGINATION CONTROL -->
+          <div class="row">
+            <div class="col-md-12 mt-3">
+              <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+              maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- PAGINATION CONTROL -->
-      <div class="row">
-        <div class="col-md-12 mt-3">
-          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      }
+      @if (!(galDetails.list | fieldSearch:'name':search_bar)?.length) {
+        <div class="row">
+          <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+            <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+            <p align="center">No data to display</p>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div *ngIf="!(galDetails.list | fieldSearch:'name':search_bar)?.length" class="row">
-      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-        <p align="center">No data to display</p>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- New image list -->
-  <form *ngIf="imgList.length" autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
-    <div class="row">
-      <div align="center" class="col-md-4 col-lg-3 form-group mb-3" *ngFor="let x of imgList; let i=index;">
-        <div class="card p-3 mt-3 mb-3">
-          <span (click)="imgList.splice(i, 1);" class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
-          <label>
-            <img *ngIf="x.temp_img" [src]="x.temp_img" height="150" width="auto">
-          </label>    
+      }
+    }
+    <!-- New image list -->
+    @if (imgList.length) {
+      <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+        <div class="row">
+          @for (x of imgList; track x; let i = $index) {
+            <div align="center" class="col-md-4 col-lg-3 form-group mb-3">
+              <div class="card p-3 mt-3 mb-3">
+                <span (click)="imgList.splice(i, 1);" class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
+                <label>
+                  @if (x.temp_img) {
+                    <img [src]="x.temp_img" height="150" width="auto">
+                  }
+                </label>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-    </div>
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div class="col-md-12 mt-3 mb-3" *ngIf="galDetails.errorMsg">
-        <p class="text-danger" align="center">{{ galDetails.errorMsg }}</p>
-      </div>
-      <div class="col-md-12">
-        <p align="center"><b>Total {{ imgList.length }} images</b></p>
-      </div>
-      <div align="center" class="col-md-12 mt-3 mb-3 z-i-0">
-        <button type="button" routerLink="/product-extras/image-gallery" class="btn btn-wide black-outline-btn">
-        <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1 ml-3" [disabled]="galDetails.submit" [ladda]="galDetails.submit">
-          Upload
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
+        <div class="separator-breadcrumb border-top mt-5"></div>
+        <div class="row">
+          @if (galDetails.errorMsg) {
+            <div class="col-md-12 mt-3 mb-3">
+              <p class="text-danger" align="center">{{ galDetails.errorMsg }}</p>
+            </div>
+          }
+          <div class="col-md-12">
+            <p align="center"><b>Total {{ imgList.length }} images</b></p>
+          </div>
+          <div align="center" class="col-md-12 mt-3 mb-3 z-i-0">
+            <button type="button" routerLink="/product-extras/image-gallery" class="btn btn-wide black-outline-btn">
+              <span class="black-outline-txt">Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1 ml-3" [disabled]="galDetails.submit" [ladda]="galDetails.submit">
+              Upload
+            </button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+}
 
 <!-- DELETE MODAL -->
 <ng-template #deleteModal let-modal>
@@ -139,16 +167,18 @@
         Are you sure you want to proceed?
       </strong>
     </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
+    @if (deleteForm.errorMsg) {
+      <div>
+        <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
       <span class="black-outline-txt">No</span>
     </button>
     <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
-    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
       <span class="orng-outline-txt">Yes</span>
     </button>
   </div>

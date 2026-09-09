@@ -17,7 +17,7 @@ import { environment } from 'src/environments/environment';
     QuillModule.forRoot(environment.quill_config),
     TagInputModule,
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     ArticleEventRoutingModule
   ]
 })

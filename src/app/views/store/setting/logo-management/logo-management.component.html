@@ -1,10 +1,12 @@
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="help_mobile_button" routerLink="/support/design-website/upload-website-logo">
-    <img src="assets/icons/help.svg" title="help">
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="help_mobile_button" routerLink="/support/design-website/upload-website-logo">
+      <img src="assets/icons/help.svg" title="help">
+    </div>
   </div>
-</div>
+}
 <div class="logo-management">
-  <ng-container *ngIf="commonService.desktop_device">
+  @if (commonService.desktop_device) {
     <div class="breadcrumb with-back-btn">
       <div class="row">
         <div class="col-md-8">
@@ -20,15 +22,21 @@
         </div>
       </div>
     </div>
-  </ng-container>
+  }
 
-  <div class="row">    
+  <div class="row">
     <div class="col-md-6 d-flex mb-3">
       <div class="card setting-card w-100 p-3 cursor">
         <div class="d-flex align-items-center justify-content-center flex-column">
-          <img *ngIf="!commonService.deploy_stages?.logo" src="assets/images/store.svg">
-          <img *ngIf="logoForm.img_change" [src]="logoForm.image" height="150px;" width="auto;">
-          <img *ngIf="commonService.deploy_stages?.logo && !logoForm.img_change" [src]="storeLogo" height="150px;" width="auto;">
+          @if (!commonService.deploy_stages?.logo) {
+            <img src="assets/images/store.svg">
+          }
+          @if (logoForm.img_change) {
+            <img [src]="logoForm.image" height="150px;" width="auto;">
+          }
+          @if (commonService.deploy_stages?.logo && !logoForm.img_change) {
+            <img [src]="storeLogo" height="150px;" width="auto;">
+          }
         </div>
         <div class="h-100 d-flex align-items-end mt-3">
           <div class="custom-file mt-2">
@@ -37,8 +45,10 @@
           </div>
         </div>
         <div>
-          <button *ngIf="logoForm.submit" type="button" class="btn btn-wide btn-primary ladda-button mt-3 w-100"
-          disabled [ladda]="logoForm.submit">Uploading</button>
+          @if (logoForm.submit) {
+            <button type="button" class="btn btn-wide btn-primary ladda-button mt-3 w-100"
+            disabled [ladda]="logoForm.submit">Uploading</button>
+          }
         </div>
       </div>
     </div>
@@ -47,20 +57,20 @@
         <div class="row m-0 w-100 text-center">
           <div class="col-md-12 mb-2">
             <span class="material-icons" style="font-size: 50px; color: #999;">palette</span>
-            <p class="m-0"><b>Don't have a logo?</b></p>           
+            <p class="m-0"><b>Don't have a logo?</b></p>
           </div>
 
           <div class="col-md-12">
             <p class="mb-0">
               <a href="https://yourstore.io/tools/free-logo-maker-tool/create/" target="_blank" class="btn btn-wide btn-primary m-0">Create your logo</a>
             </p>
-          </div>          
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <ng-container *ngIf="commonService.deploy_stages.logo">
+  @if (commonService.deploy_stages.logo) {
     <!-- <div class="separator-breadcrumb border-top mb-3 mt-4"></div> -->
     <div class="row mt-4 pb-3">
       <div class="col-md-8 col-6 d-flex align-items-center">
@@ -72,20 +82,22 @@
         </button>
       </div>
       <!-- theme colors -->
-      <ng-container *ngFor="let sec of colorSections; let i=index;">
-        <div *ngIf="sec.name!='vendor_bg'" class="col-md-6 mt-3">
-          <div class="card card-in-card p-3">
-            <div class="mb-0 d-flex align-items-center fw-700">
-              <div>{{sec.name | titlecase}} Color </div>             
-              <div class="color-span" [ngStyle]="{'background': sec.value}"></div>                       
+      @for (sec of colorSections; track sec; let i = $index) {
+        @if (sec.name!='vendor_bg') {
+          <div class="col-md-6 mt-3">
+            <div class="card card-in-card p-3">
+              <div class="mb-0 d-flex align-items-center fw-700">
+                <div>{{sec.name | titlecase}} Color </div>
+                <div class="color-span" [ngStyle]="{'background': sec.value}"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </ng-container>
+        }
+      }
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="commonService.deploy_stages.logo">
+  @if (commonService.deploy_stages.logo) {
     <!-- <div class="separator-breadcrumb border-top mb-3 mt-4"></div> -->
     <div class="row mt-4 store-logo">
       <div class="col-md-12">
@@ -139,7 +151,8 @@
         </div>
       </div>
     </div>
-  </ng-container>
+  
+}
 </div>
 
 <!-- Image Modal -->
@@ -155,30 +168,42 @@
           <div class="row">
             <div class="col-md-12" align="center">
               <p>Photo Resolution: {{uploadForm?.resolution}}</p>
-              <div *ngIf="uploadForm.image">
+              @if (uploadForm.image) {
+<div>
                 <img [src]="uploadForm.image" height="100px;" width="auto;">
               </div>
-              <div *ngIf="!uploadForm.image">
+}
+              @if (!uploadForm.image) {
+<div>
                 <img [src]="imgBaseUrl+uploadForm?.root_path+'/'+uploadForm?.file_name+'.'+uploadForm?.file_type+'?v='+verNum" height="100px;" width="auto;">
                 <div class="h-100 d-flex align-items-end">
                   <div class="custom-file mt-2">
-                    <input class="custom-file-input" *ngIf="uploadForm?.file_type=='jpg'" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/jpeg" />
-                    <input class="custom-file-input" *ngIf="uploadForm?.file_type=='png'" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/png" />
-                    <input class="custom-file-input" *ngIf="uploadForm?.file_type=='any'" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/jpeg, image/png" />
-                    <label class="custom-file-label">Choose file</label>
+                    @if (uploadForm?.file_type=='jpg') {
+                        <input class="custom-file-input" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/jpeg" />
+                      }
+                      @if (uploadForm?.file_type=='png') {
+                        <input class="custom-file-input" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/png" />
+                      }
+                      @if (uploadForm?.file_type=='any') {
+                        <input class="custom-file-input" type="file" name="image" (change)="uploadChangeListener($event);" accept="image/jpeg, image/png" />
+                      }
+                      <label class="custom-file-label">Choose file</label>
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>
-        <div *ngIf="uploadForm.errorMsg">
-          <p class="text-danger">{{ uploadForm.errorMsg }}</p>
-        </div>
+        @if (uploadForm.errorMsg) {
+          <div>
+            <p class="text-danger">{{ uploadForm.errorMsg }}</p>
+          </div>
+        }
       </div>
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-        <span class="black-outline-txt">Cancel</span>
+          <span class="black-outline-txt">Cancel</span>
         </button>
         <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">Update</button>
       </div>
@@ -189,81 +214,89 @@
 <!-- Color Modal -->
 <ng-template #colorModal let-modal>
   <div class="modal-content">
-  <div class="modal-header">
-    <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-    <h4 class="modal-title popup_text" id="modal-basic-title">Theme Colors</h4>
-  </div>
-  <div class="modal-body theme_colorpick">
-    <div class="form-group">
-      <div class="row">
-        <div *ngFor="let sec of colorFields; let i=index;" class="col-md-12" [ngClass]="(i>0)? 'mt-3': ''">
-          <div class="card card-in-card z-i-unset p-3">
-            <h5>{{sec.name}}</h5>
-            <div class="row ml-3 mt-3">
-              <div class="form-group mb-3 col-md-12">
-                <button type="button" (click)="sec.manual_status? sec.manual_status=false: sec.manual_status=true;" class="btn btn-primary">
-                  Pick {{ (sec.manual_status)? 'from logo colors': 'custom color' }}
-                </button>
-              </div>
-              <div *ngIf="sec.manual_status" class="col-md-6 form-group mb-3">
-                <label>Color Picker</label>
-                <input name="color_code{{i}}" class="form-control" [colorPicker]="sec.color_code"
-                  (colorPickerChange)="sec.color_code=$event;" [style.background]="sec.color_code"
-                  [cpOKButton]="true" [cpOKButtonText]="'Save'" [cpOKButtonClass]="'btn btn-primary'"
-                  [cpSaveClickOutside]="false" [cpCancelButton]="true" [cpCancelButtonClass]="'btn black-outline-btn'" readonly />
-              </div>
-              <ng-container *ngIf="!sec.manual_status">
-                <div class="col-lg-3 col-md-3 col-3 form-group mb-3" *ngFor="let x of colorList;">
-                  <label class="radio radio-success">
-                    <input type="radio" [(ngModel)]="sec.color_code" [value]="x" name="color_code{{i}}">
-                    <div class="color-span" [ngStyle]="{'background': x}"></div>
-                    <span class="checkmark"></span>
-                  </label>
+    <div class="modal-header">
+      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+      <h4 class="modal-title popup_text" id="modal-basic-title">Theme Colors</h4>
+    </div>
+    <div class="modal-body theme_colorpick">
+      <div class="form-group">
+        <div class="row">
+          @for (sec of colorFields; track sec; let i = $index) {
+            <div class="col-md-12" [ngClass]="(i>0)? 'mt-3': ''">
+              <div class="card card-in-card z-i-unset p-3">
+                <h5>{{sec.name}}</h5>
+                <div class="row ml-3 mt-3">
+                  <div class="form-group mb-3 col-md-12">
+                    <button type="button" (click)="sec.manual_status? sec.manual_status=false: sec.manual_status=true;" class="btn btn-primary">
+                      Pick {{ (sec.manual_status)? 'from logo colors': 'custom color' }}
+                    </button>
+                  </div>
+                  @if (sec.manual_status) {
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Color Picker</label>
+                      <input name="color_code{{i}}" class="form-control" [colorPicker]="sec.color_code"
+                        (colorPickerChange)="sec.color_code=$event;" [style.background]="sec.color_code"
+                        [cpOKButton]="true" [cpOKButtonText]="'Save'" [cpOKButtonClass]="'btn btn-primary'"
+                        [cpSaveClickOutside]="false" [cpCancelButton]="true" [cpCancelButtonClass]="'btn black-outline-btn'" readonly />
+                      </div>
+                    }
+                    @if (!sec.manual_status) {
+                      @for (x of colorList; track x) {
+                        <div class="col-lg-3 col-md-3 col-3 form-group mb-3">
+                          <label class="radio radio-success">
+                            <input type="radio" [(ngModel)]="sec.color_code" [value]="x" name="color_code{{i}}">
+                            <div class="color-span" [ngStyle]="{'background': x}"></div>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      }
+                    }
+                  </div>
                 </div>
-              </ng-container>
-            </div>
+              </div>
+            }
           </div>
         </div>
+        @if (errorMsg) {
+          <div>
+            <p class="mt-4 text-danger">{{ errorMsg }}</p>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button [hidden]="!commonService.deploy_details?.theme_colors?.primary" type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="button" (click)="updateThemeColor(welcomeModal);" class="btn btn-wide btn-primary ladda-button"
+        [disabled]="btnLoader" [ladda]="btnLoader">Update</button>
       </div>
     </div>
-    <div *ngIf="errorMsg">
-      <p class="mt-4 text-danger">{{ errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button [hidden]="!commonService.deploy_details?.theme_colors?.primary" type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">Cancel</span>
-    </button>
-    <button type="button" (click)="updateThemeColor(welcomeModal);" class="btn btn-wide btn-primary ladda-button"
-    [disabled]="btnLoader" [ladda]="btnLoader">Update</button>
-  </div>
-</div>
-</ng-template>
+  </ng-template>
 
-<!-- Welcome Modal -->
-<ng-template #welcomeModal let-modal>
-  <div class="modal-body">
-    <section class="you-dit-it-section welcome-modal-bg">
-      <div class="you-dit-it-center-section welcome-modal-sec ">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6 d-flex align-items-center justify-content-center">
-              <div class="you-dit-it-message" style="display: flex; flex-direction: column; align-items: center;text-align: center;">
-                <h2>Your website is ready!</h2>
-                <div>
-                  <a href="{{commonService.store_details?.base_url}}" target="_blank" (click)="modal.dismiss('Cross click');" class="btn-primary mr-3">Preview Website</a>
-                  <button class="btn-primary" (click)="modal.dismiss('Cross click');" routerLink="/dashboard" type="button">Continue Setup</button>
+  <!-- Welcome Modal -->
+  <ng-template #welcomeModal let-modal>
+    <div class="modal-body">
+      <section class="you-dit-it-section welcome-modal-bg">
+        <div class="you-dit-it-center-section welcome-modal-sec ">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="you-dit-it-message" style="display: flex; flex-direction: column; align-items: center;text-align: center;">
+                  <h2>Your website is ready!</h2>
+                  <div>
+                    <a href="{{commonService.store_details?.base_url}}" target="_blank" (click)="modal.dismiss('Cross click');" class="btn-primary mr-3">Preview Website</a>
+                    <button class="btn-primary" (click)="modal.dismiss('Cross click');" routerLink="/dashboard" type="button">Continue Setup</button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="col-md-6 d-flex justify-content-center">
-              <div class="you-dit-it-image">
-                <img src="assets/images/others/layout.png" alt="layout-img" style="width: 575px;margin-bottom: 20px;">
+              <div class="col-md-6 d-flex justify-content-center">
+                <div class="you-dit-it-image">
+                  <img src="assets/images/others/layout.png" alt="layout-img" style="width: 575px;margin-bottom: 20px;">
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
-</ng-template>
+      </section>
+    </div>
+  </ng-template>

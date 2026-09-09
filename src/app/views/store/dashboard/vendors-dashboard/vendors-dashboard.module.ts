@@ -12,7 +12,7 @@ import { VendorsDashboardComponent } from './vendors-dashboard.component';
     SharedModule,
     NgApexchartsModule,
     VendorsDashboardRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

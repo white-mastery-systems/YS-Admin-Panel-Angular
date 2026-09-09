@@ -11,7 +11,7 @@ import { ProductOrderDetailsComponent } from './product-order-details.component'
   imports: [
     AmazingTimePickerModule,
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     ProductOrderDetailsRoutingModule
   ]
 })

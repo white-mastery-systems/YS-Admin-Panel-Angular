@@ -13,7 +13,7 @@ import { DashboardComponent } from './dashboard.component';
     SharedModule,
     NgApexchartsModule,
     DashboardRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ],
   providers: [DatePipe]
 })

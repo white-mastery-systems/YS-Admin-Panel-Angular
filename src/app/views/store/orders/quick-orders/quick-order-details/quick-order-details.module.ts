@@ -12,7 +12,7 @@ import { QuickOrderDetailsComponent } from './quick-order-details.component';
     SharedModule,
     AmazingTimePickerModule,
     QuickOrderDetailsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

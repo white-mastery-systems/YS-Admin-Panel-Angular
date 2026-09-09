@@ -1,362 +1,446 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
-         </div>
-        </div>  
-      </div>
-    </div>
-  </ng-container>
-
-  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-    <div class="row" *ngIf="blogForm.form_type === 'edit' && !isAdvanced && commonService.master_token">
-      <div class="col-md-12 form-group mb-4">
-        <div class="card p-3 blog-reimport-panel">
-          <label class="mb-1">Replace content from doc</label>
-          <p class="light-font font-10 mb-2">
-            Upload a revised <code>.md</code> or <code>.docx</code> to refresh body content, FAQs, tags, and SEO fields from the doc metadata.
-            Uses the <strong>Editor Type</strong> selected above (Basic or Advanced).
-            Keeps publish status, created date, cover, thumbnail, and images already placed in matching slots (unless you opt in below).
-            <strong>Click Update at the bottom to save.</strong>
-          </p>
-          <label class="checkbox checkbox-primary mb-2 d-block">
-            <input class="form-check-input" type="checkbox" name="reimport_update_slug" [(ngModel)]="reimportUpdateSlug" />
-            <span>Update page URL from doc (<code>URL:</code> line or canonical link in metadata)</span>
-            <span class="checkmark"></span>
-          </label>
-          <div class="blog-reimport-row">
-            <input #reimportInput id="blog-reimport-input" type="file" accept=".docx,.md,.markdown,.txt" hidden (change)="onReimportFileSelect($event)" />
-            <label for="blog-reimport-input" class="btn btn-outline-primary btn-sm mb-0">Choose revised doc</label>
-            <button type="button" class="btn btn-primary btn-sm" [disabled]="reimportLoader || !reimportFile" (click)="submitReimportDoc()">
-              {{ reimportLoader ? 'Replacing...' : 'Replace from doc' }}
-            </button>
-          </div>
-          <p class="light-font font-10 mb-0 mt-2" *ngIf="reimportFileName">{{ reimportFileName }}</p>
-          <p class="text-success mb-0 mt-2" *ngIf="reimportSuccess">{{ reimportSuccess }}</p>
-          <p class="text-danger mb-0 mt-2" *ngIf="reimportError">{{ reimportError }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="row flex-xs-column-reverse">
-      <div class="col-md-12 col-12">
-        <div class="row justify-content-center">
-          <div class="col-md-6 mb-4" align="center">
-            <p class="mb-2">Cover Image — 900x600</p>
-             <div class="col-md-12">
-              <div class="card p-3">
-                <div *ngIf="blogForm.image">
-                  <span (click)="blogForm.img_change=null; blogForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
-                  <img *ngIf="blogForm.img_change" [src]="blogForm.image" height="100px;" width="auto;">
-                  <img *ngIf="!blogForm.img_change" [src]="toAbsoluteAssetUrl(blogForm.image)" height="100px;" width="auto;">
-                  <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
-                    <label>Image Alt Name</label>
-                    <input type="text" name="img_alt" class="form-control" [(ngModel)]="blogForm.img_alt" #img_alt="ngModel" />
-                  </div>
-                </div>
-                <div *ngIf="!blogForm.image">
-                  <label>
-                    <div>
-                      <i class="material-icons add-img">add_photo_alternate</i>
-                      <p>Click to upload cover image</p>
-                    </div>
-                    <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
-                  </label>
-                </div>
-              </div>
-             </div>
-          </div>
-          <div class="col-md-6 mb-4" align="center">
-            <p class="mb-2">Thumbnail — 400x400</p>
-            <div class="col-md-12">
-              <div class="card p-3">
-                <div *ngIf="blogForm.thumbnail">
-                  <span (click)="blogForm.thumbnail_change=null; blogForm.thumbnail=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
-                  <img *ngIf="blogForm.thumbnail_change" [src]="blogForm.thumbnail" height="100px;" width="auto;">
-                  <img *ngIf="!blogForm.thumbnail_change" [src]="toAbsoluteAssetUrl(blogForm.thumbnail)" height="100px;" width="auto;">
-                </div>
-                <div *ngIf="!blogForm.thumbnail">
-                  <label>
-                    <div>
-                      <i class="material-icons add-img">add_photo_alternate</i>
-                      <p>Click to upload thumbnail</p>
-                    </div>
-                    <input type="file" name="thumbnail" style="display: none;" (change)="thumbnailChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-12 col-12">
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
         <div class="row">
-          <div class="col-md-6 form-group mb-3">
-            <label>Author</label>
-            <select *ngIf="!isLegacyBlog" name="author_id" class="form-control" [(ngModel)]="blogForm.author_id" (ngModelChange)="onAuthorChange()">
-              <option [ngValue]="null">Select author</option>
-              <option *ngFor="let author of authorList" [ngValue]="author._id">{{author.name}}</option>
-            </select>
-            <input *ngIf="isLegacyBlog" type="text" name="author" class="form-control" [(ngModel)]="blogForm.author" placeholder="Enter author name" />
-            <p *ngIf="!isLegacyBlog" class="light-font mt-2 mb-0">
-              Manage authors in <a routerLink="/setting/blogs-authors">Blog Authors</a>
-            </p>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Created On</label>
-            <input type="text" placeholder="Select Date" class="form-control" name="created_on" autocomplete="off"
-              [maxDate]="currentDate" [(ngModel)]="blogForm.created_on" bsDatepicker
-              [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
-          </div>
-          <div class="col-md-12 form-group mb-3" *ngIf="selectedAuthor">
-            <div class="card p-3 author-preview-card">
-              <div class="d-flex align-items-start">
-                <img *ngIf="selectedAuthor.avatar" [src]="toAbsoluteAssetUrl(selectedAuthor.avatar)" class="author-preview-avatar mr-3" alt="">
-                <img *ngIf="!selectedAuthor.avatar" src="assets/images/default.png" class="author-preview-avatar mr-3" alt="">
-                <div>
-                  <p class="dark-font mb-1"><strong>{{selectedAuthor.name}}</strong></p>
-                  <p class="light-font mb-1">{{selectedAuthor.role || 'No role added'}}</p>
-                  <p class="light-font mb-1" *ngIf="selectedAuthor.bio">{{selectedAuthor.bio}}</p>
-                  <a *ngIf="selectedAuthor.link" [href]="selectedAuthor.link" target="_blank" rel="noopener">{{selectedAuthor.link}}</a>
-                </div>
-              </div>
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
-          <div class="col-md-12 form-group mb-3" *ngIf="!isLegacyBlog && !selectedAuthor && blogForm.author && blogForm.form_type === 'edit'">
-            <div class="alert alert-light mb-0">
-              This blog is using legacy inline author data: <strong>{{blogForm.author}}</strong>. Select an author above to link it to the new author collection.
-            </div>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Eyebrow Heading <span class="light-font">(optional)</span></label>
-            <input type="text" name="eyebrow_heading" class="form-control" [(ngModel)]="blogForm.eyebrow_heading"
-              placeholder="e.g. Business Travel in Chennai" />
-            <p class="light-font mt-2 mb-0">Short label shown above the blog title.</p>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Title</label>
-            <input type="text" name="name" class="form-control" [(ngModel)]="blogForm.name" (input)="onChangeTitle();" #name="ngModel" required />
-          </div>
-          <ng-container *ngIf="!isAdvanced">
-            <div class="col-md-6 form-group mb-3">
-              <label>Editor Type</label>
-              <select name="editor_type" class="form-control" [(ngModel)]="blogForm.editor_type" (ngModelChange)="onEditorTypeChange()">
-                <option value="advanced">Advanced</option>
-                <option value="basic">Basic</option>
-              </select>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Read Time</label>
-              <input type="text" name="readTime" class="form-control" [(ngModel)]="blogForm.readTime" />
-            </div>
-            <div class="col-md-6 form-group mb-3 d-flex align-items-end">
-              <label class="checkbox checkbox-primary mb-0">
-                <input class="form-check-input" type="checkbox" name="published" [(ngModel)]="blogForm.published">
-                <span>Published</span>
+        </div>
+      </div>
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      @if (blogForm.form_type === 'edit' && !isAdvanced && commonService.master_token) {
+        <div class="row">
+          <div class="col-md-12 form-group mb-4">
+            <div class="card p-3 blog-reimport-panel">
+              <label class="mb-1">Replace content from doc</label>
+              <p class="light-font font-10 mb-2">
+                Upload a revised <code>.md</code> or <code>.docx</code> to refresh body content, FAQs, tags, and SEO fields from the doc metadata.
+                Uses the <strong>Editor Type</strong> selected above (Basic or Advanced).
+                Keeps publish status, created date, cover, thumbnail, and images already placed in matching slots (unless you opt in below).
+                <strong>Click Update at the bottom to save.</strong>
+              </p>
+              <label class="checkbox checkbox-primary mb-2 d-block">
+                <input class="form-check-input" type="checkbox" name="reimport_update_slug" [(ngModel)]="reimportUpdateSlug" />
+                <span>Update page URL from doc (<code>URL:</code> line or canonical link in metadata)</span>
                 <span class="checkmark"></span>
               </label>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Tags</label>
-              <tag-input class="w-100" name="tags_list" [(ngModel)]="blogForm.tags_list" placeholder=""
-                [secondaryPlaceholder]="'Enter tags'" [separatorKeyCodes]="[188]"></tag-input>
-            </div>
-            <div class="col-md-12 form-group mb-3" *ngIf="isEditorJsMode() && imageSlotList.length">
-              <label>Bulk image upload</label>
-              <p class="light-font font-10 mb-2">
-                Put <code>[IMAGE: slot-name]</code> markers in the doc. Name each file after the slot
-                (e.g. <code>chennai-apps.jpg</code>). Cover image uses <code>cover.jpg</code> or the
-                <code>Cover:</code> metadata filename.
-              </p>
-              <div class="blog-image-slot-list mb-2">
-                <div class="blog-image-slot-item" *ngFor="let slot of imageSlotList">
-                  <span class="blog-image-slot-label">{{ slot.label || slot.name }}</span>
-                  <span class="blog-image-slot-hint">{{ slotFilenameHint(slot) }}</span>
-                </div>
-              </div>
-              <div class="blog-image-upload-row">
-                <input #bulkImageInput id="blog-bulk-image-input" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" multiple hidden (change)="onBulkImageSelect($event)" />
-                <input #bulkFolderInput id="blog-bulk-folder-input" type="file" webkitdirectory directory multiple hidden (change)="onBulkFolderSelect($event)" />
-                <button type="button" class="btn btn-outline-primary btn-sm" (click)="bulkImageInput.click()">Choose images</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openBulkFolderPicker(bulkFolderInput)">Choose folder</button>
-                <button type="button" class="btn btn-primary btn-sm" [disabled]="bulkImageLoader || !bulkImageFiles.length" (click)="submitBulkImages()">
-                  {{ bulkImageLoader ? 'Uploading...' : 'Upload & place' }}
+              <div class="blog-reimport-row">
+                <input #reimportInput id="blog-reimport-input" type="file" accept=".docx,.md,.markdown,.txt" hidden (change)="onReimportFileSelect($event)" />
+                <label for="blog-reimport-input" class="btn btn-outline-primary btn-sm mb-0">Choose revised doc</label>
+                <button type="button" class="btn btn-primary btn-sm" [disabled]="reimportLoader || !reimportFile" (click)="submitReimportDoc()">
+                  {{ reimportLoader ? 'Replacing...' : 'Replace from doc' }}
                 </button>
               </div>
-              <p class="light-font font-10 mb-0 mt-2" *ngIf="!bulkImageFiles.length">
-                Step 1: choose image files or a folder. Step 2: click <strong>Upload &amp; place</strong>.
-                <strong>Choose folder</strong> picks every image in the folder (subfolders included). Your browser may show a one-time security confirmation — this is normal.
-              </p>
-              <ul class="blog-image-selected-files mb-0 mt-2" *ngIf="bulkImageFiles.length">
-                <li *ngFor="let file of bulkImageFiles">{{ bulkImageDisplayName(file) }} ({{ (file.size / 1024) | number:'1.0-0' }} KB)</li>
-              </ul>
-              <p class="light-font font-10 mb-0 mt-2 text-success" *ngIf="bulkImageInfo">{{ bulkImageInfo }}</p>
-              <p class="text-danger mb-0 mt-2" *ngIf="bulkImageError">{{ bulkImageError }}</p>
-              <div class="blog-image-upload-report mt-2" *ngIf="bulkImageReport">
-                <p class="mb-1" *ngFor="let row of bulkImageReport.placed"><span class="text-success">✓</span> {{ row.file }} → {{ row.slotLabel || row.slot }}</p>
-                <p class="mb-1" *ngFor="let row of bulkImageReport.unmatched"><span class="text-warning">⚠</span> {{ row.file }} — no matching slot</p>
-              </div>
-            </div>
-            <div class="col-md-12 form-group mb-3" *ngIf="isEditorJsMode()">
-              <label>EditorJS Content</label>
-              <div id="blog-editorjs-holder" class="editorjs-wrapper"></div>
-            </div>
-          </ng-container>
-          <div *ngIf="!isAdvanced && !isEditorJsMode()" class="col-md-12 form-group mb-3 quill-mb-5">
-            <label>Description</label>
-            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="blogForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- categories -->
-    <ng-container *ngIf="categoryList.length">
-      <div class="p-0 col-12 mt-3">
-        <label><b>Blog Catalogs</b> <span style="font-size:12px;opacity:0.8;"> (Click on the catalog to select)</span></label>
-      </div>
-      <div class="data-list-card-wrapper p-0 col-md-8 col-12 col-md-12">
-        <div class="card card-in-card px-3 pt-3 pb-0">     
-          <div class="prod-scroll px-2">
-            <div class="row pt-3">
-              <div *ngFor="let x of categoryList; let i=index;" class="form-group mb-3 px-2 checking">
-                <label class="checkbox checkbox-primary pl-0">
-                  <input class="form-check-input" type="checkbox" name="selected" [(ngModel)]="x.selected" [checked]="x.selected" [ngModelOptions]="{standalone: true}">
-                  <span [ngClass]="x.selected? 'active': 'inactive'">
-                    <span>{{x.name}}</span>
-                    <span *ngIf="x.selected" class="material-icons p-0 cursor-poiter">close</span>
-                  </span>                 
-                </label>
-              </div>
+              @if (reimportFileName) {
+                <p class="light-font font-10 mb-0 mt-2">{{ reimportFileName }}</p>
+              }
+              @if (reimportSuccess) {
+                <p class="text-success mb-0 mt-2">{{ reimportSuccess }}</p>
+              }
+              @if (reimportError) {
+                <p class="text-danger mb-0 mt-2">{{ reimportError }}</p>
+              }
             </div>
           </div>
         </div>
-      </div>
-    </ng-container>
-
-    <!-- SEO -->
-    <div class="data-list-card-wrapper mt-3 p-0 col-md-8 col-12 col-md-12">
-      <div class="data-list-card-inner p-3">
-        <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
-          <p class="m-b-0 dark-font medium-font">SEO Listing Preview
-            <span class="light-font mt-0 font-10 d-block">This is how your blog looks on Google, Bing, Yahoo and other search engines</span>
-          </p>
-          <ng-container *ngIf="blogForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
-            <span *ngIf="!blogForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
-            (click)="blogForm.seo_disp=true" aria-hidden="true">edit</span>
-            <span *ngIf="blogForm.seo_disp && blogForm.seo_details.page_url && blogForm.seo_details.h1_tag && blogForm.seo_details.page_title && blogForm.seo_details.meta_desc"
-            (click)="blogForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
-          </ng-container>
-        </div>
-
-        <ng-container *ngIf="!blogForm.seo_disp">
-          <p *ngIf="!blogForm.name" class="light-font font-10">
-            Add a Title And Description To See How This Blog Might Appear In A Search Engine Listing
-          </p>
-          <ng-container *ngIf="blogForm.name">
-            <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/blogs/{{blogForm.seo_details?.page_url}}</p>
-            <h6 class="sec-desc mb-1 mt-2 seo-color">{{blogForm.seo_details.page_title}}</h6>
-            <p class="light-font font-10">{{blogForm.seo_details.meta_desc}}</p>
-          </ng-container>
-        </ng-container>
-
-        <ng-container *ngIf="blogForm.seo_disp">
-          <div class="col-md-12 form-group mb-3">
-            <label>Page URL</label>
-            <input type="text" name="page_url" class="form-control" [(ngModel)]="blogForm.seo_details.page_url" appNoSplChar required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>H1 Tag</label>
-            <span *ngIf="blogForm.seo_details?.h1_tag?.length" class="label_hint">
-              {{blogForm.seo_details.h1_tag.length}} of 70 characters used
-            </span>
-            <input type="text" name="h1_tag" class="form-control" [(ngModel)]="blogForm.seo_details.h1_tag" maxlength="70" required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Page Title</label>
-            <span *ngIf="blogForm.seo_details?.page_title?.length" class="label_hint">
-              {{blogForm.seo_details.page_title.length}} of {{pageTitleMaxLength}} characters used
-            </span>
-            <input type="text" name="page_title" class="form-control" [(ngModel)]="blogForm.seo_details.page_title" [maxlength]="pageTitleMaxLength" required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Meta Description</label>
-            <span *ngIf="blogForm.seo_details?.meta_desc?.length" class="label_hint">
-              {{blogForm.seo_details.meta_desc.length}} of 320 characters used</span>
-            <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="blogForm.seo_details.meta_desc" maxlength="320" required></textarea>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Meta Keywords</label>
-            <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="blogForm.seo_details.meta_keyword_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-
-    <!-- FAQ -->
-    <div class="col-md-12 form-group mb-3 mt-3">
-      <label class="checkbox checkbox-primary">
-        <input class="form-check-input" type="checkbox" name="faq_status" [(ngModel)]="blogForm.faq_status" (change)="blogForm.faq_status ? blogForm.faqs=[{}] : blogForm.faqs=[] + blogForm.faq_title='';" #faq_status="ngModel">
-        <span>Enable FAQ</span>
-        <span class="checkmark"></span>
-      </label>
-    </div>
-    <ng-container *ngIf="blogForm.faq_status">
-      <div class="col-md-6 form-group mb-3">
-        <label>Title</label>
-        <input type="text" name="faq_title" class="form-control" [(ngModel)]="blogForm.faq_title" required />
-      </div>
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-6 form-group mb-3" *ngFor="let x of blogForm.faqs; let i=index;">
-            <div class="card p-3">
-              <div class="row poss-rel">
-                <span (click)="blogForm.faqs.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
-                <div class="col-md-12 form-group mb-3">
-                  <label>Question</label>
-                  <input type="text" name="ques{{i}}" class="form-control" [(ngModel)]="x.ques" #ques="ngModel" required />
+      }
+      <div class="row flex-xs-column-reverse">
+        <div class="col-md-12 col-12">
+          <div class="row justify-content-center">
+            <div class="col-md-6 mb-4" align="center">
+              <p class="mb-2">Cover Image — 900x600</p>
+              <div class="col-md-12">
+                <div class="card p-3">
+                  @if (blogForm.image) {
+                    <div>
+                      <span (click)="blogForm.img_change=null; blogForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                      @if (blogForm.img_change) {
+                        <img [src]="blogForm.image" height="100px;" width="auto;">
+                      }
+                      @if (!blogForm.img_change) {
+                        <img [src]="toAbsoluteAssetUrl(blogForm.image)" height="100px;" width="auto;">
+                      }
+                      @if (commonService.ys_features.indexOf('advanced_seo')!=-1) {
+                        <div class="mt-3">
+                          <label>Image Alt Name</label>
+                          <input type="text" name="img_alt" class="form-control" [(ngModel)]="blogForm.img_alt" #img_alt="ngModel" />
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (!blogForm.image) {
+                    <div>
+                      <label>
+                        <div>
+                          <i class="material-icons add-img">add_photo_alternate</i>
+                          <p>Click to upload cover image</p>
+                        </div>
+                        <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                      </label>
+                    </div>
+                  }
                 </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label>Answer</label>
-                  <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer" #answer="ngModel" required></textarea>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4" align="center">
+              <p class="mb-2">Thumbnail — 400x400</p>
+              <div class="col-md-12">
+                <div class="card p-3">
+                  @if (blogForm.thumbnail) {
+                    <div>
+                      <span (click)="blogForm.thumbnail_change=null; blogForm.thumbnail=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                      @if (blogForm.thumbnail_change) {
+                        <img [src]="blogForm.thumbnail" height="100px;" width="auto;">
+                      }
+                      @if (!blogForm.thumbnail_change) {
+                        <img [src]="toAbsoluteAssetUrl(blogForm.thumbnail)" height="100px;" width="auto;">
+                      }
+                    </div>
+                  }
+                  @if (!blogForm.thumbnail) {
+                    <div>
+                      <label>
+                        <div>
+                          <i class="material-icons add-img">add_photo_alternate</i>
+                          <p>Click to upload thumbnail</p>
+                        </div>
+                        <input type="file" name="thumbnail" style="display: none;" (change)="thumbnailChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                      </label>
+                    </div>
+                  }
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="col-md-12 col-12">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Author</label>
+              @if (!isLegacyBlog) {
+                <select name="author_id" class="form-control" [(ngModel)]="blogForm.author_id" (ngModelChange)="onAuthorChange()">
+                  <option [ngValue]="null">Select author</option>
+                  @for (author of authorList; track author) {
+                    <option [ngValue]="author._id">{{author.name}}</option>
+                  }
+                </select>
+              }
+              @if (isLegacyBlog) {
+                <input type="text" name="author" class="form-control" [(ngModel)]="blogForm.author" placeholder="Enter author name" />
+              }
+              @if (!isLegacyBlog) {
+                <p class="light-font mt-2 mb-0">
+                  Manage authors in <a routerLink="/setting/blogs-authors">Blog Authors</a>
+                </p>
+              }
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Created On</label>
+              <input type="text" placeholder="Select Date" class="form-control" name="created_on" autocomplete="off"
+                [maxDate]="currentDate" [(ngModel)]="blogForm.created_on" bsDatepicker
+                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+              </div>
+              @if (selectedAuthor) {
+                <div class="col-md-12 form-group mb-3">
+                  <div class="card p-3 author-preview-card">
+                    <div class="d-flex align-items-start">
+                      @if (selectedAuthor.avatar) {
+                        <img [src]="toAbsoluteAssetUrl(selectedAuthor.avatar)" class="author-preview-avatar mr-3" alt="">
+                      }
+                      @if (!selectedAuthor.avatar) {
+                        <img src="assets/images/default.png" class="author-preview-avatar mr-3" alt="">
+                      }
+                      <div>
+                        <p class="dark-font mb-1"><strong>{{selectedAuthor.name}}</strong></p>
+                        <p class="light-font mb-1">{{selectedAuthor.role || 'No role added'}}</p>
+                        @if (selectedAuthor.bio) {
+                          <p class="light-font mb-1">{{selectedAuthor.bio}}</p>
+                        }
+                        @if (selectedAuthor.link) {
+                          <a [href]="selectedAuthor.link" target="_blank" rel="noopener">{{selectedAuthor.link}}</a>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (!isLegacyBlog && !selectedAuthor && blogForm.author && blogForm.form_type === 'edit') {
+                <div class="col-md-12 form-group mb-3">
+                  <div class="alert alert-light mb-0">
+                    This blog is using legacy inline author data: <strong>{{blogForm.author}}</strong>. Select an author above to link it to the new author collection.
+                  </div>
+                </div>
+              }
+              <div class="col-md-12 form-group mb-3">
+                <label>Eyebrow Heading <span class="light-font">(optional)</span></label>
+                <input type="text" name="eyebrow_heading" class="form-control" [(ngModel)]="blogForm.eyebrow_heading"
+                  placeholder="e.g. Business Travel in Chennai" />
+                  <p class="light-font mt-2 mb-0">Short label shown above the blog title.</p>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Title</label>
+                  <input type="text" name="name" class="form-control" [(ngModel)]="blogForm.name" (input)="onChangeTitle();" #name="ngModel" required />
+                </div>
+                @if (!isAdvanced) {
+                  <div class="col-md-6 form-group mb-3">
+                    <label>Editor Type</label>
+                    <select name="editor_type" class="form-control" [(ngModel)]="blogForm.editor_type" (ngModelChange)="onEditorTypeChange()">
+                      <option value="advanced">Advanced</option>
+                      <option value="basic">Basic</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label>Read Time</label>
+                    <input type="text" name="readTime" class="form-control" [(ngModel)]="blogForm.readTime" />
+                  </div>
+                  <div class="col-md-6 form-group mb-3 d-flex align-items-end">
+                    <label class="checkbox checkbox-primary mb-0">
+                      <input class="form-check-input" type="checkbox" name="published" [(ngModel)]="blogForm.published">
+                      <span>Published</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Tags</label>
+                    <tag-input class="w-100" name="tags_list" [(ngModel)]="blogForm.tags_list" placeholder=""
+                    [secondaryPlaceholder]="'Enter tags'" [separatorKeyCodes]="[188]"></tag-input>
+                  </div>
+                  @if (isEditorJsMode() && imageSlotList.length) {
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Bulk image upload</label>
+                      <p class="light-font font-10 mb-2">
+                        Put <code>[IMAGE: slot-name]</code> markers in the doc. Name each file after the slot
+                        (e.g. <code>chennai-apps.jpg</code>). Cover image uses <code>cover.jpg</code> or the
+                        <code>Cover:</code> metadata filename.
+                      </p>
+                      <div class="blog-image-slot-list mb-2">
+                        @for (slot of imageSlotList; track slot) {
+                          <div class="blog-image-slot-item">
+                            <span class="blog-image-slot-label">{{ slot.label || slot.name }}</span>
+                            <span class="blog-image-slot-hint">{{ slotFilenameHint(slot) }}</span>
+                          </div>
+                        }
+                      </div>
+                      <div class="blog-image-upload-row">
+                        <input #bulkImageInput id="blog-bulk-image-input" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" multiple hidden (change)="onBulkImageSelect($event)" />
+                        <input #bulkFolderInput id="blog-bulk-folder-input" type="file" webkitdirectory directory multiple hidden (change)="onBulkFolderSelect($event)" />
+                        <button type="button" class="btn btn-outline-primary btn-sm" (click)="bulkImageInput.click()">Choose images</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openBulkFolderPicker(bulkFolderInput)">Choose folder</button>
+                        <button type="button" class="btn btn-primary btn-sm" [disabled]="bulkImageLoader || !bulkImageFiles.length" (click)="submitBulkImages()">
+                          {{ bulkImageLoader ? 'Uploading...' : 'Upload & place' }}
+                        </button>
+                      </div>
+                      @if (!bulkImageFiles.length) {
+                        <p class="light-font font-10 mb-0 mt-2">
+                          Step 1: choose image files or a folder. Step 2: click <strong>Upload &amp; place</strong>.
+                          <strong>Choose folder</strong> picks every image in the folder (subfolders included). Your browser may show a one-time security confirmation — this is normal.
+                        </p>
+                      }
+                      @if (bulkImageFiles.length) {
+                        <ul class="blog-image-selected-files mb-0 mt-2">
+                          @for (file of bulkImageFiles; track file) {
+                            <li>{{ bulkImageDisplayName(file) }} ({{ (file.size / 1024) | number:'1.0-0' }} KB)</li>
+                          }
+                        </ul>
+                      }
+                      @if (bulkImageInfo) {
+                        <p class="light-font font-10 mb-0 mt-2 text-success">{{ bulkImageInfo }}</p>
+                      }
+                      @if (bulkImageError) {
+                        <p class="text-danger mb-0 mt-2">{{ bulkImageError }}</p>
+                      }
+                      @if (bulkImageReport) {
+                        <div class="blog-image-upload-report mt-2">
+                          @for (row of bulkImageReport.placed; track row) {
+                            <p class="mb-1"><span class="text-success">✓</span> {{ row.file }} → {{ row.slotLabel || row.slot }}</p>
+                          }
+                          @for (row of bulkImageReport.unmatched; track row) {
+                            <p class="mb-1"><span class="text-warning">⚠</span> {{ row.file }} — no matching slot</p>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (isEditorJsMode()) {
+                    <div class="col-md-12 form-group mb-3">
+                      <label>EditorJS Content</label>
+                      <div id="blog-editorjs-holder" class="editorjs-wrapper"></div>
+                    </div>
+                  }
+                }
+                @if (!isAdvanced && !isEditorJsMode()) {
+                  <div class="col-md-12 form-group mb-3 quill-mb-5">
+                    <label>Description</label>
+                    <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="blogForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+          <!-- categories -->
+          @if (categoryList.length) {
+            <div class="p-0 col-12 mt-3">
+              <label><b>Blog Catalogs</b> <span style="font-size:12px;opacity:0.8;"> (Click on the catalog to select)</span></label>
+            </div>
+            <div class="data-list-card-wrapper p-0 col-md-8 col-12 col-md-12">
+              <div class="card card-in-card px-3 pt-3 pb-0">
+                <div class="prod-scroll px-2">
+                  <div class="row pt-3">
+                    @for (x of categoryList; track x; let i = $index) {
+                      <div class="form-group mb-3 px-2 checking">
+                        <label class="checkbox checkbox-primary pl-0">
+                          <input class="form-check-input" type="checkbox" name="selected" [(ngModel)]="x.selected" [checked]="x.selected" [ngModelOptions]="{standalone: true}">
+                          <span [ngClass]="x.selected? 'active': 'inactive'">
+                            <span>{{x.name}}</span>
+                            @if (x.selected) {
+                              <span class="material-icons p-0 cursor-poiter">close</span>
+                            }
+                          </span>
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+          <!-- SEO -->
+          <div class="data-list-card-wrapper mt-3 p-0 col-md-8 col-12 col-md-12">
+            <div class="data-list-card-inner p-3">
+              <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+                <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                  <span class="light-font mt-0 font-10 d-block">This is how your blog looks on Google, Bing, Yahoo and other search engines</span>
+                </p>
+                @if (blogForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1) {
+                  @if (!blogForm.seo_disp) {
+                    <span class="material-icons float-right round-btn-icon ab-item-close"
+                    (click)="blogForm.seo_disp=true" aria-hidden="true">edit</span>
+                  }
+                  @if (blogForm.seo_disp && blogForm.seo_details.page_url && blogForm.seo_details.h1_tag && blogForm.seo_details.page_title && blogForm.seo_details.meta_desc) {
+                    <span
+                    (click)="blogForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+                  }
+                }
+              </div>
+              @if (!blogForm.seo_disp) {
+                @if (!blogForm.name) {
+                  <p class="light-font font-10">
+                    Add a Title And Description To See How This Blog Might Appear In A Search Engine Listing
+                  </p>
+                }
+                @if (blogForm.name) {
+                  <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/blogs/{{blogForm.seo_details?.page_url}}</p>
+                  <h6 class="sec-desc mb-1 mt-2 seo-color">{{blogForm.seo_details.page_title}}</h6>
+                  <p class="light-font font-10">{{blogForm.seo_details.meta_desc}}</p>
+                }
+              }
+              @if (blogForm.seo_disp) {
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page URL</label>
+                  <input type="text" name="page_url" class="form-control" [(ngModel)]="blogForm.seo_details.page_url" appNoSplChar required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>H1 Tag</label>
+                  @if (blogForm.seo_details?.h1_tag?.length) {
+                    <span class="label_hint">
+                      {{blogForm.seo_details.h1_tag.length}} of 70 characters used
+                    </span>
+                  }
+                  <input type="text" name="h1_tag" class="form-control" [(ngModel)]="blogForm.seo_details.h1_tag" maxlength="70" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page Title</label>
+                  @if (blogForm.seo_details?.page_title?.length) {
+                    <span class="label_hint">
+                      {{blogForm.seo_details.page_title.length}} of {{pageTitleMaxLength}} characters used
+                    </span>
+                  }
+                  <input type="text" name="page_title" class="form-control" [(ngModel)]="blogForm.seo_details.page_title" [maxlength]="pageTitleMaxLength" required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Description</label>
+                  @if (blogForm.seo_details?.meta_desc?.length) {
+                    <span class="label_hint">
+                    {{blogForm.seo_details.meta_desc.length}} of 320 characters used</span>
+                  }
+                  <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="blogForm.seo_details.meta_desc" maxlength="320" required></textarea>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Meta Keywords</label>
+                  <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="blogForm.seo_details.meta_keyword_list" placeholder=""
+                  [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                  <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- FAQ -->
+          <div class="col-md-12 form-group mb-3 mt-3">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="faq_status" [(ngModel)]="blogForm.faq_status" (change)="blogForm.faq_status ? blogForm.faqs=[{}] : blogForm.faqs=[] + blogForm.faq_title='';" #faq_status="ngModel">
+              <span>Enable FAQ</span>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          @if (blogForm.faq_status) {
+            <div class="col-md-6 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="faq_title" class="form-control" [(ngModel)]="blogForm.faq_title" required />
+            </div>
+            <div class="col-md-12">
+              <div class="row">
+                @for (x of blogForm.faqs; track x; let i = $index) {
+                  <div class="col-md-6 form-group mb-3">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="blogForm.faqs.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="ques{{i}}" class="form-control" [(ngModel)]="x.ques" #ques="ngModel" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Answer</label>
+                          <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer" #answer="ngModel" required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <button class="light-button" (click)="blogForm.faqs.push({});" type="button">
+                <span class="material-symbols-rounded ">add</span>NEW FAQ
+              </button>
+            </div>
+          }
+          <div class="separator-breadcrumb border-top mt-5"></div>
+          <div class="row">
+            @if (blogForm.errorMsg) {
+              <div class="col-md-12 mt-3 mb-3">
+                <p class="text-danger" align="center">{{ blogForm.errorMsg }}</p>
+              </div>
+            }
+            <div align="center" class="col-md-12 z-i-0">
+              <button type="button" routerLink="{{commonService.redirect}}" class="btn btn-wide black-outline-btn">
+                <span class="black-outline-txt">Cancel</span>
+              </button>&nbsp; &nbsp; &nbsp;
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="blogForm.submit" [ladda]="blogForm.submit">
+                {{ (blogForm?.form_type=='add')? 'Save': 'Update' }}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-
-      <div class="col-md-12 mb-3">
-        <button class="light-button" (click)="blogForm.faqs.push({});" type="button">
-          <span class="material-symbols-rounded ">add</span>NEW FAQ
-        </button>
-      </div>
-    </ng-container>
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div class="col-md-12 mt-3 mb-3" *ngIf="blogForm.errorMsg">
-        <p class="text-danger" align="center">{{ blogForm.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" routerLink="{{commonService.redirect}}" class="btn btn-wide black-outline-btn">
-         <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="blogForm.submit" [ladda]="blogForm.submit">
-          {{ (blogForm?.form_type=='add')? 'Save': 'Update' }}
-        </button>
-      </div>
-    </div>
-
-  </form>
-
-</div>
+    }

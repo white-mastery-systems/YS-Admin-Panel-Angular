@@ -1,170 +1,203 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" (click)="commonService.goBack();">arrow_back</span>
-          <h1>{{params.id? 'Update': 'Add'}} Theme</h1>
-        </div>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-    <div class="row m-2">
-      <div class="col-md-3 form-group mb-3">
-        <label class="light-font fw-500">Name</label>
-        <input type="text" name="name" class="form-control" [(ngModel)]="tForm.name"
-        oninput="this.value = this.value.replace(/[^A-Za-z0-9-,;'&/-_() ]|^ /g,'')" required />
-      </div>
-      <div class="col-md-3 form-group mb-4">
-        <label class="light-font fw-500">Rank</label>
-        <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="tForm.rank" min="1" max="{{maxRank}}" appNumberOnly required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label class="light-font fw-500">Sub Heading</label>
-        <input type="text" name="sub_heading" class="form-control" [(ngModel)]="tForm.sub_heading" required />
-      </div>
-      <div class="col-md-12 form-group mb-3 quill-mb-5">
-        <label>Description (optional)</label>
-        <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="tForm.description"
-          [ngModelOptions]="{standalone: true}"></quill-editor>
-      </div>
-
-      <!-- image list-->
-      <div class="col-md-12 mb-3">
-        <h6 class="mb-3 dark-font ">Image List</h6>
-        <div class="mb-1">
-          <div class="row">
-            <div *ngFor="let x of tForm?.image_list; let i=index;" class="col-md-12 col-lg-4 mb-2">
-              <div *ngIf="tForm.image_list?.length>1">
-                <span (click)="tForm.image_list.splice(i, 1);"
-                  class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true"
-                  aria-hidden="true">close</span>
-              </div>
-              <div class="mb-4 card p-2" align="center">
-                <div *ngIf="x.image" class="poss-rel">
-                  <img *ngIf="x.img_change" [src]="x.temp_img" height="150px;" width="auto;">
-                  <img *ngIf="!x.img_change" [src]="imgBaseUrl+x.image" height="150px;" width="auto;">
-                </div>
-                <div *ngIf="!x.image">
-                  <label>
-                    <div>
-                      <i class="material-icons add-img"> add_photo_alternate</i>
-                      <p class="light-font">Click to upload image</p>
-                    </div>
-                    <input type="file" name="image" style="display: none;" (change)="fileChangeListener(i, $event, 'theme');"
-                      accept="image/jpeg, image/png, image/webp" />
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="tForm.image_list?.length" class="ml-1 col-md-12"
-              [ngClass]="tForm.image_list.length? 'mt-3': ''">
-              <button class="light-button" type="button" (click)="tForm.image_list.push({}); ">
-                <span class="material-symbols-rounded">add</span> ADD Image
-              </button>
-            </div>
+@if (!pageLoader) {
+  <div>
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex align-items-center">
+            <span class="material-symbols-rounded pr-2 cursor" (click)="commonService.goBack();">arrow_back</span>
+            <h1>{{params.id? 'Update': 'Add'}} Theme</h1>
           </div>
         </div>
       </div>
-
-      <!-- categories -->
-      <div class="col-md-12 mb-3">
-        <h6 class="mb-3 dark-font ">Categories</h6>
-        <div class="mb-1">
-          <div class="row">
-            <div class="col-md-4 mb-2" *ngFor="let x of tForm.categories; let i=index;">
-              <div class="card card-in-card p-3">
-                <div *ngIf="tForm.categories?.length>1">
-                  <span (click)="tForm.categories.splice(i, 1);"
-                    class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true"
-                    aria-hidden="true">close</span>
-                </div>
-                <div class="mb-4 card p-2" align="center">
-                  <div *ngIf="x.image" class="poss-rel">
-                    <img *ngIf="x.img_change" [src]="x.temp_img" height="150px;" width="auto;">
-                    <img *ngIf="!x.img_change" [src]="imgBaseUrl+x.image" height="150px;" width="auto;">
-                  </div>
-                  <div *ngIf="!x.image">
-                    <label>
+    </div>
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      <div class="row m-2">
+        <div class="col-md-3 form-group mb-3">
+          <label class="light-font fw-500">Name</label>
+          <input type="text" name="name" class="form-control" [(ngModel)]="tForm.name"
+            oninput="this.value = this.value.replace(/[^A-Za-z0-9-,;'&/-_() ]|^ /g,'')" required />
+          </div>
+          <div class="col-md-3 form-group mb-4">
+            <label class="light-font fw-500">Rank</label>
+            <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="tForm.rank" min="1" max="{{maxRank}}" appNumberOnly required />
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label class="light-font fw-500">Sub Heading</label>
+            <input type="text" name="sub_heading" class="form-control" [(ngModel)]="tForm.sub_heading" required />
+          </div>
+          <div class="col-md-12 form-group mb-3 quill-mb-5">
+            <label>Description (optional)</label>
+            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="tForm.description"
+            [ngModelOptions]="{standalone: true}"></quill-editor>
+          </div>
+          <!-- image list-->
+          <div class="col-md-12 mb-3">
+            <h6 class="mb-3 dark-font ">Image List</h6>
+            <div class="mb-1">
+              <div class="row">
+                @for (x of tForm?.image_list; track x; let i = $index) {
+                  <div class="col-md-12 col-lg-4 mb-2">
+                    @if (tForm.image_list?.length>1) {
                       <div>
-                        <i class="material-icons add-img"> add_photo_alternate</i>
-                        <p class="light-font">Click to upload image</p>
+                        <span (click)="tForm.image_list.splice(i, 1);"
+                          class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true"
+                        aria-hidden="true">close</span>
                       </div>
-                      <input type="file" name="image" style="display: none;" (change)="fileChangeListener(i, $event, 'cat');"
-                        accept="image/jpeg, image/png, image/webp" />
-                    </label>
+                    }
+                    <div class="mb-4 card p-2" align="center">
+                      @if (x.image) {
+                        <div class="poss-rel">
+                          @if (x.img_change) {
+                            <img [src]="x.temp_img" height="150px;" width="auto;">
+                          }
+                          @if (!x.img_change) {
+                            <img [src]="imgBaseUrl+x.image" height="150px;" width="auto;">
+                          }
+                        </div>
+                      }
+                      @if (!x.image) {
+                        <div>
+                          <label>
+                            <div>
+                              <i class="material-icons add-img"> add_photo_alternate</i>
+                              <p class="light-font">Click to upload image</p>
+                            </div>
+                            <input type="file" name="image" style="display: none;" (change)="fileChangeListener(i, $event, 'theme');"
+                              accept="image/jpeg, image/png, image/webp" />
+                            </label>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                  @if (tForm.image_list?.length) {
+                    <div class="ml-1 col-md-12"
+                      [ngClass]="tForm.image_list.length? 'mt-3': ''">
+                      <button class="light-button" type="button" (click)="tForm.image_list.push({}); ">
+                        <span class="material-symbols-rounded">add</span> ADD Image
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <!-- categories -->
+            <div class="col-md-12 mb-3">
+              <h6 class="mb-3 dark-font ">Categories</h6>
+              <div class="mb-1">
+                <div class="row">
+                  @for (x of tForm.categories; track x; let i = $index) {
+                    <div class="col-md-4 mb-2">
+                      <div class="card card-in-card p-3">
+                        @if (tForm.categories?.length>1) {
+                          <div>
+                            <span (click)="tForm.categories.splice(i, 1);"
+                              class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true"
+                            aria-hidden="true">close</span>
+                          </div>
+                        }
+                        <div class="mb-4 card p-2" align="center">
+                          @if (x.image) {
+                            <div class="poss-rel">
+                              @if (x.img_change) {
+                                <img [src]="x.temp_img" height="150px;" width="auto;">
+                              }
+                              @if (!x.img_change) {
+                                <img [src]="imgBaseUrl+x.image" height="150px;" width="auto;">
+                              }
+                            </div>
+                          }
+                          @if (!x.image) {
+                            <div>
+                              <label>
+                                <div>
+                                  <i class="material-icons add-img"> add_photo_alternate</i>
+                                  <p class="light-font">Click to upload image</p>
+                                </div>
+                                <input type="file" name="image" style="display: none;" (change)="fileChangeListener(i, $event, 'cat');"
+                                  accept="image/jpeg, image/png, image/webp" />
+                                </label>
+                              </div>
+                            }
+                          </div>
+                          <div class="col-md-12 form-group mb-3">
+                            <label class="light-font fw-500">Categories Name</label>
+                            <select name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" required>
+                              @for (x of commonService.store_categories; track x) {
+                                <option [ngValue]="x.name">{{x.display}}
+                                </option>
+                              }
+                            </select>
+                          </div>
+                          <div class="col-md-12 form-group mb-3">
+                            <label class="mt-2 light-font fw-500">Url</label>
+                            <input type="text" name="url{{i}}" class="form-control" [(ngModel)]="x.url" #url="ngModel" required />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    @if (tForm.categories?.length<commonService.store_categories.length) {
+                      <div class="ml-1 col-md-12"
+                        [ngClass]="tForm.categories.length? 'mt-3': ''">
+                        <button class="light-button" type="button" (click)="tForm.categories.push({}); ">
+                          <span class="material-symbols-rounded">add</span> ADD Categories
+                        </button>
+                      </div>
+                    }
                   </div>
                 </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label class="light-font fw-500">Categories Name</label>
-                  <select name="name{{i}}" class="form-control" [(ngModel)]="x.name" #name="ngModel" required>
-                    <option *ngFor="let x of commonService.store_categories;" [ngValue]="x.name">{{x.display}}
-                    </option>
-                  </select>
+              </div>
+              <!-- currency list -->
+              @for (x of currencyList; track x; let i = $index) {
+                <div class="col-md-6">
+                  <div class="card p-3 mb-3">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <span class="primary-color"><b>{{x.base}}</b></span>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label>Selling Fees</label>
+                        <input type="tel" name="selling_cost{{i}}" class="form-control" [(ngModel)]="x.selling_amount"
+                          #selling_amount="ngModel" appNumberOnly required />
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label>Discounted Fees</label>
+                          <input type="tel" name="cost{{i}}" class="form-control" [(ngModel)]="x.amount" #amount="ngModel"
+                            appNumberOnly required />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- reset btn -->
+                    @if (i===0) {
+                      <div class="col-md-6">
+                        <button type="button" (click)="onResetPrice();" class="btn btn-wide btn-primary">
+                          Reset Price
+                        </button>
+                      </div>
+                    }
+                  }
+                  @if (tForm.errorMsg) {
+                    <div>
+                      <p class="text-danger">{{ tForm.errorMsg }}</p>
+                    </div>
+                  }
                 </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label class="mt-2 light-font fw-500">Url</label>
-                  <input type="text" name="url{{i}}" class="form-control" [(ngModel)]="x.url" #url="ngModel" required />
+                <div class="page_fixedfooter">
+                  <button type="button" class="btn btn-wide black-outline-btn mr-2" routerLink="/admin/themes">
+                    <span class="black-outline-txt">Cancel</span>
+                  </button>
+                  <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="tForm.submit"
+                    [ladda]="tForm.submit">
+                    {{params.id? 'Update': 'Add'}}
+                  </button>
                 </div>
-              </div>
+              </form>
             </div>
-            <div *ngIf="tForm.categories?.length<commonService.store_categories.length" class="ml-1 col-md-12"
-              [ngClass]="tForm.categories.length? 'mt-3': ''">
-              <button class="light-button" type="button" (click)="tForm.categories.push({}); ">
-                <span class="material-symbols-rounded">add</span> ADD Categories
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <!-- currency list -->
-      <ng-container *ngFor="let x of currencyList; let i=index;">
-        <div class="col-md-6">
-          <div class="card p-3 mb-3">
-            <div class="row">
-              <div class="col-md-12">
-                <span class="primary-color"><b>{{x.base}}</b></span>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Selling Fees</label>
-                <input type="tel" name="selling_cost{{i}}" class="form-control" [(ngModel)]="x.selling_amount"
-                  #selling_amount="ngModel" appNumberOnly required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Discounted Fees</label>
-                <input type="tel" name="cost{{i}}" class="form-control" [(ngModel)]="x.amount" #amount="ngModel"
-                  appNumberOnly required />
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- reset btn -->
-        <div *ngIf="i===0" class="col-md-6">
-          <button type="button" (click)="onResetPrice();" class="btn btn-wide btn-primary">
-            Reset Price
-          </button>
-        </div>
-      </ng-container>
-
-      <div *ngIf="tForm.errorMsg">
-        <p class="text-danger">{{ tForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="page_fixedfooter">
-      <button type="button" class="btn btn-wide black-outline-btn mr-2" routerLink="/admin/themes">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="tForm.submit"
-        [ladda]="tForm.submit">
-        {{params.id? 'Update': 'Add'}}
-      </button>
-    </div>
-  </form>
-</div>
+          }

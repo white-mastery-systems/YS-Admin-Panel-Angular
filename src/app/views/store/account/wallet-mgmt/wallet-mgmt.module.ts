@@ -11,7 +11,7 @@ import { WalletMgmtComponent } from './wallet-mgmt.component';
   ],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     WalletMgmtRoutingModule
   ]
 })

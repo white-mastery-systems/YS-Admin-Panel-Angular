@@ -1,329 +1,365 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="main-header" *ngIf="!commonService.desktop_device">
-  <h2>Guest Users</h2>
-  <div
-    class="header-part-right d-flex"
-    *ngIf="
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="main-header">
+    <h2>Guest Users</h2>
+    @if (
       commonService.store_details.login_type == 'admin' ||
       commonService.subuser_features.indexOf('order_export') != -1
-    "
-  >
-    <div
-      class="add_but"
-      ngbDropdown
-      role="group"
-      aria-label="Select all"
-      *ngIf="
-        commonService.ys_features.indexOf('sales_report') != -1 ||
-        commonService.ys_features.indexOf('advanced_sales_report') != -1
-      "
-    >
+      ) {
       <div
-        ngbDropdown
-        role="group"
-        aria-label="Select all"
-        placement="bottom-start bottom-end top-start top-end"
-      >
-        <button ngbDropdownToggle>
-          <span class="material-symbols-rounded">more_vert</span>
-        </button>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" (click)="exportAsXLSX()">
-            <span class="material-symbols-rounded">file_upload</span> Export
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div *ngIf="!pageLoader">
-  <div class="top-filter-sec" *ngIf="!commonService.desktop_device">
-    <div class="row mb-2">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <form
-            autocomplete="off"
-            (ngSubmit)="ngOnInit()"
-            ngNativeValidate
-            ngbAutofocus
-          >
-            <div class="form-group">
-              <input
-                type="text"
-                name="search_bar"
-                placeholder="Search"
-                class="form-control"
-                [(ngModel)]="filterForm.search"
-              />
-              <div class="search_icon">
-                <span class="material-symbols-rounded">search</span>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <h1>
-            Abandoned
-            {{ router.url.indexOf("cart") != -1 ? "Carts" : "Quotes" }}
-          </h1>
-        </div>
-      </div>
-    </div>
-
-    <div class="top-filter-sec list-button">
-      <div class="row mb-4">
-        <!-- search box -->
-        <div class="col-md-6 col-8">
-          <form
-            autocomplete="off"
-            (ngSubmit)="ngOnInit()"
-            ngNativeValidate
-            ngbAutofocus
-          >
-            <div class="form-group">
-              <input
-                type="text"
-                name="search_bar"
-                placeholder="Search"
-                class="form-control"
-                [(ngModel)]="filterForm.search"
-              />
-            </div>
-          </form>
-        </div>
-        <div class="col-md-6 list-button d-flex justify-content-end">
-          <button
-            *ngIf="
-              commonService.store_details.login_type == 'admin' ||
-              commonService.subuser_features.indexOf('order_export') != -1
-            "
-            type="button"
-            (click)="exportAsXLSX()"
-            [disabled]="exportLoader"
-          >
-            <span class="material-symbols-rounded">file_upload</span>Export
-          </button>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- Updated DATA LIST section with sticky columns -->
-  <div *ngIf="list.length" class="list-horizontal sticky-table-container">
-    <!-- Left Shadow -->
-    <div #leftShadow class="scroll-shadow left"></div>
-    <div class="data-list-card-wrapper scroll-div" #tableWrapper>
-      <div class="data-list-card-inner scroll-inner">
-        <!-- Header Row -->
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">       
-            <div class="col-lg-10 col-md-9 col-6 first_col px-0 header-font">
-              <p class="w-35 w-sm-100">Customer Details</p>
-              <p class="w-25 w-sm-100 m-b-0">Last Active</p>
-              <p class="w-15 w-sm-100 m-b-0">Item</p>
-              <p class="w-15 w-sm-100 m-b-0">Price</p>
-              <p class="w-15 w-sm-100 m-b-0">City</p>
-              <p class="w-15 w-sm-100 m-b-0">Country</p>
-              <p class="w-15 w-sm-100 m-b-0">Local Time</p>
-              <p class="w-15 w-sm-100 m-b-0">Reach Out</p>
-            </div>
-            <div class="col-lg-2 col-md-3 col-6 px-0 header-font action-right">
-              <p class="m-b-0 text-center">Actions</p>
-            </div>       
-        </div>
-        
-        <!-- Data Rows -->
-        <div
-          class="list-item data-list-card data-list-card-body type5-card"
-          *ngFor="let x of list; let i = index"
-          [@animate]="{ value: '*', params: { delay: i * 100 + 'ms', y: '50px' } }"
+        class="header-part-right d-flex"
         >
-        
-          <div class="col-lg-10 col-md-9 col-7 first_col px-0 cursor">
-            <p class="w-35 w-sm-100 m-b-0 dark-font breakword">
-              <ng-container *ngIf="x.name!='-'">{{ x.name }}<br></ng-container>
-              {{ x.email }}
-              <ng-container *ngIf="x.mobile!='-'">
-                <br>{{ x.mobile }}
-              </ng-container>
-            </p>
-            <p class="w-25 w-sm-100 m-b-0 light-font">
-              {{ x.cart_updated_on | date : "dd MMM y hh:mm a" }}
-            </p>
-            <ng-container *ngIf="commonService.desktop_device">
-              <p class="w-15 w-sm-100 m-b-0 light-font">
-                <span class="paid-background">
-                  <span class="paid_dot"></span>
-                  {{ x.cart_list?.length }} {{ x.cart_list?.length > 1 ? "items" : "item" }}
-                </span>
-              </p>
-              <p class="w-15 w-sm-100 m-b-0 light-font">
-                {{ x.cart_total | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
-              </p>
-            </ng-container>
-            <p *ngIf="commonService.desktop_device || x.city!='-'" class="w-15 w-sm-100 m-b-0 light-font">
-              {{x.city}}
-            </p>
-            <p *ngIf="commonService.desktop_device || x.country!='-'" class="w-15 w-sm-100 m-b-0 light-font">
-              {{x.country}} <ng-container *ngIf="!commonService.desktop_device">({{x.local_time}})</ng-container>
-            </p>
-            <p *ngIf="commonService.desktop_device" class="w-15 w-sm-100 m-b-0 light-font">
-              {{x.local_time}}
-            </p>
-            <p *ngIf="commonService.desktop_device || x.reach_out!='-'" class="w-15 w-sm-100 m-b-0 light-font">
-              <span *ngIf="x.reach_out!='-'" class="badge" [ngClass]="(x.reach_out==='Avoid for Now')? 'badge-red-background': 'badge-green-background'">
-                {{x.reach_out}}
-              </span>
-              <span *ngIf="x.reach_out=='-'">-</span>
-            </p>
-          </div>
-          
-          <!-- Actions Column - Sticky Right -->
-          <div class="col-lg-2 col-md-3 col-5 first_col d-flex text-right flex-sm-row-reverse px-0">
-            <div class="d-flex justify-content-end align-items-center"
-                [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
-              
-              <!-- Contact Dropdown -->
-              <div class="product-btn-group btn-group">
-                <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
-                    placement="bottom-start bottom-end top-start top-end">
-                  <button [ngClass]="commonService.desktop_device ? 'light-button2 mr-3' : 'iconbutton'"
-                          ngbDropdownToggle>
-                    {{ commonService.desktop_device ? "Contact" : "" }}
-                    <span class="material-symbols-rounded"
-                          [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''">
-                      {{ commonService.desktop_device ? "expand_more" : "more_vert" }}
-                    </span>
-                  </button>
-                  <div class="dropdown-menu" ngbDropdownMenu>
-                    <a *ngIf="x.reach_out_link != '-'" target="blank" href="{{x.reach_out_link}}">
-                      <button class="dropdown-item">
-                        <span class="material-symbols-rounded dropdown_icon">chat</span>
-                        Reach Out on WhatsApp
-                      </button>
-                    </a>
-                    <a *ngIf="x.follow_up_link != '-'" target="blank" href="{{x.follow_up_link}}">
-                      <button class="dropdown-item">
-                        <span class="material-symbols-rounded dropdown_icon">chat</span>
-                        Follow Up on WhatsApp
-                      </button>
-                    </a>
-                    <a href="mailto:{{ x.email }}">
-                      <button class="dropdown-item">
-                        <span class="material-symbols-rounded dropdown_icon">mail</span>
-                        Mail
-                      </button>
-                    </a>
-                    <a *ngIf="x.mobile != '-'" href="tel:{{ x.mobile }}">
-                      <button class="dropdown-item">
-                        <span class="material-symbols-rounded dropdown_icon">call</span>
-                        Call
-                      </button>
-                    </a>
-                  </div>
-                </div>
+        @if (
+          commonService.ys_features.indexOf('sales_report') != -1 ||
+          commonService.ys_features.indexOf('advanced_sales_report') != -1
+          ) {
+          <div
+            class="add_but"
+            ngbDropdown
+            role="group"
+            aria-label="Select all"
+            >
+            <div
+              ngbDropdown
+              role="group"
+              aria-label="Select all"
+              placement="bottom-start bottom-end top-start top-end"
+              >
+              <button ngbDropdownToggle>
+                <span class="material-symbols-rounded">more_vert</span>
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button class="dropdown-item" (click)="exportAsXLSX()">
+                  <span class="material-symbols-rounded">file_upload</span> Export
+                </button>
               </div>
-              
-              <!-- View Button -->
-              <a [ngClass]="commonService.desktop_device ? 'link-button' : 'iconbutton'"
-                (click)="catchPageData()"
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+@if (!pageLoader) {
+  <div>
+    @if (!commonService.desktop_device) {
+      <div class="top-filter-sec">
+        <div class="row mb-2">
+          <div class="col-md-6 col-12">
+            <div class="form-group search_bar m-0">
+              <form
+                autocomplete="off"
+                (ngSubmit)="ngOnInit()"
+                ngNativeValidate
+                ngbAutofocus
+                >
+                <div class="form-group">
+                  <input
+                    type="text"
+                    name="search_bar"
+                    placeholder="Search"
+                    class="form-control"
+                    [(ngModel)]="filterForm.search"
+                    />
+                    <div class="search_icon">
+                      <span class="material-symbols-rounded">search</span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (commonService.desktop_device) {
+        <div class="breadcrumb with-back-btn">
+          <div class="row">
+            <div class="col-md-8">
+              <h1>
+                Abandoned
+                {{ router.url.indexOf("cart") != -1 ? "Carts" : "Quotes" }}
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="top-filter-sec list-button">
+          <div class="row mb-4">
+            <!-- search box -->
+            <div class="col-md-6 col-8">
+              <form
+                autocomplete="off"
+                (ngSubmit)="ngOnInit()"
+                ngNativeValidate
+                ngbAutofocus
+                >
+                <div class="form-group">
+                  <input
+                    type="text"
+                    name="search_bar"
+                    placeholder="Search"
+                    class="form-control"
+                    [(ngModel)]="filterForm.search"
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-6 list-button d-flex justify-content-end">
+                @if (
+                  commonService.store_details.login_type == 'admin' ||
+                  commonService.subuser_features.indexOf('order_export') != -1
+                  ) {
+                  <button
+                    type="button"
+                    (click)="exportAsXLSX()"
+                    [disabled]="exportLoader"
+                    >
+                    <span class="material-symbols-rounded">file_upload</span>Export
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+        <!-- Updated DATA LIST section with sticky columns -->
+        @if (list.length) {
+          <div class="list-horizontal sticky-table-container">
+            <!-- Left Shadow -->
+            <div #leftShadow class="scroll-shadow left"></div>
+            <div class="data-list-card-wrapper scroll-div" #tableWrapper>
+              <div class="data-list-card-inner scroll-inner">
+                <!-- Header Row -->
+                @if (commonService.desktop_device) {
+                  <div class="list-item data-list-card">
+                    <div class="col-lg-10 col-md-9 col-6 first_col px-0 header-font">
+                      <p class="w-35 w-sm-100">Customer Details</p>
+                      <p class="w-25 w-sm-100 m-b-0">Last Active</p>
+                      <p class="w-15 w-sm-100 m-b-0">Item</p>
+                      <p class="w-15 w-sm-100 m-b-0">Price</p>
+                      <p class="w-15 w-sm-100 m-b-0">City</p>
+                      <p class="w-15 w-sm-100 m-b-0">Country</p>
+                      <p class="w-15 w-sm-100 m-b-0">Local Time</p>
+                      <p class="w-15 w-sm-100 m-b-0">Reach Out</p>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-6 px-0 header-font action-right">
+                      <p class="m-b-0 text-center">Actions</p>
+                    </div>
+                  </div>
+                }
+                <!-- Data Rows -->
+                @for (x of list; track x; let i = $index) {
+                  <div
+                    class="list-item data-list-card data-list-card-body type5-card"
+                    [@animate]="{ value: '*', params: { delay: i * 100 + 'ms', y: '50px' } }"
+                    >
+                    <div class="col-lg-10 col-md-9 col-7 first_col px-0 cursor">
+                      <p class="w-35 w-sm-100 m-b-0 dark-font breakword">
+                        @if (x.name!='-') {
+                          {{ x.name }}<br>
+                        }
+                        {{ x.email }}
+                        @if (x.mobile!='-') {
+                          <br>{{ x.mobile }}
+                          }
+                        </p>
+                        <p class="w-25 w-sm-100 m-b-0 light-font">
+                          {{ x.cart_updated_on | date : "dd MMM y hh:mm a" }}
+                        </p>
+                        @if (commonService.desktop_device) {
+                          <p class="w-15 w-sm-100 m-b-0 light-font">
+                            <span class="paid-background">
+                              <span class="paid_dot"></span>
+                              {{ x.cart_list?.length }} {{ x.cart_list?.length > 1 ? "items" : "item" }}
+                            </span>
+                          </p>
+                          <p class="w-15 w-sm-100 m-b-0 light-font">
+                            {{ x.cart_total | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
+                          </p>
+                        }
+                        @if (commonService.desktop_device || x.city!='-') {
+                          <p class="w-15 w-sm-100 m-b-0 light-font">
+                            {{x.city}}
+                          </p>
+                        }
+                        @if (commonService.desktop_device || x.country!='-') {
+                          <p class="w-15 w-sm-100 m-b-0 light-font">
+                            {{x.country}} @if (!commonService.desktop_device) {
+                            ({{x.local_time}})
+                          }
+                        </p>
+                      }
+                      @if (commonService.desktop_device) {
+                        <p class="w-15 w-sm-100 m-b-0 light-font">
+                          {{x.local_time}}
+                        </p>
+                      }
+                      @if (commonService.desktop_device || x.reach_out!='-') {
+                        <p class="w-15 w-sm-100 m-b-0 light-font">
+                          @if (x.reach_out!='-') {
+                            <span class="badge" [ngClass]="(x.reach_out==='Avoid for Now')? 'badge-red-background': 'badge-green-background'">
+                              {{x.reach_out}}
+                            </span>
+                          }
+                          @if (x.reach_out=='-') {
+                            <span>-</span>
+                          }
+                        </p>
+                      }
+                    </div>
+                    <!-- Actions Column - Sticky Right -->
+                    <div class="col-lg-2 col-md-3 col-5 first_col d-flex text-right flex-sm-row-reverse px-0">
+                      <div class="d-flex justify-content-end align-items-center"
+                        [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
+                        <!-- Contact Dropdown -->
+                        <div class="product-btn-group btn-group">
+                          <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                            placement="bottom-start bottom-end top-start top-end">
+                            <button [ngClass]="commonService.desktop_device ? 'light-button2 mr-3' : 'iconbutton'"
+                              ngbDropdownToggle>
+                              {{ commonService.desktop_device ? "Contact" : "" }}
+                              <span class="material-symbols-rounded"
+                                [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''">
+                                {{ commonService.desktop_device ? "expand_more" : "more_vert" }}
+                              </span>
+                            </button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                              @if (x.reach_out_link != '-') {
+                                <a target="blank" href="{{x.reach_out_link}}">
+                                  <button class="dropdown-item">
+                                    <span class="material-symbols-rounded dropdown_icon">chat</span>
+                                    Reach Out on WhatsApp
+                                  </button>
+                                </a>
+                              }
+                              @if (x.follow_up_link != '-') {
+                                <a target="blank" href="{{x.follow_up_link}}">
+                                  <button class="dropdown-item">
+                                    <span class="material-symbols-rounded dropdown_icon">chat</span>
+                                    Follow Up on WhatsApp
+                                  </button>
+                                </a>
+                              }
+                              <a href="mailto:{{ x.email }}">
+                                <button class="dropdown-item">
+                                  <span class="material-symbols-rounded dropdown_icon">mail</span>
+                                  Mail
+                                </button>
+                              </a>
+                              @if (x.mobile != '-') {
+                                <a href="tel:{{ x.mobile }}">
+                                  <button class="dropdown-item">
+                                    <span class="material-symbols-rounded dropdown_icon">call</span>
+                                    Call
+                                  </button>
+                                </a>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        <!-- View Button -->
+                        <a [ngClass]="commonService.desktop_device ? 'link-button' : 'iconbutton'"
+                          (click)="catchPageData()"
                 routerLink="{{
                   router.url.indexOf('cart') != -1
                     ? '/orders/abandoned-cart/guest-user/' + x._id
                     : '/abandoned-quotes/guest-user/' + x._id
                 }}">
-                <span class="material-symbols-rounded right_arrow transicon">
-                  {{ commonService.desktop_device ? "visibility" : "chevron_right" }}
-                </span>
-                {{ commonService.desktop_device ? "View" : "" }}
-              </a>
+                          <span class="material-symbols-rounded right_arrow transicon">
+                            {{ commonService.desktop_device ? "visibility" : "chevron_right" }}
+                          </span>
+                          {{ commonService.desktop_device ? "View" : "" }}
+                        </a>
+                      </div>
+                      <!-- Mobile Item Count and Price -->
+                      @if (!commonService.desktop_device) {
+                        <p class="w-20 w-sm-100 m-b-0 mt-2" style="white-space: nowrap"
+                          >
+                          <span class="paidbg light-font fw-500 w-50 w-sm-100 mr-2">
+                            <span class="paid_dot"></span>{{ x.cart_list?.length }}
+                            {{ x.cart_list?.length > 1 ? "items" : "item" }}
+                          </span>
+                          <span class="light-font fw-600">
+                            {{ x.cart_total | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
+                          </span>
+                        </p>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
             </div>
-            
-            <!-- Mobile Item Count and Price -->
-            <p class="w-20 w-sm-100 m-b-0 mt-2" style="white-space: nowrap"
-              *ngIf="!commonService.desktop_device">
-              <span class="paidbg light-font fw-500 w-50 w-sm-100 mr-2">
-                <span class="paid_dot"></span>{{ x.cart_list?.length }}
-                {{ x.cart_list?.length > 1 ? "items" : "item" }}
-              </span>
-              <span class="light-font fw-600">
-                {{ x.cart_total | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
-              </span>
-            </p>
+            <!-- Right Shadow -->
+            <div #rightShadow class="scroll-shadow right"></div>
+            <!-- PAGINATION CONTROL -->
+            <div class="row mt-4">
+              <div class="col-md-12 product-pagination-wrapper">
+                <ul
+                  role="navigation"
+                  class="ngx-pagination responsive product-pagination"
+                  aria-label="Pagination"
+                  >
+                  <li class="pagination-previous mr-3">
+                    <a
+                      (click)="page > 1 ? onChangePage('prev') : ''"
+                      [ngClass]="page > 1 ? 'cursor' : 'disabled'"
+                      aria-label="page"
+                      >
+                      <span class="cursor show-for-sr"></span>
+                    </a>
+                  </li>
+                  @if (commonService.desktop_device) {
+                    <li class="current">
+                      <span>{{ page }}</span>
+                    </li>
+                  }
+                  @if (!commonService.desktop_device) {
+                    <li class="small-screen">
+                      {{ page }} / {{ totalPages }}
+                    </li>
+                  }
+                  <li class="pagination-next ml-3">
+                    <a
+                      (click)="page < totalPages ? onChangePage('next') : ''"
+                      [ngClass]="page < totalPages ? 'cursor' : 'disabled'"
+                      aria-label="page"
+                      >
+                      <span class="cursor show-for-sr"></span>
+                    </a>
+                  </li>
+                </ul>
+                <div class="page-count-pagination">
+                  <b class="mr-2">Go to page</b>
+                  <select
+                    name="select_page"
+                    style="width: 70px; display: inline"
+                    class="form-control select-arrow"
+                    [(ngModel)]="page"
+                    (change)="commonService.pageTop(0); onLoadData()"
+                    >
+                    @for (num of pagesList; track num; let i = $index) {
+                      <option
+                        [ngValue]="i + 1"
+                        >
+                        {{ i + 1 }}
+                      </option>
+                    }
+                  </select>
+                  <!-- <b class="ml-2">page</b> -->
+                </div>
+              </div>
+            </div>
           </div>
-      
-        </div>
+        }
+        @if (!list.length) {
+          <div class="row">
+            <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+              <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
+              <p align="center">No data to display</p>
+            </div>
+          </div>
+        }
       </div>
-    </div>
-    <!-- Right Shadow -->
-    <div #rightShadow class="scroll-shadow right"></div>
-    <!-- PAGINATION CONTROL -->
-    <div class="row mt-4">
-      <div class="col-md-12 product-pagination-wrapper">
-        <ul
-          role="navigation"
-          class="ngx-pagination responsive product-pagination"
-          aria-label="Pagination"
-        >
-          <li class="pagination-previous mr-3">
-            <a
-              (click)="page > 1 ? onChangePage('prev') : ''"
-              [ngClass]="page > 1 ? 'cursor' : 'disabled'"
-              aria-label="page"
-            >
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-          <li *ngIf="commonService.desktop_device" class="current">
-            <span>{{ page }}</span>
-          </li>
-          <li *ngIf="!commonService.desktop_device" class="small-screen">
-            {{ page }} / {{ totalPages }}
-          </li>
-          <li class="pagination-next ml-3">
-            <a
-              (click)="page < totalPages ? onChangePage('next') : ''"
-              [ngClass]="page < totalPages ? 'cursor' : 'disabled'"
-              aria-label="page"
-            >
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-        </ul>
-        <div class="page-count-pagination">
-          <b class="mr-2">Go to page</b>
-          <select
-            name="select_page"
-            style="width: 70px; display: inline"
-            class="form-control select-arrow"
-            [(ngModel)]="page"
-            (change)="commonService.pageTop(0); onLoadData()"
-          >
-            <option
-              [ngValue]="i + 1"
-              *ngFor="let num of pagesList; let i = index"
-            >
-              {{ i + 1 }}
-            </option>
-          </select>
-          <!-- <b class="ml-2">page</b> -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="!list.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-
-</div>
+    }

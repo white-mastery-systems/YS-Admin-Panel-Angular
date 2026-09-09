@@ -1,195 +1,251 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but mr-3" ngbDropdown role="group" aria-label="Select all">
-    <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-      <button ngbDropdownToggle>
-        <span class="material-symbols-rounded">more_vert</span>
-      </button>
-      <div class="dropdown-menu" ngbDropdownMenu>
-        <button *ngIf="commonService.ys_features.indexOf('vendor_subs')!=-1" class="dropdown-item"
-          (click)="onOpenModal('subs', subscriptionModal)">
-          <span class="material-symbols-rounded mr-2">settings</span>
-          Subscription Setting
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but mr-3" ngbDropdown role="group" aria-label="Select all">
+      <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+        <button ngbDropdownToggle>
+          <span class="material-symbols-rounded">more_vert</span>
         </button>
-        <button class="dropdown-item" (click)="onOpenModal('invoice', invoiceModal)">
-          <span class="material-symbols-rounded mr-2">settings</span> Invoice
-          Setting
-        </button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          @if (commonService.ys_features.indexOf('vendor_subs')!=-1) {
+            <button class="dropdown-item"
+              (click)="onOpenModal('subs', subscriptionModal)">
+              <span class="material-symbols-rounded mr-2">settings</span>
+              Subscription Setting
+            </button>
+          }
+          <button class="dropdown-item" (click)="onOpenModal('invoice', invoiceModal)">
+            <span class="material-symbols-rounded mr-2">settings</span> Invoice
+            Setting
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="add_but" (click)="addVendor(walletModal)">
-    <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>Vendors</h1>
-      </div>
+    <div class="add_but" (click)="addVendor(walletModal)">
+      <span class="material-symbols-rounded">add</span>
     </div>
   </div>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-2">
-      <div class="col-md-4 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon">
-            <span class="material-symbols-rounded">search</span>
-          </div>
-          <div class="filter_icon" *ngIf="!commonService.desktop_device" (click)="onOpenFilterModal(filterModal)">
-            <span class="material-symbols-rounded cursor">filter_alt</span>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Vendors</h1>
           </div>
         </div>
       </div>
-      <div class="col-md-8 col-12 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal)">
-          <span class="material-symbols-rounded">filter_alt</span>Filter
-        </button>
-        <button *ngIf="commonService.ys_features.indexOf('vendor_subs')!=-1" type="button"
-          (click)="onOpenModal('subs', subscriptionModal)" class="mr-3">
-          <span class="material-symbols-rounded">settings</span>
-          Subscription Setting
-        </button>
-        <button type="button" (click)="onOpenModal('invoice', invoiceModal)" class="mr-3">
-          <span class="material-symbols-rounded">settings</span>
-          Invoice Setting
-        </button>
-        <button class="highbutton" (click)="addVendor(walletModal)" type="button">
-          <span class="material-symbols-rounded">add</span>Vendor
-        </button>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-2">
+        <div class="col-md-4 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon">
+              <span class="material-symbols-rounded">search</span>
+            </div>
+            @if (!commonService.desktop_device) {
+              <div class="filter_icon" (click)="onOpenFilterModal(filterModal)">
+                <span class="material-symbols-rounded cursor">filter_alt</span>
+              </div>
+            }
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-8 col-12 list-button d-flex justify-content-end">
+            <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal)">
+              <span class="material-symbols-rounded">filter_alt</span>Filter
+            </button>
+            @if (commonService.ys_features.indexOf('vendor_subs')!=-1) {
+              <button type="button"
+                (click)="onOpenModal('subs', subscriptionModal)" class="mr-3">
+                <span class="material-symbols-rounded">settings</span>
+                Subscription Setting
+              </button>
+            }
+            <button type="button" (click)="onOpenModal('invoice', invoiceModal)" class="mr-3">
+              <span class="material-symbols-rounded">settings</span>
+              Invoice Setting
+            </button>
+            <button class="highbutton" (click)="addVendor(walletModal)" type="button">
+              <span class="material-symbols-rounded">add</span>Vendor
+            </button>
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | gridSearch: { 'email' : search_bar, 'comp_name' : search_bar, 'comp_brand' : search_bar })?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-2 first_col px-0 header-font">
-            <p class="w-100 w-sm-100">Logo</p>
-          </div>
-          <div class="col-md-7 first_col px-0 header-font">
-            <p class="w-30 w-sm-100">Brand</p>
-            <p class="w-30 w-sm-100">Email</p>
-            <p class="w-20 w-sm-100">Status</p>
-            <p class="w-20 w-sm-100" *ngIf="
-                commonService.store_details?.payout_gateway?.name == 'Razorpay'
-              ">
-              RazorpayX
-            </p>
-          </div>
-          <div class="col-md-3 col-4">&nbsp;</div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="
-            let x of list
+    <!-- DATA LIST -->
+    @if ((list | gridSearch: { 'email' : search_bar, 'comp_name' : search_bar, 'comp_brand' : search_bar })?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-2 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100">Logo</p>
+                </div>
+                <div class="col-md-7 first_col px-0 header-font">
+                  <p class="w-30 w-sm-100">Brand</p>
+                  <p class="w-30 w-sm-100">Email</p>
+                  <p class="w-20 w-sm-100">Status</p>
+                  @if (
+                    commonService.store_details?.payout_gateway?.name == 'Razorpay'
+                    ) {
+                    <p class="w-20 w-sm-100">
+                      RazorpayX
+                    </p>
+                  }
+                </div>
+                <div class="col-md-3 col-4">&nbsp;</div>
+              </div>
+            }
+            @for (
+              x of list
               | gridSearch: { 'email' : search_bar, 'comp_name' : search_bar, 'comp_brand' : search_bar }
-              | paginate : { itemsPerPage: pageSize, currentPage: page };
-            let i = index
-          " [@animate]="{
+              | paginate : { itemsPerPage: pageSize, currentPage: page }; track
+              x; let i = $index) {
+<div class="list-item data-list-card" [@animate]="{
             value: '*',
             params: { delay: i * 100 + 'ms', y: '50px' }
           }">
-          <ng-container *ngIf="!commonService.desktop_device">
-            <span *ngIf="x.password && x.status == 'active'" class="ribbon-band green-band">Active</span>
-            <span *ngIf="x.password && x.status == 'inactive'" class="ribbon-band red-band">Inactive</span>
-            <span *ngIf="!x.password && x.status == 'inactive'" class="ribbon-band blue-band">New</span>
-            <span *ngIf="x.status == 'declined' || x.status == 'expired'" class="ribbon-band red-band">
-              x.status | titlecase
-            </span>
-            <span *ngIf="x.doc_verified" class="ribbon-band blue-band">Verified</span>
-          </ng-container>
-          <div class="col-md-2 col-3 first_col px-0">
-            <div *ngIf="x.image" class="list-thumb d-flex align-self-center">
-              <img [src]="imgBaseUrl + x.image" alt="" />
-            </div>
-            <div *ngIf="!x.image" class="list-thumb d-flex align-self-center">
-              <img src="assets/images/default.png" alt="" />
-            </div>
-          </div>
-          <div class="col-md-7 col-5 first_col px-0">
-            <p class="w-30 w-sm-100 extra_text dark-font">
-              {{ x.company_details?.name }}<br /><span class="light-font">{{
-                x.company_details?.brand
-                }}</span>
-            </p>
-            <p class="w-30 w-sm-100 m-b-0 light-font extra_text">
-              {{ x.email }}<br>
-              <ng-container *ngIf="commonService.ys_features.indexOf('vendor_subs')!=-1 && commonService.deploy_details?.vendor_subs_status">
-                <ng-container *ngIf="!x.package_details?.expiry_date && x.package_details?.trial_expiry">
-                  {{x.package_details?.trial_expiry | date : "dd MMM y"}} (Trial)
-                </ng-container>
-                <ng-container *ngIf="x.package_details?.expiry_date">
-                  {{x.package_details?.expiry_date | date : "dd MMM y"}}
-                </ng-container>
-              </ng-container>
-            </p>
-            <p class="w-20 w-sm-100 m-b-0 light-font d-flex flex-column" *ngIf="commonService.desktop_device">
-              <span *ngIf="x.password && x.status == 'active'" class="badge badge-green-background">Active</span>
-              <span *ngIf="x.password && x.status == 'inactive'" class="badge badge-red-background">Inactive</span>
-              <span *ngIf="!x.password && x.status == 'inactive'" class="badge badge-blue-background">New</span>
-              <span *ngIf="x.status == 'declined' || x.status == 'expired'" class="badge badge-red-background">{{
-                x.status | titlecase }}</span>
-              <span *ngIf="x.doc_verified" class="badge badge-blue-background">Verified</span>
-            </p>
-            <p class="w-20 w-sm-100 m-b-0" *ngIf="
-                commonService.store_details?.payout_gateway?.name ==
-                  'Razorpay' && commonService.desktop_device
-              ">
-              <button class="dark-button" [ngClass]="x.payout_contact_id ? 'text-green' : 'text-red'">
-                <span *ngIf="x.payout_contact_id" class="material-symbols-rounded"
-                  title="Account linked with RazorpayX">verified</span>
-                <span *ngIf="!x.payout_contact_id" class="material-symbols-rounded"
-                  title="Not linked with RazorpayX">error</span>
-                {{ x.payout_contact_id ? "Verified" : "Pending" }}
-              </button>
-            </p>
-            <!-- <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="commonService.store_details?.payout_gateway && commonService.desktop_device">
-              <i *ngIf="x.payout_contact_id" class="material-icons success-icon" title="Account linked with RazorpayX">verified</i>
-              <i *ngIf="!x.payout_contact_id" class="material-icons error-msg" title="Not linked with RazorpayX">error</i>
-            </p>        -->
-          </div>
-          <div class="col-md-3 col-4 pl-0">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
-              <p class="m-b-0 light-font d-flex align-items-center" *ngIf="
+                @if (!commonService.desktop_device) {
+                  @if (x.password && x.status == 'active') {
+                    <span class="ribbon-band green-band">Active</span>
+                  }
+                  @if (x.password && x.status == 'inactive') {
+                    <span class="ribbon-band red-band">Inactive</span>
+                  }
+                  @if (!x.password && x.status == 'inactive') {
+                    <span class="ribbon-band blue-band">New</span>
+                  }
+                  @if (x.status == 'declined' || x.status == 'expired') {
+                    <span class="ribbon-band red-band">
+                      x.status | titlecase
+                    </span>
+                  }
+                  @if (x.doc_verified) {
+                    <span class="ribbon-band blue-band">Verified</span>
+                  }
+                }
+                <div class="col-md-2 col-3 first_col px-0">
+                  @if (x.image) {
+                    <div class="list-thumb d-flex align-self-center">
+                      <img [src]="imgBaseUrl + x.image" alt="" />
+                    </div>
+                  }
+                  @if (!x.image) {
+                    <div class="list-thumb d-flex align-self-center">
+                      <img src="assets/images/default.png" alt="" />
+                    </div>
+                  }
+                </div>
+                <div class="col-md-7 col-5 first_col px-0">
+                  <p class="w-30 w-sm-100 extra_text dark-font">
+                    {{ x.company_details?.name }}<br /><span class="light-font">{{
+                    x.company_details?.brand
+                  }}</span>
+                </p>
+                <p class="w-30 w-sm-100 m-b-0 light-font extra_text">
+                  {{ x.email }}<br>
+                  @if (commonService.ys_features.indexOf('vendor_subs')!=-1 && commonService.deploy_details?.vendor_subs_status) {
+                    @if (!x.package_details?.expiry_date && x.package_details?.trial_expiry) {
+                      {{x.package_details?.trial_expiry | date : "dd MMM y"}} (Trial)
+                    }
+                    @if (x.package_details?.expiry_date) {
+                      {{x.package_details?.expiry_date | date : "dd MMM y"}}
+                    }
+                  }
+                </p>
+                @if (commonService.desktop_device) {
+                  <p class="w-20 w-sm-100 m-b-0 light-font d-flex flex-column">
+                    @if (x.password && x.status == 'active') {
+                      <span class="badge badge-green-background">Active</span>
+                    }
+                    @if (x.password && x.status == 'inactive') {
+                      <span class="badge badge-red-background">Inactive</span>
+                    }
+                    @if (!x.password && x.status == 'inactive') {
+                      <span class="badge badge-blue-background">New</span>
+                    }
+                    @if (x.status == 'declined' || x.status == 'expired') {
+                      <span class="badge badge-red-background">{{
+                      x.status | titlecase }}</span>
+                    }
+                    @if (x.doc_verified) {
+                      <span class="badge badge-blue-background">Verified</span>
+                    }
+                  </p>
+                }
+                @if (
                   commonService.store_details?.payout_gateway?.name ==
-                    'Razorpay' && !commonService.desktop_device
-                ">
-                <i *ngIf="x.payout_contact_id" class="material-icons success-icon"
-                  title="Account linked with RazorpayX">verified</i>
-                <i *ngIf="!x.payout_contact_id" class="material-icons error-msg"
-                  title="Not linked with RazorpayX">error</i>
-              </p>
-              <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
-                placement="bottom-start bottom-end top-start top-end">
+                  'Razorpay' && commonService.desktop_device
+                  ) {
+                  <p class="w-20 w-sm-100 m-b-0">
+                    <button class="dark-button" [ngClass]="x.payout_contact_id ? 'text-green' : 'text-red'">
+                      @if (x.payout_contact_id) {
+                        <span class="material-symbols-rounded"
+                        title="Account linked with RazorpayX">verified</span>
+                      }
+                      @if (!x.payout_contact_id) {
+                        <span class="material-symbols-rounded"
+                        title="Not linked with RazorpayX">error</span>
+                      }
+                      {{ x.payout_contact_id ? "Verified" : "Pending" }}
+                    </button>
+                  </p>
+                }
+                <!-- <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="commonService.store_details?.payout_gateway && commonService.desktop_device">
+                <i *ngIf="x.payout_contact_id" class="material-icons success-icon" title="Account linked with RazorpayX">verified</i>
+                <i *ngIf="!x.payout_contact_id" class="material-icons error-msg" title="Not linked with RazorpayX">error</i>
+              </p>        -->
+            </div>
+            <div class="col-md-3 col-4 pl-0">
+              <div class="row justify-content-end" [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
+                @if (
+                  commonService.store_details?.payout_gateway?.name ==
+                  'Razorpay' && !commonService.desktop_device
+                  ) {
+                  <p class="m-b-0 light-font d-flex align-items-center">
+                    @if (x.payout_contact_id) {
+                      <i class="material-icons success-icon"
+                      title="Account linked with RazorpayX">verified</i>
+                    }
+                    @if (!x.payout_contact_id) {
+                      <i class="material-icons error-msg"
+                      title="Not linked with RazorpayX">error</i>
+                    }
+                  </p>
+                }
+                <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                  placement="bottom-start bottom-end top-start top-end">
                 <button [ngClass]="
                     commonService.desktop_device
                       ? 'light-button2  mr-3'
                       : 'iconbutton'
                   " ngbDropdownToggle>
-                  {{ commonService.desktop_device ? "Action" : "" }}
-                  <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''">
-                    {{
-                    commonService.desktop_device ? "expand_more" : "more_vert"
+                    {{ commonService.desktop_device ? "Action" : "" }}
+                    <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''">
+                      {{
+                      commonService.desktop_device ? "expand_more" : "more_vert"
                     }}</span>
-                </button>
-                <div class="dropdown-menu" ngbDropdownMenu>
-                  <ng-container *ngIf="x.password && x.status != 'declined'">
+                  </button>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    @if (x.password && x.status != 'declined') {
                     <a class="dropdown-item" [href]="
                         commonService.store_details?.base_url +
                         '/vendor/' +
                         x.seo_details?.page_url
                       " target="_blank">
-                      <span class="material-symbols-rounded dropdown_icon">language</span>
-                      View Page
-                    </a>
+                        <span class="material-symbols-rounded dropdown_icon">language</span>
+                        View Page
+                      </a>
                     <button class="dropdown-item" (click)="
                         pwdForm = { _id: x._id, email: x.email };
                         modalService.open(changePwdModal, {
@@ -198,85 +254,96 @@
                           scrollable: true
                         })
                       ">
-                      <span class="material-symbols-rounded dropdown_icon">password</span>Password
-                    </button>
-                    <button class="dropdown-item" (click)="onEdit(x, permissionModal)">
-                      <span class="material-symbols-rounded dropdown_icon">lock</span>Permissions
-                    </button>
-                    <button *ngIf="
+                        <span class="material-symbols-rounded dropdown_icon">password</span>Password
+                      </button>
+                      <button class="dropdown-item" (click)="onEdit(x, permissionModal)">
+                        <span class="material-symbols-rounded dropdown_icon">lock</span>Permissions
+                      </button>
+                      @if (
                         commonService.store_details?.payout_gateway?.name ==
-                          'Razorpay' && !x.payout_contact_id
-                      " class="dropdown-item" (click)="
+                        'Razorpay' && !x.payout_contact_id
+                        ) {
+<button class="dropdown-item" (click)="
                         deleteForm = x;
                         modalService.open(linkModal, { centered: true })
                       ">
-                      <span class="material-symbols-rounded dropdown_icon">payments</span>
-                      Link to RazorpayX
-                    </button>
-                    <button class="dropdown-item" *ngIf="x.password && x.status != 'declined'" (click)="
+                          <span class="material-symbols-rounded dropdown_icon">payments</span>
+                          Link to RazorpayX
+                        </button>
+                      }
+                      @if (x.password && x.status != 'declined') {
+<button class="dropdown-item" (click)="
                         deleteForm = x;
                         deleteForm.submit = null;
                         modalService.open(statusModal, { centered: true })
                       ">
-                      <span class="material-symbols-rounded dropdown_icon">{{
-                        x.status == "active" ? "visibility" : "visibility_off"
-                        }}</span>
-                      {{ x.status == "active" ? "Disable" : "Enable" }}
-                    </button>
-                  </ng-container>
+                          <span class="material-symbols-rounded dropdown_icon">{{
+                            x.status == "active" ? "visibility" : "visibility_off"
+                          }}</span>
+                          {{ x.status == "active" ? "Disable" : "Enable" }}
+                        </button>
+                      }
+                    }
                   <button class="dropdown-item" (click)="
                       deleteForm = x;
                       deleteForm.submit = null;
                       modalService.open(deleteModal, { centered: true })
                     ">
-                    <span class="material-symbols-rounded dropdown_icon">delete</span>Remove
-                  </button>
-                  <button class="dropdown-item" *ngIf="!x.password" (click)="
+                      <span class="material-symbols-rounded dropdown_icon">delete</span>Remove
+                    </button>
+                    @if (!x.password) {
+<button class="dropdown-item" (click)="
                       deleteForm = x;
                       deleteForm.submit = false;
                       deleteForm.errorMsg = null;
                       modalService.open(activationModal, { centered: true })
                     ">
-                    <span class="material-symbols-rounded dropdown_icon">exit_to_app</span>
-                    Approve/Reject
-                  </button>
-                  <button *ngIf="x.documents?.length && !x.doc_verified" class="dropdown-item" (click)="
+                        <span class="material-symbols-rounded dropdown_icon">exit_to_app</span>
+                        Approve/Reject
+                      </button>
+                    }
+                    @if (x.documents?.length && !x.doc_verified) {
+<button class="dropdown-item" (click)="
                       deleteForm = x;
                       deleteForm.submit = null;
                       modalService.open(resetDocModal, { centered: true })
                     ">
-                    <span class="material-symbols-rounded dropdown_icon">undo</span>Reset Docs
-                  </button>
+                        <span class="material-symbols-rounded dropdown_icon">undo</span>Reset Docs
+                      </button>
+                    }
+                  </div>
                 </div>
-              </div>
               <button [ngClass]="
                   commonService.desktop_device ? 'light-button' : 'iconbutton'
                 " routerLink="{{ '/vendors/list/modify/' + x._id }}">
-                <span class="material-symbols-rounded right_arrow transicon">{{
-                  commonService.desktop_device ? "visibility" : "chevron_right"
+                  <span class="material-symbols-rounded right_arrow transicon">{{
+                    commonService.desktop_device ? "visibility" : "chevron_right"
                   }}</span>
-                {{ commonService.desktop_device ? "View" : "" }}
-              </button>
+                  {{ commonService.desktop_device ? "View" : "" }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
     </div>
-
     <!-- PAGINATION CONTROL -->
     <div class="col-md-12 mt-3">
       <pagination-controls (pageChange)="page = $event; commonService.pageTop(0)" autoHide="true" responsive="true"
-        maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
     </div>
   </div>
-
-  <div *ngIf="!(list | gridSearch: { 'email' : search_bar, 'comp_name' : search_bar, 'comp_brand' : search_bar })?.length" class="row">
+}
+@if (!(list | gridSearch: { 'email' : search_bar, 'comp_name' : search_bar, 'comp_brand' : search_bar })?.length) {
+  <div class="row">
     <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
       <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
       <p align="center">No data to display</p>
     </div>
   </div>
+}
 </div>
+}
 
 <!-- CHANGE PASSWORD -->
 <ng-template #changePwdModal let-modal>
@@ -296,451 +363,497 @@
               <label>New Password</label>
               <input type="text" name="new_pwd" class="form-control" [(ngModel)]="pwdForm.new_pwd"
                 (input)="pwdForm.errorMsg = null" #new_pwd="ngModel" required />
+              </div>
+              <div class="col-md-12 form-group mb-0">
+                <label>Confirm New Password</label>
+                <input type="text" name="confirm_pwd" class="form-control" [(ngModel)]="pwdForm.confirm_pwd"
+                  (input)="pwdForm.errorMsg = null" #confirm_pwd="ngModel" required />
+                </div>
+              </div>
             </div>
-            <div class="col-md-12 form-group mb-0">
-              <label>Confirm New Password</label>
-              <input type="text" name="confirm_pwd" class="form-control" [(ngModel)]="pwdForm.confirm_pwd"
-                (input)="pwdForm.errorMsg = null" #confirm_pwd="ngModel" required />
-            </div>
+            @if (pwdForm.errorMsg) {
+              <div>
+                <p class="text-danger">{{ pwdForm.errorMsg }}</p>
+              </div>
+            }
           </div>
-        </div>
-        <div *ngIf="pwdForm.errorMsg">
-          <p class="text-danger">{{ pwdForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
+          <div class="modal-footer">
+            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+              (click)="modal.dismiss('Cross click')">
+              <span class="black-outline-txt">Cancel</span>
+            </button>
         <button type="submit" [disabled]="
             pwdForm.confirm_pwd && pwdForm.new_pwd != pwdForm.confirm_pwd
           " class="btn btn-wide btn-primary">
-          Submit
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </ng-template>
 
-<!-- EDIT PERMISSIONS -->
-<ng-template #permissionModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
-          <span class="popup_text">{{ vendorForm.email }}</span>
-        </h4>
-      </div>
-      <div class="modal-body px-0">
-        <div class="form-group">
-          <div class="row">
-            <ng-container *ngFor="let x of permissionList; let i = index">
-              <div class="col-md-12 mb-3">
-                <span *ngIf="x.title" class="primary-color">
-                  <b>{{ x.title }}</b>
-                </span>
-                <label *ngIf="x.name" class="checkbox checkbox-success">
-                  <input class="form-check-input" type="checkbox" name="selected{{ i + 1 }}" [(ngModel)]="x.selected" />
-                  <span>{{ x.name }}</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <ng-container *ngFor="let y of x.sub_list; let j = index">
-                <div class="col-md-6 col-lg-4 form-group mt-1 mb-1">
-                  <label class="checkbox checkbox-success">
-                    <input class="form-check-input" type="checkbox" name="selected{{ i + 1 }}{{ j + 1 }}"
-                      [(ngModel)]="y.selected" />
-                    <span>{{ y.name }}</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div *ngIf="y.options?.length && y.selected" class="col-md-12 mb-3">
-                  <div class="row mt-2">
-                    <div *ngFor="let z of y.options; let k = index" class="col-md-6 col-lg-4 form-group ml-3">
-                      <label class="radio radio-primary">
-                        <input type="radio" name="selected_option{{ i + 1 }}{{ j + 1 }}" [value]="z.keyword"
-                          [(ngModel)]="y.selected_option" />
-                        <span>{{ z.name }}</span>
+    <!-- EDIT PERMISSIONS -->
+    <ng-template #permissionModal let-modal>
+      <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+              <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+              <span class="popup_text">{{ vendorForm.email }}</span>
+            </h4>
+          </div>
+          <div class="modal-body px-0">
+            <div class="form-group">
+              <div class="row">
+                @for (x of permissionList; track x; let i = $index) {
+                  <div class="col-md-12 mb-3">
+                    @if (x.title) {
+                      <span class="primary-color">
+                        <b>{{ x.title }}</b>
+                      </span>
+                    }
+                    @if (x.name) {
+                      <label class="checkbox checkbox-success">
+                        <input class="form-check-input" type="checkbox" name="selected{{ i + 1 }}" [(ngModel)]="x.selected" />
+                        <span>{{ x.name }}</span>
                         <span class="checkmark"></span>
                       </label>
-                    </div>
+                    }
+                  </div>
+                  @for (y of x.sub_list; track y; let j = $index) {
+                    <div class="col-md-6 col-lg-4 form-group mt-1 mb-1">
+                      <label class="checkbox checkbox-success">
+                        <input class="form-check-input" type="checkbox" name="selected{{ i + 1 }}{{ j + 1 }}"
+                          [(ngModel)]="y.selected" />
+                          <span>{{ y.name }}</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      @if (y.options?.length && y.selected) {
+                        <div class="col-md-12 mb-3">
+                          <div class="row mt-2">
+                            @for (z of y.options; track z; let k = $index) {
+                              <div class="col-md-6 col-lg-4 form-group ml-3">
+                                <label class="radio radio-primary">
+                                  <input type="radio" name="selected_option{{ i + 1 }}{{ j + 1 }}" [value]="z.keyword"
+                                    [(ngModel)]="y.selected_option" />
+                                    <span>{{ z.name }}</span>
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      }
+                    }
                   </div>
                 </div>
-              </ng-container>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="vendorForm.errorMsg">
-        <p class="text-danger">{{ vendorForm.errorMsg }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary">Update</button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- APPROVE/DECLINE MODAL -->
-<ng-template #activationModal let-modal>
-  <div class="modal-header pr-2 pt-2 pb-2">
-    <div></div>
-    <div class="d-flex">
-      <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click')">close</i>
-    </div>
-  </div>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure on approving or rejecting the account
-        <span class="txt-grdint-highlight">"{{ deleteForm.email }}?"</span>
-      </strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg | json }}</p>
-    </div>
-  </div>
-  <div *ngIf="!deleteForm.disableSubmit" class="modal-footer">
-    <button type="button" (click)="onActivate('approve')" class="btn btn-wide black-outline-btn m-1"
-      [disabled]="deleteForm.submit">
-      <span class="black-outline-txt">Approve</span>
-    </button>
-    <button type="button" (click)="onActivate('decline')" class="btn btn-wide orng-outline-btn ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      <span class="orng-outline-txt">Reject</span>
-    </button>
-  </div>
-</ng-template>
-
-<!-- STATUS MODAL -->
-<ng-template #statusModal let-modal>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure you want to
-        {{ deleteForm.status == "active" ? "disable" : "enable" }} the
-        <span class="text-danger">"{{ deleteForm.email }}"</span>?</strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onUpdateStatus()" class="btn btn-wide btn-primary ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      Yes
-    </button>
-  </div>
-</ng-template>
-
-<!-- RESET DOC MODAL -->
-<ng-template #resetDocModal let-modal>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure you want to reset the documents for
-        <span class="text-danger">
-          "{{ deleteForm.company_details?.name }} ({{ deleteForm.company_details?.brand }})"
-        </span>?
-      </strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onResetDoc()" class="btn btn-wide btn-primary ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      Yes
-    </button>
-  </div>
-</ng-template>
-
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p class="pt-3">
-      <strong>Are you sure you want to permanently delete
-        <span class="txt-grdint-highlight">"{{ deleteForm.email }}?"</span>
-      </strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete()" class="btn btn-wide btn-primary ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      Yes
-    </button>
-  </div>
-</ng-template>
-
-<!-- LINK MODAL -->
-<ng-template #linkModal let-modal>
-  <div class="modal-body">
-    <p class="pt-3">
-      <strong>Are you sure you want to link
-        <span class="txt-grdint-highlight">"{{ deleteForm.email }}"</span> to
-        RazorpayX?
-      </strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onLink()" class="btn btn-wide btn-primary ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      Yes
-    </button>
-  </div>
-</ng-template>
-
-<!-- Invoice Modal -->
-<ng-template #invoiceModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onUpdateConfig()" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
-          <span class="popup_text">Invoice Setting</span>
-        </h4>
-      </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group mb-0">
-          <div class="row">
-            <div class="col-md-6 form-group mb-2" *ngIf="invForm.vendor_inv_config && invoiceNum">
-              <b>
-                <ng-container *ngIf="invForm.vendor_inv_config.prefix">{{invForm.vendor_inv_config.prefix}}</ng-container>
-                <ng-container *ngIf="invoiceNum">{{invoiceNum}}</ng-container>
-                <ng-container *ngIf="invForm.vendor_inv_config.suffix">{{invForm.vendor_inv_config.suffix}}</ng-container>
-              </b>
-            </div>
-            <div class="form-group mb-3 col-md-6 d-flex justify-content-end align-items-center">
-              Enable Invoice
-              <label class="switch"><input type="checkbox" name="vendor_inv_status"
-                  [(ngModel)]="invForm.vendor_inv_status" #vendor_inv_status="ngModel" />
-                <div></div>
-              </label>
-            </div>
-            <ng-container *ngIf="invForm.vendor_inv_config">
-              <div class="col-md-6 form-group mb-3">
-                <label>Prefix</label>
-                <input type="text" name="inv_prefix" class="form-control" [(ngModel)]="invForm.vendor_inv_config.prefix"
-                  #inv_prefix="ngModel" />
               </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Upcoming Invoice Number</label>
-                <input type="tel" name="next_invoice_no" class="form-control"
-                  [(ngModel)]="invForm.vendor_inv_config.next_invoice_no" (ngModelChange)="invoiceNumFormat()" required
-                  appNumberOnly />
+              @if (vendorForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ vendorForm.errorMsg }}</p>
+                </div>
+              }
+              <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                  (click)="modal.dismiss('Cross click')">
+                  <span class="black-outline-txt">Cancel</span>
+                </button>
+                <button type="submit" class="btn btn-wide btn-primary">Update</button>
               </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Suffix</label>
-                <input type="text" name="inv_suffix" class="form-control" [(ngModel)]="invForm.vendor_inv_config.suffix"
-                  #inv_suffix="ngModel" />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Min digit</label>
-                <input type="tel" name="inv_min_digit" class="form-control"
-                  [(ngModel)]="invForm.vendor_inv_config.min_digit" (ngModelChange)="invoiceNumFormat()" required
-                  appNumberOnly />
-              </div>
-            </ng-container>
-          </div>
-        </div>
-        <div *ngIf="invForm.errorMsg">
-          <p class="text-danger">{{ invForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="invForm.submit"
-          [ladda]="invForm.submit">
-          Update
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+            </div>
+          </form>
+        </ng-template>
 
-<!-- Subscription Modal -->
-<ng-template #subscriptionModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onUpdateConfig()" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
-          <span class="popup_text">Subscription Setting</span>
-        </h4>
-      </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group mb-0">
-          <div class="row">
-            <div class="form-group mb-3 col-md-12 d-flex align-items-center">
-              Enable Subscription
-              <label class="switch">
-                <input type="checkbox" name="vendor_subs_status" [(ngModel)]="invForm.vendor_subs_status" />
-                <div></div>
-              </label>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Trial Days</label>
-              <input type="number" (wheel)="commonService.handleWheel($event)" name="trial_days" class="form-control"
-                [(ngModel)]="invForm.vendor_subs_config.trial_days" min="1" max="10" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Subscription Period</label>
-              <select name="subs_days" class="form-control select-arrow"
-                [(ngModel)]="invForm.vendor_subs_config.subs_days" required>
-                <option value="">-- Select --</option>
-                <option value="30">Monthly</option>
-                <option value="90">Quarterly</option>
-                <option value="180">Half-Yearly</option>
-                <option value="360">Annual</option>
-              </select>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Subscription Amount (<span [innerHTML]="commonService.store_currency.html_code"></span>)</label>
-              <input type="number" (wheel)="commonService.handleWheel($event)" name="subs_amount" class="form-control"
-                [(ngModel)]="invForm.vendor_subs_config.subs_amount" min="1" required />
-            </div>
-            <div *ngIf="commonService.store_details?.country != 'India'" class="col-md-6 form-group mb-3">
-              <label>Tax Name</label>
-              <input type="text" name="tax_name" class="form-control" [(ngModel)]="invForm.vendor_subs_config.tax_name"
-                required />
-            </div>
-            <ng-container *ngIf="commonService.store_details?.country == 'India'">
-              <div class="col-md-6 form-group mb-3">
-                <label>SGST (%)</label>
-                <input type="tel" name="sgst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.sgst"
-                  appNumberOnly required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>CGST (%)</label>
-                <input type="tel" name="cgst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.cgst"
-                  appNumberOnly required />
-              </div>
-            </ng-container>
-            <div class="col-md-6 form-group mb-3">
-              <label>{{ (commonService.store_details?.country == 'India')? 'IGST (%)': 'Tax Percentage' }}</label>
-              <input type="tel" name="igst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.igst"
-                appNumberOnly required />
+        <!-- APPROVE/DECLINE MODAL -->
+        <ng-template #activationModal let-modal>
+          <div class="modal-header pr-2 pt-2 pb-2">
+            <div></div>
+            <div class="d-flex">
+              <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click')">close</i>
             </div>
           </div>
-        </div>
-        <div *ngIf="invForm.errorMsg">
-          <p class="text-danger">{{ invForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="invForm.submit"
-          [ladda]="invForm.submit">
-          Update
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor"
-            (click)="list_type = tempFilter; modal.dismiss('Cross click')">arrow_back</span>
-          <span class="popup_text">Filter</span>
-        </h4>
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0">
-          <div class="carosal w-100">
-            <ul class="px-3">
-              <li>
-                <a class="hz_carosal carosal_button"> By Status </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="row m-0 p-3">
-          <div class="modal-card col-md-12">
-            <ng-container *ngFor="let x of filter_list">
-              <div class="radio_buttons col-12">
-                <input type="radio" id="{{ x.value }}" [value]="x.value" name="list_type" [(ngModel)]="list_type" />
-                <label for="{{ x.value }}">{{ x.name }}</label>
+          <div class="modal-body">
+            <p class="mt-3">
+              <strong>Are you sure on approving or rejecting the account
+                <span class="txt-grdint-highlight">"{{ deleteForm.email }}?"</span>
+              </strong>
+            </p>
+            @if (deleteForm.errorMsg) {
+              <div class="col-md-12 pt-3">
+                <p class="text-danger">{{ deleteForm.errorMsg | json }}</p>
               </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
+            }
           </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel')"></button>
-        <button type="button" class="btn btn-wide black-outline-btn"
-          (click)="list_type = tempFilter; modal.dismiss('cancel')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="onTypeChange(list_type)">
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+          @if (!deleteForm.disableSubmit) {
+            <div class="modal-footer">
+              <button type="button" (click)="onActivate('approve')" class="btn btn-wide black-outline-btn m-1"
+                [disabled]="deleteForm.submit">
+                <span class="black-outline-txt">Approve</span>
+              </button>
+              <button type="button" (click)="onActivate('decline')" class="btn btn-wide orng-outline-btn ladda-button m-1"
+                [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                <span class="orng-outline-txt">Reject</span>
+              </button>
+            </div>
+          }
+        </ng-template>
 
-<!-- wallet Modal -->
-<ng-template #walletModal let-modal>
-  <div class="modal-body">
-    <p>
-      Required amount
-      <strong>{{
-        vendorAccAmt
-        | currency
-        : commonService.store_currency?.country_code
-        : "symbol"
-        : commonService.cFormat
-        }}</strong>
-      and the balance was insufficient. Please topup to continue.
-    </p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">Cancel</span>
-    </button>
-    <button (click)="modal.dismiss('Cross click')" routerLink="/account/wallet" type="button"
-      class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Continue</span>
-    </button>
-  </div>
-</ng-template>
+        <!-- STATUS MODAL -->
+        <ng-template #statusModal let-modal>
+          <div class="modal-body">
+            <p class="mt-3">
+              <strong>Are you sure you want to
+                {{ deleteForm.status == "active" ? "disable" : "enable" }} the
+                <span class="text-danger">"{{ deleteForm.email }}"</span>?</strong>
+              </p>
+              @if (deleteForm.errorMsg) {
+                <div class="col-md-12 pt-3">
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">No</span>
+              </button>
+              <button type="button" (click)="onUpdateStatus()" class="btn btn-wide btn-primary ladda-button m-1"
+                [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                Yes
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- RESET DOC MODAL -->
+          <ng-template #resetDocModal let-modal>
+            <div class="modal-body">
+              <p class="mt-3">
+                <strong>Are you sure you want to reset the documents for
+                  <span class="text-danger">
+                    "{{ deleteForm.company_details?.name }} ({{ deleteForm.company_details?.brand }})"
+                  </span>?
+                </strong>
+              </p>
+              @if (deleteForm.errorMsg) {
+                <div class="col-md-12 pt-3">
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">No</span>
+              </button>
+              <button type="button" (click)="onResetDoc()" class="btn btn-wide btn-primary ladda-button m-1"
+                [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                Yes
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- DELETE MODAL -->
+          <ng-template #deleteModal let-modal>
+            <div class="modal-body">
+              <p class="pt-3">
+                <strong>Are you sure you want to permanently delete
+                  <span class="txt-grdint-highlight">"{{ deleteForm.email }}?"</span>
+                </strong>
+              </p>
+              @if (deleteForm.errorMsg) {
+                <div class="col-md-12 pt-3">
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">No</span>
+              </button>
+              <button type="button" (click)="onDelete()" class="btn btn-wide btn-primary ladda-button m-1"
+                [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                Yes
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- LINK MODAL -->
+          <ng-template #linkModal let-modal>
+            <div class="modal-body">
+              <p class="pt-3">
+                <strong>Are you sure you want to link
+                  <span class="txt-grdint-highlight">"{{ deleteForm.email }}"</span> to
+                  RazorpayX?
+                </strong>
+              </p>
+              @if (deleteForm.errorMsg) {
+                <div class="col-md-12 pt-3">
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                <span class="black-outline-txt">No</span>
+              </button>
+              <button type="button" (click)="onLink()" class="btn btn-wide btn-primary ladda-button m-1"
+                [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                Yes
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- Invoice Modal -->
+          <ng-template #invoiceModal let-modal>
+            <form autocomplete="off" (ngSubmit)="onUpdateConfig()" ngNativeValidate ngbAutofocus>
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4>
+                    <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+                    <span class="popup_text">Invoice Setting</span>
+                  </h4>
+                </div>
+                @if (popupLoader) {
+                  <div class="modal-body">
+                    <app-popup-spinner></app-popup-spinner>
+                  </div>
+                }
+                @if (!popupLoader) {
+                  <div class="modal-body">
+                    <div class="form-group mb-0">
+                      <div class="row">
+                        @if (invForm.vendor_inv_config && invoiceNum) {
+                          <div class="col-md-6 form-group mb-2">
+                            <b>
+                              @if (invForm.vendor_inv_config.prefix) {
+                                {{invForm.vendor_inv_config.prefix}}
+                              }
+                              @if (invoiceNum) {
+                                {{invoiceNum}}
+                              }
+                              @if (invForm.vendor_inv_config.suffix) {
+                                {{invForm.vendor_inv_config.suffix}}
+                              }
+                            </b>
+                          </div>
+                        }
+                        <div class="form-group mb-3 col-md-6 d-flex justify-content-end align-items-center">
+                          Enable Invoice
+                          <label class="switch"><input type="checkbox" name="vendor_inv_status"
+                            [(ngModel)]="invForm.vendor_inv_status" #vendor_inv_status="ngModel" />
+                            <div></div>
+                          </label>
+                        </div>
+                        @if (invForm.vendor_inv_config) {
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Prefix</label>
+                            <input type="text" name="inv_prefix" class="form-control" [(ngModel)]="invForm.vendor_inv_config.prefix"
+                              #inv_prefix="ngModel" />
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                              <label>Upcoming Invoice Number</label>
+                              <input type="tel" name="next_invoice_no" class="form-control"
+                                [(ngModel)]="invForm.vendor_inv_config.next_invoice_no" (ngModelChange)="invoiceNumFormat()" required
+                                appNumberOnly />
+                              </div>
+                              <div class="col-md-6 form-group mb-3">
+                                <label>Suffix</label>
+                                <input type="text" name="inv_suffix" class="form-control" [(ngModel)]="invForm.vendor_inv_config.suffix"
+                                  #inv_suffix="ngModel" />
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                  <label>Min digit</label>
+                                  <input type="tel" name="inv_min_digit" class="form-control"
+                                    [(ngModel)]="invForm.vendor_inv_config.min_digit" (ngModelChange)="invoiceNumFormat()" required
+                                    appNumberOnly />
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                            @if (invForm.errorMsg) {
+                              <div>
+                                <p class="text-danger">{{ invForm.errorMsg }}</p>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <div class="modal-footer">
+                          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                            (click)="modal.dismiss('Cross click')">
+                            <span class="black-outline-txt">Cancel</span>
+                          </button>
+                          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="invForm.submit"
+                            [ladda]="invForm.submit">
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </ng-template>
+
+                  <!-- Subscription Modal -->
+                  <ng-template #subscriptionModal let-modal>
+                    <form autocomplete="off" (ngSubmit)="onUpdateConfig()" ngNativeValidate ngbAutofocus>
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4>
+                            <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+                            <span class="popup_text">Subscription Setting</span>
+                          </h4>
+                        </div>
+                        @if (popupLoader) {
+                          <div class="modal-body">
+                            <app-popup-spinner></app-popup-spinner>
+                          </div>
+                        }
+                        @if (!popupLoader) {
+                          <div class="modal-body">
+                            <div class="form-group mb-0">
+                              <div class="row">
+                                <div class="form-group mb-3 col-md-12 d-flex align-items-center">
+                                  Enable Subscription
+                                  <label class="switch">
+                                    <input type="checkbox" name="vendor_subs_status" [(ngModel)]="invForm.vendor_subs_status" />
+                                    <div></div>
+                                  </label>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                  <label>Trial Days</label>
+                                  <input type="number" (wheel)="commonService.handleWheel($event)" name="trial_days" class="form-control"
+                                    [(ngModel)]="invForm.vendor_subs_config.trial_days" min="1" max="10" required />
+                                  </div>
+                                  <div class="col-md-6 form-group mb-3">
+                                    <label>Subscription Period</label>
+                                    <select name="subs_days" class="form-control select-arrow"
+                                      [(ngModel)]="invForm.vendor_subs_config.subs_days" required>
+                                      <option value="">-- Select --</option>
+                                      <option value="30">Monthly</option>
+                                      <option value="90">Quarterly</option>
+                                      <option value="180">Half-Yearly</option>
+                                      <option value="360">Annual</option>
+                                    </select>
+                                  </div>
+                                  <div class="col-md-6 form-group mb-3">
+                                    <label>Subscription Amount (<span [innerHTML]="commonService.store_currency.html_code"></span>)</label>
+                                    <input type="number" (wheel)="commonService.handleWheel($event)" name="subs_amount" class="form-control"
+                                      [(ngModel)]="invForm.vendor_subs_config.subs_amount" min="1" required />
+                                    </div>
+                                    @if (commonService.store_details?.country != 'India') {
+                                      <div class="col-md-6 form-group mb-3">
+                                        <label>Tax Name</label>
+                                        <input type="text" name="tax_name" class="form-control" [(ngModel)]="invForm.vendor_subs_config.tax_name"
+                                          required />
+                                        </div>
+                                      }
+                                      @if (commonService.store_details?.country == 'India') {
+                                        <div class="col-md-6 form-group mb-3">
+                                          <label>SGST (%)</label>
+                                          <input type="tel" name="sgst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.sgst"
+                                            appNumberOnly required />
+                                          </div>
+                                          <div class="col-md-6 form-group mb-3">
+                                            <label>CGST (%)</label>
+                                            <input type="tel" name="cgst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.cgst"
+                                              appNumberOnly required />
+                                            </div>
+                                          }
+                                          <div class="col-md-6 form-group mb-3">
+                                            <label>{{ (commonService.store_details?.country == 'India')? 'IGST (%)': 'Tax Percentage' }}</label>
+                                            <input type="tel" name="igst" class="form-control" [(ngModel)]="invForm.vendor_subs_config.igst"
+                                              appNumberOnly required />
+                                            </div>
+                                          </div>
+                                        </div>
+                                        @if (invForm.errorMsg) {
+                                          <div>
+                                            <p class="text-danger">{{ invForm.errorMsg }}</p>
+                                          </div>
+                                        }
+                                      </div>
+                                    }
+                                    <div class="modal-footer">
+                                      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                                        (click)="modal.dismiss('Cross click')">
+                                        <span class="black-outline-txt">Cancel</span>
+                                      </button>
+                                      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="invForm.submit"
+                                        [ladda]="invForm.submit">
+                                        Update
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </ng-template>
+
+                              <!-- filter Modal -->
+                              <ng-template #filterModal let-modal>
+                                <form autocomplete="off" ngbAutofocus>
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4>
+                                        <span class="material-symbols-rounded cursor"
+                                        (click)="list_type = tempFilter; modal.dismiss('Cross click')">arrow_back</span>
+                                        <span class="popup_text">Filter</span>
+                                      </h4>
+                                    </div>
+                                    <div class="modal-body filtersec">
+                                      <div class="row m-0">
+                                        <div class="carosal w-100">
+                                          <ul class="px-3">
+                                            <li>
+                                              <a class="hz_carosal carosal_button"> By Status </a>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                      <div class="row m-0 p-3">
+                                        <div class="modal-card col-md-12">
+                                          @for (x of filter_list; track x) {
+                                            <div class="radio_buttons col-12">
+                                              <input type="radio" id="{{ x.value }}" [value]="x.value" name="list_type" [(ngModel)]="list_type" />
+                                              <label for="{{ x.value }}">{{ x.name }}</label>
+                                            </div>
+                                            <div class="col-md-12 border-top"></div>
+                                          }
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel')"></button>
+                                      <button type="button" class="btn btn-wide black-outline-btn"
+                                        (click)="list_type = tempFilter; modal.dismiss('cancel')">
+                                        <span class="black-outline-txt">Cancel</span>
+                                      </button>
+                                      <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="onTypeChange(list_type)">
+                                        <span class="orng-outline-txt">Apply</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </ng-template>
+
+                              <!-- wallet Modal -->
+                              <ng-template #walletModal let-modal>
+                                <div class="modal-body">
+                                  <p>
+                                    Required amount
+                                    <strong>{{
+                                      vendorAccAmt
+                                      | currency
+                                      : commonService.store_currency?.country_code
+                                      : "symbol"
+                                      : commonService.cFormat
+                                    }}</strong>
+                                    and the balance was insufficient. Please topup to continue.
+                                  </p>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                                    <span class="black-outline-txt">Cancel</span>
+                                  </button>
+                                  <button (click)="modal.dismiss('Cross click')" routerLink="/account/wallet" type="button"
+                                    class="btn btn-wide orng-outline-btn">
+                                    <span class="orng-outline-txt">Continue</span>
+                                  </button>
+                                </div>
+                              </ng-template>

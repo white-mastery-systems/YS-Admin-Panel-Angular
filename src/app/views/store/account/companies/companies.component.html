@@ -1,89 +1,100 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <!-- search box -->
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+@if (!pageLoader) {
+  <div>
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <!-- search box -->
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
         </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" (click)="exportAsXLSX();" class="mr-3">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-        <button type="button" (click)="modalService.open(bulkUploadModal, { centered: true });" class="mr-3">
-          <span class="material-symbols-rounded">file_download</span> Import
-        </button>
-        <button class="highbutton" type="button" routerLink="/setting/customers/companies/add"><span
-        class="material-symbols-rounded">add</span>Add Company</button>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" (click)="exportAsXLSX();" class="mr-3">
+              <span class="material-symbols-rounded">file_upload</span> Export
+            </button>
+            <button type="button" (click)="modalService.open(bulkUploadModal, { centered: true });" class="mr-3">
+              <span class="material-symbols-rounded">file_download</span> Import
+            </button>
+            <button class="highbutton" type="button" routerLink="/setting/customers/companies/add"><span
+            class="material-symbols-rounded">add</span>Add Company</button>
+          </div>
+        }
       </div>
     </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-9 first_col px-0 header-font">
-            <p class="w-80 w-sm-100 m-b-0">Name</p>
-            <p class="w-80 w-sm-100 m-b-0">Email</p>
-            <p class="w-50 w-sm-100 m-b-0">GST Number</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card"
-          *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index"
-          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-9 col-6 first_col px-0">
-            <p class="w-80 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
-            <p class="w-80 w-sm-100 m-b-0 light-font">{{x.email}}</p>
-            <p class="w-50 w-sm-100 m-b-0 light-font">{{ (x.gst_no)? x.gst_no: 'NA' }}</p>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="row d-flex justify-content-end m-0" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <div class="row justify-content-end mr-3" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                  routerLink="/setting/customers/approved">
-                  <span class="material-symbols-rounded" title="view customers">visibility</span>
-                  {{commonService.desktop_device? 'Customers': ''}}
-                </button>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-9 first_col px-0 header-font">
+                  <p class="w-80 w-sm-100 m-b-0">Name</p>
+                  <p class="w-80 w-sm-100 m-b-0">Email</p>
+                  <p class="w-50 w-sm-100 m-b-0">GST Number</p>
+                </div>
               </div>
-              <div *ngIf="x._id" class="row justify-content-end"
-                [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                  routerLink="/setting/customers/companies/{{x._id}}">
-                  <span class="material-symbols-rounded" title="edit">edit</span> {{commonService.desktop_device?
-                  'Edit': ''}}
-                </button>
+            }
+            @for (x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card"
+                [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-9 col-6 first_col px-0">
+                  <p class="w-80 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+                  <p class="w-80 w-sm-100 m-b-0 light-font">{{x.email}}</p>
+                  <p class="w-50 w-sm-100 m-b-0 light-font">{{ (x.gst_no)? x.gst_no: 'NA' }}</p>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="row d-flex justify-content-end m-0" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <div class="row justify-content-end mr-3" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                        routerLink="/setting/customers/approved">
+                        <span class="material-symbols-rounded" title="view customers">visibility</span>
+                        {{commonService.desktop_device? 'Customers': ''}}
+                      </button>
+                    </div>
+                    @if (x._id) {
+                      <div class="row justify-content-end"
+                        [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                        <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                          routerLink="/setting/customers/companies/{{x._id}}">
+                          <span class="material-symbols-rounded" title="edit">edit</span> {{commonService.desktop_device?
+                          'Edit': ''}}
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
-
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
       </div>
-    </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- Bulk Upload MODAL -->
 <ng-template #bulkUploadModal let-modal>
@@ -101,10 +112,12 @@
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="col-8 p-3 card" align="center">
                 <div>
-                  <div *ngIf="fileName" class="w-100">
-                    <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5"
+                  @if (fileName) {
+                    <div class="w-100">
+                      <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5"
                       aria-hidden="true">close</span>
-                  </div>
+                    </div>
+                  }
                   <label>
                     <div class="w-100">
                       <input type="file" id="importFile" (change)="onFileChange($event)" style="display: none;" accept=".csv, .xlsx" />
@@ -118,7 +131,9 @@
               </div>
             </div>
             <div align="center" class="col-md-12 z-i-0 mt-3">
-              <p *ngIf="errorMsg" class="text-danger mt-3">{{ errorMsg }}</p>
+              @if (errorMsg) {
+                <p class="text-danger mt-3">{{ errorMsg }}</p>
+              }
             </div>
           </div>
         </div>

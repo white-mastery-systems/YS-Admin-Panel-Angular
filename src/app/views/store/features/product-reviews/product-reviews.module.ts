@@ -10,7 +10,7 @@ import { ProductReviewsComponent } from './product-reviews.component';
   imports: [
     SharedModule,
     ProductReviewsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

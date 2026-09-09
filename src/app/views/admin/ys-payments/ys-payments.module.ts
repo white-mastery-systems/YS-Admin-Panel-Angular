@@ -10,7 +10,7 @@ import { YsPaymentsComponent } from './ys-payments.component';
   imports: [
     SharedModule,
     YsPaymentsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

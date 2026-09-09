@@ -10,7 +10,7 @@ import { AdDetailsComponent } from './ad-details.component';
   imports: [
     SharedModule,
     AdDetailsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

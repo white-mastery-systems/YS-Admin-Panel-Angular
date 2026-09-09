@@ -1,217 +1,255 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-
-  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-
-    <div *ngFor="let x of catForm.image_list; let i=index;" class="poss-rel card p-3 mb-3">
-
-      <span (click)="catForm.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
-      <div class="row pt-3 pb-3">
-        <div class="col-md-12">
-          <p class="dark-font">Section {{(catForm.image_list.length > 1)? i+1: ''}}</p>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Image -->
-        <div class="col-md-12 col-lg-6 d-flex">
-          <div class="card card-in-card w-100 p-3 mb-3">
-            <div class="desktop-banner" align="center">
-              <p>600 x 600 pixels &#64;72ppi</p>
-              <ng-container *ngIf="!catForm.isMultiImages">
-                <i *ngIf="!x.image" style="font-size: 100px; height: 150px;" class="material-icons">add_photo_alternate</i>
-                <figure *ngIf="x.image" class="desktop-layout-image-sec">
-                  <img *ngIf="x?.img_change" [src]="x.temp_img">
-                  <img *ngIf="!x?.img_change" [src]="imgBaseUrl+x.image">
-                </figure>
-              </ng-container>
-              <div class="row" *ngIf="catForm.isMultiImages">
-                <div *ngFor="let imgData of x.images; let j=index;" class="col-md-4 col-6">
-                  <div class="card mb-3">
-                    <span (click)="x.images.splice(j, 1);" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
-                    <label class="mb-0">
-                      <img *ngIf="imgData.img_change" [src]="imgData.temp_img" alt="" class="grid-img">
-                      <img *ngIf="!imgData.img_change" [src]="imgBaseUrl+imgData.image" alt="" class="grid-img">
-                      <input type="file" name="prodImage{{i}}{{j}}" id="prodImage{{i}}{{j}}" style="display: none;" (change)="fileChangeListener2(i, j, $event);" accept="image/jpeg, image/png, image/webp" />
-                    </label>
-                  </div>
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      @for (x of catForm.image_list; track x; let i = $index) {
+        <div class="poss-rel card p-3 mb-3">
+          <span (click)="catForm.image_list.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5" aria-hidden="true">close</span>
+          <div class="row pt-3 pb-3">
+            <div class="col-md-12">
+              <p class="dark-font">Section {{(catForm.image_list.length > 1)? i+1: ''}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <!-- Image -->
+            <div class="col-md-12 col-lg-6 d-flex">
+              <div class="card card-in-card w-100 p-3 mb-3">
+                <div class="desktop-banner" align="center">
+                  <p>600 x 600 pixels &#64;72ppi</p>
+                  @if (!catForm.isMultiImages) {
+                    @if (!x.image) {
+                      <i style="font-size: 100px; height: 150px;" class="material-icons">add_photo_alternate</i>
+                    }
+                    @if (x.image) {
+                      <figure class="desktop-layout-image-sec">
+                        @if (x?.img_change) {
+                          <img [src]="x.temp_img">
+                        }
+                        @if (!x?.img_change) {
+                          <img [src]="imgBaseUrl+x.image">
+                        }
+                      </figure>
+                    }
+                  }
+                  @if (catForm.isMultiImages) {
+                    <div class="row">
+                      @for (imgData of x.images; track imgData; let j = $index) {
+                        <div class="col-md-4 col-6">
+                          <div class="card mb-3">
+                            <span (click)="x.images.splice(j, 1);" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                            <label class="mb-0">
+                              @if (imgData.img_change) {
+                                <img [src]="imgData.temp_img" alt="" class="grid-img">
+                              }
+                              @if (!imgData.img_change) {
+                                <img [src]="imgBaseUrl+imgData.image" alt="" class="grid-img">
+                              }
+                              <input type="file" name="prodImage{{i}}{{j}}" id="prodImage{{i}}{{j}}" style="display: none;" (change)="fileChangeListener2(i, j, $event);" accept="image/jpeg, image/png, image/webp" />
+                            </label>
+                          </div>
+                        </div>
+                      }
+                      @if (x.images.length <= 4) {
+                        <div class="col-md-4 col-6">
+                          <div class="card mb-3">
+                            <label class="mb-0">
+                              <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="material-icons add-img">add_photo_alternate</i>
+                                <p class="mb-2 add-txt">ADD IMAGE</p>
+                              </div>
+                              <input type="file" name="prodImageAdd{{i}}" id="prodImageAdd{{i}}" style="display: none;" (change)="fileChangeListener2(i, -1, $event);" accept="image/jpeg, image/png, image/webp" />
+                            </label>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
                 </div>
-                <div *ngIf="x.images.length <= 4" class="col-md-4 col-6">
-                  <div class="card mb-3">
-                    <label class="mb-0">
-                      <div class="h-100 d-flex flex-column justify-content-center align-items-center">             
-                        <i class="material-icons add-img">add_photo_alternate</i>           
-                        <p class="mb-2 add-txt">ADD IMAGE</p>
+                @if (!catForm.isMultiImages) {
+                  <div class="h-100 d-flex align-items-end">
+                    <div class="custom-file mt-2">
+                      <input type="file" name="layout_img" class="custom-file-input" [required]="!x.image" (change)="fileChangeListener(i, $event)"
+                        accept="image/jpeg, image/png, image/webp">
+                        <label class="custom-file-label">Choose file</label>
                       </div>
-                      <input type="file" name="prodImageAdd{{i}}" id="prodImageAdd{{i}}" style="display: none;" (change)="fileChangeListener2(i, -1, $event);" accept="image/jpeg, image/png, image/webp" />
-                    </label>
+                    </div>
+                    @if (x.err_msg) {
+                      <div class="mt-2">
+                        <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+              <!-- Content -->
+              <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+                <div class="card w-100 p-3 mb-3">
+                  <div class="row">
+                    <div class="col-md-12 mb-3">
+                      <label class="checkbox checkbox-primary">
+                        <input class="form-check-input" type="checkbox" name="isActive{{i}}"
+                          [(ngModel)]="x.isActive">
+                          <span>Enable</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label>Rank</label>
+                        <input type="number" (wheel)="commonService.handleWheel($event)" name="rank{{i}}" class="form-control" [(ngModel)]="x.rank" #rank="ngModel" appNumberOnly required />
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label>Heading</label>
+                        <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.heading" #heading="ngModel" required />
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label>Sub-heading</label>
+                        <textarea class="form-control" aria-label="With textarea" name="sub_heading{{i}}" [(ngModel)]="x.sub_heading" #sub_heading="ngModel"></textarea>
+                      </div>
+                      @if (catForm.isMultiImages) {
+                        <div class="col-md-12 form-group mb-3">
+                          <label>No.of Additional Sections</label>
+                          <input type="number" (wheel)="commonService.handleWheel($event)" name="totalSections{{i}}" class="form-control" [(ngModel)]="x.totalSections" #totalSections="ngModel" appNumberOnly required />
+                        </div>
+                      }
+                    </div>
                   </div>
                 </div>
+                <!-- #Content -->
+                <!-- Link -->
+                <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
+                  <div class="card w-100 p-3 mb-3">
+                    <div class="row">
+                      <div class="col-md-12 form-group mb-3">
+                        <label class="checkbox checkbox-primary">
+                          <input class="form-check-input" type="checkbox" name="link_status{{i}}" [(ngModel)]="x.link_status" (change)="x.link_type='category'; x.btn_status=false; x.btn_text='';" #link_status="ngModel">
+                          <span>Enable Link</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    </div>
+                    @if (x.link_status) {
+                      <div class="row">
+                        <div class="col-md-6 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="category">
+                            <span>Link to Catalog</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="product">
+                            <span>Link to Product</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="internal">
+                            <span>Link to Internal Link</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="external">
+                            <span>Link to External Link</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        @if (x.link_type=='category' || x.link_type=='product') {
+                          <div class="col-md-12 form-group mb-3">
+                            <label>{{x.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
+                            <select name="category_id{{i}}" class="form-control select-arrow" (change)="x.productList=[]" [(ngModel)]="x.category_id" #category_id="ngModel" required>
+                              @for (y of commonService.catalog_list | orderAsc: 'name'; track y) {
+                                <option [ngValue]="y._id">{{y.name}}</option>
+                              }
+                            </select>
+                          </div>
+                        }
+                        @if (x.link_type=='product') {
+                          <div class="col-md-9 form-group mb-3">
+                            <input type="text" name="search_bar{{i}}" placeholder="Search" (input)="x.productList=[]" class="form-control" [(ngModel)]="x.search_bar" />
+                          </div>
+                          <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
+                            <button [disabled]="!x.category_id || x.search_bar?.length<3" type="button"
+                            (click)="searchProduct(x.category_id, x.search_bar, i);" class="btn search-btn btn-wide btn-primary">Search</button>
+                          </div>
+                          <div class="col-md-12 form-group mb-3">
+                            <label>Link to Product
+                              @if (x.searchLoader) {
+                                <i class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
+                              }
+                              @if (!x.searchLoader && x.category_id && x.search_bar?.length>=3) {
+                                ({{x.productList.length}} products found)
+                              }
+                            </label>
+                            <select name="product_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.product_id" required>
+                              @for (y of x.productList; track y) {
+                                <option [ngValue]="y._id">{{y.name}}</option>
+                              }
+                            </select>
+                          </div>
+                        }
+                        @if (x.link_type=='internal' || x.link_type=='external') {
+                          <div class="col-md-12 form-group mb-3">
+                            @if (x.link_type=='internal') {
+                              <label>{{commonService.store_details?.base_url}}{{x.link}}</label>
+                            }
+                            @if (x.link_type=='external') {
+                              <label>External Link</label>
+                            }
+                            <input type="text" name="link{{i}}" class="form-control" [(ngModel)]="x.link" #int_link="ngModel" required />
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+                <!-- #Link -->
               </div>
             </div>
-            <ng-container *ngIf="!catForm.isMultiImages">
-              <div class="h-100 d-flex align-items-end">
-                <div class="custom-file mt-2">
-                  <input type="file" name="layout_img" class="custom-file-input" [required]="!x.image" (change)="fileChangeListener(i, $event)"
-                  accept="image/jpeg, image/png, image/webp">
-                  <label class="custom-file-label">Choose file</label>
-                </div>
-              </div>
-              <div *ngIf="x.err_msg" class="mt-2">
-                <p class="mb-0 error-msg">Accept file size upto 500 KB</p>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
-          <div class="card w-100 p-3 mb-3">
-            <div class="row">
-              <div class="col-md-12 mb-3">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="isActive{{i}}"
-                    [(ngModel)]="x.isActive">
-                  <span>Enable</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Rank</label>
-                <input type="number" (wheel)="commonService.handleWheel($event)" name="rank{{i}}" class="form-control" [(ngModel)]="x.rank" #rank="ngModel" appNumberOnly required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading{{i}}" class="form-control" [(ngModel)]="x.heading" #heading="ngModel" required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading{{i}}" [(ngModel)]="x.sub_heading" #sub_heading="ngModel"></textarea>
-              </div>
-              <div *ngIf="catForm.isMultiImages" class="col-md-12 form-group mb-3">
-                <label>No.of Additional Sections</label>
-                <input type="number" (wheel)="commonService.handleWheel($event)" name="totalSections{{i}}" class="form-control" [(ngModel)]="x.totalSections" #totalSections="ngModel" appNumberOnly required />
+          }
+          @if (catForm.image_list.length<25) {
+            <div  class="row m-0">
+              <div class="col-md-4">
+                <button type="button" class="light-button" (click)="catForm.image_list.push({ isActive: true, images: [] });">
+                  <span class="material-symbols-rounded">ADD</span>NEW
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-        <!-- #Content -->
-
-        <!-- Link -->
-        <div class="col-md-12 col-lg-6 d-flex justify-content-center align-items-center form-group mb-3">
-          <div class="card w-100 p-3 mb-3">
-            <div class="row">
-              <div class="col-md-12 form-group mb-3">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="link_status{{i}}" [(ngModel)]="x.link_status" (change)="x.link_type='category'; x.btn_status=false; x.btn_text='';" #link_status="ngModel">
-                  <span>Enable Link</span>
-                  <span class="checkmark"></span>
-                </label>
+          }
+          <div class="separator-breadcrumb border-top mt-5"></div>
+          <div class="row">
+            @if (catForm.errorMsg) {
+              <div class="col-md-12 mt-3 mb-3">
+                <p class="text-danger" align="center">{{ catForm.errorMsg }}</p>
               </div>
-            </div>
-            <div *ngIf="x.link_status" class="row">
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="category">
-                  <span>Link to Catalog</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="product">
-                  <span>Link to Product</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="internal">
-                  <span>Link to Internal Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label class="radio radio-primary">
-                  <input type="radio" name="link_type{{i}}" [(ngModel)]="x.link_type" value="external">
-                  <span>Link to External Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div *ngIf="x.link_type=='category' || x.link_type=='product'" class="col-md-12 form-group mb-3">
-                <label>{{x.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
-                <select name="category_id{{i}}" class="form-control select-arrow" (change)="x.productList=[]" [(ngModel)]="x.category_id" #category_id="ngModel" required>
-                  <option [ngValue]="y._id" *ngFor="let y of commonService.catalog_list | orderAsc: 'name'">{{y.name}}</option>
-                </select>
-              </div>
-              <ng-container *ngIf="x.link_type=='product'">
-                <div class="col-md-9 form-group mb-3">
-                  <input type="text" name="search_bar{{i}}" placeholder="Search" (input)="x.productList=[]" class="form-control" [(ngModel)]="x.search_bar" />
-                </div>
-                <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
-                  <button [disabled]="!x.category_id || x.search_bar?.length<3" type="button"
-                  (click)="searchProduct(x.category_id, x.search_bar, i);" class="btn search-btn btn-wide btn-primary">Search</button>
-                </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label>Link to Product
-                    <i *ngIf="x.searchLoader" class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
-                    <ng-container *ngIf="!x.searchLoader && x.category_id && x.search_bar?.length>=3">
-                      ({{x.productList.length}} products found)
-                    </ng-container>
-                  </label>
-                  <select name="product_id{{i}}" class="form-control select-arrow" [(ngModel)]="x.product_id" required>
-                    <option [ngValue]="y._id" *ngFor="let y of x.productList;">{{y.name}}</option>
-                  </select>
-                </div>
-              </ng-container>
-              <div *ngIf="x.link_type=='internal' || x.link_type=='external'" class="col-md-12 form-group mb-3">
-                <label *ngIf="x.link_type=='internal'">{{commonService.store_details?.base_url}}{{x.link}}</label>
-                <label *ngIf="x.link_type=='external'">External Link</label>
-                <input type="text" name="link{{i}}" class="form-control" [(ngModel)]="x.link" #int_link="ngModel" required />
-              </div>
+            }
+            <div align="center" class="col-md-12 z-i-0">
+              <button type="button" [routerLink]="commonService.redirect" class="btn btn-wide black-outline-btn">
+                <span class="black-outline-txt">Cancel</span>
+              </button>&nbsp; &nbsp; &nbsp;
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit" [ladda]="catForm.submit">Update</button>
             </div>
           </div>
-        </div>
-        <!-- #Link -->
+        </form>
       </div>
-    </div>
-    
-    <div *ngIf="catForm.image_list.length<25"  class="row m-0">
-      <div class="col-md-4">
-        <button type="button" class="light-button" (click)="catForm.image_list.push({ isActive: true, images: [] });">
-          <span class="material-symbols-rounded">ADD</span>NEW
-        </button>
-      </div>
-    </div>
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div class="col-md-12 mt-3 mb-3" *ngIf="catForm.errorMsg">
-        <p class="text-danger" align="center">{{ catForm.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" [routerLink]="commonService.redirect" class="btn btn-wide black-outline-btn">
-         <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit" [ladda]="catForm.submit">Update</button>
-      </div>
-    </div>
-
-  </form>
-
-</div>
+    }

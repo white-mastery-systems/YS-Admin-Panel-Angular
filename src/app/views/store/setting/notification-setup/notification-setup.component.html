@@ -1,110 +1,130 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>Notification Settings</h1>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="row" style="justify-content: center;">
-    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus class="w-100">
-      <div class="col-md-2"></div>
-      <div class="col-md-8 form-group mb-4" *ngFor="let x of notify_triggers; let i= index;">
-        <div class="card card-in-card p-4 mb-3">
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <h5>{{x.name}}</h5>
-            </div>
-            <div class="col-md-6 form-group mb-3" style="text-align: end;">
-              <label class="switch">
-                <input type="checkbox" name="enable_{{i}}" [(ngModel)]="x.isActive" />
-                <div></div>
-              </label>
-            </div>
-          </div>
-          <ng-container *ngIf="x.isActive">
-            <div class="row">
-              <div class="col-md-12">
-                <b>Trigger Type</b>
-                <div class="row mt-3">
-                  <div *ngIf="x.triggers.indexOf('instant')!=-1;" class="col-md-4 form-group mb-3">
-                    <label class="radio radio-primary">
-                      <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="instant">
-                      <span>Instant</span>
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                  <div *ngIf="x.triggers.indexOf('duration')!=-1;" class="col-md-4 form-group mb-3">
-                    <label class="radio radio-primary">
-                      <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="duration">
-                      <span>Duration</span>
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                  <div *ngIf="x.triggers.indexOf('fixed')!=-1;" class="col-md-4 form-group mb-3">
-                    <label class="radio radio-primary">
-                      <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="fixed">
-                      <span>Fixed</span>
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 form-group mb-3" *ngIf="x.trigger_type=='duration'">
-                <label>Hours After</label>
-                <div class="pro-qty d-flex justify-content-center align-items-center height-100">
-                  <button type="button" [ngClass]="x.days_before>1? 'cursor': 'qty-btn-disabled'" (click)="decQty(x);">
-                    <i class="material-icons">remove_circle</i>
-                  </button>
-                  <input type="number" (wheel)="commonService.handleWheel($event)" class="text-center" name="hrs_after_{{i}}" [(ngModel)]="x.hrs_after" readonly required>
-                  <button type="button" [ngClass]="(x.days_before<=24)? 'cursor': 'qty-btn-disabled'" (click)="incQty(x);">
-                    <i class="material-icons">add_circle</i>
-                  </button>
-                </div>
-              </div>
-              <ng-container *ngIf="x.trigger_type=='fixed'">
-                <div class="col-md-6 form-group mb-3">
-                  <label>Time</label>
-                  <input type="text" name="time_{{i}}" class="form-control" [(ngModel)]='x.time' (click)="timePicker(x);" required readonly />
-                </div>
-                <div class="col-md-6 form-group mb-3" *ngIf="beforeDays.indexOf(x.type)!=-1">
-                  <label>Days Before</label>
-                  <input type="number" (wheel)="commonService.handleWheel($event)" name="days_before_{{i}}" class="form-control" [(ngModel)]="x.days_before" required />
-                </div>
-              </ng-container>
-            </div>
-            <div class="row">
-              <div class="col-md-6 form-group mb-3">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="link_status_{{i}}" [(ngModel)]="x.msg_enabled" [disabled]="x.btn_disable">
-                  <span>Enable Whatsapp message</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-6 form-group mb-3" *ngIf="x.msg_enabled">
-                <label>Template ID</label>
-                <input type="text" name="template_id_{{i}}" class="form-control" [(ngModel)]="x.template_id" required />
-              </div>
-            </div>
-          </ng-container>
+@if (!pageLoader) {
+  <div>
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Notification Settings</h1>
         </div>
       </div>
-      <div class="col-md-2"></div>
-
-      <div class="col-md-12">
-        <p *ngIf="successMsg" style="color: #3CC596;">{{successMsg}}</p>
-        <p *ngIf="errorMsg" style="color: #f33b4d;">{{errorMsg}}</p>
-        <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="formSubmit" [ladda]="formSubmit">
-          Update
-        </button>
-      </div>
-    </form>
+    </div>
+    <div class="row" style="justify-content: center;">
+      <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus class="w-100">
+        <div class="col-md-2"></div>
+        @for (x of notify_triggers; track x; let i = $index) {
+          <div class="col-md-8 form-group mb-4">
+            <div class="card card-in-card p-4 mb-3">
+              <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                  <h5>{{x.name}}</h5>
+                </div>
+                <div class="col-md-6 form-group mb-3" style="text-align: end;">
+                  <label class="switch">
+                    <input type="checkbox" name="enable_{{i}}" [(ngModel)]="x.isActive" />
+                    <div></div>
+                  </label>
+                </div>
+              </div>
+              @if (x.isActive) {
+                <div class="row">
+                  <div class="col-md-12">
+                    <b>Trigger Type</b>
+                    <div class="row mt-3">
+                      @if (x.triggers.indexOf('instant')!=-1;) {
+                        <div class="col-md-4 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="instant">
+                            <span>Instant</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      }
+                      @if (x.triggers.indexOf('duration')!=-1;) {
+                        <div class="col-md-4 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="duration">
+                            <span>Duration</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      }
+                      @if (x.triggers.indexOf('fixed')!=-1;) {
+                        <div class="col-md-4 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="trigger_type_{{i}}" [(ngModel)]="x.trigger_type" value="fixed">
+                            <span>Fixed</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  @if (x.trigger_type=='duration') {
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Hours After</label>
+                      <div class="pro-qty d-flex justify-content-center align-items-center height-100">
+                        <button type="button" [ngClass]="x.days_before>1? 'cursor': 'qty-btn-disabled'" (click)="decQty(x);">
+                          <i class="material-icons">remove_circle</i>
+                        </button>
+                        <input type="number" (wheel)="commonService.handleWheel($event)" class="text-center" name="hrs_after_{{i}}" [(ngModel)]="x.hrs_after" readonly required>
+                        <button type="button" [ngClass]="(x.days_before<=24)? 'cursor': 'qty-btn-disabled'" (click)="incQty(x);">
+                          <i class="material-icons">add_circle</i>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  @if (x.trigger_type=='fixed') {
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Time</label>
+                      <input type="text" name="time_{{i}}" class="form-control" [(ngModel)]='x.time' (click)="timePicker(x);" required readonly />
+                    </div>
+                    @if (beforeDays.indexOf(x.type)!=-1) {
+                      <div class="col-md-6 form-group mb-3">
+                        <label>Days Before</label>
+                        <input type="number" (wheel)="commonService.handleWheel($event)" name="days_before_{{i}}" class="form-control" [(ngModel)]="x.days_before" required />
+                      </div>
+                    }
+                  }
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-3">
+                    <label class="checkbox checkbox-primary">
+                      <input class="form-check-input" type="checkbox" name="link_status_{{i}}" [(ngModel)]="x.msg_enabled" [disabled]="x.btn_disable">
+                      <span>Enable Whatsapp message</span>
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                  @if (x.msg_enabled) {
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Template ID</label>
+                      <input type="text" name="template_id_{{i}}" class="form-control" [(ngModel)]="x.template_id" required />
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <div class="col-md-2"></div>
+        <div class="col-md-12">
+          @if (successMsg) {
+            <p style="color: #3CC596;">{{successMsg}}</p>
+          }
+          @if (errorMsg) {
+            <p style="color: #f33b4d;">{{errorMsg}}</p>
+          }
+          <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="formSubmit" [ladda]="formSubmit">
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+}

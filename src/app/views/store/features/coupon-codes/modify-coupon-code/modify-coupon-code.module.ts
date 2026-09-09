@@ -12,7 +12,7 @@ import { ModifyCouponCodeComponent } from './modify-coupon-code.component';
     AmazingTimePickerModule,
     SharedModule,
     ModifyCouponCodeRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

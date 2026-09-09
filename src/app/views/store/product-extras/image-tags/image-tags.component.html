@@ -1,98 +1,114 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div class="inner-dots" *ngIf="!commonService.desktop_device && list?.length<33">
-  <div class="add_but mr-3" (click)="exportAsXLSX();">
-    <span class="material-symbols-rounded">file_upload</span>
-</div>
-  <div class="add_but" (click)="tagForm = { form_type: 'add', rank: maxRank+1 }; modalService.open(tagModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+@if (!commonService.desktop_device && list?.length<33) {
+  <div class="inner-dots">
+    <div class="add_but mr-3" (click)="exportAsXLSX();">
+      <span class="material-symbols-rounded">file_upload</span>
+    </div>
+    <div class="add_but" (click)="tagForm = { form_type: 'add', rank: maxRank+1 }; modalService.open(tagModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
       <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-       </div>
-      </div>  
     </div>
   </div>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-        <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-        <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device && list?.length<33">
-        <button type="button" (click)="exportAsXLSX();" class="mr-3">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-        <button type="button" class="highbutton" (click)="tagForm = { form_type: 'add', rank: maxRank+1 }; modalService.open(tagModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
-          <span class="material-symbols-rounded">add</span>Add Tag
-        </button>
-      </div>      
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        @if (commonService.desktop_device && list?.length<33) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" (click)="exportAsXLSX();" class="mr-3">
+              <span class="material-symbols-rounded">file_upload</span> Export
+            </button>
+            <button type="button" class="highbutton" (click)="tagForm = { form_type: 'add', rank: maxRank+1 }; modalService.open(tagModal, {windowClass: 'scroll-modal-xl', scrollable : true});">
+              <span class="material-symbols-rounded">add</span>Add Tag
+            </button>
+          </div>
+        }
+      </div>
     </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-    
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-              <div class="col-md-4 col-4 first_col px-0 header-font">
-                <p class="w-100 w-sm-100">Name</p>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-4 col-4 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100">Name</p>
+                </div>
               </div>
-            </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-4 col-4 first_col px-0 cursor">
-            <p class="w-100 w-sm-100 dark-font">{{x.name}}</p>
+            }
+            @for (x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-4 col-4 first_col px-0 cursor">
+                  <p class="w-100 w-sm-100 dark-font">{{x.name}}</p>
+                </div>
+                <div class="col-md-8 col-8">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    @if (x.status!='active') {
+                      <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="tagForm=x; modalService.open(statusModal, { centered: true });">
+                        <span class="material-symbols-rounded">visibility</span> {{commonService.desktop_device? 'Enable': ''}}
+                      </button>
+                    }
+                    @if (x.status=='active') {
+                      <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="tagForm=x; modalService.open(statusModal, { centered: true });">
+                        <span class="material-symbols-rounded">visibility_off</span> {{commonService.desktop_device? 'Disable': ''}}
+                      </button>
+                    }
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" [disabled]="x.type" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });" [ngStyle]="{'opacity': x.type? '0.5': '1' }">
+                      <span class="material-symbols-rounded" >delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button ': 'iconbutton'" (click)="onEdit(x, tagModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
-          <div class="col-md-8 col-8">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">              
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" *ngIf="x.status!='active'" (click)="tagForm=x; modalService.open(statusModal, { centered: true });">
-                <span class="material-symbols-rounded">visibility</span> {{commonService.desktop_device? 'Enable': ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" *ngIf="x.status=='active'" (click)="tagForm=x; modalService.open(statusModal, { centered: true });">
-                <span class="material-symbols-rounded">visibility_off</span> {{commonService.desktop_device? 'Disable': ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" [disabled]="x.type" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });" [ngStyle]="{'opacity': x.type? '0.5': '1' }">
-                <span class="material-symbols-rounded" >delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>   
-              <button [ngClass]="commonService.desktop_device? 'light-button ': 'iconbutton'" (click)="onEdit(x, tagModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-              </button>
-            </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
           </div>
         </div>
       </div>
-    </div>
-    
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
       </div>
-    </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- TAG MODAL -->
 <ng-template #tagModal let-modal>
@@ -100,8 +116,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-        <h4 class="modal-title popup_text" *ngIf="!tagForm.type"> {{ (tagForm.form_type=='add')? 'New Tag': tagForm.name }}</h4>   
-        <h4 class="modal-title popup_text" *ngIf="tagForm.type"> {{tagForm.display}}</h4>
+        @if (!tagForm.type) {
+          <h4 class="modal-title popup_text"> {{ (tagForm.form_type=='add')? 'New Tag': tagForm.name }}</h4>
+        }
+        @if (tagForm.type) {
+          <h4 class="modal-title popup_text"> {{tagForm.display}}</h4>
+        }
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -110,60 +130,68 @@
               <label>Name</label>
               <input type="text" name="name" class="form-control" [(ngModel)]="tagForm.name" required />
             </div>
-            <div *ngIf="!tagForm.type" class="col-md-12 form-group mb-3">
-              <label>Rank</label>
-              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" min="1" [(ngModel)]="tagForm.rank"
-              max="{{(tagForm.form_type=='add')? maxRank+1: maxRank}}" appNumberOnly required />
+            @if (!tagForm.type) {
+              <div class="col-md-12 form-group mb-3">
+                <label>Rank</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" min="1" [(ngModel)]="tagForm.rank"
+                  max="{{(tagForm.form_type=='add')? maxRank+1: maxRank}}" appNumberOnly required />
+                </div>
+              }
             </div>
           </div>
+          @if (tagForm.errorMsg) {
+            <div>
+              <p class="text-danger">{{ tagForm.errorMsg }}</p>
+            </div>
+          }
         </div>
-        <div *ngIf="tagForm.errorMsg">
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+            <span class="black-outline-txt">Cancel</span>
+          </button>
+          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="tagForm.submit"
+          [ladda]="tagForm.submit">{{ (tagForm.form_type=='add')? 'Add': 'Update' }}</button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <!-- STATUS MODAL -->
+  <ng-template #statusModal let-modal>
+    <div class="modal-body">
+      <p><strong>Are you sure you want to {{tagForm.status=='active'? 'disable': 'enable'}} the <span
+      class="txt-grdint-highlight">"{{tagForm.name}}"</span> tag?</strong></p>
+      @if (tagForm.errorMsg) {
+        <div>
           <p class="text-danger">{{ tagForm.errorMsg }}</p>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="tagForm.submit"
-        [ladda]="tagForm.submit">{{ (tagForm.form_type=='add')? 'Add': 'Update' }}</button>
-      </div>
+      }
     </div>
-  </form>
-</ng-template>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="button" (click)="onUpdateStatus(tagForm);" class="btn btn-wide btn-primary">Yes</button>
+    </div>
+  </ng-template>
 
-<!-- STATUS MODAL -->
-<ng-template #statusModal let-modal>
-  <div class="modal-body">
-    <p><strong>Are you sure you want to {{tagForm.status=='active'? 'disable': 'enable'}} the <span
-    class="txt-grdint-highlight">"{{tagForm.name}}"</span> tag?</strong></p>
-    <div *ngIf="tagForm.errorMsg">
-      <p class="text-danger">{{ tagForm.errorMsg }}</p>
+  <!-- DELETE MODAL -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-body">
+      <p><strong>Are you sure you want to permanently delete the <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> Tag?</strong></p>
+      @if (deleteForm.errorMsg) {
+        <div>
+          <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+        </div>
+      }
     </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onUpdateStatus(tagForm);" class="btn btn-wide btn-primary">Yes</button>
-  </div>
-</ng-template>
-
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p><strong>Are you sure you want to permanently delete the <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span> Tag?</strong></p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+        [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+        <span class="orng-outline-txt">Yes</span>
+      </button>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
-    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+  </ng-template>

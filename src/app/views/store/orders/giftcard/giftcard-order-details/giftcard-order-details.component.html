@@ -1,235 +1,244 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-        </div>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="row order-details">
-
-    <div class="col-lg-9 ">
-      <!-- Order ID -->
-      <div class="row d-flex px-0 mb-2">
-        <div class="col-12 d-flex justify-content-end status-split mb-2">
-
-          <div class="add_but" ngbDropdown role="group" aria-label="Select all">
-            <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-              <button ngbDropdownToggle type="button" class="ml-3 white-button-right-icon">
-                <span class="material-symbols-rounded">more_horiz</span>More Options
-              </button>
-              <div class="dropdown-menu" ngbDropdownMenu>
-                <a href="https://yourstore.io/invoice/giftcard/{{commonService.store_details?._id}}/{{details._id}}" target="_blank" class="dropdown-item">
-                  <span class="material-symbols-rounded">receipt</span>View Invoice
-                </a>
-                <button
-                  (click)="btnLoader=false; mailForm={ email: details.to_email }; modalService.open(resendMailModal);"
-                  class="dropdown-item">
-                  <span class="material-symbols-rounded">forward_to_inbox</span>Resend Mail
-                </button>
-                <button [disabled]="details.status!='active'" class="dropdown-item"
-                  [ngStyle]="{'opacity': details.status!='active'? '0.5': '1' }"
-                  (click)="deleteForm=details; modalService.open(deleteModal, { centered: true });">
-                  <span class="material-symbols-rounded">visibility</span>Deactivate
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-6 mb-3">
-          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-            <div class="icons mb-0">
-              <span class="material-symbols-rounded">sell</span>
-            </div>
-            <div class="order-details-cardcontent">
-              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order ID</label>
-              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                {{commonService.secondary_header}}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- order Date -->
-        <div class="col-12 col-md-6 mb-3">
-          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-            <div class="icons mb-0">
-              <span class="material-symbols-rounded">calendar_month</span>
-            </div>
-            <div class="order-details-cardcontent">
-              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order Date</label>
-              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                {{details.created_on | date: "dd MMM y hh:mm a"}}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- gift code -->
-        <div class="col-12 col-md-6 mb-3">
-          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-            <div class="icons mb-0">
-              <span class="material-symbols-rounded">redeem</span>
-            </div>
-            <div class="order-details-cardcontent">
-              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Gift Code</label>
-              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                {{details.code}}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- balance -->
-        <div class="col-12 col-md-6 mb-3">
-          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-            <div class="icons mb-0">
-              <span class="material-symbols-rounded">payments</span>
-            </div>
-            <div class="order-details-cardcontent">
-              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Balance</label>
-              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                {{details.balance | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}} / {{details.price |
-                currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- Validity -->
-        <div class="col-12 col-md-6 mb-3">
-          <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-            <div class="icons mb-0">
-              <span class="material-symbols-rounded">event_busy</span>
-            </div>
-            <div class="order-details-cardcontent">
-              <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Validity</label>
-              <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                {{details.expiry_on | date: "dd MMM y"}}
-              </span>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- withdrawal details -->
-      <div *ngIf="details.order_list?.length" class="order-section">
-        <p class="sec-desc mb-2" style="display: inline-block;">Withdrawal Details</p>
-        <div class="col-md-12 list-item p-0">
-          <div *ngFor="let x of details.order_list;" class="card mb-4 d-flex flex-row">
-            <div class="flex-grow-1 pl-2 d-flex">
-              <div
-                class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
-                <p class="w-30 w-sm-100 m-b-0">#{{x.order_number}}</p>
-                <p class="w-30 w-sm-100 m-b-0">{{x.created_on | date: "dd MMM y hh:mm a"}}</p>
-                <p class="w-30 w-sm-100 m-b-0">{{x.redeemed_amount |
-                  currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+    }
+    <div class="row order-details">
+      <div class="col-lg-9 ">
+        <!-- Order ID -->
+        <div class="row d-flex px-0 mb-2">
+          <div class="col-12 d-flex justify-content-end status-split mb-2">
+            <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+              <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                <button ngbDropdownToggle type="button" class="ml-3 white-button-right-icon">
+                  <span class="material-symbols-rounded">more_horiz</span>More Options
+                </button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <a href="https://yourstore.io/invoice/giftcard/{{commonService.store_details?._id}}/{{details._id}}" target="_blank" class="dropdown-item">
+                    <span class="material-symbols-rounded">receipt</span>View Invoice
+                  </a>
+                  <button
+                    (click)="btnLoader=false; mailForm={ email: details.to_email }; modalService.open(resendMailModal);"
+                    class="dropdown-item">
+                    <span class="material-symbols-rounded">forward_to_inbox</span>Resend Mail
+                  </button>
+                  <button [disabled]="details.status!='active'" class="dropdown-item"
+                    [ngStyle]="{'opacity': details.status!='active'? '0.5': '1' }"
+                    (click)="deleteForm=details; modalService.open(deleteModal, { centered: true });">
+                    <span class="material-symbols-rounded">visibility</span>Deactivate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mb-3">
+            <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">sell</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order ID</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{commonService.secondary_header}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- order Date -->
+          <div class="col-12 col-md-6 mb-3">
+            <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">calendar_month</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Order Date</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{details.created_on | date: "dd MMM y hh:mm a"}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- gift code -->
+          <div class="col-12 col-md-6 mb-3">
+            <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">redeem</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Gift Code</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{details.code}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- balance -->
+          <div class="col-12 col-md-6 mb-3">
+            <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">payments</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Balance</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{details.balance | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}} / {{details.price |
+                  currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- Validity -->
+          <div class="col-12 col-md-6 mb-3">
+            <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+              <div class="icons mb-0">
+                <span class="material-symbols-rounded">event_busy</span>
+              </div>
+              <div class="order-details-cardcontent">
+                <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Validity</label>
+                <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                  {{details.expiry_on | date: "dd MMM y"}}
+                </span>
               </div>
             </div>
           </div>
         </div>
+        <!-- withdrawal details -->
+        @if (details.order_list?.length) {
+          <div class="order-section">
+            <p class="sec-desc mb-2" style="display: inline-block;">Withdrawal Details</p>
+            <div class="col-md-12 list-item p-0">
+              @for (x of details.order_list; track x) {
+                <div class="card mb-4 d-flex flex-row">
+                  <div class="flex-grow-1 pl-2 d-flex">
+                    <div
+                      class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
+                      <p class="w-30 w-sm-100 m-b-0">#{{x.order_number}}</p>
+                      <p class="w-30 w-sm-100 m-b-0">{{x.created_on | date: "dd MMM y hh:mm a"}}</p>
+                      <p class="w-30 w-sm-100 m-b-0">{{x.redeemed_amount |
+                      currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
-    </div>
-
-    <div class="col-lg-3 z-i-0">
-      <!-- gift card details -->
-
-      <h5 class="dark-font">Details</h5>
-      <!-- customer -->
-      <div class="order-details-card">
-        <div class="address-head d-flex justify-content-between">
-          <h5 class="dark-font font-14 m-b-0">Customer</h5>
-        </div>
-        <ng-container *ngIf="details?.order_by=='user'">
+      <div class="col-lg-3 z-i-0">
+        <!-- gift card details -->
+        <h5 class="dark-font">Details</h5>
+        <!-- customer -->
+        <div class="order-details-card">
+          <div class="address-head d-flex justify-content-between">
+            <h5 class="dark-font font-14 m-b-0">Customer</h5>
+          </div>
+          @if (details?.order_by=='user') {
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">person</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{details.customerDetails[0].name}}
+              </p>
+            </div>
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">mail</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{details.customerDetails[0].email}}
+              </p>
+            </div>
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">phone</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{ (details.customerDetails[0]?.mobile)? details.customerDetails[0].mobile: 'NA' }}
+              </p>
+            </div>
+          }
+          @if (details?.order_by=='admin') {
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">person</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{details.from_name}}
+              </p>
+            </div>
+          }
+          <!-- Recipient Details -->
+          <div class="address-head d-flex justify-content-between">
+            <h5 class="dark-font font-14 m-b-0">Recipient Details</h5>
+          </div>
           <div class="order-details-cardinner d-flex">
             <span class="material-symbols-rounded">person</span>
             <p class="light-font medium-font m-b-0 pl-2">
-              {{details.customerDetails[0].name}}
+              {{details.to_name}}
             </p>
           </div>
           <div class="order-details-cardinner d-flex">
             <span class="material-symbols-rounded">mail</span>
             <p class="light-font medium-font m-b-0 pl-2">
-              {{details.customerDetails[0].email}}
+              {{details.to_email}}
             </p>
           </div>
           <div class="order-details-cardinner d-flex">
-            <span class="material-symbols-rounded">phone</span>
+            <span class="material-symbols-rounded">calendar_month</span>
             <p class="light-font medium-font m-b-0 pl-2">
-              {{ (details.customerDetails[0]?.mobile)? details.customerDetails[0].mobile: 'NA' }}
+              {{details.created_on | date: "dd MMM y hh:mm a"}}
             </p>
           </div>
-        </ng-container>
-        <div class="order-details-cardinner d-flex" *ngIf="details?.order_by=='admin'">
-          <span class="material-symbols-rounded">person</span>
-          <p class="light-font medium-font m-b-0 pl-2">
-            {{details.from_name}}
-          </p>
-        </div>
-
-        <!-- Recipient Details -->
-        <div class="address-head d-flex justify-content-between">
-          <h5 class="dark-font font-14 m-b-0">Recipient Details</h5>
-        </div>
-        <div class="order-details-cardinner d-flex">
-          <span class="material-symbols-rounded">person</span>
-          <p class="light-font medium-font m-b-0 pl-2">
-            {{details.to_name}}
-          </p>
-        </div>
-        <div class="order-details-cardinner d-flex">
-          <span class="material-symbols-rounded">mail</span>
-          <p class="light-font medium-font m-b-0 pl-2">
-            {{details.to_email}}
-          </p>
-        </div>
-        <div class="order-details-cardinner d-flex">
-          <span class="material-symbols-rounded">calendar_month</span>
-          <p class="light-font medium-font m-b-0 pl-2">
-            {{details.created_on | date: "dd MMM y hh:mm a"}}
-          </p>
-        </div>
-        <!-- Payment Details -->
-        <ng-container *ngIf="details?.payment_details">
+          <!-- Payment Details -->
+          @if (details?.payment_details) {
+            <div class="address-head d-flex justify-content-between">
+              <h5 class="dark-font font-14 m-b-0">Payment Details</h5>
+              <span class="material-symbols-rounded" (click)="onEdit(paymentDetailsModal);">edit</span>
+            </div>
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">currency_exchange</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{details?.payment_details?.name}}
+              </p>
+            </div>
+            <div class="order-details-cardinner d-flex">
+              <span class="material-symbols-rounded">badge</span>
+              <p class="light-font medium-font m-b-0 pl-2">
+                {{details?.payment_details?.payment_id}}
+              </p>
+            </div>
+          }
+          <!-- Message -->
           <div class="address-head d-flex justify-content-between">
-            <h5 class="dark-font font-14 m-b-0">Payment Details</h5>
-            <span class="material-symbols-rounded" (click)="onEdit(paymentDetailsModal);">edit</span>
+            <h5 class="dark-font font-14 m-b-0">Message</h5>
+            <span class="material-symbols-rounded" (click)="onEdit(orderNoteModal);">edit</span>
           </div>
           <div class="order-details-cardinner d-flex">
-            <span class="material-symbols-rounded">currency_exchange</span>
-            <p class="light-font medium-font m-b-0 pl-2">
-              {{details?.payment_details?.name}}
-            </p>
+            <span class="material-symbols-rounded">note</span>
+            @if (details?.disp_order_note) {
+              <p class="light-font medium-font m-b-0 pl-2"
+                [innerHTML]="details.disp_order_note">
+              </p>
+            }
+            @if (!details?.disp_order_note) {
+              <p class="light-font medium-font m-b-0 pl-2">
+                NA
+              </p>
+            }
           </div>
-          <div class="order-details-cardinner d-flex">
-            <span class="material-symbols-rounded">badge</span>
-            <p class="light-font medium-font m-b-0 pl-2">
-              {{details?.payment_details?.payment_id}}
-            </p>
-          </div>
-        </ng-container>
-        <!-- Message -->
-        <div class="address-head d-flex justify-content-between">
-          <h5 class="dark-font font-14 m-b-0">Message</h5>
-          <span class="material-symbols-rounded" (click)="onEdit(orderNoteModal);">edit</span>
-        </div>
-        <div class="order-details-cardinner d-flex">
-          <span class="material-symbols-rounded">note</span>
-          <p class="light-font medium-font m-b-0 pl-2" *ngIf="details?.disp_order_note"
-            [innerHTML]="details.disp_order_note">
-          </p>
-          <p class="light-font medium-font m-b-0 pl-2" *ngIf="!details?.disp_order_note">
-            NA
-          </p>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
 
 <!-- update payment details -->
 <ng-template #paymentDetailsModal let-modal>
@@ -248,110 +257,118 @@
             <label>Payment Type</label>
             <input type="text" name="name" class="form-control" [(ngModel)]="editForm.payment_details.name"
               #name="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3">
+              <label>Payment ID</label>
+              <input type="text" name="payment_id" class="form-control" [(ngModel)]="editForm.payment_details.payment_id"
+                #payment_id="ngModel" required />
+              </div>
+            </div>
           </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Payment ID</label>
-            <input type="text" name="payment_id" class="form-control" [(ngModel)]="editForm.payment_details.payment_id"
-              #payment_id="ngModel" required />
-          </div>
+          @if (editForm.errorMsg) {
+            <div>
+              <p class="text-danger">{{ editForm.errorMsg }}</p>
+            </div>
+          }
         </div>
-      </div>
-      <div *ngIf="editForm.errorMsg">
-        <p class="text-danger">{{ editForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary">Update</button>
-    </div>
-  </form>
-</ng-template>
-
-<!-- update order note -->
-<ng-template #orderNoteModal let-modal>
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Update Note</span>
-    </h4>
-  </div>
-  <form autocomplete="off" (ngSubmit)="onUpdate({ _id: details._id, order_note: editForm.order_note });"
-    ngNativeValidate ngbAutofocus>
-    <div class="modal-body">
-      <div class="form-group">
-        <div class="row">
-          <div class="col-md-12 form-group mb-3">
-            <label>Note</label>
-            <textarea class="form-control" rows="5" aria-label="With textarea" name="order_note"
-              [(ngModel)]="editForm.order_note" #order_note="ngModel" required></textarea>
-          </div>
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
+            <span class="black-outline-txt">Cancel</span>
+          </button>
+          <button type="submit" class="btn btn-wide btn-primary">Update</button>
         </div>
-      </div>
-      <div *ngIf="editForm.errorMsg">
-        <p class="text-danger">{{ editForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary">Update</button>
-    </div>
-  </form>
-</ng-template>
+      </form>
+    </ng-template>
 
-<!-- Resend mail -->
-<ng-template #resendMailModal let-modal>
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Resend email to customer</span>
-    </h4>
-  </div>
-  <form autocomplete="off" (ngSubmit)="sendMail();" ngNativeValidate ngbAutofocus>
-    <div class="modal-body">
-      <div class="form-group">
-        <div class="row">
-          <div class="col-md-12 form-group mb-3">
-            <label>Send To</label>
-            <input type="text" name="email" class="form-control" [(ngModel)]="mailForm.email" #email="ngModel"
-              required />
+    <!-- update order note -->
+    <ng-template #orderNoteModal let-modal>
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Update Note</span>
+        </h4>
+      </div>
+      <form autocomplete="off" (ngSubmit)="onUpdate({ _id: details._id, order_note: editForm.order_note });"
+        ngNativeValidate ngbAutofocus>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Note</label>
+                <textarea class="form-control" rows="5" aria-label="With textarea" name="order_note"
+                [(ngModel)]="editForm.order_note" #order_note="ngModel" required></textarea>
+              </div>
+            </div>
           </div>
+          @if (editForm.errorMsg) {
+            <div>
+              <p class="text-danger">{{ editForm.errorMsg }}</p>
+            </div>
+          }
         </div>
-      </div>
-      <div *ngIf="mailForm.errorMsg">
-        <p class="text-danger">{{ mailForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" [disabled]="btnLoader" [ladda]="btnLoader"
-        class="btn btn-wide btn-primary ladda-button">Confirm</button>
-    </div>
-  </form>
-</ng-template>
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
+            <span class="black-outline-txt">Cancel</span>
+          </button>
+          <button type="submit" class="btn btn-wide btn-primary">Update</button>
+        </div>
+      </form>
+    </ng-template>
 
-<!-- Delete Modal -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong>Are you sure you want to remove
-        <span class="txt-grdint-highlight">"{{deleteForm.code}}"</span> this coupon?</strong>
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" class="btn btn-wide orng-outline-btn" (click)="onDelete();">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+    <!-- Resend mail -->
+    <ng-template #resendMailModal let-modal>
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Resend email to customer</span>
+        </h4>
+      </div>
+      <form autocomplete="off" (ngSubmit)="sendMail();" ngNativeValidate ngbAutofocus>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Send To</label>
+                <input type="text" name="email" class="form-control" [(ngModel)]="mailForm.email" #email="ngModel"
+                  required />
+                </div>
+              </div>
+            </div>
+            @if (mailForm.errorMsg) {
+              <div>
+                <p class="text-danger">{{ mailForm.errorMsg }}</p>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
+              <span class="black-outline-txt">Cancel</span>
+            </button>
+            <button type="submit" [disabled]="btnLoader" [ladda]="btnLoader"
+            class="btn btn-wide btn-primary ladda-button">Confirm</button>
+          </div>
+        </form>
+      </ng-template>
+
+      <!-- Delete Modal -->
+      <ng-template #deleteModal let-modal>
+        <div class="modal-body">
+          <p>
+            <strong>Are you sure you want to remove
+              <span class="txt-grdint-highlight">"{{deleteForm.code}}"</span> this coupon?</strong>
+            </p>
+            @if (deleteForm.errorMsg) {
+              <div>
+                <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+              <span class="black-outline-txt">No</span>
+            </button>
+            <button type="button" class="btn btn-wide orng-outline-btn" (click)="onDelete();">
+              <span class="orng-outline-txt">Yes</span>
+            </button>
+          </div>
+        </ng-template>

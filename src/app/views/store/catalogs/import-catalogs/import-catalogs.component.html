@@ -1,65 +1,73 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-        </div>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="top-filter-sec">
-    <form autocomplete="off" (ngSubmit)="onUpload();" ngNativeValidate>
-      <div class="row">
-        <div class="col-md-8 form-group mb-3">
-          <div class="card card-in-card p-4 mb-3">
-            <div class="col-md-12 mb-3 d-flex justify-content-center">
-              <div class="col-8 p-3 card" align="center">
-                <div>
-                  <div *ngIf="fileName" class="w-100">
-                    <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5"
-                      aria-hidden="true">close</span>
-                  </div>
-                  <label>
-                    <div class="w-100">
-                      <input type="file" id="importFile" (change)="onFileChange($event)" style="display: none;"
-                        accept=".csv, .xlsx" />
-                    </div>
-                    <div>
-                      <i class="material-icons add-img">{{ fileName? 'task': 'note_add' }}</i>
-                      <p>{{ fileName? fileName: 'Click to upload csv' }}</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div align="center" class="col-md-12 z-i-0 mt-3">
-              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
-                [ladda]="btnLoader">
-                Update
-              </button>
-              <p *ngIf="errorMsg" class="text-danger mt-3">{{ errorMsg }}</p>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
         </div>
       </div>
-    </form>
-
-    <div class="row">
-      <div class="col-md-12">
-        <h1 style="font-size:16px;font-weight: 700;">
-          Sample CSV/XLSX Template
-        </h1>
-        <div class="col-sm-12 mt-3">
-          <p class="note"><a href="assets/Yourstore Catalog Upload Template.csv" download>Download CSV/XLSX</a></p>
+    }
+    <div class="top-filter-sec">
+      <form autocomplete="off" (ngSubmit)="onUpload();" ngNativeValidate>
+        <div class="row">
+          <div class="col-md-8 form-group mb-3">
+            <div class="card card-in-card p-4 mb-3">
+              <div class="col-md-12 mb-3 d-flex justify-content-center">
+                <div class="col-8 p-3 card" align="center">
+                  <div>
+                    @if (fileName) {
+                      <div class="w-100">
+                        <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5"
+                        aria-hidden="true">close</span>
+                      </div>
+                    }
+                    <label>
+                      <div class="w-100">
+                        <input type="file" id="importFile" (change)="onFileChange($event)" style="display: none;"
+                          accept=".csv, .xlsx" />
+                        </div>
+                        <div>
+                          <i class="material-icons add-img">{{ fileName? 'task': 'note_add' }}</i>
+                          <p>{{ fileName? fileName: 'Click to upload csv' }}</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div align="center" class="col-md-12 z-i-0 mt-3">
+                  <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
+                    [ladda]="btnLoader">
+                    Update
+                  </button>
+                  @if (errorMsg) {
+                    <p class="text-danger mt-3">{{ errorMsg }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-md-12">
+            <h1 style="font-size:16px;font-weight: 700;">
+              Sample CSV/XLSX Template
+            </h1>
+            <div class="col-sm-12 mt-3">
+              <p class="note"><a href="assets/Yourstore Catalog Upload Template.csv" download>Download CSV/XLSX</a></p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  }

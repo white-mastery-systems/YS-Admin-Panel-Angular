@@ -13,7 +13,7 @@ import { YsDashboardComponent } from './ys-dashboard.component';
     SharedModule,
     NgxEchartsModule,
     YsDashboardRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ],
   providers: [DatePipe]
 })

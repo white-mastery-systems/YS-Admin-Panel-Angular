@@ -1,98 +1,113 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="help_mobile_button mr-3" routerLink="/support/bulk-upload">
-    <img src="assets/icons/help.svg" title="help">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-  <div class="add_but" routerLink="/product-sections/products/import/history">
-    <span class="material-symbols-rounded">history</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-       </div>
-      </div>  
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="help_mobile_button mr-3" routerLink="/support/bulk-upload">
+      <img src="assets/icons/help.svg" title="help">
+    </div>
+    <div class="add_but" routerLink="/product-sections/products/import/history">
+      <span class="material-symbols-rounded">history</span>
     </div>
   </div>
+}
 
-  <div class="top-filter-sec">
-    <div class="row">
-      <div class="col-md-12 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button routerLink="/product-sections/products/import/history" type="button">
-          <span class="material-symbols-rounded">history</span>Import History
-        </button>
-        <button class="help-button" routerLink="/support/bulk-upload">
-          <span class="material-symbols-rounded mb-0">help</span>Need help?
-        </button>
-      </div>
-    </div>
-      
-    <form autocomplete="off" (ngSubmit)="onUpload();" ngNativeValidate>
-      <div class="row">
-        <div class="col-md-8 form-group mb-3">
-          <div class="card card-in-card p-4 mb-3">
-            <div *ngIf="commonService.vendor_list?.length" class="mt-1 mb-3">
-              <select name="vendor_id" class="form-control" (change)="onChangeVendor(vendorId); errorMsg=null;" [(ngModel)]="vendorId" required>
-                <option value="">-- Select Vendor --</option>
-                <option *ngFor="let x of commonService.vendor_list;" [ngValue]="x._id">{{x.company_details?.brand}}</option>
-              </select>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
-            <ng-container *ngIf="!commonService.vendor_list?.length || vendorId">
-              <div class="col-md-12 mb-3 d-flex justify-content-center">
-                <div class="col-8 p-3 card" align="center">
-                  <div>
-                    <div *ngIf="fileName" class="w-100">
-                      <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
-                    </div>
-                    <label>
-                      <div class="w-100">
-                        <input type="file" id="importFile" (change)="onFileChange($event)" style="display: none;" accept=".csv, .xlsx" />
-                      </div>
-                      <div>
-                        <i class="material-icons add-img">{{ fileName? 'task': 'note_add' }}</i>
-                        <p>{{ fileName? fileName: 'Click to upload csv' }}</p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div align="center" class="col-md-12 z-i-0 mt-3">
-                <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
-                  Update
-                </button>
-                <p *ngIf="errorMsg" class="text-danger mt-3">{{ errorMsg }}</p>
-              </div>
-            </ng-container>
           </div>
         </div>
       </div>
-    </form>
-
-    <div class="row">
-      <div class="col-md-12">
-        <h1 style="font-size:16px;font-weight: 700;">
-          Sample CSV/XLSX Template
-        </h1>
-        <div class="col-sm-12 mt-3">
-          <h1 style="font-size:16px;font-weight: 400;">
-            Products without Variants
-          </h1>
-          <p class="note"><a href="assets/Yourstore Bulk Upload Template - Without Variant.csv" download>Download CSV/XLSX</a></p>
+    }
+    <div class="top-filter-sec">
+      <div class="row">
+        @if (commonService.desktop_device) {
+          <div class="col-md-12 list-button d-flex justify-content-end">
+            <button routerLink="/product-sections/products/import/history" type="button">
+              <span class="material-symbols-rounded">history</span>Import History
+            </button>
+            <button class="help-button" routerLink="/support/bulk-upload">
+              <span class="material-symbols-rounded mb-0">help</span>Need help?
+            </button>
+          </div>
+        }
+      </div>
+      <form autocomplete="off" (ngSubmit)="onUpload();" ngNativeValidate>
+        <div class="row">
+          <div class="col-md-8 form-group mb-3">
+            <div class="card card-in-card p-4 mb-3">
+              @if (commonService.vendor_list?.length) {
+                <div class="mt-1 mb-3">
+                  <select name="vendor_id" class="form-control" (change)="onChangeVendor(vendorId); errorMsg=null;" [(ngModel)]="vendorId" required>
+                    <option value="">-- Select Vendor --</option>
+                    @for (x of commonService.vendor_list; track x) {
+                      <option [ngValue]="x._id">{{x.company_details?.brand}}</option>
+                    }
+                  </select>
+                </div>
+              }
+              @if (!commonService.vendor_list?.length || vendorId) {
+                <div class="col-md-12 mb-3 d-flex justify-content-center">
+                  <div class="col-8 p-3 card" align="center">
+                    <div>
+                      @if (fileName) {
+                        <div class="w-100">
+                          <span (click)="clearInput();" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                        </div>
+                      }
+                      <label>
+                        <div class="w-100">
+                          <input type="file" id="importFile" (change)="onFileChange($event)" style="display: none;" accept=".csv, .xlsx" />
+                        </div>
+                        <div>
+                          <i class="material-icons add-img">{{ fileName? 'task': 'note_add' }}</i>
+                          <p>{{ fileName? fileName: 'Click to upload csv' }}</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div align="center" class="col-md-12 z-i-0 mt-3">
+                  <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
+                    Update
+                  </button>
+                  @if (errorMsg) {
+                    <p class="text-danger mt-3">{{ errorMsg }}</p>
+                  }
+                </div>
+              }
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 mt-2">
-          <h1 style="font-size:16px;font-weight: 400;">
-            Products with Variants
+      </form>
+      <div class="row">
+        <div class="col-md-12">
+          <h1 style="font-size:16px;font-weight: 700;">
+            Sample CSV/XLSX Template
           </h1>
-          <p class="note"><a href="assets/Yourstore Bulk Upload Template - With Variant.csv" download>Download CSV/XLSX</a></p>
+          <div class="col-sm-12 mt-3">
+            <h1 style="font-size:16px;font-weight: 400;">
+              Products without Variants
+            </h1>
+            <p class="note"><a href="assets/Yourstore Bulk Upload Template - Without Variant.csv" download>Download CSV/XLSX</a></p>
+          </div>
+          <div class="col-sm-12 mt-2">
+            <h1 style="font-size:16px;font-weight: 400;">
+              Products with Variants
+            </h1>
+            <p class="note"><a href="assets/Yourstore Bulk Upload Template - With Variant.csv" download>Download CSV/XLSX</a></p>
+          </div>
         </div>
-      </div>      
+      </div>
     </div>
   </div>
-</div>
+}

@@ -9,7 +9,7 @@ import { VendorSettlementComponent } from './vendor-settlement.component';
   declarations: [VendorSettlementComponent],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     VendorSettlementRoutingModule
   ]
 })

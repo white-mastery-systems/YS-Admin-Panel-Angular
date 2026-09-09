@@ -14,7 +14,7 @@ import { BranchDashboardComponent } from './branch-dashboard.component';
     SharedModule,
     NgApexchartsModule,
     BranchDashboardRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

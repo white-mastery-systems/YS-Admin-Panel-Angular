@@ -12,7 +12,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
   ],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     VendorPaymentsRoutingModule
   ]
 })

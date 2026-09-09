@@ -21,7 +21,7 @@ import { AddProductComponent } from './add-product.component';
     SharedModule,
     ColorPickerModule,
     AddProductRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

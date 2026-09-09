@@ -1,80 +1,91 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <h1>Store SEO</h1>          
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Store SEO</h1>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col-md-8 form-group mb-3">
+        <div class="card card-in-card p-4 mb-3">
+          @if (!seoForm.seo_disp) {
+            <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+              <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                <span class="light-font mt-0 font-10 d-block">This is how your website looks on Google, Bing, Yahoo and other search engines</span>
+              </p>
+              <span class="material-icons float-right round-btn-icon ab-item-close"
+              (click)="seoForm.seo_disp=true;" aria-hidden="true">edit</span>
+            </div>
+            <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}</p>
+            <h6 class="sec-desc mb-1 mt-2 seo-color">{{seoForm.page_title}}</h6>
+            <p class="light-font font-10">{{seoForm.meta_desc}}</p>
+          }
+          @if (seoForm.seo_disp) {
+            <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
+              <div class="row">
+                <div class="col-md-12 form-group mb-3">
+                  <label>H1 Tag</label>
+                  @if (seoForm?.h1_tag?.length) {
+                    <span class="label_hint">{{seoForm?.h1_tag?.length}} of 70 characters used</span>
+                  }
+                  <input type="text" name="h1_tag" class="form-control" [(ngModel)]="seoForm.h1_tag" #h1_tag="ngModel" maxlength="70" required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Tile Color</label>
+                  <input name="tile_color" class="form-control" [colorPicker]="seoForm.tile_color"
+                    (colorPickerChange)="seoForm.tile_color=$event;" [style.background]="seoForm.tile_color"
+                    [cpOKButton]="true" [cpOKButtonText]="'Save'" [cpOKButtonClass]="'btn btn-primary'"
+                    [cpSaveClickOutside]="false" [cpCancelButton]="true" [cpCancelButtonClass]="'btn black-outline-btn'" readonly />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Page Title</label>
+                    @if (seoForm?.page_title?.length) {
+                      <span class="label_hint">{{seoForm?.page_title?.length}} of 70 characters used</span>
+                    }
+                    <input type="text" name="page_title" class="form-control" [(ngModel)]="seoForm.page_title" #page_title="ngModel" maxlength="70" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Description</label>
+                    @if (seoForm?.meta_desc?.length) {
+                      <span class="label_hint">{{seoForm?.meta_desc?.length}} of 320 characters used</span>
+                    }
+                    <textarea rows="4" class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="seoForm.meta_desc" #meta_desc="ngModel" maxlength="320" required></textarea>
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Keywords</label>
+                    <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="seoForm.meta_keyword_list"
+                      #meta_keyword_list="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
+                    [separatorKeyCodes]="[188]"></tag-input>
+                    <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+                  </div>
+                  @if (seoForm.errorMsg) {
+                    <div class="col-md-12 mt-3 mb-3">
+                      <p class="text-danger" align="center">{{ seoForm.errorMsg }}</p>
+                    </div>
+                  }
+                  <div align="center" class="col-md-12 mt-3 z-i-0">
+                    <button type="button" (click)="seoForm.seo_disp=false;" class="btn btn-wide black-outline-btn">
+                      <span class="black-outline-txt">Cancel</span>
+                    </button>
+                    <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="seoForm.submit" [ladda]="seoForm.submit">
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </form>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </ng-container>
-
-  <div class="row">
-
-    <div class="col-md-8 form-group mb-3">
-      <div class="card card-in-card p-4 mb-3">
-        <ng-container *ngIf="!seoForm.seo_disp">
-          <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
-            <p class="m-b-0 dark-font medium-font">SEO Listing Preview
-              <span class="light-font mt-0 font-10 d-block">This is how your website looks on Google, Bing, Yahoo and other search engines</span>
-            </p>   
-            <span class="material-icons float-right round-btn-icon ab-item-close"
-            (click)="seoForm.seo_disp=true;" aria-hidden="true">edit</span>
-          </div>
-          <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}</p>
-          <h6 class="sec-desc mb-1 mt-2 seo-color">{{seoForm.page_title}}</h6>
-          <p class="light-font font-10">{{seoForm.meta_desc}}</p>
-        </ng-container>
-
-        <form *ngIf="seoForm.seo_disp" autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>H1 Tag</label>
-              <span *ngIf="seoForm?.h1_tag?.length" class="label_hint">{{seoForm?.h1_tag?.length}} of 70 characters used</span>
-              <input type="text" name="h1_tag" class="form-control" [(ngModel)]="seoForm.h1_tag" #h1_tag="ngModel" maxlength="70" required />
-            </div>
-            <div class="col-md-4 form-group mb-3">
-              <label>Tile Color</label>
-              <input name="tile_color" class="form-control" [colorPicker]="seoForm.tile_color"
-                (colorPickerChange)="seoForm.tile_color=$event;" [style.background]="seoForm.tile_color"
-                [cpOKButton]="true" [cpOKButtonText]="'Save'" [cpOKButtonClass]="'btn btn-primary'"
-                [cpSaveClickOutside]="false" [cpCancelButton]="true" [cpCancelButtonClass]="'btn black-outline-btn'" readonly />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Page Title</label>
-              <span *ngIf="seoForm?.page_title?.length" class="label_hint">{{seoForm?.page_title?.length}} of 70 characters used</span>
-              <input type="text" name="page_title" class="form-control" [(ngModel)]="seoForm.page_title" #page_title="ngModel" maxlength="70" required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Meta Description</label>
-              <span *ngIf="seoForm?.meta_desc?.length" class="label_hint">{{seoForm?.meta_desc?.length}} of 320 characters used</span>
-              <textarea rows="4" class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="seoForm.meta_desc" #meta_desc="ngModel" maxlength="320" required></textarea>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Meta Keywords</label>
-              <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="seoForm.meta_keyword_list"
-                #meta_keyword_list="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
-                [separatorKeyCodes]="[188]"></tag-input>
-                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-            </div>
-            <div class="col-md-12 mt-3 mb-3" *ngIf="seoForm.errorMsg">
-              <p class="text-danger" align="center">{{ seoForm.errorMsg }}</p>
-            </div>
-            <div align="center" class="col-md-12 mt-3 z-i-0">
-              <button type="button" (click)="seoForm.seo_disp=false;" class="btn btn-wide black-outline-btn">
-                <span class="black-outline-txt">Cancel</span>
-              </button>
-              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="seoForm.submit" [ladda]="seoForm.submit">
-                Update
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+  }

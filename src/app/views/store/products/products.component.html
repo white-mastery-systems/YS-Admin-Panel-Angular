@@ -1,282 +1,353 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="main-header" *ngIf="!commonService.desktop_device">
-  <h2>Products</h2>
-  <div class="header-part-right d-flex">
-    <div class="help_but mr-3" routerLink="/support/products">
-      <img src="assets/icons/help.svg" title="help" />
-    </div>
-    <div class="add_but" ngbDropdown role="group" aria-label="Select all">
-      <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-        <button ngbDropdownToggle type="button" class="light-font three-dot-button">
-          <span class="material-symbols-rounded">more_vert</span>
-        </button>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item d-flex" *ngIf="
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="main-header">
+    <h2>Products</h2>
+    <div class="header-part-right d-flex">
+      <div class="help_but mr-3" routerLink="/support/products">
+        <img src="assets/icons/help.svg" title="help" />
+      </div>
+      <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+        <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+          <button ngbDropdownToggle type="button" class="light-font three-dot-button">
+            <span class="material-symbols-rounded">more_vert</span>
+          </button>
+          <div class="dropdown-menu" ngbDropdownMenu>
+            @if (
               commonService.store_details?.login_type == 'admin' ||
               commonService.vendor_features.indexOf('add_product') != -1 ||
               commonService.subuser_features.indexOf('add_product') != -1
-            " (click)="openpage()">
-            <span class="material-symbols-rounded mr-2">add</span> Add Product
-          </button>
-          <button class="dropdown-item d-flex" *ngIf="
+              ) {
+              <button class="dropdown-item d-flex" (click)="openpage()">
+                <span class="material-symbols-rounded mr-2">add</span> Add Product
+              </button>
+            }
+            @if (
               commonService.route_permission_list.indexOf('bulk_upload') != -1
-            " routerLink="/product-sections/products/import">
-            <span class="material-symbols-rounded mr-2">file_download</span>
-            Import
-          </button>
-          <button class="dropdown-item d-flex" *ngIf="
+              ) {
+              <button class="dropdown-item d-flex" routerLink="/product-sections/products/import">
+                <span class="material-symbols-rounded mr-2">file_download</span>
+                Import
+              </button>
+            }
+            @if (
               commonService.store_details.login_type == 'admin' ||
               commonService.subuser_features.indexOf('product_export') != -1
-            " (click)="exportAsXLSX()" [disabled]="exportLoader">
-            <span class="material-symbols-rounded mr-2">file_upload</span>
-            Export
-          </button>
+              ) {
+              <button class="dropdown-item d-flex" (click)="exportAsXLSX()" [disabled]="exportLoader">
+                <span class="material-symbols-rounded mr-2">file_upload</span>
+                Export
+              </button>
+            }
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-6">
-          <div *ngIf="commonService.secondary_header" class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{ commonService.secondary_header }}</h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-6">
+            @if (commonService.secondary_header) {
+              <div class="d-flex align-items-center">
+                <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+                <h1>{{ commonService.secondary_header }}</h1>
+              </div>
+            }
           </div>
-        </div>
-        <div class="col-md-6 d-flex justify-content-end">
-          <p class="m-0 fw-500">
-            Total {{ totalCount }} product<ng-container *ngIf="totalCount > 1">s</ng-container>
+          <div class="col-md-6 d-flex justify-content-end">
+            <p class="m-0 fw-500">
+              Total {{ totalCount }} product@if (totalCount > 1) {
+              s
+            }
           </p>
         </div>
       </div>
     </div>
-  </ng-container>
+  }
   <!-- <div class="separator-breadcrumb border-top" *ngIf="!commonService.secondary_header"></div> -->
   <div class="top-filter-sec list-button">
     <div class="row">
-      <div *ngIf="!commonService.desktop_device" class="col-md-12 d-flex justify-content-end mb-3">
-        <p class="m-0 fw-500">
-          Total {{ totalCount }} product<ng-container *ngIf="totalCount > 1">s</ng-container>
+      @if (!commonService.desktop_device) {
+        <div class="col-md-12 d-flex justify-content-end mb-3">
+          <p class="m-0 fw-500">
+            Total {{ totalCount }} product@if (totalCount > 1) {
+            s
+          }
         </p>
       </div>
-      <div class="col-md-3 col-12">
-        <form autocomplete="off" (ngSubmit)="ngOnInit()" ngNativeValidate ngbAutofocus>
-          <div class="form-group search_bar m-0">
-            <input type="text" name="search_bar" placeholder="Search" class="form-control"
-              [(ngModel)]="filterForm.search" />
+    }
+    <div class="col-md-3 col-12">
+      <form autocomplete="off" (ngSubmit)="ngOnInit()" ngNativeValidate ngbAutofocus>
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search" class="form-control"
+            [(ngModel)]="filterForm.search" />
             <div class="search_icon">
               <span class="material-symbols-rounded">search</span>
             </div>
-            <div class="sort_icon" *ngIf="!commonService.desktop_device" (click)="onOpenFilterModal(sortModal)">
-              <span class="material-symbols-rounded cursor">sort</span>
-            </div>
-            <div class="filter_icon" *ngIf="!commonService.desktop_device" (click)="onOpenFilterModal(filterModal)">
-              <span class="material-symbols-rounded cursor">filter_alt</span>
-            </div>
+            @if (!commonService.desktop_device) {
+              <div class="sort_icon" (click)="onOpenFilterModal(sortModal)">
+                <span class="material-symbols-rounded cursor">sort</span>
+              </div>
+            }
+            @if (!commonService.desktop_device) {
+              <div class="filter_icon" (click)="onOpenFilterModal(filterModal)">
+                <span class="material-symbols-rounded cursor">filter_alt</span>
+              </div>
+            }
           </div>
         </form>
       </div>
-      <div class="col-md-9 list-button d-flex justify-content-end px-0" *ngIf="commonService.desktop_device">
-        <button class="help-button mr-3" routerLink="/support/products">
-          <span class="material-symbols-rounded mb-0">help</span>Need Help?
-        </button>
-        <button *ngIf="selectedList.length" type="button" class="mr-3" (click)="onOpenDeleteModal(deleteModal)">
-          <span class="material-symbols-rounded">delete</span>Delete
-        </button>
-        <button type="button" class="mr-3" (click)="onOpenFilterModal(sortModal)">
-          <span class="material-symbols-rounded">sort</span>Sort
-        </button>
-        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal)">
-          <span class="material-symbols-rounded">filter_alt</span> Filter
-        </button>
-        <button *ngIf="
+      @if (commonService.desktop_device) {
+        <div class="col-md-9 list-button d-flex justify-content-end px-0">
+          <button class="help-button mr-3" routerLink="/support/products">
+            <span class="material-symbols-rounded mb-0">help</span>Need Help?
+          </button>
+          @if (selectedList.length) {
+            <button type="button" class="mr-3" (click)="onOpenDeleteModal(deleteModal)">
+              <span class="material-symbols-rounded">delete</span>Delete
+            </button>
+          }
+          <button type="button" class="mr-3" (click)="onOpenFilterModal(sortModal)">
+            <span class="material-symbols-rounded">sort</span>Sort
+          </button>
+          <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal)">
+            <span class="material-symbols-rounded">filter_alt</span> Filter
+          </button>
+          @if (
             commonService.store_details.login_type == 'admin' ||
             commonService.subuser_features.indexOf('product_export') != -1
-          " type="button" (click)="exportAsXLSX()" [disabled]="exportLoader" class="mr-3">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-        <button *ngIf="
+            ) {
+            <button type="button" (click)="exportAsXLSX()" [disabled]="exportLoader" class="mr-3">
+              <span class="material-symbols-rounded">file_upload</span> Export
+            </button>
+          }
+          @if (
             commonService.route_permission_list.indexOf('bulk_upload') != -1
-          " type="button" routerLink="/product-sections/products/import" class="mr-3">
-          <span class="material-symbols-rounded">file_download</span> Import
-        </button>
-        <button class="highbutton" *ngIf="
+            ) {
+            <button type="button" routerLink="/product-sections/products/import" class="mr-3">
+              <span class="material-symbols-rounded">file_download</span> Import
+            </button>
+          }
+          @if (
             commonService.store_details?.login_type == 'admin' ||
             commonService.vendor_features.indexOf('add_product') != -1 ||
             commonService.subuser_features.indexOf('add_product') != -1
-          " type="button" (click)="openpage()">
-          <span class="material-symbols-rounded">add</span> Add Product
-        </button>
-      </div>
+            ) {
+            <button class="highbutton" type="button" (click)="openpage()">
+              <span class="material-symbols-rounded">add</span> Add Product
+            </button>
+          }
+        </div>
+      }
     </div>
   </div>
-
   <!-- <div class="separator-breadcrumb border-top"></div> -->
-
   <!-- DATA LIST -->
-  <div class="list-horizontal mt-3" *ngIf="list?.length">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-2 col-3 first_col px-0 cursor header-font">
-            <p class="w-100 w-sm-100 m-b-0">Image</p>
-          </div>
-          <div class="col-md-8 col-6 first_col px-0 header-font">
-            <p class="w-25 w-sm-100 m-b-0">Product</p>
-            <p *ngIf="commonService.store_details?.type != 'estates'" class="w-20 w-sm-100 m-b-0">
-              Stock
-            </p>
-            <p class="w-20 w-sm-100 m-b-0">SKU</p>
-            <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
-            <p class="w-15 w-sm-100 m-b-0">{{ (commonService.store_details._id==configData.dqj_id)? 'Downloads': 'Price' }}</p>
-          </div>
-          <div *ngIf="commonService.subuser_features.indexOf('delete_product') != -1" class="col-md-2 col-6 first_col px-0 justify-content-end">
-            <label class="checkbox checkbox-outline-light">
-              <input type="checkbox" name="allSelected" [(ngModel)]="allSelected" (change)="selectAll(allSelected)" />
-              <span></span>
-              <span class="checkmark" style="border: 2px solid #000000"></span>
-            </label>
-          </div>
-        </div>
-
-        <div *ngFor="let x of list; let i = index" class="list-item data-list-card" [@animate]="{
+  @if (list?.length) {
+    <div class="list-horizontal mt-3">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          @if (commonService.desktop_device) {
+            <div class="list-item data-list-card">
+              <div class="col-md-2 col-3 first_col px-0 cursor header-font">
+                <p class="w-100 w-sm-100 m-b-0">Image</p>
+              </div>
+              <div class="col-md-8 col-6 first_col px-0 header-font">
+                <p class="w-25 w-sm-100 m-b-0">Product</p>
+                @if (commonService.store_details?.type != 'estates') {
+                  <p class="w-20 w-sm-100 m-b-0">
+                    Stock
+                  </p>
+                }
+                <p class="w-20 w-sm-100 m-b-0">SKU</p>
+                <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
+                <p class="w-15 w-sm-100 m-b-0">{{ (commonService.store_details._id==configData.dqj_id)? 'Downloads': 'Price' }}</p>
+              </div>
+              @if (commonService.subuser_features.indexOf('delete_product') != -1) {
+                <div class="col-md-2 col-6 first_col px-0 justify-content-end">
+                  <label class="checkbox checkbox-outline-light">
+                    <input type="checkbox" name="allSelected" [(ngModel)]="allSelected" (change)="selectAll(allSelected)" />
+                    <span></span>
+                    <span class="checkmark" style="border: 2px solid #000000"></span>
+                  </label>
+                </div>
+              }
+            </div>
+          }
+          @for (x of list; track x; let i = $index) {
+<div class="list-item data-list-card" [@animate]="{
             value: '*',
             params: { delay: i * 100 + 'ms', y: '50px' }
           }">
-          <div class="col-xl-2 col-md-3 col-3 first_col px-0 cursor"
-            (click)="!commonService.desktop_device ? goModifyPage(x) : false">
-            <div *ngIf="x.image_list[0]" class="list-thumb d-flex align-self-center">
-              <img [src]="imgBaseUrl + x.image_list[0].image" alt="" />
-            </div>
-            <div *ngIf="!x.image_list[0]" class="list-thumb d-flex align-self-center">
-              <img src="assets/images/default.png" alt="" />
-            </div>
-          </div>
-          <div class="col-xl-8 col-md-6 col-6 first_col px-0"
-            (click)="!commonService.desktop_device ? goModifyPage(x) : false">
-            <p class="w-25 w-sm-100 m-b-0 extra_text dark-font">
-              {{ x.name }}
-              <ng-container *ngIf="commonService.store_details?._id==configData.chettinad_id && x.wl_count">
-                <p class="light-font">
-                  {{x.wl_count}} Like{{ (x.wl_count>1)? 's': '' }}
+              <div class="col-xl-2 col-md-3 col-3 first_col px-0 cursor"
+                (click)="!commonService.desktop_device ? goModifyPage(x) : false">
+                @if (x.image_list[0]) {
+                  <div class="list-thumb d-flex align-self-center">
+                    <img [src]="imgBaseUrl + x.image_list[0].image" alt="" />
+                  </div>
+                }
+                @if (!x.image_list[0]) {
+                  <div class="list-thumb d-flex align-self-center">
+                    <img src="assets/images/default.png" alt="" />
+                  </div>
+                }
+              </div>
+              <div class="col-xl-8 col-md-6 col-6 first_col px-0"
+                (click)="!commonService.desktop_device ? goModifyPage(x) : false">
+                <p class="w-25 w-sm-100 m-b-0 extra_text dark-font">
+                  {{ x.name }}
+                  @if (commonService.store_details?._id==configData.chettinad_id && x.wl_count) {
+                    <p class="light-font">
+                      {{x.wl_count}} Like{{ (x.wl_count>1)? 's': '' }}
+                    </p>
+                  }
                 </p>
-              </ng-container>
-            </p>
-            <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="
-                commonService.desktop_device &&
-                commonService.store_details?.type != 'estates'
-              ">
-              <span *ngIf="x.stock > 0">{{ x.stock }} {{ x.unit }}</span><span *ngIf="x.stock == 0">Out of Stock</span>
-            </p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">{{ x.sku }}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">
-              {{ x.created_on | date : "dd MMM y" }}
-            </p>
-            <p class="w-15 w-sm-100 m-b-0 light-font" *ngIf="commonService.desktop_device || commonService.store_details?.type == 'estates'">
-              <ng-container *ngIf="commonService.store_details._id==configData.dqj_id">
-                {{ (x.downloads?.length)? x.downloads.length: '0' }} No's
-              </ng-container>
-              <ng-container *ngIf="commonService.store_details._id!=configData.dqj_id">
-                {{ x?.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
-              </ng-container>
-            </p>
-          </div>
-          <div *ngIf="commonService.desktop_device" class="col-xl-2 col-md-3 col-3 d-flex justify-content-end px-0">
-            <div *ngIf="commonService.subuser_features.indexOf('update_product') != -1">
+                @if (
+                  commonService.desktop_device &&
+                  commonService.store_details?.type != 'estates'
+                  ) {
+                  <p class="w-20 w-sm-100 m-b-0 light-font">
+                    @if (x.stock > 0) {
+                      <span>{{ x.stock }} {{ x.unit }}</span>
+                      }@if (x.stock == 0) {
+                      <span>Out of Stock</span>
+                    }
+                  </p>
+                }
+                <p class="w-20 w-sm-100 m-b-0 light-font">{{ x.sku }}</p>
+                <p class="w-20 w-sm-100 m-b-0 light-font">
+                  {{ x.created_on | date : "dd MMM y" }}
+                </p>
+                @if (commonService.desktop_device || commonService.store_details?.type == 'estates') {
+                  <p class="w-15 w-sm-100 m-b-0 light-font">
+                    @if (commonService.store_details._id==configData.dqj_id) {
+                      {{ (x.downloads?.length)? x.downloads.length: '0' }} No's
+                    }
+                    @if (commonService.store_details._id!=configData.dqj_id) {
+                      {{ x?.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
+                    }
+                  </p>
+                }
+              </div>
+              @if (commonService.desktop_device) {
+                <div class="col-xl-2 col-md-3 col-3 d-flex justify-content-end px-0">
+                  @if (commonService.subuser_features.indexOf('update_product') != -1) {
+                    <div>
               <a class="light-button" (click)="goModifyPage('')" routerLink="/product-sections/products/modify/{{ x._id }}/{{
                   globalCount
                 }}">
-                <span class="material-symbols-rounded right_arrow transicon">edit</span>Edit
-              </a>
-              <a *ngIf="commonService.ys_features.indexOf('product_reviews') != -1" class="light-button cursor mt-2" (click)="goReviewPage(x)">
-                <span class="material-symbols-rounded right_arrow transicon">edit</span>Review
-              </a>
+                        <span class="material-symbols-rounded right_arrow transicon">edit</span>Edit
+                      </a>
+                      @if (commonService.ys_features.indexOf('product_reviews') != -1) {
+                        <a class="light-button cursor mt-2" (click)="goReviewPage(x)">
+                          <span class="material-symbols-rounded right_arrow transicon">edit</span>Review
+                        </a>
+                      }
+                    </div>
+                  }
+                  @if (commonService.subuser_features.indexOf('delete_product') != -1) {
+                    <div class="align-self-center pl-3 pb-2 item-select">
+                      <label class="checkbox checkbox-outline-light">
+                        <input type="checkbox" name="isSelected{{ i + 1 }}" [(ngModel)]="x.isSelected" (change)="onSelect(x)" />
+                        <span></span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  }
+                </div>
+              }
+              @if (
+                !commonService.desktop_device &&
+                commonService.store_details?.type != 'estates'
+                ) {
+                <div class="col-xl-5 col-md-3 col-3 px-0 text-right flex-end" (click)="goModifyPage(x)">
+                  <div class="d-flex mb-2 justify-content-end">
+                    <p class="m-b-0 d-flex justify-content-end">
+                      <span class="paidbg text-light medium-font m-0">
+                        <span [ngClass]="x.stock > 0 ? 'paid_dot' : 'unpaid_dot'"></span>
+                        <span class="text-light light-font">{{ x.stock }} {{ x.unit }}</span>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="d-flex mb-1 justify-content-end">
+                    <p class="w-30 w-sm-100 m-b-0 light-font text-light">
+                      @if (commonService.store_details._id==configData.dqj_id) {
+                        {{ (x.downloads?.length)? x.downloads.length: '0' }} No's
+                      }
+                      @if (commonService.store_details._id!=configData.dqj_id) {
+                        {{ x?.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
+                      }
+                    </p>
+                  </div>
+                </div>
+              }
             </div>
-            <div *ngIf="commonService.subuser_features.indexOf('delete_product') != -1" class="align-self-center pl-3 pb-2 item-select">
-              <label class="checkbox checkbox-outline-light">
-                <input type="checkbox" name="isSelected{{ i + 1 }}" [(ngModel)]="x.isSelected" (change)="onSelect(x)" />
-                <span></span>
-                <span class="checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <div class="col-xl-5 col-md-3 col-3 px-0 text-right flex-end" *ngIf="
-              !commonService.desktop_device &&
-              commonService.store_details?.type != 'estates'
-            " (click)="goModifyPage(x)">
-            <div class="d-flex mb-2 justify-content-end">
-              <p class="m-b-0 d-flex justify-content-end">
-                <span class="paidbg text-light medium-font m-0">
-                  <span [ngClass]="x.stock > 0 ? 'paid_dot' : 'unpaid_dot'"></span>
-                  <span class="text-light light-font">{{ x.stock }} {{ x.unit }}</span>
-                </span>
-              </p>
-            </div>
-            <div class="d-flex mb-1 justify-content-end">
-              <p class="w-30 w-sm-100 m-b-0 light-font text-light">
-                <ng-container *ngIf="commonService.store_details._id==configData.dqj_id">
-                  {{ (x.downloads?.length)? x.downloads.length: '0' }} No's
-                </ng-container>
-                <ng-container *ngIf="commonService.store_details._id!=configData.dqj_id">
-                  {{ x?.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat }}
-                </ng-container>
-              </p>
+          }
+        </div>
+      </div>
+      <!-- PAGINATION CONTROL -->
+      @if (list.length) {
+        <div class="row mt-4">
+          <div class="col-md-12 product-pagination-wrapper">
+            <ul role="navigation" class="ngx-pagination responsive product-pagination" aria-label="Pagination">
+              <li class="pagination-previous mr-2">
+                <a (click)="page > 1 ? onChangePage('prev') : ''" [ngClass]="page > 1 ? 'cursor' : 'disabled'"
+                  aria-label="page">
+                  <span class="cursor show-for-sr"></span>
+                </a>
+              </li>
+              @if (commonService.desktop_device) {
+                <li class="current">
+                  <span>{{ page }}</span>
+                </li>
+              }
+              @if (!commonService.desktop_device) {
+                <li class="small-screen">
+                  {{ page }} / {{ totalPages }}
+                </li>
+              }
+              <li class="pagination-next ml-2">
+                <a (click)="page < totalPages ? onChangePage('next') : ''"
+                  [ngClass]="page < totalPages ? 'cursor' : 'disabled'" aria-label="page">
+                  <span class="cursor show-for-sr"></span>
+                </a>
+              </li>
+            </ul>
+            <div class="page-count-pagination">
+              <b class="mr-2">Go to page</b>
+              <select name="select_page" style="width: 70px; display: inline" class="form-control select-arrow"
+                [(ngModel)]="page" (change)="commonService.pageTop(0); getProductList()">
+                @for (num of pagesList; track num; let i = $index) {
+                  <option [ngValue]="i + 1">
+                    {{ i + 1 }}
+                  </option>
+                }
+              </select>
+              <!-- <b class="ml-2">page</b> -->
             </div>
           </div>
         </div>
+      }
+    </div>
+  }
+  @if (!list?.length) {
+    <div class="row">
+      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
+        <p align="center">No data to display</p>
       </div>
     </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div *ngIf="list.length" class="row mt-4">
-      <div class="col-md-12 product-pagination-wrapper">
-        <ul role="navigation" class="ngx-pagination responsive product-pagination" aria-label="Pagination">
-          <li class="pagination-previous mr-2">
-            <a (click)="page > 1 ? onChangePage('prev') : ''" [ngClass]="page > 1 ? 'cursor' : 'disabled'"
-              aria-label="page">
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-          <li *ngIf="commonService.desktop_device" class="current">
-            <span>{{ page }}</span>
-          </li>
-          <li *ngIf="!commonService.desktop_device" class="small-screen">
-            {{ page }} / {{ totalPages }}
-          </li>
-          <li class="pagination-next ml-2">
-            <a (click)="page < totalPages ? onChangePage('next') : ''"
-              [ngClass]="page < totalPages ? 'cursor' : 'disabled'" aria-label="page">
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-        </ul>
-        <div class="page-count-pagination">
-          <b class="mr-2">Go to page</b>
-          <select name="select_page" style="width: 70px; display: inline" class="form-control select-arrow"
-            [(ngModel)]="page" (change)="commonService.pageTop(0); getProductList()">
-            <option [ngValue]="i + 1" *ngFor="let num of pagesList; let i = index">
-              {{ i + 1 }}
-            </option>
-          </select>
-          <!-- <b class="ml-2">page</b> -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="!list?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
-      <p align="center">No data to display</p>
-    </div>
-  </div>
+  }
 </div>
+}
 
 <!-- filter Modal -->
 <ng-template #filterModal let-modal>
@@ -304,12 +375,14 @@
                   By Catalog
                 </a>
               </li>
-              <li *ngIf="vendorList.length">
-                <a class="hz_carosal" [ngClass]="{ carosal_button: selectedItem == 'vendors' }"
-                  (click)="selectedItem = 'vendors'">
-                  By Vendors
-                </a>
-              </li>
+              @if (vendorList.length) {
+                <li>
+                  <a class="hz_carosal" [ngClass]="{ carosal_button: selectedItem == 'vendors' }"
+                    (click)="selectedItem = 'vendors'">
+                    By Vendors
+                  </a>
+                </li>
+              }
               <li>
                 <a class="hz_carosal" [ngClass]="{ carosal_button: selectedItem == 'bydate' }"
                   (click)="selectedItem = 'bydate'">
@@ -320,151 +393,167 @@
           </div>
         </div>
 
-        <div class="row m-0 p-3" *ngIf="selectedItem === 'bytype'">
-          <div class="modal-card col-md-12">
-            <div class="radio_buttons col-12">
-              <input type="radio" id="all" value="all" name="product_type" [(ngModel)]="filterForm.product_type" />
-              <label for="all">All</label>
+        @if (selectedItem === 'bytype') {
+          <div class="row m-0 p-3">
+            <div class="modal-card col-md-12">
+              <div class="radio_buttons col-12">
+                <input type="radio" id="all" value="all" name="product_type" [(ngModel)]="filterForm.product_type" />
+                <label for="all">All</label>
+              </div>
+              <div class="col-md-12 border-top"></div>
+              @if (commonService.store_details?.type != 'estates') {
+                <div class="radio_buttons col-12">
+                  <input type="radio" id="in" value="in" name="product_type" [(ngModel)]="filterForm.product_type" />
+                  <label for="in">In Stock</label>
+                </div>
+                <div class="col-md-12 border-top"></div>
+                <div class="radio_buttons col-12">
+                  <input type="radio" id="out" value="out" name="product_type" [(ngModel)]="filterForm.product_type" />
+                  <label for="out">Out Of Stock</label>
+                </div>
+                <div class="col-md-12 border-top"></div>
+              }
             </div>
-            <div class="col-md-12 border-top"></div>
-            <ng-container *ngIf="commonService.store_details?.type != 'estates'">
-              <div class="radio_buttons col-12">
-                <input type="radio" id="in" value="in" name="product_type" [(ngModel)]="filterForm.product_type" />
-                <label for="in">In Stock</label>
-              </div>
-              <div class="col-md-12 border-top"></div>
-              <div class="radio_buttons col-12">
-                <input type="radio" id="out" value="out" name="product_type" [(ngModel)]="filterForm.product_type" />
-                <label for="out">Out Of Stock</label>
-              </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
           </div>
-        </div>
+        }
 
-        <div class="row m-0 p-3" *ngIf="selectedItem === 'catalog'">
-          <div class="modal-card col-md-12">
-            <ng-container *ngFor="let x of categoryList">
-              <div class="radio_buttons col-12">
-                <input type="radio" id="{{ x._id }}" [value]="x._id" name="category_id"
-                  [(ngModel)]="filterForm.category_id" />
-                <label for="{{ x._id }}">{{ x.name }}</label>
+        @if (selectedItem === 'catalog') {
+          <div class="row m-0 p-3">
+            <div class="modal-card col-md-12">
+              @for (x of categoryList; track x) {
+                <div class="radio_buttons col-12">
+                  <input type="radio" id="{{ x._id }}" [value]="x._id" name="category_id"
+                    [(ngModel)]="filterForm.category_id" />
+                    <label for="{{ x._id }}">{{ x.name }}</label>
+                  </div>
+                  <div class="col-md-12 border-top"></div>
+                }
               </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>
-        </div>
+            </div>
+          }
 
-        <div class="row m-0 p-3" *ngIf="selectedItem === 'vendors'">
-          <div class="modal-card col-md-12">
-            <ng-container *ngFor="let x of vendorList">
-              <div class="radio_buttons col-12">
-                <input type="radio" id="{{ x._id }}" [value]="x._id" name="vendor_id"
-                  [(ngModel)]="filterForm.vendor_id" />
-                <label for="{{ x._id }}">{{ x.company_details?.brand }}</label>
+          @if (selectedItem === 'vendors') {
+            <div class="row m-0 p-3">
+              <div class="modal-card col-md-12">
+                @for (x of vendorList; track x) {
+                  <div class="radio_buttons col-12">
+                    <input type="radio" id="{{ x._id }}" [value]="x._id" name="vendor_id"
+                      [(ngModel)]="filterForm.vendor_id" />
+                      <label for="{{ x._id }}">{{ x.company_details?.brand }}</label>
+                    </div>
+                    <div class="col-md-12 border-top"></div>
+                  }
+                </div>
               </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>
-        </div>
-        <div class="row m-0 p-3" *ngIf="selectedItem === 'bydate'">
-          <div class="col-md-6 col-6 mb-2">
-            <div class="form-group">
-              <input type="text" placeholder="Select From Date" class="form-control" name="from_date" autocomplete="off"
+            }
+            @if (selectedItem === 'bydate') {
+              <div class="row m-0 p-3">
+                <div class="col-md-6 col-6 mb-2">
+                  <div class="form-group">
+                    <input type="text" placeholder="Select From Date" class="form-control" name="from_date" autocomplete="off"
                 [(ngModel)]="filterForm.from_date" bsDatepicker [bsConfig]="{
                   showWeekNumbers: false,
                   dateInputFormat: 'DD-MM-YYYY'
                 }" readonly />
-            </div>
-          </div>
-          <div class="col-md-6 col-6 mb-2">
-            <div class="form-group">
-              <input type="text" placeholder="Select To Date" class="form-control" name="to_date" autocomplete="off"
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-6 mb-2">
+                    <div class="form-group">
+                      <input type="text" placeholder="Select To Date" class="form-control" name="to_date" autocomplete="off"
                 [(ngModel)]="filterForm.to_date" bsDatepicker [minDate]="filterForm.from_date" [bsConfig]="{
                   showWeekNumbers: false,
                   dateInputFormat: 'DD-MM-YYYY'
                 }" readonly />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit()">
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- sort Modal -->
-<ng-template #sortModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
-          <span class="popup_text">Sort</span>
-        </h4>
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0 p-3">
-          <div class="modal-card col-md-12">
-            <ng-container *ngFor="let x of sortList">
-              <div class="radio_buttons col-12">
-                <input type="radio" id="{{ x.value }}" [value]="x.value" name="sort_by"
-                  [(ngModel)]="filterForm.sort_by" />
-                <label for="{{ x.value }}">{{ x.name }}</label>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit()">
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+              <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+                  <span class="black-outline-txt">Cancel</span>
+                </button>
+                <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit()">
+                  <span class="orng-outline-txt">Apply</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-template>
 
-<!-- Delete Modal -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong *ngIf="deleteForm.skuList?.length">
-        Are you sure you want to remove the following product{{
-        deleteForm.skuList?.length > 1 ? "s" : ""
-        }}?<br /><br />
-        <span class="txt-grdint-highlight">{{
-          deleteForm.skuList?.join(", ")
-          }}</span>
-      </strong>
-      <strong *ngIf="!deleteForm.skuList?.length">
-        No products selected
-      </strong>
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
-      <span class="black-outline-txt">{{
-        deleteForm.skuList?.length ? "No" : "Close"
-        }}</span>
-    </button>
-    <button *ngIf="deleteForm.skuList?.length" type="button" class="btn btn-wide orng-outline-btn ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit" (click)="onDelete()">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+        <!-- sort Modal -->
+        <ng-template #sortModal let-modal>
+          <form autocomplete="off" ngbAutofocus>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4>
+                  <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
+                  <span class="popup_text">Sort</span>
+                </h4>
+              </div>
+              <div class="modal-body filtersec">
+                <div class="row m-0 p-3">
+                  <div class="modal-card col-md-12">
+                    @for (x of sortList; track x) {
+                      <div class="radio_buttons col-12">
+                        <input type="radio" id="{{ x.value }}" [value]="x.value" name="sort_by"
+                          [(ngModel)]="filterForm.sort_by" />
+                          <label for="{{ x.value }}">{{ x.name }}</label>
+                        </div>
+                        <div class="col-md-12 border-top"></div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+                    <span class="black-outline-txt">Cancel</span>
+                  </button>
+                  <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit()">
+                    <span class="orng-outline-txt">Apply</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+
+          <!-- Delete Modal -->
+          <ng-template #deleteModal let-modal>
+            <div class="modal-body">
+              <p>
+                @if (deleteForm.skuList?.length) {
+                  <strong>
+                    Are you sure you want to remove the following product{{
+                    deleteForm.skuList?.length > 1 ? "s" : ""
+                    }}?<br /><br />
+                    <span class="txt-grdint-highlight">{{
+                      deleteForm.skuList?.join(", ")
+                    }}</span>
+                  </strong>
+                }
+                @if (!deleteForm.skuList?.length) {
+                  <strong>
+                    No products selected
+                  </strong>
+                }
+              </p>
+              @if (deleteForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">
+                <span class="black-outline-txt">{{
+                  deleteForm.skuList?.length ? "No" : "Close"
+                }}</span>
+              </button>
+              @if (deleteForm.skuList?.length) {
+                <button type="button" class="btn btn-wide orng-outline-btn ladda-button m-1"
+                  [disabled]="deleteForm.submit" [ladda]="deleteForm.submit" (click)="onDelete()">
+                  <span class="orng-outline-txt">Yes</span>
+                </button>
+              }
+            </div>
+          </ng-template>

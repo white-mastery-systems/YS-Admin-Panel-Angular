@@ -1,98 +1,114 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1 *ngIf="!params.chart_id">Create Size Chart</h1>
-            <h1 *ngIf="params.chart_id">{{chartForm.name}}</h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              @if (!params.chart_id) {
+                <h1>Create Size Chart</h1>
+              }
+              @if (params.chart_id) {
+                <h1>{{chartForm.name}}</h1>
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-
-  <form autocomplete="off" (ngSubmit)="params.chart_id? onUpdate(): onAdd()" ngNativeValidate ngbAutofocus>
-    ​
-        <div class="row">
-          <div class="col-md-6 form-group mb-3">
-            <label class="light-font fw-600">Name</label>
-            <input type="text" name="name" class="form-control" [(ngModel)]="chartForm.name" #name="ngModel" required />
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label class="light-font fw-600">Unit</label>
-            <input type="text" name="unit" class="form-control" [(ngModel)]="chartForm.unit" #name="ngModel" required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label class="light-font fw-600">Description</label>
-            <textarea class="form-control" aria-label="With textarea" name="description" [(ngModel)]="chartForm.description" #description="ngModel" required></textarea>
+    }
+    <form autocomplete="off" (ngSubmit)="params.chart_id? onUpdate(): onAdd()" ngNativeValidate ngbAutofocus>
+      ​
+      <div class="row">
+        <div class="col-md-6 form-group mb-3">
+          <label class="light-font fw-600">Name</label>
+          <input type="text" name="name" class="form-control" [(ngModel)]="chartForm.name" #name="ngModel" required />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label class="light-font fw-600">Unit</label>
+          <input type="text" name="unit" class="form-control" [(ngModel)]="chartForm.unit" #name="ngModel" required />
+        </div>
+        <div class="col-md-12 form-group mb-3">
+          <label class="light-font fw-600">Description</label>
+          <textarea class="form-control" aria-label="With textarea" name="description" [(ngModel)]="chartForm.description" #description="ngModel" required></textarea>
+        </div>
+      </div>
+      ​
+      <div class="row mt-3 mb-3">
+        <div class="col-md-4 col-12 mb-3"><h5 class="light-font fw-600">Size Chart</h5></div>
+        <div class="col-md-8 col-12 mb-3">
+          <div class="row justify-content-end m-0" >
+            @if (duplicateKeys?.length>1) {
+              <button class="light-button mr-3" (click)="removeColumn(duplicateKeys.length-1);">
+                <span class="material-symbols-rounded">remove</span>Remove Column
+              </button>
+            }
+            <button class="light-button"  (click)="addColumn();">
+              <span class="material-symbols-rounded">add</span>Add Column
+            </button>
           </div>
         </div>
-    ​
-        <div class="row mt-3 mb-3">
-          <div class="col-md-4 col-12 mb-3"><h5 class="light-font fw-600">Size Chart</h5></div>
-          <div class="col-md-8 col-12 mb-3">
-                <div class="row justify-content-end m-0" >     
-                  
-                <button *ngIf="duplicateKeys?.length>1" class="light-button mr-3" (click)="removeColumn(duplicateKeys.length-1);">
-                <span class="material-symbols-rounded">remove</span>Remove Column
-                </button>  
-                <button class="light-button"  (click)="addColumn();">
-                  <span class="material-symbols-rounded">add</span>Add Column
-                  </button>    
-                </div>
-          </div>
-             ​
-          <div class="col-md-12 pb-4 slim-scroll" style="width:100%;overflow-x:scroll;">
-            <table class="table table-bordered size-chart">
-              <thead>
-                <th *ngFor='let key of duplicateKeys; let i=index;'>
+        ​
+        <div class="col-md-12 pb-4 slim-scroll" style="width:100%;overflow-x:scroll;">
+          <table class="table table-bordered size-chart">
+            <thead>
+              @for (key of duplicateKeys; track key; let i = $index) {
+                <th>
                   <input type="text" class="table-input form-control" [(ngModel)]="key.name" [ngModelOptions]="{standalone: true}" (focusout)="focusOutFunction($event, i)" required />
                 </th>
-              </thead>
-              <tbody>
-                <tr *ngFor="let x of chartForm.chart_list;">
-                  <td *ngFor="let key of keys;">
-                    <input type="text" class="table-input form-control" [(ngModel)]="x[key]" [ngModelOptions]="{standalone: true}" required />
-                  </td>
+              }
+            </thead>
+            <tbody>
+              @for (x of chartForm.chart_list; track x) {
+                <tr>
+                  @for (key of keys; track key) {
+                    <td>
+                      <input type="text" class="table-input form-control" [(ngModel)]="x[key]" [ngModelOptions]="{standalone: true}" required />
+                    </td>
+                  }
                 </tr>
-              </tbody>
-            </table>
-            
-          </div>
-          <div class="row m-0" >  
-            <div class="col-md-12 d-flex">
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="row m-0" >
+          <div class="col-md-12 d-flex">
             <button class="light-button mr-3"  (click)="chartForm.chart_list.push({});">
               <span class="material-symbols-rounded">add</span> Add Row
-            </button>     
-            <button *ngIf="chartForm?.chart_list?.length>1" class="light-button" (click)="chartForm.chart_list.splice(chartForm.chart_list.length-1, 1);">
+            </button>
+            @if (chartForm?.chart_list?.length>1) {
+              <button class="light-button" (click)="chartForm.chart_list.splice(chartForm.chart_list.length-1, 1);">
                 <span class="material-symbols-rounded">remove</span>Remove Row
-              </button>  
-            </div>   
+              </button>
+            }
           </div>
-          <!-- <div class="col-md-1">
-            <button type="button" class="btn blue-outline-btn mr-1" (click)="addColumn();">
-              <span class="blue-outline-txt">+ Column</span></button>
-            <button *ngIf="duplicateKeys?.length>1" type="button" class="btn btn-primary" (click)="removeColumn(duplicateKeys.length-1);">- Column</button>
-          </div> -->
         </div>
-        <div class="row">
-          <div *ngIf="chartForm.errorMsg" style="margin: 25px 0 25px 0;">
+        <!-- <div class="col-md-1">
+        <button type="button" class="btn blue-outline-btn mr-1" (click)="addColumn();">
+          <span class="blue-outline-txt">+ Column</span></button>
+          <button *ngIf="duplicateKeys?.length>1" type="button" class="btn btn-primary" (click)="removeColumn(duplicateKeys.length-1);">- Column</button>
+        </div> -->
+      </div>
+      <div class="row">
+        @if (chartForm.errorMsg) {
+          <div style="margin: 25px 0 25px 0;">
             <p class="text-danger" align="center">{{ chartForm.errorMsg }}</p>
           </div>
-          <div align="center" class="col-12 page_fixedfooter">
-            <button type="button" routerLink="/product-extras/size-chart" class="btn btn-wide black-outline-btn">
-             <span class="black-outline-txt">Cancel</span>
-            </button>&nbsp; &nbsp; &nbsp;
-            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">{{params.chart_id? 'Update': 'Save'}}</button>
-          </div>
+        }
+        <div align="center" class="col-12 page_fixedfooter">
+          <button type="button" routerLink="/product-extras/size-chart" class="btn btn-wide black-outline-btn">
+            <span class="black-outline-txt">Cancel</span>
+          </button>&nbsp; &nbsp; &nbsp;
+          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">{{params.chart_id? 'Update': 'Save'}}</button>
         </div>
-    ​
-      </form>
-
-</div>
+      </div>
+      ​
+    </form>
+  </div>
+}

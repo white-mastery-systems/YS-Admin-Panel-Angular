@@ -1,218 +1,244 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="help_mobile_button mr-3" routerLink="/support/promo-codes">
-    <img src="assets/icons/help.svg" title="help">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-  <div class="add_but" routerLink="/setting/coupon-codes/new">
+}
+
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="help_mobile_button mr-3" routerLink="/support/promo-codes">
+      <img src="assets/icons/help.svg" title="help">
+    </div>
+    <div class="add_but" routerLink="/setting/coupon-codes/new">
       <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-  
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <h1>Offers</h1>
-        </div>
-        <div class="col-md-4 d-flex justify-content-end">
-          <button class="help-button" routerLink="/support/promo-codes">
-            <span class="material-symbols-rounded mb-0">help</span>Need Help?
-          </button>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-          <div class="filter_icon" *ngIf="!commonService.desktop_device" (click)="onOpenFilterModal(filterModal);">
-            <span class="material-symbols-rounded cursor">filter_alt</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);"><span
-          class="material-symbols-rounded">filter_alt</span>Filter</button>
-        <button class="highbutton" type="button" routerLink="/setting/coupon-codes/new">
-          <span class="material-symbols-rounded">add</span>Create Offer
-        </button>
-      </div>  
     </div>
   </div>
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'code':search_bar)?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-9 first_col px-0 header-font">
-            <p class="w-30 w-sm-100">Name</p>
-            <p class="w-20 w-sm-100 m-b-0">Usage</p>
-            <p class="w-30 w-sm-100 m-b-0">Date & Time</p>
-            <p class="w-20 w-sm-100 m-b-0">Status</p>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Offers</h1>
+          </div>
+          <div class="col-md-4 d-flex justify-content-end">
+            <button class="help-button" routerLink="/support/promo-codes">
+              <span class="material-symbols-rounded mb-0">help</span>Need Help?
+            </button>
           </div>
         </div>
-        <div class="col-md-4 col-6">&nbsp;</div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderDesc:'created_on' | fieldSearch:'code':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="ribbon-band" *ngIf="!commonService.desktop_device" [ngClass]="{
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+            @if (!commonService.desktop_device) {
+              <div class="filter_icon" (click)="onOpenFilterModal(filterModal);">
+                <span class="material-symbols-rounded cursor">filter_alt</span></div>
+              }
+            </div>
+          </div>
+          @if (commonService.desktop_device) {
+            <div class="col-md-6 list-button d-flex justify-content-end">
+              <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);"><span
+              class="material-symbols-rounded">filter_alt</span>Filter</button>
+              <button class="highbutton" type="button" routerLink="/setting/coupon-codes/new">
+                <span class="material-symbols-rounded">add</span>Create Offer
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- DATA LIST -->
+      @if ((list | fieldSearch:'code':search_bar)?.length) {
+        <div class="list-horizontal">
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div class="list-item data-list-card">
+                  <div class="col-md-9 first_col px-0 header-font">
+                    <p class="w-30 w-sm-100">Name</p>
+                    <p class="w-20 w-sm-100 m-b-0">Usage</p>
+                    <p class="w-30 w-sm-100 m-b-0">Date & Time</p>
+                    <p class="w-20 w-sm-100 m-b-0">Status</p>
+                  </div>
+                </div>
+              }
+              <div class="col-md-4 col-6">&nbsp;</div>
+              @for (x of list | numOrderDesc:'created_on' | fieldSearch:'code':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+                <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  @if (!commonService.desktop_device) {
+<div class="ribbon-band" [ngClass]="{
             'green-band': x.code_status === 'Active',
             'blue-band': x.code_status === 'Inactive',
             'red-band': x.code_status === 'Expired'
           }">{{x.code_status}}</div>
-          <div *ngIf="commonService.desktop_device && x.code_type=='auto_discount'" class="ribbon-band green-band">
-            Auto Discount
-          </div>
-          <div class="col-md-9 col-8 first_col px-0">
-            <p class="w-30 w-sm-100 dark-font">{{x.code}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">
-              <ng-container *ngIf="!x.usage_limit || x.usage_limit<=0">{{x.redeemed_count}} used</ng-container>
-              <ng-container *ngIf="x.usage_limit>0">{{x.redeemed_count}}/{{x.usage_limit}} used</ng-container>
-            </p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">
-              From {{x.valid_from | date: "dd MMM y hh:mm a"}}
-              <span *ngIf="x.valid_to"> To {{x.valid_to | date: "dd MMM y hh:mm a"}}</span>
-            </p>
-            <p *ngIf="!commonService.desktop_device && x.code_type=='auto_discount'" class="w-30 w-sm-100 dark-font">
-              <span class="badge badge-green-background">Auto Discount</span>
-            </p>
-            <p class="w-20 w-sm-100" [ngClass]="commonService.desktop_device? 'justify-content-end': ''" *ngIf="commonService.desktop_device">
+                  }
+                  @if (commonService.desktop_device && x.code_type=='auto_discount') {
+                    <div class="ribbon-band green-band">
+                      Auto Discount
+                    </div>
+                  }
+                  <div class="col-md-9 col-8 first_col px-0">
+                    <p class="w-30 w-sm-100 dark-font">{{x.code}}</p>
+                    <p class="w-20 w-sm-100 m-b-0 light-font">
+                      @if (!x.usage_limit || x.usage_limit<=0) {
+                        {{x.redeemed_count}} used
+                      }
+                      @if (x.usage_limit>0) {
+                        {{x.redeemed_count}}/{{x.usage_limit}} used
+                      }
+                    </p>
+                    <p class="w-30 w-sm-100 m-b-0 light-font">
+                      From {{x.valid_from | date: "dd MMM y hh:mm a"}}
+                      @if (x.valid_to) {
+                        <span> To {{x.valid_to | date: "dd MMM y hh:mm a"}}</span>
+                      }
+                    </p>
+                    @if (!commonService.desktop_device && x.code_type=='auto_discount') {
+                      <p class="w-30 w-sm-100 dark-font">
+                        <span class="badge badge-green-background">Auto Discount</span>
+                      </p>
+                    }
+                    @if (commonService.desktop_device) {
+                      <p class="w-20 w-sm-100" [ngClass]="commonService.desktop_device? 'justify-content-end': ''">
               <span class="badge" [ngClass]="{
                 'badge-green-background': x.code_status === 'Active',
                 'badge-blue-background': x.code_status === 'Inactive',
                 'badge-red-background': x.code_status === 'Expired'
               }">{{x.code_status}}</span>
-            </p>
+                      </p>
+                    }
+                  </div>
+                  <div class="col-md-3 col-4">
+                    <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                        <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':
+                        ''}}
+                      </button>
+                      <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="/setting/coupon-codes/modify/{{x._id}}">
+                        <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility':
+                          'chevron_right'}}
+                        </span> {{commonService.desktop_device? 'View': ''}}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
-          <div class="col-md-3 col-4">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">     
-              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':
-                ''}}
-              </button>  
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="/setting/coupon-codes/modify/{{x._id}}">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility':
-                  'chevron_right'}}
-                </span> {{commonService.desktop_device? 'View': ''}}
-              </button>        
-            </div>            
-          </div>
-        </div>
-      </div>      
-    </div>   
-
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true" maxSize="5"
-          previousLabel="" nextLabel=""></pagination-controls>
-      </div>
-    </div>
-
-
-  </div>
-
-  <div *ngIf="!(list | fieldSearch:'code':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-
-</div>
-
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong>Are you sure you want to delete
-        <span class="txt-grdint-highlight">"{{deleteForm.code}}"</span>?</strong>
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-wide black-outline-btn" id="closeModal" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
-
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor"
-            (click)="list_type=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Filter</span>
-        </h4>
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0">
-          <div class="carosal w-100">
-            <ul class="px-3">
-              <li>
-                <a class="hz_carosal carosal_button">
-                  By Status
-                </a>
-            </ul>
+          <!-- PAGINATION CONTROL -->
+          <div class="row">
+            <div class="col-md-12 mt-3">
+              <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true" maxSize="5"
+              previousLabel="" nextLabel=""></pagination-controls>
+            </div>
           </div>
         </div>
-
-        <div class="row m-0 p-3">
-          <div class="modal-card col-md-12">          
-            <div class="radio_buttons col-12">
-              <input type="radio" id="all" value="all" name="list_type" [(ngModel)]="list_type">
-              <label for="all">All</label>
-            </div>
-            <div class="col-md-12 border-top"></div>
-
-            <div class="radio_buttons col-12">
-              <input type="radio" id="Active" value="Active" name="list_type" [(ngModel)]="list_type">
-              <label for="Active">Active</label>
-            </div>
-            <div class="col-md-12 border-top"></div>
-
-            <div class="radio_buttons col-12">
-              <input type="radio" id="Inactive" value="Inactive" name="list_type" [(ngModel)]="list_type">
-              <label for="Inactive">Inactive</label>
-            </div>
-            <div class="col-md-12 border-top"></div>
-
-            <div class="radio_buttons col-12">
-              <input type="radio" id="Expired" value="Expired" name="list_type" [(ngModel)]="list_type">
-              <label for="Expired">Expired</label>
-            </div>
-            <div class="col-md-12 border-top"></div>
-            
-          </div>         
+      }
+      @if (!(list | fieldSearch:'code':search_bar)?.length) {
+        <div class="row">
+          <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+            <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+            <p align="center">No data to display</p>
+          </div>
         </div>
-      </div>
+      }
+    </div>
+  }
 
+  <!-- DELETE MODAL -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-body">
+      <p>
+        <strong>Are you sure you want to delete
+          <span class="txt-grdint-highlight">"{{deleteForm.code}}"</span>?</strong>
+        </p>
+        @if (deleteForm.errorMsg) {
+          <div>
+            <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+          </div>
+        }
+      </div>
       <div class="modal-footer">
-        <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
-        <button type="button" class="btn btn-wide black-outline-btn"
-          (click)="list_type=tempFilter; modal.dismiss('cancel');">
-          <span class="black-outline-txt">Cancel</span>
+        <button type="button" class="btn btn-wide black-outline-btn" id="closeModal" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">No</span>
         </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="filterList(list_type);">
-          <span class="orng-outline-txt">Apply</span>
+        <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+          <span class="orng-outline-txt">Yes</span>
         </button>
       </div>
+    </ng-template>
 
-    </div>
-  </form>
-</ng-template>
+    <!-- filter Modal -->
+    <ng-template #filterModal let-modal>
+      <form autocomplete="off" ngbAutofocus>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+              <span class="material-symbols-rounded cursor"
+              (click)="list_type=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
+              <span class="popup_text">Filter</span>
+            </h4>
+          </div>
+          <div class="modal-body filtersec">
+            <div class="row m-0">
+              <div class="carosal w-100">
+                <ul class="px-3">
+                  <li>
+                    <a class="hz_carosal carosal_button">
+                      By Status
+                    </a>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="row m-0 p-3">
+                <div class="modal-card col-md-12">
+                  <div class="radio_buttons col-12">
+                    <input type="radio" id="all" value="all" name="list_type" [(ngModel)]="list_type">
+                    <label for="all">All</label>
+                  </div>
+                  <div class="col-md-12 border-top"></div>
+
+                  <div class="radio_buttons col-12">
+                    <input type="radio" id="Active" value="Active" name="list_type" [(ngModel)]="list_type">
+                    <label for="Active">Active</label>
+                  </div>
+                  <div class="col-md-12 border-top"></div>
+
+                  <div class="radio_buttons col-12">
+                    <input type="radio" id="Inactive" value="Inactive" name="list_type" [(ngModel)]="list_type">
+                    <label for="Inactive">Inactive</label>
+                  </div>
+                  <div class="col-md-12 border-top"></div>
+
+                  <div class="radio_buttons col-12">
+                    <input type="radio" id="Expired" value="Expired" name="list_type" [(ngModel)]="list_type">
+                    <label for="Expired">Expired</label>
+                  </div>
+                  <div class="col-md-12 border-top"></div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
+              <button type="button" class="btn btn-wide black-outline-btn"
+                (click)="list_type=tempFilter; modal.dismiss('cancel');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="filterList(list_type);">
+                <span class="orng-outline-txt">Apply</span>
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </ng-template>

@@ -5,12 +5,16 @@
   <source src="assets/audio/notification.mp3" type="audio/mpeg">
 </audio>
 
-<div *ngIf="commonService.toastMsg" class="toastbar">
-  <div id="toaster-div">
-    <div *ngIf="commonService.toastMsg" id="snackbar" [ngClass]="commonService.toastErr? 'red':'green'">
-      <div class="px-0" >
-        {{commonService.toastMsg}}
-      </div>
+@if (commonService.toastMsg) {
+  <div class="toastbar">
+    <div id="toaster-div">
+      @if (commonService.toastMsg) {
+        <div id="snackbar" [ngClass]="commonService.toastErr? 'red':'green'">
+          <div class="px-0" >
+            {{commonService.toastMsg}}
+          </div>
+        </div>
+      }
     </div>
   </div>
-</div>
+}

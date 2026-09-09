@@ -1,29 +1,30 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>  
-
-  <!-- DATA LIST -->
-  <div *ngIf="customer_details?.cart_list?.length"  class="list-horizontal order-details">
-
-
-    <div class="row ">
-      <div class="col-md-9 col-12">
-         <div class="row m-0">
-            <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pl-0':'px-0'">
+    }
+    <!-- DATA LIST -->
+    @if (customer_details?.cart_list?.length) {
+      <div  class="list-horizontal order-details">
+        <div class="row ">
+          <div class="col-md-9 col-12">
+            <div class="row m-0">
+              <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pl-0':'px-0'">
                 <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
                   <div class="icons mb-0">
                     <span class="material-symbols-rounded">calendar_month</span>
@@ -31,31 +32,30 @@
                   <div class="order-details-cardcontent">
                     <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Date & Time</label>
                     <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                        {{ customer_details.cart_updated_on | date: "dd MMM y hh:mm a" }}
+                      {{ customer_details.cart_updated_on | date: "dd MMM y hh:mm a" }}
                     </span>
                   </div>
                 </div>
               </div>
               <div class="col-12 col-md-6 mb-3" [ngClass]="commonService.desktop_device?'pr-0':'px-0'">
-                  <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
-                    <div class="icons mb-0">
-                      <span class="material-symbols-rounded">payments</span>
-                    </div>
-                    <div class="order-details-cardcontent">
-                      <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Cart Value</label>
-                      <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
-                          {{ cartTotal | currency: commonService.store_currency?.country_code}}
-                      </span>
-                    </div>
+                <div class=" order-details-card d-flex justify-content-start align-items-center flex-row ">
+                  <div class="icons mb-0">
+                    <span class="material-symbols-rounded">payments</span>
                   </div>
+                  <div class="order-details-cardcontent">
+                    <label class="font-14 cursor dark-font text-left medium-font ml-3 mb-1">Cart Value</label>
+                    <span class="cursor ml-3 font-12 medium-font m-b-0 text-left">
+                      {{ cartTotal | currency: commonService.store_currency?.country_code}}
+                    </span>
+                  </div>
+                </div>
               </div>
-
-         </div>
-
+            </div>
             <!-- list-item -->
             <div class="data-list-card-wrapper mb-3">
-                <div class="data-list-card-inner">
-                  <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
+              <div class="data-list-card-inner">
+                @if (commonService.desktop_device) {
+                  <div class="list-item data-list-card">
                     <div class="col-md-2 col-4 first_col px-0 cursor header-font">
                       <p class="w-35 w-sm-100 m-b-0">Image</p>
                     </div>
@@ -65,133 +65,123 @@
                       <p class="w-25 w-sm-100 m-b-0">Price</p>
                     </div>
                   </div>
+                }
+                @for (x of customer_details.cart_list; track x; let i = $index) {
                   <div class="list-item data-list-card"
-                  *ngFor="let x of customer_details.cart_list; let i=index;"
                     [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
                     <div class="col-md-2 col-3 first_col px-0 cursor">
-                      <div *ngIf="x.image" class="list-thumb d-flex align-self-center">
+                      @if (x.image) {
+                        <div class="list-thumb d-flex align-self-center">
                           <img [src]="imgBaseUrl+x.image" alt="">
-                      </div>
+                        </div>
+                      }
                     </div>
                     <div class="col-md-10 col-9 first_col align-items-center">
                       <p class="w-50 w-sm-100 m-b-0 dark-font">
                         {{x.name}}
-                        <ng-container *ngIf="x.variant_status">
-                            <ng-container *ngFor="let y of x.variant_types;">
-                                <p class=" w-sm-100 m-b-0 light-font"> <b>{{y.name}}: </b>{{y.value}}</p>
-                            </ng-container>
-                          </ng-container>
-                        <ng-container *ngIf="x.addon_status"> 
-                            <span class="light-font"><span class="light-font">Addon:</span> {{x.selected_addon?.name}}</span>
-                        </ng-container>
-                        </p>
-                        <p class="w-25 w-sm-100 m-b-0 light-font">{{x.quantity}} {{x.unit? x.unit: 'Qty'}}</p>
-                        <p class="w-25 w-sm-100 m-b-0 light-font" *ngIf="x.unit=='Pcs'">{{ (x.final_price*x.quantity) | currency:
-                            commonService.store_currency?.country_code}}</p>
-                        <p class="w-25 w-sm-100 m-b-0 light-font" *ngIf="x.unit!='Pcs'">{{
-                            ((x.final_price*x.quantity)+x.addon_price) |
-                            currency: commonService.store_currency?.country_code}}</p>
+                        @if (x.variant_status) {
+                          @for (y of x.variant_types; track y) {
+                            <p class=" w-sm-100 m-b-0 light-font"> <b>{{y.name}}: </b>{{y.value}}</p>
+                          }
+                        }
+                        @if (x.addon_status) {
+                          <span class="light-font"><span class="light-font">Addon:</span> {{x.selected_addon?.name}}</span>
+                        }
+                      </p>
+                      <p class="w-25 w-sm-100 m-b-0 light-font">{{x.quantity}} {{x.unit? x.unit: 'Qty'}}</p>
+                      @if (x.unit=='Pcs') {
+                        <p class="w-25 w-sm-100 m-b-0 light-font">{{ (x.final_price*x.quantity) | currency:
+                        commonService.store_currency?.country_code}}</p>
+                      }
+                      @if (x.unit!='Pcs') {
+                        <p class="w-25 w-sm-100 m-b-0 light-font">{{
+                          ((x.final_price*x.quantity)+x.addon_price) |
+                        currency: commonService.store_currency?.country_code}}</p>
+                      }
                     </div>
-          
                   </div>
-                </div>
+                }
               </div>
-      </div>
-      <div class="col-md-3 col-12">
-          <h5 class="mb-3 dark-font">Details</h5>
-          <div class="order-details-card">
-            <!-- customer -->
-            <div class="order-details-cardinner d-flex">
+            </div>
+          </div>
+          <div class="col-md-3 col-12">
+            <h5 class="mb-3 dark-font">Details</h5>
+            <div class="order-details-card">
+              <!-- customer -->
+              <div class="order-details-cardinner d-flex">
                 <span class="material-symbols-rounded">person</span>
                 <p class="light-font medium-font m-b-0 pl-2">
-                    {{ customer_details.name }}
+                  {{ customer_details.name }}
                 </p>
               </div>
               <div class="order-details-cardinner d-flex">
-                  <span class="material-symbols-rounded">mail</span>
-                  <p class="light-font medium-font m-b-0 pl-2">
-                      {{ customer_details.email }}
-                  </p>
-                </div>
-                <div class="order-details-cardinner d-flex">
-                    <span class="material-symbols-rounded">phone</span>
-                    <p class="light-font medium-font m-b-0 pl-2">
-                        {{ customer_details.mobile }}
-                    </p>
-                  </div>
+                <span class="material-symbols-rounded">mail</span>
+                <p class="light-font medium-font m-b-0 pl-2">
+                  {{ customer_details.email }}
+                </p>
+              </div>
+              <div class="order-details-cardinner d-flex">
+                <span class="material-symbols-rounded">phone</span>
+                <p class="light-font medium-font m-b-0 pl-2">
+                  {{ customer_details.mobile }}
+                </p>
+              </div>
             </div>
-      </div>
-    </div>
-
-
-
-
-
-  
-
-
-
-
-
-
-    <!-- <div class="col-md-12 list-item">
-      <div class="card mb-4 d-flex flex-row">
-        <div class="flex-grow-1 d-flex">
-          <div
-            class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
-            <p class="w-30 w-sm-100 m-b-0">{{ customer_details.name }}</p>
-            <p class="w-30 w-sm-100 m-b-0">{{ customer_details.email }}</p>
-            <p class="w-30 w-sm-100 m-b-0">{{ customer_details.mobile }}</p>
-            <p class="w-30 w-sm-100 m-b-0">{{ customer_details.cart_updated_on | date: "dd MMM y hh:mm a" }}</p>
           </div>
         </div>
-      </div>
-    </div> -->
-
-
-
-
-
-    <!-- <div class="col-md-12">
+        <!-- <div class="col-md-12 list-item">
+        <div class="card mb-4 d-flex flex-row">
+          <div class="flex-grow-1 d-flex">
+            <div
+              class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
+              <p class="w-30 w-sm-100 m-b-0">{{ customer_details.name }}</p>
+              <p class="w-30 w-sm-100 m-b-0">{{ customer_details.email }}</p>
+              <p class="w-30 w-sm-100 m-b-0">{{ customer_details.mobile }}</p>
+              <p class="w-30 w-sm-100 m-b-0">{{ customer_details.cart_updated_on | date: "dd MMM y hh:mm a" }}</p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- <div class="col-md-12">
       <div class="data-list-card-wrapper">
         <div class="data-list-card-inner">
           <div class="list-item data-list-card"
-          *ngFor="let x of customer_details.cart_list; let i=index;"
+            *ngFor="let x of customer_details.cart_list; let i=index;"
             [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
             <div class="col-md-2 col-5 first_col px-0 cursor">
               <div *ngIf="x.image" class="list-thumb d-flex align-self-center">
-                  <img [src]="imgBaseUrl+x.image" alt="">
+                <img [src]="imgBaseUrl+x.image" alt="">
               </div>
             </div>
             <div class="col-md-10 col-4 first_col align-items-center">
               <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
               <ng-container *ngIf="x.variant_status">
-                  <ng-container *ngFor="let y of x.variant_types;">
-                      <p class="w-20 w-sm-100 m-b-0 light-font"> <b>{{y.name}}: </b>{{y.value}}</p>
-                  </ng-container>
+                <ng-container *ngFor="let y of x.variant_types;">
+                  <p class="w-20 w-sm-100 m-b-0 light-font"> <b>{{y.name}}: </b>{{y.value}}</p>
                 </ng-container>
+              </ng-container>
               <p class="w-35 w-sm-100 m-b-0 light-font" *ngIf="x.addon_status"> <b>Addon</b>
-                <br>{{x.selected_addon?.name}}</p>
-                <p class="w-30 w-sm-100 m-b-0 light-font">{{x.quantity}} {{x.unit? x.unit: 'Qty'}}</p>
-                <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="x.unit=='Pcs'">{{ (x.final_price*x.quantity) | currency:
-                    commonService.store_currency?.country_code}}</p>
-                <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="x.unit!='Pcs'">{{
-                    ((x.final_price*x.quantity)+x.addon_price) |
-                    currency: commonService.store_currency?.country_code}}</p>
+              <br>{{x.selected_addon?.name}}</p>
+              <p class="w-30 w-sm-100 m-b-0 light-font">{{x.quantity}} {{x.unit? x.unit: 'Qty'}}</p>
+              <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="x.unit=='Pcs'">{{ (x.final_price*x.quantity) | currency:
+              commonService.store_currency?.country_code}}</p>
+              <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="x.unit!='Pcs'">{{
+                ((x.final_price*x.quantity)+x.addon_price) |
+              currency: commonService.store_currency?.country_code}}</p>
             </div>
           </div>
         </div>
       </div>
     </div> -->
-
-
   </div>
-
-  <div *ngIf="!customer_details?.cart_list?.length" class="row">
+}
+@if (!customer_details?.cart_list?.length) {
+  <div class="row">
     <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
       <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
       <p align="center">No data to display</p>
     </div>
   </div>
-
+}
 </div>
+}

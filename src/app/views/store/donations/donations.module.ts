@@ -10,7 +10,7 @@ import { DonationsComponent } from './donations.component';
   imports: [
     SharedModule,
     DonationsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

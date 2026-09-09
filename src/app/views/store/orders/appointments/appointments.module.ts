@@ -9,7 +9,7 @@ import { AppointmentsComponent } from './appointments.component';
   declarations: [AppointmentsComponent],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     AppointmentsRoutingModule
   ]
 })

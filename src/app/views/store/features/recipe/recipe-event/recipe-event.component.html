@@ -1,192 +1,209 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
-         </div>
-        </div>  
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </ng-container>
-
-  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-    <div class="row flex-xs-column-reverse">
-      <div class="col-md-12 col-12">
-        <div class="row justify-content-center">
-          <p>Photo Resolution: 900x600</p>
-          <div class="col-md-12 col-12 mb-4" align="center">
-             <div class="col-md-6">
-              <div class="card p-3">
-                <div *ngIf="recipeForm.image">
-                  <span (click)="recipeForm.img_change=null; recipeForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
-                  <img *ngIf="recipeForm.img_change" [src]="recipeForm.image" height="100px;" width="auto;">
-                  <img *ngIf="!recipeForm.img_change" [src]="imgBaseUrl+recipeForm.image" height="100px;" width="auto;">
-                  <div *ngIf="commonService.ys_features.indexOf('advanced_seo')!=-1" class="mt-3">
-                    <label>Image Alt Name</label>
-                    <input type="text" name="img_alt" class="form-control" [(ngModel)]="recipeForm.img_alt" #img_alt="ngModel" />
-                  </div>
-                </div>
-                <div *ngIf="!recipeForm.image">
-                  <label>
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      <div class="row flex-xs-column-reverse">
+        <div class="col-md-12 col-12">
+          <div class="row justify-content-center">
+            <p>Photo Resolution: 900x600</p>
+            <div class="col-md-12 col-12 mb-4" align="center">
+              <div class="col-md-6">
+                <div class="card p-3">
+                  @if (recipeForm.image) {
                     <div>
-                      <i class="material-icons add-img">add_photo_alternate</i>
-                      <p>Click to upload image</p>
+                      <span (click)="recipeForm.img_change=null; recipeForm.image=null;" class="material-icons round-img-icon ab-item-close float-right top5" aria-hidden="true">close</span>
+                      @if (recipeForm.img_change) {
+                        <img [src]="recipeForm.image" height="100px;" width="auto;">
+                      }
+                      @if (!recipeForm.img_change) {
+                        <img [src]="imgBaseUrl+recipeForm.image" height="100px;" width="auto;">
+                      }
+                      @if (commonService.ys_features.indexOf('advanced_seo')!=-1) {
+                        <div class="mt-3">
+                          <label>Image Alt Name</label>
+                          <input type="text" name="img_alt" class="form-control" [(ngModel)]="recipeForm.img_alt" #img_alt="ngModel" />
+                        </div>
+                      }
                     </div>
-                    <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
-                  </label>
+                  }
+                  @if (!recipeForm.image) {
+                    <div>
+                      <label>
+                        <div>
+                          <i class="material-icons add-img">add_photo_alternate</i>
+                          <p>Click to upload image</p>
+                        </div>
+                        <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                      </label>
+                    </div>
+                  }
                 </div>
               </div>
-             </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-12 col-12">
+        <div class="col-md-12 col-12">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Author</label>
+              <input type="text" name="author" class="form-control" [(ngModel)]="recipeForm.author" #author="ngModel" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Created On</label>
+              <input type="text" placeholder="Select Date" class="form-control" name="created_on" autocomplete="off"
+                [maxDate]="currentDate" [(ngModel)]="recipeForm.created_on" bsDatepicker
+                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Title</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="recipeForm.name" (input)="onChangeTitle();" #name="ngModel" required />
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label>Preparation Time</label>
+                <input type="text" name="prep_time" class="form-control" [(ngModel)]="recipeForm.prep_time" #prep_time="ngModel" required />
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label>Cook Time</label>
+                <input type="text" name="cook_time" class="form-control" [(ngModel)]="recipeForm.cook_time" #cook_time="ngModel" required />
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label>Total Time</label>
+                <input type="text" name="total_time" class="form-control" [(ngModel)]="recipeForm.total_time" #total_time="ngModel" required />
+              </div>
+              <div class="col-md-6 form-group mb-3 quill-mb-5">
+                <label>Category</label>
+                <tag-input class="w-100" name="category" [(ngModel)]="recipeForm.category_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div class="col-md-6 form-group mb-3 quill-mb-5">
+                <label>Cuisine</label>
+                <tag-input class="w-100" name="cuisine" [(ngModel)]="recipeForm.cuisine_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Yields</label>
+                <tag-input class="w-100" name="yields" [(ngModel)]="recipeForm.yields_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Ingredients</label>
+                <tag-input class="w-100" name="ingredients" [(ngModel)]="recipeForm.ingredients_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+              <div class="col-md-12 form-group mb-3 quill-mb-5">
+                <label>Description</label>
+                <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="recipeForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- SEO -->
+        <div class="data-list-card-wrapper p-0 col-md-8 col-12 col-md-12">
+          <div class="data-list-card-inner p-3">
+            <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+              <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                <span class="light-font mt-0 font-10 d-block">This is how your recipe looks on Google, Bing, Yahoo and other search engines</span>
+              </p>
+              @if (recipeForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1) {
+                @if (!recipeForm.seo_disp) {
+                  <span class="material-icons float-right round-btn-icon ab-item-close"
+                  (click)="recipeForm.seo_disp=true" aria-hidden="true">edit</span>
+                }
+                @if (recipeForm.seo_disp && recipeForm.seo_details.page_url && recipeForm.seo_details.h1_tag && recipeForm.seo_details.page_title && recipeForm.seo_details.meta_desc) {
+                  <span
+                  (click)="recipeForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
+                }
+              }
+            </div>
+            @if (!recipeForm.seo_disp) {
+              @if (!recipeForm.name) {
+                <p class="light-font font-10">
+                  Add a Title And Description To See How This Recipe Might Appear In A Search Engine Listing
+                </p>
+              }
+              @if (recipeForm.name) {
+                <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/recipes/{{recipeForm.seo_details?.page_url}}</p>
+                <h6 class="sec-desc mb-1 mt-2 seo-color">{{recipeForm.seo_details.page_title}}</h6>
+                <p class="light-font font-10">{{recipeForm.seo_details.meta_desc}}</p>
+              }
+            }
+            @if (recipeForm.seo_disp) {
+              <div class="col-md-12 form-group mb-3">
+                <label>Page URL</label>
+                <input type="text" name="page_url" class="form-control" [(ngModel)]="recipeForm.seo_details.page_url" appNoSplChar required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>H1 Tag</label>
+                @if (recipeForm.seo_details?.h1_tag?.length) {
+                  <span class="label_hint">
+                    {{recipeForm.seo_details.h1_tag.length}} of 70 characters used
+                  </span>
+                }
+                <input type="text" name="h1_tag" class="form-control" [(ngModel)]="recipeForm.seo_details.h1_tag" maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Page Title</label>
+                @if (recipeForm.seo_details?.page_title?.length) {
+                  <span class="label_hint">
+                    {{recipeForm.seo_details.page_title.length}} of 70 characters used
+                  </span>
+                }
+                <input type="text" name="page_title" class="form-control" [(ngModel)]="recipeForm.seo_details.page_title" maxlength="70" required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Description</label>
+                @if (recipeForm.seo_details?.meta_desc?.length) {
+                  <span class="label_hint">
+                  {{recipeForm.seo_details.meta_desc.length}} of 320 characters used</span>
+                }
+                <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="recipeForm.seo_details.meta_desc" maxlength="320" required></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Meta Keywords</label>
+                <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="recipeForm.seo_details.meta_keyword_list" placeholder=""
+                [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="separator-breadcrumb border-top mt-5"></div>
         <div class="row">
-          <div class="col-md-6 form-group mb-3">
-            <label>Author</label>
-            <input type="text" name="author" class="form-control" [(ngModel)]="recipeForm.author" #author="ngModel" required />
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Created On</label>
-            <input type="text" placeholder="Select Date" class="form-control" name="created_on" autocomplete="off"
-              [maxDate]="currentDate" [(ngModel)]="recipeForm.created_on" bsDatepicker
-              [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Title</label>
-            <input type="text" name="name" class="form-control" [(ngModel)]="recipeForm.name" (input)="onChangeTitle();" #name="ngModel" required />
-          </div>
-          <div class="col-md-4 form-group mb-3">
-            <label>Preparation Time</label>
-            <input type="text" name="prep_time" class="form-control" [(ngModel)]="recipeForm.prep_time" #prep_time="ngModel" required />
-          </div>
-          <div class="col-md-4 form-group mb-3">
-            <label>Cook Time</label>
-            <input type="text" name="cook_time" class="form-control" [(ngModel)]="recipeForm.cook_time" #cook_time="ngModel" required />
-          </div>
-          <div class="col-md-4 form-group mb-3">
-            <label>Total Time</label>
-            <input type="text" name="total_time" class="form-control" [(ngModel)]="recipeForm.total_time" #total_time="ngModel" required />
-          </div>
-          <div class="col-md-6 form-group mb-3 quill-mb-5">
-            <label>Category</label>
-            <tag-input class="w-100" name="category" [(ngModel)]="recipeForm.category_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-          <div class="col-md-6 form-group mb-3 quill-mb-5">
-            <label>Cuisine</label>
-            <tag-input class="w-100" name="cuisine" [(ngModel)]="recipeForm.cuisine_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-          <div class="col-md-12 form-group mb-3 quill-mb-5">
-            <label>Yields</label>
-            <tag-input class="w-100" name="yields" [(ngModel)]="recipeForm.yields_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-          <div class="col-md-12 form-group mb-3 quill-mb-5">
-            <label>Ingredients</label>
-            <tag-input class="w-100" name="ingredients" [(ngModel)]="recipeForm.ingredients_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-          <div class="col-md-12 form-group mb-3 quill-mb-5">
-            <label>Description</label>
-            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="recipeForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
+          @if (recipeForm.errorMsg) {
+            <div class="col-md-12 mt-3 mb-3">
+              <p class="text-danger" align="center">{{ recipeForm.errorMsg }}</p>
+            </div>
+          }
+          <div align="center" class="col-md-12 z-i-0">
+            <button type="button" routerLink="/setting/recipes" class="btn btn-wide black-outline-btn">
+              <span class="black-outline-txt">Cancel</span>
+            </button>&nbsp; &nbsp; &nbsp;
+            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="recipeForm.submit" [ladda]="recipeForm.submit">
+              {{ (recipeForm?.form_type=='add')? 'Add': 'Update' }}
+            </button>
           </div>
         </div>
-      </div>
-
+      </form>
     </div>
-
- 
-
-
-    <!-- SEO -->
-    <div class="data-list-card-wrapper p-0 col-md-8 col-12 col-md-12">
-      <div class="data-list-card-inner p-3">
-        <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
-          <p class="m-b-0 dark-font medium-font">SEO Listing Preview
-            <span class="light-font mt-0 font-10 d-block">This is how your recipe looks on Google, Bing, Yahoo and other search engines</span>
-          </p>
-          <ng-container *ngIf="recipeForm.name && commonService.ys_features.indexOf('advanced_seo')!=-1">
-            <span *ngIf="!recipeForm.seo_disp" class="material-icons float-right round-btn-icon ab-item-close"
-            (click)="recipeForm.seo_disp=true" aria-hidden="true">edit</span>
-            <span *ngIf="recipeForm.seo_disp && recipeForm.seo_details.page_url && recipeForm.seo_details.h1_tag && recipeForm.seo_details.page_title && recipeForm.seo_details.meta_desc"
-            (click)="recipeForm.seo_disp=false" class="material-icons float-right round-btn-icon ab-item-close" aria-hidden="true">done</span>
-          </ng-container>
-        </div>
-
-        <ng-container *ngIf="!recipeForm.seo_disp">
-          <p *ngIf="!recipeForm.name" class="light-font font-10">
-            Add a Title And Description To See How This Recipe Might Appear In A Search Engine Listing
-          </p>
-          <ng-container *ngIf="recipeForm.name">
-            <p class="light-font font-10 mb-1">{{commonService.store_details?.base_url}}/recipes/{{recipeForm.seo_details?.page_url}}</p>
-            <h6 class="sec-desc mb-1 mt-2 seo-color">{{recipeForm.seo_details.page_title}}</h6>
-            <p class="light-font font-10">{{recipeForm.seo_details.meta_desc}}</p>
-          </ng-container>
-        </ng-container>
-
-        <ng-container *ngIf="recipeForm.seo_disp">
-          <div class="col-md-12 form-group mb-3">
-            <label>Page URL</label>
-            <input type="text" name="page_url" class="form-control" [(ngModel)]="recipeForm.seo_details.page_url" appNoSplChar required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>H1 Tag</label>
-            <span *ngIf="recipeForm.seo_details?.h1_tag?.length" class="label_hint">
-              {{recipeForm.seo_details.h1_tag.length}} of 70 characters used
-            </span>
-            <input type="text" name="h1_tag" class="form-control" [(ngModel)]="recipeForm.seo_details.h1_tag" maxlength="70" required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Page Title</label>
-            <span *ngIf="recipeForm.seo_details?.page_title?.length" class="label_hint">
-              {{recipeForm.seo_details.page_title.length}} of 70 characters used
-            </span>
-            <input type="text" name="page_title" class="form-control" [(ngModel)]="recipeForm.seo_details.page_title" maxlength="70" required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Meta Description</label>
-            <span *ngIf="recipeForm.seo_details?.meta_desc?.length" class="label_hint">
-              {{recipeForm.seo_details.meta_desc.length}} of 320 characters used</span>
-            <textarea class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="recipeForm.seo_details.meta_desc" maxlength="320" required></textarea>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Meta Keywords</label>
-            <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="recipeForm.seo_details.meta_keyword_list" placeholder=""
-            [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]"></tag-input>
-            <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div class="col-md-12 mt-3 mb-3" *ngIf="recipeForm.errorMsg">
-        <p class="text-danger" align="center">{{ recipeForm.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" routerLink="/setting/recipes" class="btn btn-wide black-outline-btn">
-         <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="recipeForm.submit" [ladda]="recipeForm.submit">
-          {{ (recipeForm?.form_type=='add')? 'Add': 'Update' }}
-        </button>
-      </div>
-    </div>
-
-  </form>
-
-</div>
+  }

@@ -1,130 +1,152 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>{{commonService.secondary_header}}</h1>          
-      </div>
-    </div>
-  </div>
-
+@if (pageLoader) {
   <div class="row">
-    <div class="col-md-8 form-group mb-3">
-      <div class="card card-in-card p-4 mb-3">
-        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
-          <div class="row">
-            <div class="form-group mb-3 col-md-12 d-flex align-items-center justify-content-end">
-              Enable <label class="switch"><input type="checkbox" name="newsletter_status"
+    <app-spinner></app-spinner>
+  </div>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col-md-8 form-group mb-3">
+        <div class="card card-in-card p-4 mb-3">
+          <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+            <div class="row">
+              <div class="form-group mb-3 col-md-12 d-flex align-items-center justify-content-end">
+                Enable <label class="switch"><input type="checkbox" name="newsletter_status"
                 [(ngModel)]="app_setting.newsletter_status"
                 (change)="!app_setting.newsletter_config? app_setting.newsletter_config={}: '';" /><div></div>
               </label>
             </div>
             <!-- <div class="form-group mb-3 col-6">
-              <label class="checkbox checkbox-primary">
-                <input class="form-check-input" type="checkbox" name="newsletter_status"
-                  [(ngModel)]="app_setting.newsletter_status"
-                  (change)="!app_setting.newsletter_config? app_setting.newsletter_config={}: '';">
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="newsletter_status"
+                [(ngModel)]="app_setting.newsletter_status"
+                (change)="!app_setting.newsletter_config? app_setting.newsletter_config={}: '';">
                 <span>Enable Popup</span>
                 <span class="checkmark"></span>
               </label>
             </div> -->
-            <ng-container *ngIf="app_setting.newsletter_config">
+            @if (app_setting.newsletter_config) {
               <div class="form-group mb-3 col-6">
                 <label class="checkbox checkbox-primary">
                   <input class="form-check-input" type="checkbox" name="subscription_status"
                     [(ngModel)]="app_setting.newsletter_config.subscription_status">
-                  <span>Enable Newsletter Subscription</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="col-md-12 mb-3 d-flex justify-content-center">
-                <div class="col-8 p-3 card" align="center">
-                  <!-- <p>Photo Resolution: 450x300</p> -->
-                  <div *ngIf="app_setting.newsletter_config.image" class="w-100">
-                    <span (click)="app_setting.newsletter_config.img_change=null; app_setting.newsletter_config.image=null"
-                      class="material-icons round-img-icon ab-item-close float-right top5"  aria-hidden="true">close</span>
-                    <img *ngIf="app_setting.newsletter_config.img_change" [src]="app_setting.newsletter_config.image"
-                      height="auto;" width="100%;">
-                    <img *ngIf="!app_setting.newsletter_config.img_change"
-                      [src]="imgBaseUrl+app_setting.newsletter_config.image" height="auto;" width="100%;">
-                  </div>
-                  <div *ngIf="!app_setting.newsletter_config.image">
-                    <label>
-                      <div>
-                        <i class="material-icons add-img">add_photo_alternate</i>
-                        <p>Click to upload image</p>
+                    <span>Enable Newsletter Subscription</span>
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+                <div class="col-md-12 mb-3 d-flex justify-content-center">
+                  <div class="col-8 p-3 card" align="center">
+                    <!-- <p>Photo Resolution: 450x300</p> -->
+                    @if (app_setting.newsletter_config.image) {
+                      <div class="w-100">
+                        <span (click)="app_setting.newsletter_config.img_change=null; app_setting.newsletter_config.image=null"
+                        class="material-icons round-img-icon ab-item-close float-right top5"  aria-hidden="true">close</span>
+                        @if (app_setting.newsletter_config.img_change) {
+                          <img [src]="app_setting.newsletter_config.image"
+                            height="auto;" width="100%;">
+                        }
+                        @if (!app_setting.newsletter_config.img_change) {
+                          <img
+                            [src]="imgBaseUrl+app_setting.newsletter_config.image" height="auto;" width="100%;">
+                        }
                       </div>
-                      <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);"
-                        accept="image/jpeg, image/png, image/webp" />
-                    </label>
+                    }
+                    @if (!app_setting.newsletter_config.image) {
+                      <div>
+                        <label>
+                          <div>
+                            <i class="material-icons add-img">add_photo_alternate</i>
+                            <p>Click to upload image</p>
+                          </div>
+                          <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);"
+                            accept="image/jpeg, image/png, image/webp" />
+                          </label>
+                        </div>
+                      }
+                    </div>
                   </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Heading</label>
+                    <input type="text" name="heading" class="form-control" [(ngModel)]="app_setting.newsletter_config.heading" #heading="ngModel" />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Sub-heading</label>
+                    <textarea class="form-control" aria-label="With textarea" name="sub_heading"
+                    [(ngModel)]="app_setting.newsletter_config.sub_heading" #sub_heading="ngModel"></textarea>
+                  </div>
+                  @if (app_setting.newsletter_config.subscription_status) {
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Thank you Message</label>
+                      <textarea class="form-control" aria-label="With textarea" name="response_msg"
+                      [(ngModel)]="app_setting.newsletter_config.response_msg" #response_msg="ngModel"></textarea>
+                    </div>
+                  }
+                  <div class="col-6 form-group mb-3">
+                    <label>Button text</label>
+                    <input type="text" name="btn_text" class="form-control" [(ngModel)]="app_setting.newsletter_config.btn_text" #btn_text="ngModel" required />
+                  </div>
+                  @if (commonService.store_details?.type!='restaurant_based' && app_setting.newsletter_config.subscription_status) {
+                    <div class="form-group mb-3 mt-4 col-6">
+                      <label class="checkbox checkbox-primary">
+                        <input class="form-check-input" type="checkbox" name="open_onload" [(ngModel)]="app_setting.newsletter_config.open_onload" #open_onload="ngModel">
+                        <span>Open popup on page load</span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  }
+                  <!-- link info -->
+                  @if (!app_setting.newsletter_config?.subscription_status) {
+                    <div class="row w-100">
+                      <div class="col-6 form-group my-3">
+                        <label class="radio radio-primary">
+                          <input type="radio" name="link_type" [(ngModel)]="app_setting.newsletter_config.link_type" value="internal">
+                          <span>Link to Internal Link</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="col-6 form-group my-3">
+                        <label class="radio radio-primary">
+                          <input type="radio" name="link_type" [(ngModel)]="app_setting.newsletter_config.link_type" value="external">
+                          <span>Link to External Link</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      @if (app_setting.newsletter_config.link_type=='internal') {
+                        <label>{{commonService.store_details?.base_url}}{{app_setting.newsletter_config.link}}</label>
+                      }
+                      @if (app_setting.newsletter_config.link_type=='external') {
+                        <label>External Link</label>
+                      }
+                      <input type="text" name="link" class="form-control" [(ngModel)]="app_setting.newsletter_config.link" required />
+                    </div>
+                  }
+                }
+                @if (app_setting.errorMsg) {
+                  <div align="center" class="col-md-12 z-i-0">
+                    <p class="text-danger">{{ app_setting.errorMsg }}</p>
+                  </div>
+                }
+                <div align="center" class="col-md-12 z-i-0">
+                  <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
+                    Update
+                  </button>
                 </div>
               </div>
-             
-              <div class="col-md-12 form-group mb-3">
-                <label>Heading</label>
-                <input type="text" name="heading" class="form-control" [(ngModel)]="app_setting.newsletter_config.heading" #heading="ngModel" />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Sub-heading</label>
-                <textarea class="form-control" aria-label="With textarea" name="sub_heading"
-                [(ngModel)]="app_setting.newsletter_config.sub_heading" #sub_heading="ngModel"></textarea>
-              </div>
-              <div *ngIf="app_setting.newsletter_config.subscription_status" class="col-md-12 form-group mb-3">
-                <label>Thank you Message</label>
-                <textarea class="form-control" aria-label="With textarea" name="response_msg"
-                [(ngModel)]="app_setting.newsletter_config.response_msg" #response_msg="ngModel"></textarea>
-              </div>
-              <div class="col-6 form-group mb-3">
-                <label>Button text</label>
-                <input type="text" name="btn_text" class="form-control" [(ngModel)]="app_setting.newsletter_config.btn_text" #btn_text="ngModel" required />
-              </div>
-              <div *ngIf="commonService.store_details?.type!='restaurant_based' && app_setting.newsletter_config.subscription_status" class="form-group mb-3 mt-4 col-6">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="open_onload" [(ngModel)]="app_setting.newsletter_config.open_onload" #open_onload="ngModel">
-                  <span>Open popup on page load</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <!-- link info -->
-              <ng-container *ngIf="!app_setting.newsletter_config?.subscription_status">
-                <div class="row w-100">
-                  <div class="col-6 form-group my-3">
-                    <label class="radio radio-primary">
-                      <input type="radio" name="link_type" [(ngModel)]="app_setting.newsletter_config.link_type" value="internal">
-                      <span>Link to Internal Link</span>
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                  <div class="col-6 form-group my-3">
-                    <label class="radio radio-primary">
-                      <input type="radio" name="link_type" [(ngModel)]="app_setting.newsletter_config.link_type" value="external">
-                      <span>Link to External Link</span>
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group mb-3">
-                  <label *ngIf="app_setting.newsletter_config.link_type=='internal'">{{commonService.store_details?.base_url}}{{app_setting.newsletter_config.link}}</label>
-                  <label *ngIf="app_setting.newsletter_config.link_type=='external'">External Link</label>
-                  <input type="text" name="link" class="form-control" [(ngModel)]="app_setting.newsletter_config.link" required />
-                </div>
-              </ng-container>
-            </ng-container>
-            <div align="center" class="col-md-12 z-i-0" *ngIf="app_setting.errorMsg">
-              <p class="text-danger">{{ app_setting.errorMsg }}</p>
-            </div>
-            <div align="center" class="col-md-12 z-i-0">
-              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
-                Update
-              </button>
-            </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  }

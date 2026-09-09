@@ -10,7 +10,7 @@ import { InactiveProductOrdersComponent } from './inactive-product-orders.compon
   imports: [
     SharedModule,
     InactiveProductOrdersRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 
