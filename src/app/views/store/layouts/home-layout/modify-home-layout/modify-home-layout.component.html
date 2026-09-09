@@ -38,11 +38,11 @@
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
                 <p *ngIf="layoutDetails?.type=='testimonial' || layoutDetails?.type=='highlighted_section' || layoutDetails?.type=='secondary' || layoutDetails?.type=='featured_section'">
-                  {{ (layoutDetails?.type=='testimonial')? '72 x 72': (layoutDetails?.type=='highlighted_section')? '1025 x 575': (layoutDetails?.type=='secondary')? '1110 x 400': '600 x 600' }} pixels @72ppi
+                  {{ (layoutDetails?.type=='testimonial')? '72 x 72': (layoutDetails?.type=='highlighted_section')? '1025 x 575': (layoutDetails?.type=='secondary')? '1110 x 400': '600 x 600' }} pixels &#64;72ppi
                 </p>
-                <p *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">(Desktop) - 1850 x 690 pixels @72ppi</p>
+                <p *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider'">(Desktop) - 1850 x 690 pixels &#64;72ppi</p>
                 <p *ngIf="layoutDetails?.type=='dual_image_highlight'">{{ (x.rank==1)? '(Background) - 750 x 875 pixels @72ppi': '(Foreground) - 575 x 675 pixels @72ppi' }}</p>
-                <p *ngIf="layoutDetails?.type=='cta'">(Desktop) - 1850 x 400 pixels @72ppi</p>
+                <p *ngIf="layoutDetails?.type=='cta'">(Desktop) - 1850 x 400 pixels &#64;72ppi</p>
                 <p *ngIf="layoutDetails?.type=='section' && grid_details.resolutions && grid_details.resolutions[i]?.value">{{grid_details.resolutions[i].value}}</p>
                 <i *ngIf="!x.desktop_img" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="x.desktop_img" class="desktop-layout-image-sec">
@@ -84,7 +84,7 @@
           <div class="col-md-12 col-lg-6 d-flex" *ngIf="layoutDetails?.type=='primary_slider' || layoutDetails?.type=='slider' || layoutDetails?.type=='cta'">
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
-                <p>(Mobile) - 650 x 800 pixels @72ppi</p>
+                <p>(Mobile) - 650 x 800 pixels &#64;72ppi</p>
                 <i *ngIf="!x.mobile_img" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="x.mobile_img" class="desktop-layout-image-sec">
                   <img *ngIf="x?.mobile_img_change" [src]="x.temp_mobile_img">
@@ -115,7 +115,7 @@
         <!-- Social Video -->
         <ng-container class="row" *ngIf="layoutDetails.type=='social_video'">
           <div class="col-md-12">
-            <p align="center">1080 x 1350 pixels @72ppi</p>
+            <p align="center">1080 x 1350 pixels &#64;72ppi</p>
           </div>
           <!-- thumbnail -->
           <div class="col-md-6 col-lg-6 d-flex">
@@ -1238,7 +1238,7 @@
           <div class="col-md-12 col-lg-6 d-flex">
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
-                <p>1025 x 575 pixels @72ppi</p>
+                <p>1025 x 575 pixels &#64;72ppi</p>
                 <i *ngIf="!m.image && !m.temp_image" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="m.image || m.temp_image" class="desktop-layout-image-sec">
                   <img *ngIf="m.img_change" [src]="m.temp_image">
@@ -1387,7 +1387,7 @@
           <div class="col-md-12 col-lg-6 d-flex">
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
-                <p>1025 x 575 pixels @72ppi</p>
+                <p>1025 x 575 pixels &#64;72ppi</p>
                 <i *ngIf="!layoutDetails.feature_split_config?.cover_img && !layoutDetails.feature_split_config?.temp_cover_img" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="layoutDetails.feature_split_config?.cover_img || layoutDetails.feature_split_config?.temp_cover_img" class="desktop-layout-image-sec">
                   <img *ngIf="layoutDetails.feature_split_config?.img_change" [src]="layoutDetails.feature_split_config.temp_cover_img">
@@ -1474,7 +1474,7 @@
           <div class="col-md-12 col-lg-6 d-flex">
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
-                <p>1025 x 575 pixels @72ppi</p>
+                <p>1025 x 575 pixels &#64;72ppi</p>
                 <i *ngIf="!layoutDetails.store_locator_config?.store_image && !layoutDetails.store_locator_config?.temp_store_image" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="layoutDetails.store_locator_config?.store_image || layoutDetails.store_locator_config?.temp_store_image" class="desktop-layout-image-sec">
                   <img *ngIf="layoutDetails.store_locator_config?.img_change" [src]="layoutDetails.store_locator_config.temp_store_image">
@@ -2045,7 +2045,7 @@
         <div class="col-md-6 col-lg-6 d-flex">
           <div class="card card-in-card w-100 p-3 mb-3">
             <div class="desktop-banner" align="center">
-              <p>780 x 780 @ 72ppi</p>
+              <p>780 x 780 &#64; 72ppi</p>
               <i *ngIf="!shopping_assist_config.image" class="material-icons">add_photo_alternate</i>
               <img *ngIf="shopping_assist_config.image && shopping_assist_config.img_change" [src]="shopping_assist_config.temp_image">
               <ng-container *ngIf="shopping_assist_config.image && !shopping_assist_config.img_change">
@@ -2335,7 +2335,7 @@
           <div class="col-md-12 col-lg-6 d-flex">
             <div class="card card-in-card w-100 p-3 mb-3">
               <div class="desktop-banner" align="center">
-                <p>600 x 600 pixels @72ppi</p>
+                <p>600 x 600 pixels &#64;72ppi</p>
                 <i *ngIf="!x.desktop_img" class="material-icons">add_photo_alternate</i>
                 <figure *ngIf="x.desktop_img" class="desktop-layout-image-sec">
                   <img *ngIf="x?.desktop_img_change" [src]="x.temp_desktop_img">

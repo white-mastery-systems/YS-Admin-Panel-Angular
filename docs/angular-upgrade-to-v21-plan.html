@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Angular Upgrade Plan: v16 → v21 | YourStore Admin</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --card: #ffffff;
+      --text: #1a1d26;
+      --muted: #5c6578;
+      --border: #e2e6ee;
+      --accent: #0b6bcb;
+      --accent-soft: #e8f2fc;
+      --ok: #0f7b4a;
+      --ok-soft: #e6f6ee;
+      --warn: #9a6700;
+      --warn-soft: #fff8e6;
+      --code-bg: #0f172a;
+      --code-fg: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    header {
+      background: linear-gradient(135deg, #0b6bcb 0%, #084a8a 100%);
+      color: #fff;
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      margin-bottom: 24px;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    header p { margin: 0; opacity: 0.92; }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .meta div {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+    .meta strong { display: block; font-size: 0.75rem; opacity: 0.85; font-weight: 600; letter-spacing: 0.02em; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    h3 { margin: 18px 0 8px; font-size: 1.05rem; }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .callout {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 0.95rem;
+    }
+    .callout.ok { background: var(--ok-soft); border: 1px solid #b7e4cb; color: #0b5c38; }
+    .callout.warn { background: var(--warn-soft); border: 1px solid #f0d48a; color: #7a5200; }
+    .callout.info { background: var(--accent-soft); border: 1px solid #b7d6f5; color: #0a4f96; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 10px 0 4px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f1f4f9; }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border-radius: 10px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      margin: 10px 0;
+    }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+    }
+    p code, li code, td code {
+      background: #eef2f7;
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #1e293b;
+    }
+    .hop {
+      border-left: 4px solid var(--accent);
+      padding-left: 14px;
+      margin: 20px 0;
+    }
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+    nav.toc ol { margin: 0; padding-left: 22px; }
+    nav.toc a { color: var(--accent); text-decoration: none; }
+    nav.toc a:hover { text-decoration: underline; }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    @media print {
+      body { background: #fff; }
+      header { break-after: avoid; }
+      section { break-inside: avoid; box-shadow: none; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Angular Upgrade Plan: v16 → v21</h1>
+      <p>YS-Admin-Panel-Angular (YourStore Admin) — one major at a time, separate branch per hop, merge into <strong>dev</strong>.</p>
+      <div class="meta">
+        <div><strong>CURRENT</strong>Angular 16.2.12</div>
+        <div><strong>TARGET</strong>Angular 21 (LTS)</div>
+        <div><strong>BASE BRANCH</strong>dev</div>
+        <div><strong>PATH</strong>16 → 17 → 18 → 19 → 20 → 21</div>
+      </div>
+    </header>
+
+    <section class="callout ok" style="border-radius:12px;">
+      <strong>Is Angular 21 okay?</strong> Yes. Angular 21 is a supported LTS target. It is a better end goal than jumping straight to 22 right now, and it keeps you on a maintained release without adopting Angular 22’s newer defaults yet.
+    </section>
+
+    <section>
+      <h2>Table of contents</h2>
+      <nav class="toc">
+        <ol>
+          <li><a href="#goals">Goals &amp; branching</a></li>
+          <li><a href="#prep">Environment prep</a></li>
+          <li><a href="#workflow">Standard workflow (every hop)</a></li>
+          <li><a href="#hops">Exact commands per hop</a></li>
+          <li><a href="#no-gh">Without GitHub CLI</a></li>
+          <li><a href="#fixes">Common fix commands</a></li>
+          <li><a href="#dont">What not to do</a></li>
+          <li><a href="#cleanup">Optional post-v21 cleanup</a></li>
+          <li><a href="#checklist">Final checklist</a></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section id="goals">
+      <h2>1. Goals &amp; branching</h2>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Decision</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>End version</td><td>Angular <strong>21.x</strong> (latest patch)</td></tr>
+          <tr><td>Strategy</td><td>One major version at a time</td></tr>
+          <tr><td>Branching</td><td>Separate branch per hop</td></tr>
+          <tr><td>Merge target</td><td>Always merge into <code>dev</code></td></tr>
+          <tr><td>Skip majors?</td><td><strong>No</strong> — migrations must run sequentially</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Branch names</h3>
+      <table>
+        <thead>
+          <tr><th>Hop</th><th>Branch</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>16 → 17</td><td><code>chore/angular-upgrade-v17</code></td></tr>
+          <tr><td>17 → 18</td><td><code>chore/angular-upgrade-v18</code></td></tr>
+          <tr><td>18 → 19</td><td><code>chore/angular-upgrade-v19</code></td></tr>
+          <tr><td>19 → 20</td><td><code>chore/angular-upgrade-v20</code></td></tr>
+          <tr><td>20 → 21</td><td><code>chore/angular-upgrade-v21</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="prep">
+      <h2>2. Environment prep (before any hop)</h2>
+<pre><code>git checkout dev
+git pull origin dev
+
+node -v
+npm -v
+
+rm -rf node_modules
+npm ci
+npx ng version
+npx ng build</code></pre>
+      <div class="callout info">
+        Use Node 20 LTS or Node 22. Do not start the next hop until build + smoke tests pass and the previous hop is merged into <code>dev</code>.
+      </div>
+      <ul class="checklist">
+        <li><code>ng build</code> succeeds</li>
+        <li>App starts (<code>npm start</code>)</li>
+        <li>Critical smoke tests pass (login, store list, orders, settings)</li>
+        <li>Branch merged into <code>dev</code></li>
+        <li>Local <code>dev</code> updated from remote</li>
+      </ul>
+    </section>
+
+    <section id="workflow">
+      <h2>3. Standard workflow for EVERY major hop</h2>
+      <p class="muted">Replace <code>NN</code> with <code>17</code>, <code>18</code>, <code>19</code>, <code>20</code>, or <code>21</code>.</p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-vNN
+
+npx ng update
+npx ng update @angular/core@NN @angular/cli@NN
+npx ng update @angular/localize@NN @angular/service-worker@NN
+
+npm install
+npx ng build
+npm start
+# smoke-test, then stop server
+
+git add .
+git commit -m "chore(angular): upgrade to vNN"
+git push -u origin chore/angular-upgrade-vNN
+
+gh pr create --base dev --head chore/angular-upgrade-vNN \
+  --title "chore(angular): upgrade to vNN" \
+  --body "## Summary
+- Upgrade Angular to vNN
+
+## Test plan
+- [ ] ng build
+- [ ] smoke test critical screens"
+
+# After approval:
+gh pr merge --merge
+git checkout dev
+git pull origin dev</code></pre>
+    </section>
+
+    <section id="hops">
+      <h2>4. Exact commands per hop</h2>
+
+      <div class="hop">
+        <h3>Hop 1 — Angular 16 → 17</h3>
+        <p><strong>Branch:</strong> <code>chore/angular-upgrade-v17</code></p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-v17
+
+npx ng update
+npx ng update @angular/core@17 @angular/cli@17
+npx ng update @angular/localize@17 @angular/service-worker@17
+
+npm install
+npx ng build
+npm start
+
+git add .
+git commit -m "chore(angular): upgrade to v17"
+git push -u origin chore/angular-upgrade-v17
+
+gh pr create --base dev --head chore/angular-upgrade-v17 \
+  --title "chore(angular): upgrade to v17" \
+  --body "## Summary
+- Angular 16 → 17
+
+## Test plan
+- [ ] build
+- [ ] smoke test critical screens"
+
+gh pr merge --merge
+git checkout dev
+git pull origin dev</code></pre>
+        <p class="muted"><strong>Watch for:</strong> TypeScript ~5.2; ngx peer dependency updates.</p>
+      </div>
+
+      <div class="hop">
+        <h3>Hop 2 — Angular 17 → 18</h3>
+        <p><strong>Prerequisite:</strong> Hop 1 merged into <code>dev</code> · <strong>Branch:</strong> <code>chore/angular-upgrade-v18</code></p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-v18
+
+npx ng update
+npx ng update @angular/core@18 @angular/cli@18
+npx ng update @angular/localize@18 @angular/service-worker@18
+
+npm install
+npx ng build
+npm start
+
+git add .
+git commit -m "chore(angular): upgrade to v18"
+git push -u origin chore/angular-upgrade-v18
+
+gh pr create --base dev --head chore/angular-upgrade-v18 \
+  --title "chore(angular): upgrade to v18" \
+  --body "## Summary
+- Angular 17 → 18
+
+## Test plan
+- [ ] build
+- [ ] smoke test critical screens"
+
+gh pr merge --merge
+git checkout dev
+git pull origin dev</code></pre>
+      </div>
+
+      <div class="hop">
+        <h3>Hop 3 — Angular 18 → 19</h3>
+        <p><strong>Prerequisite:</strong> Hop 2 merged · <strong>Branch:</strong> <code>chore/angular-upgrade-v19</code></p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-v19
+
+npx ng update
+npx ng update @angular/core@19 @angular/cli@19
+npx ng update @angular/localize@19 @angular/service-worker@19
+
+npm install
+npx ng build
+npm start
+
+git add .
+git commit -m "chore(angular): upgrade to v19"
+git push -u origin chore/angular-upgrade-v19
+
+gh pr create --base dev --head chore/angular-upgrade-v19 \
+  --title "chore(angular): upgrade to v19" \
+  --body "## Summary
+- Angular 18 → 19
+
+## Test plan
+- [ ] build
+- [ ] smoke test critical screens"
+
+gh pr merge --merge
+git checkout dev
+git pull origin dev</code></pre>
+        <p class="muted"><strong>Watch for:</strong> <code>ng-apexcharts</code>, <code>ngx-echarts</code>, <code>ngx-quill</code>, EditorJS compatibility.</p>
+      </div>
+
+      <div class="hop">
+        <h3>Hop 4 — Angular 19 → 20</h3>
+        <p><strong>Prerequisite:</strong> Hop 3 merged · <strong>Branch:</strong> <code>chore/angular-upgrade-v20</code></p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-v20
+
+npx ng update
+npx ng update @angular/core@20 @angular/cli@20
+npx ng update @angular/localize@20 @angular/service-worker@20
+
+npm install
+npx ng build
+npm start
+
+git add .
+git commit -m "chore(angular): upgrade to v20"
+git push -u origin chore/angular-upgrade-v20
+
+gh pr create --base dev --head chore/angular-upgrade-v20 \
+  --title "chore(angular): upgrade to v20" \
+  --body "## Summary
+- Angular 19 → 20
+
+## Test plan
+- [ ] build
+- [ ] smoke test critical screens"
+
+gh pr merge --merge
+git checkout dev
+git pull origin dev</code></pre>
+      </div>
+
+      <div class="hop">
+        <h3>Hop 5 — Angular 20 → 21 (TARGET)</h3>
+        <p><strong>Prerequisite:</strong> Hop 4 merged · <strong>Branch:</strong> <code>chore/angular-upgrade-v21</code></p>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-upgrade-v21
+
+npx ng update
+npx ng update @angular/core@21 @angular/cli@21
+npx ng update @angular/localize@21 @angular/service-worker@21
+
+npm install
+npx ng build
+npm start
+
+git add .
+git commit -m "chore(angular): upgrade to v21"
+git push -u origin chore/angular-upgrade-v21
+
+gh pr create --base dev --head chore/angular-upgrade-v21 \
+  --title "chore(angular): upgrade to v21" \
+  --body "## Summary
+- Angular 20 → 21 (target LTS)
+
+## Test plan
+- [ ] build
+- [ ] full regression smoke test
+- [ ] service worker / PWA (if used)
+- [ ] Capacitor build (if applicable)"
+
+gh pr merge --merge
+git checkout dev
+git pull origin dev
+npx ng version</code></pre>
+      </div>
+    </section>
+
+    <section id="no-gh">
+      <h2>5. Without GitHub CLI</h2>
+      <p>After <code>git push -u origin chore/angular-upgrade-vNN</code>:</p>
+      <ol>
+        <li>Open GitHub → <strong>Compare &amp; pull request</strong></li>
+        <li>Base: <code>dev</code> ← compare: your hop branch</li>
+        <li>Review → Merge</li>
+        <li>Locally sync:</li>
+      </ol>
+<pre><code>git checkout dev
+git pull origin dev</code></pre>
+    </section>
+
+    <section id="fixes">
+      <h2>6. Common fix commands</h2>
+<pre><code>npx ng update
+npx ng update @angular/core@NN @angular/cli@NN --verbose
+
+rm -rf node_modules package-lock.json
+npm install
+
+npx ng version
+grep -R "\"@angular/" package.json
+
+# only if peers block install mid-hop
+npm install --legacy-peer-deps</code></pre>
+
+      <h3>Risky packages in this project</h3>
+      <table>
+        <thead>
+          <tr><th>Package</th><th>If it blocks upgrade</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>ngx-perfect-scrollbar</code></td><td>Remove (already unused / commented)</td></tr>
+          <tr><td><code>ngx-bootstrap</code> / <code>@ng-bootstrap/ng-bootstrap</code></td><td>Bump to matching Angular major</td></tr>
+          <tr><td><code>ngx-echarts</code> / <code>ng-apexcharts</code> / <code>ngx-quill</code></td><td>Bump compatible version</td></tr>
+          <tr><td><code>tslint</code> / <code>codelyzer</code> / <code>protractor</code></td><td>Remove during early hops</td></tr>
+          <tr><td>Capacitor 4</td><td>Fix in a follow-up PR if mobile build breaks</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="dont">
+      <h2>7. What NOT to do</h2>
+      <ul>
+        <li>Do not skip majors (e.g. 16 → 19 directly)</li>
+        <li>Do not rewrite to standalone in the same PR as a version hop</li>
+        <li>Do not enable zoneless change detection yet</li>
+        <li>Do not merge if <code>ng build</code> fails</li>
+        <li>Do not start hop N+1 from an unmerged hop N branch — always branch from updated <code>dev</code></li>
+      </ul>
+    </section>
+
+    <section id="cleanup">
+      <h2>8. Optional post-v21 cleanup (separate PR)</h2>
+<pre><code>git checkout dev
+git pull origin dev
+git checkout -b chore/angular-v21-cleanup
+# migrate builder browser → application
+# replace tslint with eslint
+# remove dead polyfills
+# fix ng build --prod script
+git push -u origin chore/angular-v21-cleanup
+gh pr create --base dev --title "chore(angular): post-v21 cleanup"</code></pre>
+    </section>
+
+    <section id="checklist">
+      <h2>9. Final checklist</h2>
+      <ul class="checklist">
+        <li>Hop 1: v17 branch → PR → merge to <code>dev</code></li>
+        <li>Hop 2: v18 branch → PR → merge to <code>dev</code></li>
+        <li>Hop 3: v19 branch → PR → merge to <code>dev</code></li>
+        <li>Hop 4: v20 branch → PR → merge to <code>dev</code></li>
+        <li>Hop 5: v21 branch → PR → merge to <code>dev</code></li>
+        <li>Confirm: <code>npx ng version</code> shows Angular 21.x</li>
+        <li>Full QA on staging built from <code>dev</code></li>
+      </ul>
+
+      <div class="callout warn">
+        Official guides: <a href="https://angular.dev/update-guide" target="_blank" rel="noopener">angular.dev/update-guide</a> ·
+        <a href="https://angular.dev/cli/update" target="_blank" rel="noopener">ng update</a> ·
+        <a href="https://angular.dev/reference/versions" target="_blank" rel="noopener">version compatibility</a>
+      </div>
+    </section>
+
+    <footer>
+      YS-Admin-Panel-Angular — Angular 16.2.12 → 21 LTS upgrade plan<br />
+      Also available as <code>docs/angular-upgrade-to-v21-plan.md</code>
+    </footer>
+  </div>
+</body>
+</html>
