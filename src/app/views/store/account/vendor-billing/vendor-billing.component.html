@@ -1,51 +1,61 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <div *ngIf="cs.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-12">
+@if (!pageLoader) {
+  <div>
+    @if (cs.desktop_device) {
+      <div class="breadcrumb with-back-btn">
         <div class="row">
-          <div class="col-md-12 col-md-8 d-flex justify-content-end align-items-start flex-column">
-            <h1>Vendor Subscription</h1>
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-12 col-md-8 d-flex justify-content-end align-items-start flex-column">
+                <h1>Vendor Subscription</h1>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12 d-flex">
-      <div class="card w-100 p-3 mb-3">
-        <div class="row">
-          <div *ngIf="!vendorDetails.package_details?.expiry_date" class="col-md-6 col-6">
-            <p>
-              <b>Trial Account</b>
-            </p>
-            <p>
-              Valid till {{vendorDetails.package_details?.trial_expiry | date: "dd MMM y": "+0530"}} (IST)
-            </p>
-          </div>
-          <div *ngIf="vendorDetails.package_details?.expiry_date" class="col-md-6 col-6">
-            <p>
-              <b>Subscription Details</b>
-            </p>
-            <p>
-              Valid till {{vendorDetails.package_details?.expiry_date | date: "dd MMM y": "+0530"}} (IST)
-            </p>
-          </div>
-          <div class="col-md-6 col-6">
-            <div class="d-flex justify-content-end">
-              <button type="button" (click)="billDetails.submit=false; billDetails.errorMsg=null; modalService.open(subscriptionModal)" class="dark-button">
-                <span class="material-symbols-rounded">payments</span> Make Payment
-              </button>
+    }
+    <div class="row">
+      <div class="col-md-12 d-flex">
+        <div class="card w-100 p-3 mb-3">
+          <div class="row">
+            @if (!vendorDetails.package_details?.expiry_date) {
+              <div class="col-md-6 col-6">
+                <p>
+                  <b>Trial Account</b>
+                </p>
+                <p>
+                  Valid till {{vendorDetails.package_details?.trial_expiry | date: "dd MMM y": "+0530"}} (IST)
+                </p>
+              </div>
+            }
+            @if (vendorDetails.package_details?.expiry_date) {
+              <div class="col-md-6 col-6">
+                <p>
+                  <b>Subscription Details</b>
+                </p>
+                <p>
+                  Valid till {{vendorDetails.package_details?.expiry_date | date: "dd MMM y": "+0530"}} (IST)
+                </p>
+              </div>
+            }
+            <div class="col-md-6 col-6">
+              <div class="d-flex justify-content-end">
+                <button type="button" (click)="billDetails.submit=false; billDetails.errorMsg=null; modalService.open(subscriptionModal)" class="dark-button">
+                  <span class="material-symbols-rounded">payments</span> Make Payment
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
 
 <!-- Subscription Modal -->
 <ng-template #subscriptionModal let-modal>
@@ -106,14 +116,18 @@
         </div>
       </div>
     </div>
-    <div *ngIf="billDetails.errorMsg">
-      <p class="text-danger">{{ billDetails.errorMsg }}</p>
+    @if (billDetails.errorMsg) {
+      <div>
+        <p class="text-danger">{{ billDetails.errorMsg }}</p>
+      </div>
+    }
+  </div>
+  @if (billDetails.payment_details?.name) {
+    <div class="modal-footer">
+      <button type="button" (click)="onSubscribe()" class="btn btn-wide btn-primary ladda-button m-1"
+      [disabled]="billDetails.submit" [ladda]="billDetails.submit">Pay Now</button>
     </div>
-  </div>
-  <div *ngIf="billDetails.payment_details?.name" class="modal-footer">
-    <button type="button" (click)="onSubscribe()" class="btn btn-wide btn-primary ladda-button m-1"
-    [disabled]="billDetails.submit" [ladda]="billDetails.submit">Pay Now</button>
-  </div>
+  }
 </ng-template>
 
 <!-- razorpay form -->

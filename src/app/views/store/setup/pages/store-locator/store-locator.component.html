@@ -1,100 +1,109 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but mr-3" (click)="addForm={rank: maxRank+1}; modalService.open(addModal);">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but mr-3" (click)="addForm={rank: maxRank+1}; modalService.open(addModal);">
       <span class="material-symbols-rounded">add</span>
+    </div>
+    <div class="add_but" (click)="modalService.open(settingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+      <span class="material-symbols-rounded">settings</span>
+    </div>
   </div>
-  <div class="add_but" (click)="modalService.open(settingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-    <span class="material-symbols-rounded">settings</span>
-</div>
-</div>
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="top-filter-sec  list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" class="mr-3" (click)="open_website()">
+              <span class="material-symbols-rounded">visibility</span>View Page
+            </button>
+            <button type="button" class="mr-3" (click)="modalService.open(settingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+              <span class="material-symbols-rounded">settings</span> Page Setting
+            </button>
+            <button type="button" class="highbutton" (click)="addForm={rank: maxRank+1}; modalService.open(addModal);">
+              <span class="material-symbols-rounded">add</span> Location
+            </button>
+          </div>
+        }
+        <!-- search box -->
+      </div>
+    </div>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-6 col-6 first_col px-0 header-font">
+                  <p class="w-30 w-sm-100 m-b-0">Name</p>
+                </div>
+              </div>
+            }
+            @for (x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-6 col-6 first_col px-0">
+                  <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+                </div>
+                <div class="col-md-6 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, editModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        @if (list?.length) {
+          <div class="row">
+            <div class="col-md-12 mt-3">
+              <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+              maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+            </div>
+          </div>
+        }
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
       <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}
-            </h1>
-          </div>
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
         </div>
       </div>
-    </div>
-  </ng-container>
-
-
-  <div class="top-filter-sec  list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="mr-3" (click)="open_website()">
-          <span class="material-symbols-rounded">visibility</span>View Page
-        </button>
-          
-          <button type="button" class="mr-3" (click)="modalService.open(settingModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-            <span class="material-symbols-rounded">settings</span> Page Setting
-          </button>
-          <button type="button" class="highbutton" (click)="addForm={rank: maxRank+1}; modalService.open(addModal);">
-            <span class="material-symbols-rounded">add</span> Location
-          </button>
-      </div>
-      <!-- search box -->
-
-    </div>
+    }
   </div>
-
-  <!-- DATA LIST -->
-  <div class="list-horizontal" *ngIf="(list | fieldSearch:'name':search_bar)?.length">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-6 col-6 first_col px-0 header-font">
-            <p class="w-30 w-sm-100 m-b-0">Name</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-6 col-6 first_col px-0">
-            <p class="w-30 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
-          </div>
-          <div class="col-md-6 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">              
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>   
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, editModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-              </button>     
-            </div>            
-          </div>
-        </div>
-      </div>      
-    </div>
-
-    
-    <!-- PAGINATION CONTROL -->
-    <div class="row" *ngIf="list?.length">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
-      </div>
-    </div>
-
-  </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- ADD MODAL -->
 <ng-template #addModal let-modal>
@@ -102,7 +111,7 @@
     <h4>
       <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
       <span class="popup_text">New Location</span>
-     </h4>     
+    </h4>
   </div>
   <form autocomplete="off" (ngSubmit)="onAdd();" ngNativeValidate ngbAutofocus>
     <div class="modal-body">
@@ -119,7 +128,7 @@
           <div class="col-md-12 form-group mb-3">
             <label>Address</label>
             <textarea class="form-control" aria-label="With textarea" name="address" [(ngModel)]="addForm.address"
-              #address="ngModel"></textarea>
+            #address="ngModel"></textarea>
           </div>
           <div class="col-md-12 form-group mb-3">
             <label>Map URL</label>
@@ -127,9 +136,11 @@
           </div>
         </div>
       </div>
-      <div *ngIf="addForm.errorMsg">
-        <p class="text-danger">{{ addForm.errorMsg }}</p>
-      </div>
+      @if (addForm.errorMsg) {
+        <div>
+          <p class="text-danger">{{ addForm.errorMsg }}</p>
+        </div>
+      }
     </div>
     <div class="modal-footer">
       <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
@@ -147,7 +158,7 @@
     <h4>
       <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
       <span class="popup_text">Edit Location</span>
-     </h4>     
+    </h4>
   </div>
   <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
     <div class="modal-body">
@@ -164,7 +175,7 @@
           <div class="col-md-12 form-group mb-3">
             <label>Address</label>
             <textarea class="form-control" aria-label="With textarea" name="address" [(ngModel)]="editForm.address"
-              #address="ngModel"></textarea>
+            #address="ngModel"></textarea>
           </div>
           <div class="col-md-12 form-group mb-3">
             <label>Map URL</label>
@@ -172,9 +183,11 @@
           </div>
         </div>
       </div>
-      <div *ngIf="editForm.errorMsg">
-        <p class="text-danger">{{ editForm.errorMsg }}</p>
-      </div>
+      @if (editForm.errorMsg) {
+        <div>
+          <p class="text-danger">{{ editForm.errorMsg }}</p>
+        </div>
+      }
     </div>
     <div class="modal-footer">
       <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
@@ -190,57 +203,61 @@
 <ng-template #deleteModal let-modal>
   <div class="modal-body">
     <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
-        location?</strong></p>
-    <div *ngIf="deleteForm.errorMsg">
+  location?</strong></p>
+  @if (deleteForm.errorMsg) {
+    <div>
       <p class="text-danger">{{ deleteForm.errorMsg }}</p>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
+  }
+</div>
+<div class="modal-footer">
+  <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+    (click)="modal.dismiss('Cross click');">
+    <span class="black-outline-txt">No</span>
+  </button>
+  <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+    <span class="orng-outline-txt">Yes</span>
+  </button>
+</div>
 </ng-template>
 
 <!-- SETTING MODAL -->
 <ng-template #settingModal let-modal>
   <form autocomplete="off" (ngSubmit)="onUpdateSetting();" ngNativeValidate ngbAutofocus>
     <div class="modal-content">
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Page Configuration</span>
-     </h4>     
-  </div>  
-    <div class="modal-body">
-      <div class="form-group">
-        <div class="row">
-          <div class="col-md-12 form-group mb-3">
-            <label>Heading</label>
-            <input type="text" name="heading" class="form-control" [(ngModel)]="settingForm.heading" #heading="ngModel"
-              required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Sub-heading</label>
-            <input type="text" name="sub_heading" class="form-control" [(ngModel)]="settingForm.sub_heading"
-              #sub_heading="ngModel" />
-          </div>
-        </div>
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Page Configuration</span>
+        </h4>
       </div>
-      <div *ngIf="settingForm.errorMsg">
-        <p class="text-danger">{{ settingForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-        (click)="modal.dismiss('Cross click');">
-        <span class="black-outline-txt">Close</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary">Update</button>
-    </div>
-  </div></form>
-</ng-template>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Heading</label>
+              <input type="text" name="heading" class="form-control" [(ngModel)]="settingForm.heading" #heading="ngModel"
+                required />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Sub-heading</label>
+                <input type="text" name="sub_heading" class="form-control" [(ngModel)]="settingForm.sub_heading"
+                  #sub_heading="ngModel" />
+                </div>
+              </div>
+            </div>
+            @if (settingForm.errorMsg) {
+              <div>
+                <p class="text-danger">{{ settingForm.errorMsg }}</p>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+              (click)="modal.dismiss('Cross click');">
+              <span class="black-outline-txt">Close</span>
+            </button>
+            <button type="submit" class="btn btn-wide btn-primary">Update</button>
+          </div>
+        </div></form>
+      </ng-template>

@@ -1,130 +1,163 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="main-header" *ngIf="!commonService.desktop_device">
-  <h2>Quotations</h2>
-</div>
-
-<div *ngIf="!pageLoader">
-
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1 *ngIf="params?.type=='live'">
-          <ng-container *ngIf="params?.customer_id!='all' && commonService.selected_customer?.name">{{commonService.selected_customer?.name}} -
-          </ng-container>Live Requests
-        </h1>
-        <h1 *ngIf="params?.type=='confirmed'">
-          <ng-container *ngIf="params?.customer_id!='all' && commonService.selected_customer?.name">{{commonService.selected_customer?.name}} -
-          </ng-container>Confirmed Requests
-        </h1>
-        <h1 *ngIf="params?.type=='cancelled'">
-          <ng-container *ngIf="params?.customer_id!='all' && commonService.selected_customer?.name">{{commonService.selected_customer?.name}} -
-          </ng-container>Cancelled Requests
-        </h1>
-      </div>
-      <div class="col-md-4 list-button d-flex justify-content-end">
-        <button *ngIf="commonService.store_details.login_type=='admin'" type="button" (click)="exportAsXLSX();">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-
-
-  <div class="row mb-4">
-    <div *ngIf="params?.type=='live'" class="col-md-3">
-      <div class="form-group">
-        <select name="type" class="form-control select-arrow" [(ngModel)]="filterForm.type" (change)="getQuotationList();">
-          <option value="all">All Requests</option>
-          <option value="placed">New Requests</option>
-          <option value="processing">Processing Requests</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="form-group">
-        <input type="text" placeholder="Select Date" class="form-control" name="from_date" [(ngModel)]="filterForm.from_date" (ngModelChange)="getQuotationList();"
-          bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="form-group">
-        <input type="text" placeholder="Select Date" class="form-control" name="to_date" [(ngModel)]="filterForm.to_date" (ngModelChange)="getQuotationList();"
-          bsDatepicker [minDate]="filterForm.from_date" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly
-        />
-      </div>
-    </div>
-    <!-- search box -->
-    <div [ngClass]="params.type=='live'? 'col-md-3': 'col-md-6'">
-      <div class="form-group">
-        <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-      </div>
-    </div>
+@if (!commonService.desktop_device) {
+  <div class="main-header">
+    <h2>Quotations</h2>
   </div>
+}
 
-  <!-- DATA LIST -->
-  <div *ngIf="list?.length" class="row" class="list-horizontal">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-10 col-4 first_col px-0 cursor header-font">
-            <p class="w-30 w-sm-100 m-b-0">Order ID</p>
-            <p class="w-20 w-sm-100 m-b-0">Customer</p>
-            <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
-            <p class="w-20 w-sm-100 m-b-0">Total Price</p>
-            <p *ngIf="params?.type=='live'" class="w-10 w-sm-100 m-b-0">Status</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card"  *ngFor="let x of list | gridSearch: { quot_number: search_bar, customer_name: search_bar, customer_email: search_bar, customer_mobile: search_bar, shipping_customer_name: search_bar, billing_customer_name: search_bar } | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;"
-          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <ng-container *ngIf="params?.type=='live'">
-            <div *ngIf="x.c_req_type=='revision'" class="ribbon-band pink-band">Revision Requested</div>
-            <div *ngIf="x.c_req_type=='approve'" class="ribbon-band green-band">Quote Approved</div>
-          </ng-container>
-          <div class="col-md-10 col-8 first_col px-0 align-items-center">
-            <p class="w-30 w-sm-100 m-b-0 dark-font">#{{x.quot_number}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.customer_name}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="params?.type=='live'">{{x.modified_on | date: "dd MMM y hh:mm a"}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="params?.type=='confirmed'">{{x.confirmed_on | date: "dd MMM y hh:mm a"}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font" *ngIf="params?.type=='cancelled'">{{x.cancelled_on | date: "dd MMM y hh:mm a"}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.final_price | currency: commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
-            <p *ngIf="params?.type=='live'" class="w-10 w-sm-100 m-b-0">
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            @if (params?.type=='live') {
+              <h1>
+                @if (params?.customer_id!='all' && commonService.selected_customer?.name) {
+                  {{commonService.selected_customer?.name}} -
+                  }Live Requests
+                </h1>
+              }
+              @if (params?.type=='confirmed') {
+                <h1>
+                  @if (params?.customer_id!='all' && commonService.selected_customer?.name) {
+                    {{commonService.selected_customer?.name}} -
+                    }Confirmed Requests
+                  </h1>
+                }
+                @if (params?.type=='cancelled') {
+                  <h1>
+                    @if (params?.customer_id!='all' && commonService.selected_customer?.name) {
+                      {{commonService.selected_customer?.name}} -
+                      }Cancelled Requests
+                    </h1>
+                  }
+                </div>
+                <div class="col-md-4 list-button d-flex justify-content-end">
+                  @if (commonService.store_details.login_type=='admin') {
+                    <button type="button" (click)="exportAsXLSX();">
+                      <span class="material-symbols-rounded">file_upload</span> Export
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+          <div class="row mb-4">
+            @if (params?.type=='live') {
+              <div class="col-md-3">
+                <div class="form-group">
+                  <select name="type" class="form-control select-arrow" [(ngModel)]="filterForm.type" (change)="getQuotationList();">
+                    <option value="all">All Requests</option>
+                    <option value="placed">New Requests</option>
+                    <option value="processing">Processing Requests</option>
+                  </select>
+                </div>
+              </div>
+            }
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" placeholder="Select Date" class="form-control" name="from_date" [(ngModel)]="filterForm.from_date" (ngModelChange)="getQuotationList();"
+                  bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <input type="text" placeholder="Select Date" class="form-control" name="to_date" [(ngModel)]="filterForm.to_date" (ngModelChange)="getQuotationList();"
+                    bsDatepicker [minDate]="filterForm.from_date" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly
+                    />
+                  </div>
+                </div>
+                <!-- search box -->
+                <div [ngClass]="params.type=='live'? 'col-md-3': 'col-md-6'">
+                  <div class="form-group">
+                    <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+                  </div>
+                </div>
+              </div>
+              <!-- DATA LIST -->
+              @if (list?.length) {
+                <div class="row" class="list-horizontal">
+                  <div class="data-list-card-wrapper">
+                    <div class="data-list-card-inner">
+                      @if (commonService.desktop_device) {
+                        <div class="list-item data-list-card">
+                          <div class="col-md-10 col-4 first_col px-0 cursor header-font">
+                            <p class="w-30 w-sm-100 m-b-0">Order ID</p>
+                            <p class="w-20 w-sm-100 m-b-0">Customer</p>
+                            <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
+                            <p class="w-20 w-sm-100 m-b-0">Total Price</p>
+                            @if (params?.type=='live') {
+                              <p class="w-10 w-sm-100 m-b-0">Status</p>
+                            }
+                          </div>
+                        </div>
+                      }
+                      @for (x of list | gridSearch: { quot_number: search_bar, customer_name: search_bar, customer_email: search_bar, customer_mobile: search_bar, shipping_customer_name: search_bar, billing_customer_name: search_bar } | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+                        <div class="list-item data-list-card"
+                          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                          @if (params?.type=='live') {
+                            @if (x.c_req_type=='revision') {
+                              <div class="ribbon-band pink-band">Revision Requested</div>
+                            }
+                            @if (x.c_req_type=='approve') {
+                              <div class="ribbon-band green-band">Quote Approved</div>
+                            }
+                          }
+                          <div class="col-md-10 col-8 first_col px-0 align-items-center">
+                            <p class="w-30 w-sm-100 m-b-0 dark-font">#{{x.quot_number}}</p>
+                            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.customer_name}}</p>
+                            @if (params?.type=='live') {
+                              <p class="w-20 w-sm-100 m-b-0 light-font">{{x.modified_on | date: "dd MMM y hh:mm a"}}</p>
+                            }
+                            @if (params?.type=='confirmed') {
+                              <p class="w-20 w-sm-100 m-b-0 light-font">{{x.confirmed_on | date: "dd MMM y hh:mm a"}}</p>
+                            }
+                            @if (params?.type=='cancelled') {
+                              <p class="w-20 w-sm-100 m-b-0 light-font">{{x.cancelled_on | date: "dd MMM y hh:mm a"}}</p>
+                            }
+                            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.final_price | currency: commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                            @if (params?.type=='live') {
+                              <p class="w-10 w-sm-100 m-b-0">
               <span class="badge" [ngClass]="{
                 'badge-blue-background': x.quot_status === 'placed',
                 'badge-yellow-background': x.quot_status === 'processing'
               }">{{ x.quot_status | titlecase }}</span>
-            </p>
-          </div>
-          <div class="col-md-2 col-4">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
-              (click)="capturePageData();" routerLink="/orders/quotations/{{params?.type}}/{{params?.customer_id}}/{{x._id}}">
-                <span class="material-symbols-rounded right_arrow transicon">
-                  {{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
-                {{commonService.desktop_device? 'View': ''}}
-              </button>
+                              </p>
+                            }
+                          </div>
+                          <div class="col-md-2 col-4">
+                            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                                (click)="capturePageData();" routerLink="/orders/quotations/{{params?.type}}/{{params?.customer_id}}/{{x._id}}">
+                                <span class="material-symbols-rounded right_arrow transicon">
+                                {{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
+                                {{commonService.desktop_device? 'View': ''}}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <!-- PAGINATION CONTROL -->
+                  <div class="col-md-12 mt-3">
+                    <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true" maxSize="5" previousLabel=""
+                    nextLabel=""></pagination-controls>
+                  </div>
+                </div>
+              }
+              @if (!list?.length) {
+                <div class="row">
+                  <div class="col-md-12">
+                    <p align="center">No data to display</p>
+                  </div>
+                </div>
+              }
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="col-md-12 mt-3">
-      <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true" maxSize="5" previousLabel=""
-        nextLabel=""></pagination-controls>
-    </div>
-
-  </div>
-
-  <div *ngIf="!list?.length" class="row">
-    <div class="col-md-12">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-
-</div>
+          }

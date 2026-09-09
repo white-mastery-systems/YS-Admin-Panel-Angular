@@ -14,7 +14,7 @@ import { BlogEventComponent } from './blog-event.component';
     QuillModule.forRoot(environment.quill_config),
     TagInputModule,
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     BlogEventRoutingModule
   ]
 })

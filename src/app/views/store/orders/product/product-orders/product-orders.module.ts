@@ -13,7 +13,7 @@ import { OrderFilterPipe } from './order-filter.pipe';
     SharedModule,
     AmazingTimePickerModule,
     ProductOrdersRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

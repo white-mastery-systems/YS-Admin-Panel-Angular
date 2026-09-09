@@ -37,7 +37,7 @@ import { Directive, HostListener } from '@angular/core';
         return false
     }
 
-    @HostListener('click', ['$event'])
+    @HostListener('click')
     toggleFullscreen() {
         var elem = document.body;
         var isInFullScreen = (document['fullScreenElement'] && document['fullScreenElement'] !== null) || (document['mozFullScreen'] || document['webkitIsFullScreen']);

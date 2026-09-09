@@ -1,71 +1,84 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<ng-container *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>{{commonService.secondary_header}}</h1>
+@if (!pageLoader) {
+  @if (commonService.desktop_device) {
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <h1>{{commonService.secondary_header}}</h1>
+        </div>
       </div>
     </div>
-  </div>
+  }
   <!-- list -->
-  <div *ngIf="!params.type" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-10 col-6 first_col px-0 cursor header-font">
-            <p class="w-100 w-sm-100 m-b-0">Name</p>
-          </div>
+  @if (!params.type) {
+    <div class="list-horizontal">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          @if (commonService.desktop_device) {
+            <div class="list-item data-list-card">
+              <div class="col-md-10 col-6 first_col px-0 cursor header-font">
+                <p class="w-100 w-sm-100 m-b-0">Name</p>
+              </div>
+            </div>
+          }
+          @for (x of menuList; track x) {
+            <div class="list-item data-list-card">
+              <div class="col-md-10 col-6 first_col px-0 cursor">
+                <p class="w-100 w-sm-100 m-b-0 dark-font">{{ x.name }}</p>
+              </div>
+              <div class="col-md-2 col-6 px-0 d-flex justify-content-end">
+                <div [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                  <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" routerLink="{{x.state}}">
+                    <span class="material-symbols-rounded right_arrow transicon">
+                    {{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
+                    {{commonService.desktop_device? 'View': ''}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
         </div>
-        <div class="list-item data-list-card" *ngFor="let x of menuList">
-          <div class="col-md-10 col-6 first_col px-0 cursor">
-              <p class="w-100 w-sm-100 m-b-0 dark-font">{{ x.name }}</p>
-          </div>
-          <div class="col-md-2 col-6 px-0 d-flex justify-content-end">
-            <div [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" routerLink="{{x.state}}">
-                <span class="material-symbols-rounded right_arrow transicon">
-                  {{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
-                {{commonService.desktop_device? 'View': ''}}
-              </button>
+      </div>
+    </div>
+  }
+  <!-- form -->
+  @if (params.type) {
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+        <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
+          <div class="row">
+            <div class="col-md-12 form-group mb-3">
+              <label>Title</label>
+              <input type="text" name="title" class="form-control" [(ngModel)]="editForm.title" #title="ngModel" required />
+            </div>
+            <div class="col-md-12 form-group mb-3 quill-mb-5">
+              <label>Content</label>
+              <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content" [ngModelOptions]="{standalone: true}"></quill-editor>
             </div>
           </div>
-        </div>
+          <div class="separator-breadcrumb border-top mt-5"></div>
+          <div class="row">
+            @if (editForm.errorMsg) {
+              <div class="col-md-12 mt-3 mb-3">
+                <p class="text-danger" align="center">{{ editForm.errorMsg }}</p>
+              </div>
+            }
+            <div align="center" class="col-md-12 z-i-0">
+              <button type="button" routerLink="{{ commonService.desktop_device? '/setup/policies': '/setup' }}" class="btn btn-wide black-outline-btn">
+                <span class="black-outline-txt">Cancel</span>
+              </button>&nbsp; &nbsp; &nbsp;
+              <button type="submit" class="btn btn-wide btn-primary">Update</button>
+            </div>
+          </div>
+        </form>
       </div>
+      <div class="col-md-1"></div>
     </div>
-  </div>
-
-  <!-- form -->
-  <div *ngIf="params.type" class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-10">
-      <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
-        <div class="row">
-          <div class="col-md-12 form-group mb-3">
-            <label>Title</label>
-            <input type="text" name="title" class="form-control" [(ngModel)]="editForm.title" #title="ngModel" required />
-          </div>
-          <div class="col-md-12 form-group mb-3 quill-mb-5">
-            <label>Content</label>
-            <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content" [ngModelOptions]="{standalone: true}"></quill-editor>
-          </div>
-        </div>
-        <div class="separator-breadcrumb border-top mt-5"></div>
-        <div class="row">
-          <div class="col-md-12 mt-3 mb-3" *ngIf="editForm.errorMsg">
-            <p class="text-danger" align="center">{{ editForm.errorMsg }}</p>
-          </div>
-          <div align="center" class="col-md-12 z-i-0">
-            <button type="button" routerLink="{{ commonService.desktop_device? '/setup/policies': '/setup' }}" class="btn btn-wide black-outline-btn">
-            <span class="black-outline-txt">Cancel</span>
-            </button>&nbsp; &nbsp; &nbsp;
-            <button type="submit" class="btn btn-wide btn-primary">Update</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="col-md-1"></div>
-  </div>
-</ng-container>
+  }
+}

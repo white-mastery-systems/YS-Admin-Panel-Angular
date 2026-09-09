@@ -11,7 +11,7 @@ import { AdMgmtEventsComponent } from './ad-mgmt-events.component';
   ],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     AdMgmtEventsRoutingModule
   ]
 })

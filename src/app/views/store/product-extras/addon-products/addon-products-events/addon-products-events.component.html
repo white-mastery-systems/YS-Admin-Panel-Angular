@@ -1,122 +1,148 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-  
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb">
-      <div class="d-flex align-items-center">
-        <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-        <h1 *ngIf="!router.url.includes('modify')">New Addon Product</h1>
-        <h1 *ngIf="router.url.includes('modify')">{{addonProductForm.name}}</h1>
-      </div>   
-    </div>
-  </ng-container>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-  <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
-    <div class="row">
-      <div align="center" class="col-md-12 col-lg-12 form-group mb-3" *ngFor="let x of addonProductForm.image_list; let i=index;">
-        <div class="card p-3 mt-3 mb-3 w-50">
-          <span *ngIf="addonProductForm.image_list[0].image" (click)="addonProductForm.image_list[0]={};" class="material-icons item-close absolute-item-close float-right" aria-hidden="true">close</span>
-          <label>
-            <div *ngIf="!x.image">
-              <i class="material-icons add-img">add_photo_alternate</i>
-              <p>Click to upload image</p>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb">
+        <div class="d-flex align-items-center">
+          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+          @if (!router.url.includes('modify')) {
+            <h1>New Addon Product</h1>
+          }
+          @if (router.url.includes('modify')) {
+            <h1>{{addonProductForm.name}}</h1>
+          }
+        </div>
+      </div>
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate ngbAutofocus>
+      <div class="row">
+        @for (x of addonProductForm.image_list; track x; let i = $index) {
+          <div align="center" class="col-md-12 col-lg-12 form-group mb-3">
+            <div class="card p-3 mt-3 mb-3 w-50">
+              @if (addonProductForm.image_list[0].image) {
+                <span (click)="addonProductForm.image_list[0]={};" class="material-icons item-close absolute-item-close float-right" aria-hidden="true">close</span>
+              }
+              <label>
+                @if (!x.image) {
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image</p>
+                  </div>
+                }
+                @if (x.image && x.img_change) {
+                  <img [src]="x.image" height="150" width="auto">
+                }
+                @if (x.image && !x.img_change) {
+                  <img [src]="imgBaseUrl+x.image" height="150" width="auto">
+                }
+                <input type="file" name="image{{i}}" style="display: none;" (change)="fileChangeListener(i, $event);" accept="image/jpeg, image/png, image/webp" />
+              </label>
             </div>
-            <img *ngIf="x.image && x.img_change" [src]="x.image" height="150" width="auto">
-            <img *ngIf="x.image && !x.img_change" [src]="imgBaseUrl+x.image" height="150" width="auto">
-            <input type="file" name="image{{i}}" style="display: none;" (change)="fileChangeListener(i, $event);" accept="image/jpeg, image/png, image/webp" />
-          </label>
-        </div>
-      </div>
-      <div *ngIf="addonProductForm.image_list.length!>1" align="center" class="col-md-6 col-lg-4 d-flex align-items-center form-group mb-3 z-i-0">
-        <div class="add-another-opt w-100" (click)="addonProductForm.image_list.push({});">
-          <p>ADD {{(addonProductForm.image_list.length)? 'ANOTHER': ''}} IMAGE</p>
-        </div>
-      </div>
-      <div class="col-md-12 col-12">
-        <div class="row">
-          <div class="col-md-6 form-group mb-3">
-            <label>Product Name</label>
-            <input type="text" name="name" class="form-control" [(ngModel)]="addonProductForm.name" #name="ngModel" required />
           </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Product SKU</label>
-            <input type="text" name="sku" class="form-control" [(ngModel)]="addonProductForm.sku" #sku="ngModel" appUppercase appNoSplChar required />
+        }
+        @if (addonProductForm.image_list.length!>1) {
+          <div align="center" class="col-md-6 col-lg-4 d-flex align-items-center form-group mb-3 z-i-0">
+            <div class="add-another-opt w-100" (click)="addonProductForm.image_list.push({});">
+              <p>ADD {{(addonProductForm.image_list.length)? 'ANOTHER': ''}} IMAGE</p>
+            </div>
           </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Stock Type</label>
-            <select name="stock_type" class="form-control" [(ngModel)]="addonProductForm.stock_type" required>
-              <option value="lim">Limited</option>
-              <option value="unlim">Unlimited</option>
-            </select>
-          </div>
-          <div *ngIf="commonService.store_details?.type!='estates'" class="col-md-6 form-group mb-3">
-            <label>Shipping Weight for 1 {{addonProductForm.unit}} (in Kg, 500g = 0.5)</label>
-            <input type="tel" name="weight" class="form-control" [(ngModel)]="addonProductForm.weight" (focusout)="parseToFloat(addonProductForm.weight);" #weight="ngModel" required />
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Selling Price</label>
-            <input type="number" (wheel)="commonService.handleWheel($event)" name="selling_price" class="form-control" [(ngModel)]="addonProductForm.selling_price" #selling_price="ngModel"
-            (input)="discountCalc(addonProductForm);" appNumberOnly required />
-          </div>
-          <div *ngIf="addonProductForm.stock_type=='lim'" class="col-md-6 form-group mb-3">
-            <label>Stock</label>
-            <input type="tel" name="stock" class="form-control" [(ngModel)]="addonProductForm.stock" #stock="ngModel" appNumberOnly required />
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Rank</label>
-            <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addonProductForm.rank" #rank="ngModel" min="1" max="{{maxRank}}" appNumberOnly required />
-          </div>
-          <!-- Apply Discount -->
-          <div class="col-md-12 form-group" [ngClass]="addonProductForm.disc_status? 'mt-2 mb-5': ''">
-            <div class="row">
-              <div class="col-md-12 form-group">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="disc_status" [(ngModel)]="addonProductForm.disc_status" #disc_status="ngModel"
-                  (change)="addonProductForm.disc_percentage='';">
-                  <span [ngClass]="addonProductForm.disc_status? 'f-w-800': ''">Apply Discount</span>
-                  <span class="checkmark"></span>
-                </label>
+        }
+        <div class="col-md-12 col-12">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label>Product Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="addonProductForm.name" #name="ngModel" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Product SKU</label>
+              <input type="text" name="sku" class="form-control" [(ngModel)]="addonProductForm.sku" #sku="ngModel" appUppercase appNoSplChar required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Stock Type</label>
+              <select name="stock_type" class="form-control" [(ngModel)]="addonProductForm.stock_type" required>
+                <option value="lim">Limited</option>
+                <option value="unlim">Unlimited</option>
+              </select>
+            </div>
+            @if (commonService.store_details?.type!='estates') {
+              <div class="col-md-6 form-group mb-3">
+                <label>Shipping Weight for 1 {{addonProductForm.unit}} (in Kg, 500g = 0.5)</label>
+                <input type="tel" name="weight" class="form-control" [(ngModel)]="addonProductForm.weight" (focusout)="parseToFloat(addonProductForm.weight);" #weight="ngModel" required />
               </div>
-              <div *ngIf="addonProductForm.disc_status" class="col-md-12">
-                <div class="card card-in-card p-3">
-                  <div class="row">
-                    <div class="col-md-6 form-group mb-2">                    
-                      <label>Discount (in %)</label>
-                      <input type="number" (wheel)="commonService.handleWheel($event)" name="disc_percentage" class="form-control" [(ngModel)]="addonProductForm.disc_percentage" #disc_percentage="ngModel"
-                      (input)="discountCalc(addonProductForm)" min="0.1" max="100" step="any" appNumberOnly />                     
+            }
+            <div class="col-md-6 form-group mb-3">
+              <label>Selling Price</label>
+              <input type="number" (wheel)="commonService.handleWheel($event)" name="selling_price" class="form-control" [(ngModel)]="addonProductForm.selling_price" #selling_price="ngModel"
+                (input)="discountCalc(addonProductForm);" appNumberOnly required />
+              </div>
+              @if (addonProductForm.stock_type=='lim') {
+                <div class="col-md-6 form-group mb-3">
+                  <label>Stock</label>
+                  <input type="tel" name="stock" class="form-control" [(ngModel)]="addonProductForm.stock" #stock="ngModel" appNumberOnly required />
+                </div>
+              }
+              <div class="col-md-6 form-group mb-3">
+                <label>Rank</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addonProductForm.rank" #rank="ngModel" min="1" max="{{maxRank}}" appNumberOnly required />
+              </div>
+              <!-- Apply Discount -->
+              <div class="col-md-12 form-group" [ngClass]="addonProductForm.disc_status? 'mt-2 mb-5': ''">
+                <div class="row">
+                  <div class="col-md-12 form-group">
+                    <label class="checkbox checkbox-primary">
+                      <input class="form-check-input" type="checkbox" name="disc_status" [(ngModel)]="addonProductForm.disc_status" #disc_status="ngModel"
+                        (change)="addonProductForm.disc_percentage='';">
+                        <span [ngClass]="addonProductForm.disc_status? 'f-w-800': ''">Apply Discount</span>
+                        <span class="checkmark"></span>
+                      </label>
                     </div>
-                    <div class="col-md-6 form-group mb-2">                    
-                      <label>Price after Discount</label>
-                      <input type="number" (wheel)="commonService.handleWheel($event)" name="discounted_price" class="form-control" [(ngModel)]="addonProductForm.discounted_price" #discounted_price="ngModel"
-                      max="{{addonProductForm.selling_price - 0.1}}" step="any" appNumberOnly required />                    
+                    @if (addonProductForm.disc_status) {
+                      <div class="col-md-12">
+                        <div class="card card-in-card p-3">
+                          <div class="row">
+                            <div class="col-md-6 form-group mb-2">
+                              <label>Discount (in %)</label>
+                              <input type="number" (wheel)="commonService.handleWheel($event)" name="disc_percentage" class="form-control" [(ngModel)]="addonProductForm.disc_percentage" #disc_percentage="ngModel"
+                                (input)="discountCalc(addonProductForm)" min="0.1" max="100" step="any" appNumberOnly />
+                              </div>
+                              <div class="col-md-6 form-group mb-2">
+                                <label>Price after Discount</label>
+                                <input type="number" (wheel)="commonService.handleWheel($event)" name="discounted_price" class="form-control" [(ngModel)]="addonProductForm.discounted_price" #discounted_price="ngModel"
+                                  max="{{addonProductForm.selling_price - 0.1}}" step="any" appNumberOnly required />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Description</label>
+                      <textarea class="form-control" aria-label="With textarea" name="description" [(ngModel)]="addonProductForm.description"></textarea>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <div class="page_fixedfooter row">
+                @if (addonProductForm.errorMsg) {
+                  <div class="col-md-12 mt-3 mb-3">
+                    <p class="text-danger" align="center">{{ addonProductForm.errorMsg }}</p>
+                  </div>
+                }
+                <div align="center" class="col-md-12 z-i-0">
+                  <button type="button" routerLink="/product-extras/addons" class="btn btn-wide black-outline-btn">
+                    <span class="black-outline-txt">Cancel</span>
+                  </button>&nbsp; &nbsp; &nbsp;
+                  <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
+                    {{router.url.includes('modify')? 'Update': 'Save'}}
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Description</label>
-            <textarea class="form-control" aria-label="With textarea" name="description" [(ngModel)]="addonProductForm.description"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="page_fixedfooter row">
-      <div *ngIf="addonProductForm.errorMsg" class="col-md-12 mt-3 mb-3">
-        <p class="text-danger" align="center">{{ addonProductForm.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" routerLink="/product-extras/addons" class="btn btn-wide black-outline-btn">
-          <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">
-            {{router.url.includes('modify')? 'Update': 'Save'}}
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
+        }

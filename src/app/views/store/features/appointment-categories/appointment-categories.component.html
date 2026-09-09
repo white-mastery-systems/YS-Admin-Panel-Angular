@@ -1,191 +1,215 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="catForm={ form_type: 'add', rank: list.length+1 }; modalService.open(categoryModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but" (click)="catForm={ form_type: 'add', rank: list.length+1 }; modalService.open(categoryModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
       <span class="material-symbols-rounded">add</span>
-  </div>  
-</div>
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb">
-      <h1>Appointment Services
-      </h1>      
-    </div>
-  </ng-container>
-
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="mr-3" (click)="open_website()">
-          <span class="material-symbols-rounded">visibility</span>View Page
-        </button>
-        <button class="highbutton" type="button" (click)="catForm={ form_type: 'add', rank: list.length+1 }; modalService.open(categoryModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-          <span class="material-symbols-rounded">add</span>Create Category
-        </button>
-      </div>
     </div>
   </div>
-
-  <!-- DATA LIST -->
-  <div class="list-horizontal" *ngIf="(list | fieldSearch:'name':search_bar)?.length">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-2 col-3 first_col px-0 header-font">
-            <p class="w-100 w-sm-100">Image</p>
-          </div>
-          <div class="col-md-4 col-4 first_col header-font">
-            <p class="w-50 w-sm-100 m-b-0">Service</p>
-            <p class="w-50 w-sm-100 m-b-0">Link</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc: 'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-2 col-2 first_col px-0 cursor">
-            <div *ngIf="x.image" class="list-thumb d-flex align-self-center mb-2">
-                <img class="appointment-img" [src]="imgBaseUrl+x.image" alt="">
-            </div>
-            <div *ngIf="!x.image" class="list-thumb d-flex align-self-center mb-2">
-                <img class="appointment-img" src="assets/images/default.png" alt="">
-            </div>
-          </div>
-          <div class="col-md-4 col-4 first_col">       
-            <p class="w-50 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-50 w-sm-100 m-b-0 light-font" style="word-wrap:break-word;">{{commonService.store_details?.base_url}}/services/{{x?.page_url}}</p>
-          </div>
-          <div class="col-md-6 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">  
-              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" routerLink="/setting/appointment-categories/{{x._id}}"><span class="material-symbols-rounded">grid_view</span>{{commonService.desktop_device? 'View Service':
-                ''}}</button>           
-              <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span>{{commonService.desktop_device? 'Remove':
-                ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, categoryModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
-                  'visibility': 'chevron_right'}} </span> {{commonService.desktop_device? 'View': ''}}
-              </button>
-            </div>            
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb">
+        <h1>Appointment Services
+        </h1>
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
           </div>
         </div>
-      </div>      
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" class="mr-3" (click)="open_website()">
+              <span class="material-symbols-rounded">visibility</span>View Page
+            </button>
+            <button class="highbutton" type="button" (click)="catForm={ form_type: 'add', rank: list.length+1 }; modalService.open(categoryModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+              <span class="material-symbols-rounded">add</span>Create Category
+            </button>
+          </div>
+        }
+      </div>
     </div>
-
-   
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-2 col-3 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100">Image</p>
+                </div>
+                <div class="col-md-4 col-4 first_col header-font">
+                  <p class="w-50 w-sm-100 m-b-0">Service</p>
+                  <p class="w-50 w-sm-100 m-b-0">Link</p>
+                </div>
+              </div>
+            }
+            @for (x of list | numOrderAsc: 'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-2 col-2 first_col px-0 cursor">
+                  @if (x.image) {
+                    <div class="list-thumb d-flex align-self-center mb-2">
+                      <img class="appointment-img" [src]="imgBaseUrl+x.image" alt="">
+                    </div>
+                  }
+                  @if (!x.image) {
+                    <div class="list-thumb d-flex align-self-center mb-2">
+                      <img class="appointment-img" src="assets/images/default.png" alt="">
+                    </div>
+                  }
+                </div>
+                <div class="col-md-4 col-4 first_col">
+                  <p class="w-50 w-sm-100 dark-font">{{x.name}}</p>
+                  <p class="w-50 w-sm-100 m-b-0 light-font" style="word-wrap:break-word;">{{commonService.store_details?.base_url}}/services/{{x?.page_url}}</p>
+                </div>
+                <div class="col-md-6 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" routerLink="/setting/appointment-categories/{{x._id}}"><span class="material-symbols-rounded">grid_view</span>{{commonService.desktop_device? 'View Service':
+                  ''}}</button>
+                  <button [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                    <span class="material-symbols-rounded">delete</span>{{commonService.desktop_device? 'Remove':
+                    ''}}
+                  </button>
+                  <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, categoryModal);">
+                    <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                    'visibility': 'chevron_right'}} </span> {{commonService.desktop_device? 'View': ''}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- PAGINATION CONTROL -->
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
           maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        </div>
       </div>
     </div>
-  
-
-  </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
+  }
+  @if (!(list | fieldSearch:'name':search_bar)?.length) {
+    <div class="row">
+      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+        <p align="center">No data to display</p>
+      </div>
     </div>
-  </div>
+  }
 </div>
+}
 
 <!-- CATEGORY MODAL -->
 <ng-template #categoryModal let-modal>
   <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
     <div class="modal-content">
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">{{ catForm?.form_type=='add'? 'Add': 'Update' }} Category</span>
-     </h4>    
-  </div>  
-    <div class="modal-body">
-      <div class="form-group">
-        <div class="row justify-content-center">
-          <p>Photo Resolution: 450x300</p>
-          <div class="col-md-12 col-8 mb-3 d-flex justify-content-center">
-            <div class="col-md-6 card p-3">
-            <div *ngIf="catForm.image" class="text-center mt-3">
-              <span (click)="catForm.img_change=null; catForm.image=null" class="material-icons round-img-icon ab-item-close top5"
-                aria-hidden="true">close</span>
-              <img *ngIf="catForm.img_change" [src]="catForm.image" height="100px;" width="auto;">
-              <img *ngIf="!catForm.img_change" [src]="imgBaseUrl+catForm.image" height="100px;" width="auto;">
-            </div>
-            <div *ngIf="!catForm.image" class="d-flex justify-content-center">
-              <label>
-                <div class="text-center">
-                  <i class="material-icons add-img">add_photo_alternate</i>
-                  <p>Click to upload image</p>
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">{{ catForm?.form_type=='add'? 'Add': 'Update' }} Category</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="row justify-content-center">
+            <p>Photo Resolution: 450x300</p>
+            <div class="col-md-12 col-8 mb-3 d-flex justify-content-center">
+              <div class="col-md-6 card p-3">
+                @if (catForm.image) {
+                  <div class="text-center mt-3">
+                    <span (click)="catForm.img_change=null; catForm.image=null" class="material-icons round-img-icon ab-item-close top5"
+                    aria-hidden="true">close</span>
+                    @if (catForm.img_change) {
+                      <img [src]="catForm.image" height="100px;" width="auto;">
+                    }
+                    @if (!catForm.img_change) {
+                      <img [src]="imgBaseUrl+catForm.image" height="100px;" width="auto;">
+                    }
+                  </div>
+                }
+                @if (!catForm.image) {
+                  <div class="d-flex justify-content-center">
+                    <label>
+                      <div class="text-center">
+                        <i class="material-icons add-img">add_photo_alternate</i>
+                        <p>Click to upload image</p>
+                      </div>
+                      <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);"
+                        accept="image/jpeg, image/png, image/webp" />
+                      </label>
+                    </div>
+                  }
                 </div>
-                <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);"
-                  accept="image/jpeg, image/png, image/webp" />
-              </label>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="catForm.name" #name="ngModel" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Rank</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="catForm.rank" #rank="ngModel" min="1"
+                  max="{{ (catForm?.form_type=='add')? list.length+1: list.length }}" appNumberOnly required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Description</label>
+                  <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="catForm.description" #description="ngModel"></textarea>
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label>Page URL - {{commonService.store_details?.base_url}}/services/{{catForm?.page_url}}</label>
+                  <input type="text" name="page_url" class="form-control" [(ngModel)]="catForm.page_url" #page_url="ngModel"
+                    appNoSplChar required />
+                  </div>
+                </div>
+              </div>
+              @if (catForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ catForm.errorMsg }}</p>
+                </div>
+              }
             </div>
-          </div>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Name</label>
-            <input type="text" name="name" class="form-control" [(ngModel)]="catForm.name" #name="ngModel" required />
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label>Rank</label>
-            <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="catForm.rank" #rank="ngModel" min="1"
-            max="{{ (catForm?.form_type=='add')? list.length+1: list.length }}" appNumberOnly required />
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Description</label>
-            <textarea class="form-control" aria-label="With textarea" name="description"
-              [(ngModel)]="catForm.description" #description="ngModel"></textarea>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>Page URL - {{commonService.store_details?.base_url}}/services/{{catForm?.page_url}}</label>
-            <input type="text" name="page_url" class="form-control" [(ngModel)]="catForm.page_url" #page_url="ngModel"
-              appNoSplChar required />
-          </div>
-        </div>
-      </div>
-      <div *ngIf="catForm.errorMsg">
-        <p class="text-danger">{{ catForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-        (click)="modal.dismiss('Cross click');">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit"
-        [ladda]="catForm.submit">
-        {{ catForm?.form_type=='add'? 'Add': 'Update' }}
-      </button>
-    </div>
-  </div></form>
-</ng-template>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                (click)="modal.dismiss('Cross click');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="catForm.submit"
+                [ladda]="catForm.submit">
+                {{ catForm?.form_type=='add'? 'Add': 'Update' }}
+              </button>
+            </div>
+          </div></form>
+        </ng-template>
 
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
-        category?</strong></p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+        <!-- DELETE MODAL -->
+        <ng-template #deleteModal let-modal>
+          <div class="modal-body">
+            <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
+          category?</strong></p>
+          @if (deleteForm.errorMsg) {
+            <div>
+              <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+            </div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+            (click)="modal.dismiss('Cross click');">
+            <span class="black-outline-txt">No</span>
+          </button>
+          <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+            <span class="orng-outline-txt">Yes</span>
+          </button>
+        </div>
+      </ng-template>

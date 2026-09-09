@@ -10,7 +10,7 @@ import { GiftcardOrdersComponent } from './giftcard-orders.component';
   imports: [
     SharedModule,
     GiftcardOrdersRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

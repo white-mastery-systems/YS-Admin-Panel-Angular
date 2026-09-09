@@ -1,125 +1,160 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="apps-section" *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>{{ (ys_apps_category?.name)? ys_apps_category?.name+' - ': '' }}Apps</h1>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-  </ng-container>
+}
 
-  <ng-container *ngIf="!ys_apps_category">
-    <div class="top-filter-sec">
-      <div class="row mb-2">
-        <div class="col-md-6">
-          <div class="form-group">
-            <select name="type" (change)="onChange(selected_package);" [(ngModel)]="selected_package" class="form-control select-arrow">
-              <option value="all">All</option>
-              <ng-container *ngFor="let x of package_list;">
-                <option [value]="x._id">{{x.name}}</option>
-              </ng-container>
-            </select>
+@if (!pageLoader) {
+  <div class="apps-section">
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>{{ (ys_apps_category?.name)? ys_apps_category?.name+' - ': '' }}Apps</h1>
           </div>
         </div>
       </div>
-    </div>
-
-    <div *ngIf="!notFound" class="apps-cards-section">
-      <ng-container *ngFor="let cat of commonService.feature_categories | numOrderAsc:'rank';">
-        <div *ngIf="cat.apps.length" class="row">
-          <div class="col-md-12 mb-3">
-            <div class="row">
-              <div class="col-6 d-flex align-items-center">
-                <div class="plans-app-head">
-                  <h4 class="mt-2 mb-0">{{cat.name}}</h4>
-                </div>
-              </div>
-              <div *ngIf="cat.apps.length>3" class="col-6 d-flex align-items-center justify-content-end">
-                <button class="light-button"(click)="viewAll(cat);">
-                  <span class="material-symbols-rounded">visibility</span> View More
-                </button>
-                <!-- <div class="plans-app-btn-sec">
-                  <span (click)="viewAll(cat);">View More</span>
-                </div> -->
-              </div>
+    }
+    @if (!ys_apps_category) {
+      <div class="top-filter-sec">
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <div class="form-group">
+              <select name="type" (change)="onChange(selected_package);" [(ngModel)]="selected_package" class="form-control select-arrow">
+                <option value="all">All</option>
+                @for (x of package_list; track x) {
+                  <option [value]="x._id">{{x.name}}</option>
+                }
+              </select>
             </div>
           </div>
-
-          <div *ngFor="let x of cat.apps | numOrderAsc:'rank' | slice:0:3;" class="col-md-4 d-flex">
+        </div>
+      </div>
+      @if (!notFound) {
+        <div class="apps-cards-section">
+          @for (cat of commonService.feature_categories | numOrderAsc:'rank'; track cat) {
+            @if (cat.apps.length) {
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <div class="row">
+                    <div class="col-6 d-flex align-items-center">
+                      <div class="plans-app-head">
+                        <h4 class="mt-2 mb-0">{{cat.name}}</h4>
+                      </div>
+                    </div>
+                    @if (cat.apps.length>3) {
+                      <div class="col-6 d-flex align-items-center justify-content-end">
+                        <button class="light-button"(click)="viewAll(cat);">
+                          <span class="material-symbols-rounded">visibility</span> View More
+                        </button>
+                        <!-- <div class="plans-app-btn-sec">
+                        <span (click)="viewAll(cat);">View More</span>
+                      </div> -->
+                    </div>
+                  }
+                </div>
+              </div>
+              @for (x of cat.apps | numOrderAsc:'rank' | slice:0:3; track x) {
+                <div class="col-md-4 d-flex">
+                  <div class="card apps-card w-100 p-3 mb-4" (click)="onSelectApp(x);">
+                    <div class="app-image">
+                      @if (!x.image_list.length) {
+                        <span class="material-icons-outlined">widgets</span>
+                      }
+                      @if (x.image_list.length) {
+                        <img [src]="imgBaseUrl+x.image_list[0].image" alt="app-icons">
+                      }
+                    </div>
+                    <div class="app-content">
+                      <h5>{{x.name}}</h5>
+                      <div class="app-description">
+                        <p class="two-line-txt-ellipsis" [innerHTML]="x.description"></p>
+                      </div>
+                      @if (commonService.ys_features.indexOf(x.keyword)!=-1 && !x.deploy_data) {
+                        <div class="app-indicator">
+                          <div class="app-installed">
+                            <i class="material-icons">check_circle</i> App Installed
+                          </div>
+                        </div>
+                      }
+                      @if (x.deploy_data) {
+                        <div class="app-indicator">
+                          @if (x.deploy_data?.paid) {
+                            <div class="app-installed">
+                              <i class="material-icons">check_circle</i> App Installed
+                            </div>
+                          }
+                          @if (!x.deploy_data?.paid) {
+                            <div class="app-not-installed">
+                              <i class="material-icons">paid</i> Make payment
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+    @if (notFound) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
+  }
+  @if (ys_apps_category) {
+    <div class="apps-cards-section">
+      <div class="row">
+        @for (x of ys_apps_category.apps | numOrderAsc:'rank'; track x) {
+          <div class="col-md-4 d-flex">
             <div class="card apps-card w-100 p-3 mb-4" (click)="onSelectApp(x);">
               <div class="app-image">
-                <span *ngIf="!x.image_list.length" class="material-icons-outlined">widgets</span>
-                <img *ngIf="x.image_list.length" [src]="imgBaseUrl+x.image_list[0].image" alt="app-icons">
+                @if (!x.image_list.length) {
+                  <span class="material-icons-outlined">widgets</span>
+                }
+                @if (x.image_list.length) {
+                  <img [src]="imgBaseUrl+x.image_list[0].image" alt="app-icons">
+                }
               </div>
               <div class="app-content">
                 <h5>{{x.name}}</h5>
                 <div class="app-description">
                   <p class="two-line-txt-ellipsis" [innerHTML]="x.description"></p>
                 </div>
-                <div *ngIf="commonService.ys_features.indexOf(x.keyword)!=-1 && !x.deploy_data" class="app-indicator">
-                  <div class="app-installed">
-                    <i class="material-icons">check_circle</i> App Installed
+                @if (commonService.ys_features.indexOf(x.keyword)!=-1 && !x.deploy_data) {
+                  <div class="app-indicator">
+                    <div class="app-installed">
+                      <i class="material-icons">check_circle</i> App Installed
+                    </div>
                   </div>
-                </div>
-                <div *ngIf="x.deploy_data" class="app-indicator">
-                  <div *ngIf="x.deploy_data?.paid" class="app-installed">
-                    <i class="material-icons">check_circle</i> App Installed
+                }
+                @if (x.deploy_data) {
+                  <div class="app-indicator">
+                    @if (x.deploy_data?.paid) {
+                      <div class="app-installed">
+                        <i class="material-icons">check_circle</i> App Installed
+                      </div>
+                    }
+                    @if (!x.deploy_data?.paid) {
+                      <div class="app-not-installed">
+                        <i class="material-icons">paid</i> Make payment
+                      </div>
+                    }
                   </div>
-                  <div *ngIf="!x.deploy_data?.paid" class="app-not-installed">
-                    <i class="material-icons">paid</i> Make payment
-                  </div>
-                </div>
+                }
               </div>
             </div>
           </div>
-        </div>
-      </ng-container>
-    </div>
-
-    <div *ngIf="notFound" class="row">
-      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-        <p align="center">No data to display</p>
+        }
       </div>
     </div>
-  </ng-container>
-
-  <ng-container *ngIf="ys_apps_category">
-    <div class="apps-cards-section">
-      <div class="row">
-        <div *ngFor="let x of ys_apps_category.apps | numOrderAsc:'rank';" class="col-md-4 d-flex">
-          <div class="card apps-card w-100 p-3 mb-4" (click)="onSelectApp(x);">
-            <div class="app-image">
-              <span *ngIf="!x.image_list.length" class="material-icons-outlined">widgets</span>
-              <img *ngIf="x.image_list.length" [src]="imgBaseUrl+x.image_list[0].image" alt="app-icons">
-            </div>
-            <div class="app-content">
-              <h5>{{x.name}}</h5>
-              <div class="app-description">
-                <p class="two-line-txt-ellipsis" [innerHTML]="x.description"></p>
-              </div>
-              <div *ngIf="commonService.ys_features.indexOf(x.keyword)!=-1 && !x.deploy_data" class="app-indicator">
-                <div class="app-installed">
-                  <i class="material-icons">check_circle</i> App Installed
-                </div>
-              </div>
-              <div *ngIf="x.deploy_data" class="app-indicator">
-                <div *ngIf="x.deploy_data?.paid" class="app-installed">
-                  <i class="material-icons">check_circle</i> App Installed
-                </div>
-                <div *ngIf="!x.deploy_data?.paid" class="app-not-installed">
-                  <i class="material-icons">paid</i> Make payment
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-container>
+  }
 </div>
+}

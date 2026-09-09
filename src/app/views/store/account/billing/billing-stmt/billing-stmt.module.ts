@@ -10,7 +10,7 @@ import { BillingStmtComponent } from './billing-stmt.component';
   imports: [
     SharedModule,
     BillingStmtRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

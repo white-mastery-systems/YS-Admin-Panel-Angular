@@ -13,7 +13,7 @@ import { ModifyYsFeaturesComponent } from './modify-ys-features.component';
     QuillModule.forRoot(environment.quill_config),
     SharedModule,
     ModifyYsFeaturesRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

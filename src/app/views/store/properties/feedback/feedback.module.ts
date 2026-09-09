@@ -10,7 +10,7 @@ import { FeedbackComponent } from './feedback.component';
   imports: [
     SharedModule,
     FeedbackRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

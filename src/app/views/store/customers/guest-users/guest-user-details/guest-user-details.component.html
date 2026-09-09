@@ -1,106 +1,122 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{customerDetails.email}}</h1>
-        </div>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="list-horizontal order-details">
-
-    <div class="row m-0 flex-sm-row-reverse">
-      <!-- right-side -->
-      <div *ngIf="customerDetails.address_list?.length" class="col-12 d-flex justify-content-end" [ngClass]="commonService.desktop_device?'':'px-0'">
-        <!-- quotations -->
-        <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
-          *ngIf="commonService.store_details?.type=='quot_based'" placement="bottom-start bottom-end top-start top-end">
-          <button type="button" class="light-button" ngbDropdownToggle><span
-              class="material-symbols-rounded">visibility</span>View Orders</button>
-          <div class="dropdown-menu" ngbDropdownMenu>
-            <button (click)="goQuotPage(customerDetails, 'live')" class="dropdown-item">
-              <span class="material-symbols-rounded">shopping_cart</span>Live
-            </button>
-            <button (click)="goQuotPage(customerDetails, 'confirmed')" class="dropdown-item">
-              <span class="material-symbols-rounded">done</span>Confirmed
-            </button>
-            <button (click)="goQuotPage(customerDetails, 'cancelled')" class="dropdown-item">
-              <span class="material-symbols-rounded">close</span>Cancelled
-            </button>
-          </div>
-        </div>
-        <!-- orders -->
-        <div class="btn-group"
-          *ngIf="commonService.store_details?.type!='quot_based'"
-          ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-          <button class="light-button" ngbDropdownToggle><span
-              class="material-symbols-rounded">visibility</span>View Orders</button>
-          <div class="dropdown-menu" ngbDropdownMenu>
-            <button (click)="goOrdersPage(customerDetails, 'live')" class="dropdown-item">
-              <span class="material-symbols-rounded">shopping_cart</span>Live
-            </button>
-            <button (click)="goOrdersPage(customerDetails, 'delivered')" class="dropdown-item">
-              <span class="material-symbols-rounded">done</span>Completed
-            </button>
-            <button (click)="goOrdersPage(customerDetails, 'cancelled')" class="dropdown-item">
-              <span class="material-symbols-rounded">close</span>Cancelled
-            </button>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{customerDetails.email}}</h1>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- address list -->
-      <div class="col-md-12 col-12 px-0">
-        <div *ngIf="!commonService.desktop_device" class="d-flex align-items-center mt-3 mb-3">
-          <div class="col-md-6 col-4">
-            <p class="dark-font x-close mb-0">ADDRESS</p>
-          </div>
-        </div>
-        <div class="data-list-card-wrapper mt-3 mb-3" *ngIf="customerDetails.address_list?.length">
-          <div class="data-list-card-inner">
-            <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-              <div class="col-md-10 col-5 first_col px-0 cursor header-font">
-                <p class="w-50 w-sm-100 m-b-0">Address</p>
-                <p class="w-25 w-sm-100 m-b-0">Name</p>
-                <p class="w-25 w-sm-100 m-b-0">Mobile No</p>
-              </div>
-            </div>
-            <div class="list-item data-list-card" *ngFor="let x of customerDetails.address_list; let i=index;">
-              <div class="col-md-10 col-10 first_col px-0 align-items-center">
-                <p class="w-50 w-sm-100 m-b-0 dark-font breakword">{{x.address}}</p>
-                <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.name}}</p>
-                <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.dial_code}} {{x.mobile}}</p>
-              </div>
-              <div class="col-md-2 col-2">
-                <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                  <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
-                  (click)="onViewCustomer(x, viewCustomerModal);">
-                    <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
-                      'visibility': 'chevron_right'}}</span>
-                    {{commonService.desktop_device? 'View': ''}}
+    }
+    <div class="list-horizontal order-details">
+      <div class="row m-0 flex-sm-row-reverse">
+        <!-- right-side -->
+        @if (customerDetails.address_list?.length) {
+          <div class="col-12 d-flex justify-content-end" [ngClass]="commonService.desktop_device?'':'px-0'">
+            <!-- quotations -->
+            @if (commonService.store_details?.type=='quot_based') {
+              <div class="btn-group" ngbDropdown role="group" aria-label="Select all"
+                placement="bottom-start bottom-end top-start top-end">
+                <button type="button" class="light-button" ngbDropdownToggle><span
+                class="material-symbols-rounded">visibility</span>View Orders</button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button (click)="goQuotPage(customerDetails, 'live')" class="dropdown-item">
+                    <span class="material-symbols-rounded">shopping_cart</span>Live
+                  </button>
+                  <button (click)="goQuotPage(customerDetails, 'confirmed')" class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Confirmed
+                  </button>
+                  <button (click)="goQuotPage(customerDetails, 'cancelled')" class="dropdown-item">
+                    <span class="material-symbols-rounded">close</span>Cancelled
                   </button>
                 </div>
               </div>
-            </div>
+            }
+            <!-- orders -->
+            @if (commonService.store_details?.type!='quot_based') {
+              <div class="btn-group"
+                ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                <button class="light-button" ngbDropdownToggle><span
+                class="material-symbols-rounded">visibility</span>View Orders</button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button (click)="goOrdersPage(customerDetails, 'live')" class="dropdown-item">
+                    <span class="material-symbols-rounded">shopping_cart</span>Live
+                  </button>
+                  <button (click)="goOrdersPage(customerDetails, 'delivered')" class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Completed
+                  </button>
+                  <button (click)="goOrdersPage(customerDetails, 'cancelled')" class="dropdown-item">
+                    <span class="material-symbols-rounded">close</span>Cancelled
+                  </button>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-
-        <div *ngIf="!customerDetails.address_list?.length" class="col-md-12 d-flex flex-column align-items-center justify-content-center">
-          <img class="no-rec-found mt-3" src="assets/images/no_records_found.png" alt="no-records">
-          <p align="center">No address found.</p>
+        }
+        <!-- address list -->
+        <div class="col-md-12 col-12 px-0">
+          @if (!commonService.desktop_device) {
+            <div class="d-flex align-items-center mt-3 mb-3">
+              <div class="col-md-6 col-4">
+                <p class="dark-font x-close mb-0">ADDRESS</p>
+              </div>
+            </div>
+          }
+          @if (customerDetails.address_list?.length) {
+            <div class="data-list-card-wrapper mt-3 mb-3">
+              <div class="data-list-card-inner">
+                @if (commonService.desktop_device) {
+                  <div class="list-item data-list-card">
+                    <div class="col-md-10 col-5 first_col px-0 cursor header-font">
+                      <p class="w-50 w-sm-100 m-b-0">Address</p>
+                      <p class="w-25 w-sm-100 m-b-0">Name</p>
+                      <p class="w-25 w-sm-100 m-b-0">Mobile No</p>
+                    </div>
+                  </div>
+                }
+                @for (x of customerDetails.address_list; track x; let i = $index) {
+                  <div class="list-item data-list-card">
+                    <div class="col-md-10 col-10 first_col px-0 align-items-center">
+                      <p class="w-50 w-sm-100 m-b-0 dark-font breakword">{{x.address}}</p>
+                      <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.name}}</p>
+                      <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.dial_code}} {{x.mobile}}</p>
+                    </div>
+                    <div class="col-md-2 col-2">
+                      <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                        <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                          (click)="onViewCustomer(x, viewCustomerModal);">
+                          <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                          'visibility': 'chevron_right'}}</span>
+                          {{commonService.desktop_device? 'View': ''}}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          @if (!customerDetails.address_list?.length) {
+            <div class="col-md-12 d-flex flex-column align-items-center justify-content-center">
+              <img class="no-rec-found mt-3" src="assets/images/no_records_found.png" alt="no-records">
+              <p align="center">No address found.</p>
+            </div>
+          }
         </div>
       </div>
     </div>
-
   </div>
-</div>
+}
 
 <!-- VIEW CUSTOMER -->
 <ng-template #viewCustomerModal let-modal>
@@ -109,49 +125,55 @@
       <h4>
         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
         <span class="popup_text">Address Details</span>
-       </h4>
+      </h4>
     </div>
     <div class="modal-body " style="padding:15px 15px !important;">
       <!-- <h5><b>Address Details</b></h5> -->
       <div class="card p-3">
-        <div *ngIf="addressForm" class="row">
-          <div class="col-md-6">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>Customer Name</h6>
-              <p>{{addressForm.name}}</p>
+        @if (addressForm) {
+          <div class="row">
+            <div class="col-md-6">
+              <div class="review-details-mdl-inner mb-3">
+                <h6>Customer Name</h6>
+                <p>{{addressForm.name}}</p>
+              </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>Country</h6>
-              <p>{{addressForm.country}}</p>
+            <div class="col-md-6">
+              <div class="review-details-mdl-inner mb-3">
+                <h6>Country</h6>
+                <p>{{addressForm.country}}</p>
+              </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>Mobile</h6>
-              <p>{{addressForm.dial_code}} {{addressForm.mobile}}</p>
+            <div class="col-md-6">
+              <div class="review-details-mdl-inner mb-3">
+                <h6>Mobile</h6>
+                <p>{{addressForm.dial_code}} {{addressForm.mobile}}</p>
+              </div>
             </div>
-          </div>
-          <div *ngFor="let field of address_fields; let j=index;" class="col-md-6">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>{{field.label}}</h6>
-              <p>{{field.value}}</p>
+            @for (field of address_fields; track field; let j = $index) {
+              <div class="col-md-6">
+                <div class="review-details-mdl-inner mb-3">
+                  <h6>{{field.label}}</h6>
+                  <p>{{field.value}}</p>
+                </div>
+              </div>
+            }
+            <div class="col-md-12">
+              <div class="review-details-mdl-inner mb-3">
+                <h6>Complete Address</h6>
+                <p>{{addressForm.address}}</p>
+              </div>
             </div>
+            @if (addressForm.landmark) {
+              <div class="col-md-6">
+                <div class="review-details-mdl-inner mb-3">
+                  <h6>Landmark</h6>
+                  <p>{{addressForm.landmark}}</p>
+                </div>
+              </div>
+            }
           </div>
-          <div class="col-md-12">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>Complete Address</h6>
-              <p>{{addressForm.address}}</p>
-            </div>
-          </div>
-          <div *ngIf="addressForm.landmark" class="col-md-6">
-            <div class="review-details-mdl-inner mb-3">
-              <h6>Landmark</h6>
-              <p>{{addressForm.landmark}}</p>
-            </div>
-          </div>
-        </div>
+        }
       </div>
     </div>
     <div class="modal-footer">

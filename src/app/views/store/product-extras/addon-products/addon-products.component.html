@@ -1,123 +1,140 @@
-<div *ngIf="pageLoader" class="row">
+@if (pageLoader) {
+  <div class="row">
     <app-spinner></app-spinner>
-</div>
-  <div class="inner-dots" *ngIf="!commonService.desktop_device">
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
     <div class="add_but" routerLink="{{'/product-extras/addon-products/add/'+(maxRank+1)}}">
       <span class="material-symbols-rounded">add</span>
-  </div>
-  </div>
-  <div *ngIf="!pageLoader">
-    <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
-         </div>
-        </div>      
-      </div>
     </div>
-  
+  </div>
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
     <div class="top-filter-sec list-button">
       <div class="row mb-4">
-      <!-- search box -->
-      <div class="col-md-4 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-8 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="highbutton" routerLink="{{'/product-extras/addon-products/add/'+(maxRank+1)}}">
-          <span class="material-symbols-rounded">add</span>Add Addon Product</button>
-       </div>
-      </div>
-    </div>
-    <!-- DATA LIST -->
-    <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-  
-      <div class="data-list-card-wrapper">
-        <div class="data-list-card-inner">
-          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-            <div class="col-md-2 col-3 first_col px-0 cursor header-font">
-                <p class="w-100 w-sm-100 m-b-0">Image</p>
-              </div>
-              <div class="col-md-8 col-6 first_col px-0 header-font">
-                <p class="w-25 w-sm-100 m-b-0">Product</p>
-                <p class="w-20 w-sm-100 m-b-0">Stock</p>
-                <p class="w-20 w-sm-100 m-b-0">SKU</p>
-                <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
-                <p class="w-15 w-sm-100 m-b-0">Price</p>
-            </div>
-          </div>
-          <div class="list-item data-list-card" *ngFor="let x of list | orderDesc:'createdAt' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-            <div class="col-xl-2 col-md-3 col-3 first_col px-0 cursor"
-                (click)="!commonService.desktop_device ? goModifyPage(x) : false">
-                <div *ngIf="x.image_list[0]" class="list-thumb d-flex align-self-center">
-                    <img [src]="imgBaseUrl + x.image_list[0].image" alt="" />
-                </div>
-                <div *ngIf="!x.image_list[0]" class="list-thumb d-flex align-self-center">
-                    <img src="assets/images/default.png" alt="" />
-                </div>
-            </div>
-            <div class="col-xl-8 col-md-6 col-6 first_col px-0" (click)="goModifyPage(x);">
-              <p class="w-25 w-sm-100 dark-font">{{x.name}}</p>
-              <p class="w-20 w-sm-100 m-b-0 light-font">{{x.stock}} Pcs</p>
-              <p class="w-20 w-sm-100 m-b-0 light-font"> {{x.sku}} </p>
-              <p class="w-20 w-sm-100 m-b-0 light-font"> {{x.createdAt | date : "dd MMM y"}} </p>
-              <p class="w-15 w-sm-100 m-b-0 light-font"> {{x.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat}} </p>
-            </div>
-            <div class="col-xl-2 col-md-3 col-3 d-flex justify-content-end px-0">
-              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
-                  <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-                </button>
-                  <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="goModifyPage(x);">
-                    <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-                  </button>
-              </div>
-            </div>
+        <!-- search box -->
+        <div class="col-md-4 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
           </div>
         </div>
-      </div>
-  
-  
-      <!-- PAGINATION CONTROL -->
-      <div class="row">
-        <div class="col-md-12 mt-3">
-          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        @if (commonService.desktop_device) {
+          <div class="col-md-8 list-button d-flex justify-content-end">
+            <button type="button" class="highbutton" routerLink="{{'/product-extras/addon-products/add/'+(maxRank+1)}}">
+              <span class="material-symbols-rounded">add</span>Add Addon Product</button>
+            </div>
+          }
         </div>
       </div>
-  
-  
+      <!-- DATA LIST -->
+      @if ((list | fieldSearch:'name':search_bar)?.length) {
+        <div class="list-horizontal">
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div class="list-item data-list-card">
+                  <div class="col-md-2 col-3 first_col px-0 cursor header-font">
+                    <p class="w-100 w-sm-100 m-b-0">Image</p>
+                  </div>
+                  <div class="col-md-8 col-6 first_col px-0 header-font">
+                    <p class="w-25 w-sm-100 m-b-0">Product</p>
+                    <p class="w-20 w-sm-100 m-b-0">Stock</p>
+                    <p class="w-20 w-sm-100 m-b-0">SKU</p>
+                    <p class="w-20 w-sm-100 m-b-0">Date & Time</p>
+                    <p class="w-15 w-sm-100 m-b-0">Price</p>
+                  </div>
+                </div>
+              }
+              @for (x of list | orderDesc:'createdAt' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+                <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  <div class="col-xl-2 col-md-3 col-3 first_col px-0 cursor"
+                    (click)="!commonService.desktop_device ? goModifyPage(x) : false">
+                    @if (x.image_list[0]) {
+                      <div class="list-thumb d-flex align-self-center">
+                        <img [src]="imgBaseUrl + x.image_list[0].image" alt="" />
+                      </div>
+                    }
+                    @if (!x.image_list[0]) {
+                      <div class="list-thumb d-flex align-self-center">
+                        <img src="assets/images/default.png" alt="" />
+                      </div>
+                    }
+                  </div>
+                  <div class="col-xl-8 col-md-6 col-6 first_col px-0" (click)="goModifyPage(x);">
+                    <p class="w-25 w-sm-100 dark-font">{{x.name}}</p>
+                    <p class="w-20 w-sm-100 m-b-0 light-font">{{x.stock}} Pcs</p>
+                    <p class="w-20 w-sm-100 m-b-0 light-font"> {{x.sku}} </p>
+                    <p class="w-20 w-sm-100 m-b-0 light-font"> {{x.createdAt | date : "dd MMM y"}} </p>
+                    <p class="w-15 w-sm-100 m-b-0 light-font"> {{x.discounted_price | currency: commonService.store_currency?.country_code: "symbol": commonService.cFormat}} </p>
+                  </div>
+                  <div class="col-xl-2 col-md-3 col-3 d-flex justify-content-end px-0">
+                    <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; modalService.open(deleteModal, { centered: true });">
+                        <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                      </button>
+                      <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="goModifyPage(x);">
+                        <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- PAGINATION CONTROL -->
+          <div class="row">
+            <div class="col-md-12 mt-3">
+              <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+              maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+            </div>
+          </div>
+        </div>
+      }
+      @if (!(list | fieldSearch:'name':search_bar)?.length) {
+        <div class="row">
+          <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+            <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+            <p align="center">No. data to display.</p>
+          </div>
+        </div>
+      }
     </div>
-  
-    <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-      <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-        <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-        <p align="center">No. data to display.</p>
-      </div>
-    </div>
-  </div>
-  
+  }
+
   <!-- DELETE MODAL -->
   <ng-template #deleteModal let-modal>
     <div class="modal-body">
       <p><strong>Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
-          addon product?</strong>
-      </p>
-      <div *ngIf="deleteForm.errorMsg">
-        <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-      </div>
+    addon product?</strong>
+  </p>
+  @if (deleteForm.errorMsg) {
+    <div>
+      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
     </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-        (click)="modal.dismiss('Cross click');">
-        <span class="black-outline-txt">No</span>
-      </button>
-      <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-        <span class="orng-outline-txt">Yes</span>
-      </button>
-    </div>
-  </ng-template>
+  }
+</div>
+<div class="modal-footer">
+  <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+    (click)="modal.dismiss('Cross click');">
+    <span class="black-outline-txt">No</span>
+  </button>
+  <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+    <span class="orng-outline-txt">Yes</span>
+  </button>
+</div>
+</ng-template>

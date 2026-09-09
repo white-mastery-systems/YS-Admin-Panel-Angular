@@ -10,12 +10,16 @@
           <div class="form-group">
             <label>Store List</label>
             <select name="store_id" class="form-control form-control-rounded select-arrow" [(ngModel)]="store_id" (change)="errorMsg=null;" required>
-              <option [ngValue]="x._id" *ngFor="let x of commonService.store_list | orderAsc:'name';">{{x.name}} ({{x.email}})</option>
+              @for (x of commonService.store_list | orderAsc:'name'; track x) {
+                <option [ngValue]="x._id">{{x.name}} ({{x.email}})</option>
+              }
             </select>
           </div>
-          <div *ngIf="errorMsg" align="center" style="margin: 20px 0 10px 0;">
-            <p style="color:red;"><strong>{{errorMsg}}</strong></p>
-          </div>
+          @if (errorMsg) {
+            <div align="center" style="margin: 20px 0 10px 0;">
+              <p style="color:red;"><strong>{{errorMsg}}</strong></p>
+            </div>
+          }
           <div class="row">
             <div class="col-md-6 d-flex align-items-center">
               <div class="forgot-password-link">
@@ -30,9 +34,9 @@
       </div>
     </div>
     <div class="col-md-12 mt-2">
-    <!-- <div class="col-md-12 mt-2"> -->
+      <!-- <div class="col-md-12 mt-2"> -->
       <div class="auth-card p-4 text-center" style="cursor: pointer;">
-       <button (click)="clientHub();" class="btn btn-wide btn-primary">Admin Panel</button>
+        <button (click)="clientHub();" class="btn btn-wide btn-primary">Admin Panel</button>
       </div>
     </div>
   </div>

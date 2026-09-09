@@ -12,7 +12,7 @@ import { YsNotificationEventsComponent } from './ys-notification-events.componen
   ],
   imports: [
     AmazingTimePickerModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     SharedModule,
     YsNotificationEventsRoutingModule
   ]

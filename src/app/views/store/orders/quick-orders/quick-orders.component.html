@@ -1,507 +1,543 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="main-header" *ngIf="!commonService.desktop_device">
-  <h2>Quick Orders</h2>
-  <div class="header-part-right d-flex">
-    <div class="help_but mr-3" routerLink="/support/quick-orders">
-      <img src="assets/icons/help.svg" title="help" />
-    </div>
-    <div
-      class="add_but"
-      routerLink="/orders/quick-orders/create/{{ parentList.length + 1 }}"
-    >
-      <span class="material-symbols-rounded">add</span>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-</div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <h1>Quick Orders</h1>
-        </div>
-        <div class="col-md-4 d-flex justify-content-end">
-          <button class="help-button" routerLink="/support/quick-orders">
-            <span class="material-symbols-rounded mb-0">help</span>Need Help?
-          </button>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input
-            type="text"
-            name="search_bar"
-            placeholder="Search"
-            class="form-control"
-            [(ngModel)]="search_bar"
-          />
-          <div class="search_icon">
-            <span class="material-symbols-rounded">search</span>
-          </div>
-          <div
-            *ngIf="!commonService.desktop_device"
-            class="filter_icon"
-            (click)="onOpenFilterModal(filterModal)"
-          >
-            <span class="material-symbols-rounded cursor">filter_alt</span>
-          </div>
-        </div>
+@if (!commonService.desktop_device) {
+  <div class="main-header">
+    <h2>Quick Orders</h2>
+    <div class="header-part-right d-flex">
+      <div class="help_but mr-3" routerLink="/support/quick-orders">
+        <img src="assets/icons/help.svg" title="help" />
       </div>
       <div
-        class="col-md-6 list-button d-flex justify-content-end"
-        *ngIf="commonService.desktop_device"
-      >
-        <button
-          type="button"
-          class="mr-3"
-          (click)="onOpenFilterModal(filterModal)"
+        class="add_but"
+        routerLink="/orders/quick-orders/create/{{ parentList.length + 1 }}"
         >
-          <span class="material-symbols-rounded">filter_alt</span>Filter
-        </button>
-        <button
-          type="button"
-          class="highbutton"
-          routerLink="/orders/quick-orders/create/{{ parentList.length + 1 }}"
-        >
-          <span class="material-symbols-rounded">add</span> Create Order
-        </button>
+        <span class="material-symbols-rounded">add</span>
       </div>
     </div>
   </div>
+}
 
-  <!-- DATA LIST -->
-  <div
-    *ngIf="(list | fieldSearch : 'name' : search_bar)?.length"
-    class="list-horizontal mt-3"
-  >
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div
-          class="list-item data-list-card type5-card"
-          style="border: unset"
-          *ngIf="commonService.desktop_device"
-        >
-          <div class="col-md-9 first_col px-0 header-font">
-            <p class="w-20 w-sm-100 m-b-0">Name</p>
-            <p class="w-20 w-sm-100 m-b-0">Product Name</p>
-            <p class="w-20 w-sm-100 m-b-0">Usage</p>
-            <p class="w-20 w-sm-100 m-b-0">Status</p>
-            <p class="w-20 w-sm-100 m-b-0">Price</p>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Quick Orders</h1>
           </div>
-          <div class="col-md-3">&nbsp;</div>
+          <div class="col-md-4 d-flex justify-content-end">
+            <button class="help-button" routerLink="/support/quick-orders">
+              <span class="material-symbols-rounded mb-0">help</span>Need Help?
+            </button>
+          </div>
         </div>
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input
+              type="text"
+              name="search_bar"
+              placeholder="Search"
+              class="form-control"
+              [(ngModel)]="search_bar"
+              />
+              <div class="search_icon">
+                <span class="material-symbols-rounded">search</span>
+              </div>
+              @if (!commonService.desktop_device) {
+                <div
+                  class="filter_icon"
+                  (click)="onOpenFilterModal(filterModal)"
+                  >
+                  <span class="material-symbols-rounded cursor">filter_alt</span>
+                </div>
+              }
+            </div>
+          </div>
+          @if (commonService.desktop_device) {
+            <div
+              class="col-md-6 list-button d-flex justify-content-end"
+              >
+              <button
+                type="button"
+                class="mr-3"
+                (click)="onOpenFilterModal(filterModal)"
+                >
+                <span class="material-symbols-rounded">filter_alt</span>Filter
+              </button>
+              <button
+                type="button"
+                class="highbutton"
+                routerLink="/orders/quick-orders/create/{{ parentList.length + 1 }}"
+                >
+                <span class="material-symbols-rounded">add</span> Create Order
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- DATA LIST -->
+      @if ((list | fieldSearch : 'name' : search_bar)?.length) {
         <div
-          class="list-item data-list-card type5-card"
-          *ngFor="
-            let x of list
-              | numOrderDesc : '_id'
-              | fieldSearch : 'name' : search_bar
-              | paginate : { itemsPerPage: pageSize, currentPage: page };
-            let i = index
-          "
+          class="list-horizontal mt-3"
+          >
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div
+                  class="list-item data-list-card type5-card"
+                  style="border: unset"
+                  >
+                  <div class="col-md-9 first_col px-0 header-font">
+                    <p class="w-20 w-sm-100 m-b-0">Name</p>
+                    <p class="w-20 w-sm-100 m-b-0">Product Name</p>
+                    <p class="w-20 w-sm-100 m-b-0">Usage</p>
+                    <p class="w-20 w-sm-100 m-b-0">Status</p>
+                    <p class="w-20 w-sm-100 m-b-0">Price</p>
+                  </div>
+                  <div class="col-md-3">&nbsp;</div>
+                </div>
+              }
+              @for (
+                x of list
+                | numOrderDesc : '_id'
+                | fieldSearch : 'name' : search_bar
+                | paginate : { itemsPerPage: pageSize, currentPage: page }; track
+                x; let i = $index) {
+                <div
+                  class="list-item data-list-card type5-card"
           [@animate]="{
             value: '*',
             params: { delay: i * 100 + 'ms', y: '50px' }
           }"
-        >
-          <div
-            *ngIf="x.status == 'active' && !commonService.desktop_device"
-            class="ribbon-band green-band"
-          >
-            Active
-          </div>
-          <div
-            *ngIf="x.status == 'inactive' && !commonService.desktop_device"
-            class="ribbon-band red-band"
-          >
-            Inactive
-          </div>
-          <!-- <div *ngIf="x.disc_status" class="ribbon-band1 blue-band">Discount Applied</div> -->
-          <div
-            class="col-md-9 col-6 first_col px-0 cursor"
-            routerLink="/orders/quick-orders/{{ x._id }}"
-          >
-            <p class="w-20 w-sm-100 m-b-0 dark-font">{{ x.name }}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font extra_text">
-              <span
-                *ngFor="let item of x.item_names; let j = index"
-                class="d-block"
-                >{{ item }}{{ j == x.item_names.length - 1 ? "" : "," }}</span
-              >
-            </p>
-            <p class="w-20 w-sm-100 m-b-0" *ngIf="commonService.desktop_device">
-              <span *ngIf="x.usage_count > 0"
-                ><span class="paid_dot"></span
-              ></span>
-              <span *ngIf="x.usage_count == 0"
-                ><span class="unpaid_dot"></span
-              ></span>
-              <span
-                class="light-font"
-                [ngClass]="commonService.desktop_device ? 'mr-5' : 'mr-1'"
-                >{{ x.usage_count }} used</span
-              >
-            </p>
-            <p
-              class="w-20 w-sm-100 m-b-0 light-font"
-              *ngIf="commonService.desktop_device"
-            >
-              <span
-                *ngIf="x.status == 'active'"
-                class="badge badge-green-background"
-                >Active</span
-              >
-              <span
-                *ngIf="x.status == 'inactive'"
-                class="badge badge-red-background"
-                >Inactive</span
-              >
-            </p>
-            <p
-              class="w-20 w-sm-100 m-b-0 light-font"
-              *ngIf="commonService.desktop_device"
-            >
-              {{
-                x.cart_total - x.discount
-                  | currency
-                    : commonService.store_currency.country_code
-                    : "symbol"
-                    : commonService.cFormat
-              }}
-            </p>
-          </div>
-          <div
-            class="col-md-3 col-6 px-0 d-flex justify-content-end"
-            [ngClass]="commonService.desktop_device ? '' : 'text-right'"
-          >
-            <div
-              class="row d-flex justify-content-end m-0"
-              [ngClass]="commonService.desktop_device ? '' : 'more_icons'"
-            >
-              <div
-                class="btn-group align-baseline"
-                ngbDropdown
-                role="group"
-                aria-label="Select all"
-                placement="bottom-start bottom-end top-start top-end"
-              >
-                <button
-                  (click)="x.share = false"
+                  >
+                  @if (x.status == 'active' && !commonService.desktop_device) {
+                    <div
+                      class="ribbon-band green-band"
+                      >
+                      Active
+                    </div>
+                  }
+                  @if (x.status == 'inactive' && !commonService.desktop_device) {
+                    <div
+                      class="ribbon-band red-band"
+                      >
+                      Inactive
+                    </div>
+                  }
+                  <!-- <div *ngIf="x.disc_status" class="ribbon-band1 blue-band">Discount Applied</div> -->
+                  <div
+                    class="col-md-9 col-6 first_col px-0 cursor"
+                    routerLink="/orders/quick-orders/{{ x._id }}"
+                    >
+                    <p class="w-20 w-sm-100 m-b-0 dark-font">{{ x.name }}</p>
+                    <p class="w-20 w-sm-100 m-b-0 light-font extra_text">
+                      @for (item of x.item_names; track item; let j = $index) {
+                        <span
+                          class="d-block"
+                          >{{ item }}{{ j == x.item_names.length - 1 ? "" : "," }}</span
+                          >
+                      }
+                    </p>
+                    @if (commonService.desktop_device) {
+                      <p class="w-20 w-sm-100 m-b-0">
+                        @if (x.usage_count > 0) {
+                          <span
+                            ><span class="paid_dot"></span
+                          ></span>
+                        }
+                        @if (x.usage_count == 0) {
+                          <span
+                            ><span class="unpaid_dot"></span
+                          ></span>
+                        }
+                        <span
+                          class="light-font"
+                          [ngClass]="commonService.desktop_device ? 'mr-5' : 'mr-1'"
+                          >{{ x.usage_count }} used</span
+                          >
+                        </p>
+                      }
+                      @if (commonService.desktop_device) {
+                        <p
+                          class="w-20 w-sm-100 m-b-0 light-font"
+                          >
+                          @if (x.status == 'active') {
+                            <span
+                              class="badge badge-green-background"
+                              >Active</span
+                              >
+                            }
+                            @if (x.status == 'inactive') {
+                              <span
+                                class="badge badge-red-background"
+                                >Inactive</span
+                                >
+                              }
+                            </p>
+                          }
+                          @if (commonService.desktop_device) {
+                            <p
+                              class="w-20 w-sm-100 m-b-0 light-font"
+                              >
+                              {{
+                              x.cart_total - x.discount
+                              | currency
+                              : commonService.store_currency.country_code
+                              : "symbol"
+                              : commonService.cFormat
+                              }}
+                            </p>
+                          }
+                        </div>
+                        <div
+                          class="col-md-3 col-6 px-0 d-flex justify-content-end"
+                          [ngClass]="commonService.desktop_device ? '' : 'text-right'"
+                          >
+                          <div
+                            class="row d-flex justify-content-end m-0"
+                            [ngClass]="commonService.desktop_device ? '' : 'more_icons'"
+                            >
+                            <div
+                              class="btn-group align-baseline"
+                              ngbDropdown
+                              role="group"
+                              aria-label="Select all"
+                              placement="bottom-start bottom-end top-start top-end"
+                              >
+                              <button
+                                (click)="x.share = false"
                   [ngClass]="
                     commonService.desktop_device
                       ? 'light-button2  mr-3'
                       : 'iconbutton'
                   "
-                  ngbDropdownToggle
-                >
-                  {{ commonService.desktop_device ? "Action" : "" }}
-                  <span
-                    class="material-symbols-rounded"
-                    [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''"
-                  >
-                    {{
-                      commonService.desktop_device ? "expand_more" : "more_vert"
-                    }}</span
-                  >
-                </button>
-                <div class="dropdown-menu" ngbDropdownMenu>
-                  <button
-                    class="dropdown-item"
-                    *ngIf="x.status != 'active'"
+                                ngbDropdownToggle
+                                >
+                                {{ commonService.desktop_device ? "Action" : "" }}
+                                <span
+                                  class="material-symbols-rounded"
+                                  [ngClass]="commonService.desktop_device ? 'pr-0 pl-1' : ''"
+                                  >
+                                  {{
+                                  commonService.desktop_device ? "expand_more" : "more_vert"
+                                  }}</span
+                                  >
+                                </button>
+                                <div class="dropdown-menu" ngbDropdownMenu>
+                                  @if (x.status != 'active') {
+                                    <button
+                                      class="dropdown-item"
                     (click)="
                       deleteForm = x;
                       modalService.open(statusModal, { centered: true })
                     "
-                  >
-                    <span class="material-symbols-rounded dropdown_icon"
-                      >visibility</span
-                    >
-                    Enable
-                  </button>
-                  <button
-                    class="dropdown-item"
-                    *ngIf="x.status == 'active'"
+                                      >
+                                      <span class="material-symbols-rounded dropdown_icon"
+                                        >visibility</span
+                                        >
+                                        Enable
+                                      </button>
+                                    }
+                                    @if (x.status == 'active') {
+                                      <button
+                                        class="dropdown-item"
                     (click)="
                       deleteForm = x;
                       modalService.open(statusModal, { centered: true })
                     "
-                  >
-                    <span class="material-symbols-rounded dropdown_icon"
-                      >visibility_off</span
-                    >
-                    Disable
-                  </button>
-                  <button
-                    class="dropdown-item"
+                                        >
+                                        <span class="material-symbols-rounded dropdown_icon"
+                                          >visibility_off</span
+                                          >
+                                          Disable
+                                        </button>
+                                      }
+                                      <button
+                                        class="dropdown-item"
                     (click)="
                       deleteForm = x;
                       modalService.open(deleteModal, { centered: true })
                     "
-                  >
-                    <span class="material-symbols-rounded dropdown_icon"
-                      >delete</span
-                    >
-                    Remove
-                  </button>
-                  <button
-                    class="dropdown-item"
-                    (click)="socialShare(x.listIndex, x._id)"
-                  >
-                    <span class="material-symbols-rounded dropdown_icon"
-                      >share</span
-                    >
-                    Share
-                  </button>
-                </div>
-              </div>
-              <a
+                                        >
+                                        <span class="material-symbols-rounded dropdown_icon"
+                                          >delete</span
+                                          >
+                                          Remove
+                                        </button>
+                                        <button
+                                          class="dropdown-item"
+                                          (click)="socialShare(x.listIndex, x._id)"
+                                          >
+                                          <span class="material-symbols-rounded dropdown_icon"
+                                            >share</span
+                                            >
+                                            Share
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <a
                 [ngClass]="
                   commonService.desktop_device ? 'link-button' : 'iconbutton'
                 "
-                routerLink="/orders/quick-orders/{{ x._id }}"
-              >
-                <span class="material-symbols-rounded right_arrow transicon">{{
-                  commonService.desktop_device ? "visibility" : "chevron_right"
-                }}</span>
-                {{ commonService.desktop_device ? "View" : "" }}
-              </a>
-              <p
-                class="m-b-0 w-sm-100"
-                *ngIf="!commonService.desktop_device"
-                [ngClass]="commonService.desktop_device ? 'mr-4' : ''"
-              >
-                <span *ngIf="x.usage_count > 0"
-                  ><span class="paid_dot"></span
-                ></span>
-                <span *ngIf="x.usage_count == 0"
-                  ><span class="unpaid_dot"></span
-                ></span>
-                <span
-                  class="light-font"
-                  [ngClass]="commonService.desktop_device ? 'mr-5' : 'mr-1'"
-                  >{{ x.usage_count }} used</span
-                >
-                <span class="light-font fw-600">{{
-                  x.cart_total - x.discount
-                    | currency
-                      : commonService.store_currency.country_code
-                      : "symbol"
-                      : commonService.cFormat
-                }}</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-2 shared" *ngIf="x.share">
-            <div class="bubble_head"></div>
-            <div class="bubble_body">
-              <span
+                                        routerLink="/orders/quick-orders/{{ x._id }}"
+                                        >
+                                        <span class="material-symbols-rounded right_arrow transicon">{{
+                                          commonService.desktop_device ? "visibility" : "chevron_right"
+                                        }}</span>
+                                        {{ commonService.desktop_device ? "View" : "" }}
+                                      </a>
+                                      @if (!commonService.desktop_device) {
+                                        <p
+                                          class="m-b-0 w-sm-100"
+                                          [ngClass]="commonService.desktop_device ? 'mr-4' : ''"
+                                          >
+                                          @if (x.usage_count > 0) {
+                                            <span
+                                              ><span class="paid_dot"></span
+                                            ></span>
+                                          }
+                                          @if (x.usage_count == 0) {
+                                            <span
+                                              ><span class="unpaid_dot"></span
+                                            ></span>
+                                          }
+                                          <span
+                                            class="light-font"
+                                            [ngClass]="commonService.desktop_device ? 'mr-5' : 'mr-1'"
+                                            >{{ x.usage_count }} used</span
+                                            >
+                                            <span class="light-font fw-600">{{
+                                              x.cart_total - x.discount
+                                              | currency
+                                              : commonService.store_currency.country_code
+                                              : "symbol"
+                                              : commonService.cFormat
+                                            }}</span>
+                                          </p>
+                                        }
+                                      </div>
+                                    </div>
+                                    @if (x.share) {
+                                      <div class="mt-2 shared">
+                                        <div class="bubble_head"></div>
+                                        <div class="bubble_body">
+                                          <span
                 (click)="
                   x.redirect = 'checkout/quick-order/' + x._id;
                   commonService.onShare('facebook', x.redirect);
                   x.share = false
                 "
-              >
-                <img src="assets/images/facebook.svg" alt="facebook" />
-                <p>Facebook</p>
-              </span>
-              <span
+                                            >
+                                            <img src="assets/images/facebook.svg" alt="facebook" />
+                                            <p>Facebook</p>
+                                          </span>
+                                          <span
                 (click)="
                   x.redirect = 'checkout/quick-order/' + x._id;
                   commonService.onShare('whatsapp', x.redirect);
                   x.share = false
                 "
-              >
-                <img src="assets/images/whatsapp.svg" alt="whatsapp" />
-                <p>whatsapp</p>
-              </span>
-              <span
+                                            >
+                                            <img src="assets/images/whatsapp.svg" alt="whatsapp" />
+                                            <p>whatsapp</p>
+                                          </span>
+                                          <span
                 (click)="
                   x.redirect = 'checkout/quick-order/' + x._id;
                   commonService.onShare('twitter', x.redirect);
                   x.share = false
                 "
-              >
-                <img src="assets/images/twitter.svg" alt="twitter" />
-                <p>Twitter</p>
-              </span>
-              <span
+                                            >
+                                            <img src="assets/images/twitter.svg" alt="twitter" />
+                                            <p>Twitter</p>
+                                          </span>
+                                          <span
                 (click)="
                   x.redirect = 'checkout/quick-order/' + x._id;
                   commonService.onShare('copy_link', x.redirect)
                 "
-              >
-                <img src="assets/images/link.svg" alt="link" />
-                <p>{{ commonService.copyLink ? "Copied" : "Copy Link" }}</p>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                                            >
+                                            <img src="assets/images/link.svg" alt="link" />
+                                            <p>{{ commonService.copyLink ? "Copied" : "Copy Link" }}</p>
+                                          </span>
+                                        </div>
+                                      </div>
+                                    }
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                            <!-- PAGINATION CONTROL -->
+                            <div class="col-md-12 mt-3">
+                              <pagination-controls
+                                (pageChange)="page = $event; commonService.pageTop(0)"
+                                autoHide="true"
+                                responsive="true"
+                                maxSize="5"
+                                previousLabel=""
+                                nextLabel=""
+                              ></pagination-controls>
+                            </div>
+                          </div>
+                        }
+                        @if (!(list | fieldSearch : 'name' : search_bar)?.length) {
+                          <div class="row">
+                            <div
+                              class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper"
+                              >
+                              <img
+                                class="no-rec-found"
+                                src="assets/images/no_records_found.png"
+                                alt="no-records"
+                                />
+                                <p align="center">No data to display</p>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
 
-    <!-- PAGINATION CONTROL -->
-    <div class="col-md-12 mt-3">
-      <pagination-controls
-        (pageChange)="page = $event; commonService.pageTop(0)"
-        autoHide="true"
-        responsive="true"
-        maxSize="5"
-        previousLabel=""
-        nextLabel=""
-      ></pagination-controls>
-    </div>
-  </div>
+                      <!-- DELETE MODAL -->
+                      <ng-template #deleteModal let-modal>
+                        <div class="modal-body">
+                          <p>
+                            <strong
+                              >Are you sure you want to remove
+                              <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>
+                              order?</strong
+                              >
+                            </p>
+                            @if (deleteForm.errorMsg) {
+                              <div>
+                                <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                              </div>
+                            }
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              id="closeModal"
+                              class="btn btn-wide black-outline-btn"
+                              (click)="modal.dismiss('Cross click')"
+                              >
+                              <span class="black-outline-txt">No</span>
+                            </button>
+                            <button
+                              type="button"
+                              (click)="onDelete()"
+                              class="btn btn-wide orng-outline-btn"
+                              >
+                              <span class="black-outline-txt">Yes</span>
+                            </button>
+                          </div>
+                        </ng-template>
 
-  <div *ngIf="!(list | fieldSearch : 'name' : search_bar)?.length" class="row">
-    <div
-      class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper"
-    >
-      <img
-        class="no-rec-found"
-        src="assets/images/no_records_found.png"
-        alt="no-records"
-      />
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+                        <!-- STATUS MODAL -->
+                        <ng-template #statusModal let-modal>
+                          <div class="modal-body">
+                            <p>
+                              <strong
+                                >Are you sure you want to
+                                {{ deleteForm.status == "active" ? "Disable" : "Enable" }} the
+                                <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>
+                                order?</strong
+                                >
+                              </p>
+                              @if (deleteForm.errorMsg) {
+                                <div>
+                                  <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                                </div>
+                              }
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                id="closeModal"
+                                class="btn btn-wide black-outline-btn"
+                                (click)="modal.dismiss('Cross click')"
+                                >
+                                <span class="black-outline-txt">No</span>
+                              </button>
+                              <button
+                                type="button"
+                                (click)="onUpdateStatus()"
+                                class="btn btn-wide btn-primary"
+                                >
+                                Yes
+                              </button>
+                            </div>
+                          </ng-template>
 
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong
-        >Are you sure you want to remove
-        <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>
-        order?</strong
-      >
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      id="closeModal"
-      class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click')"
-    >
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button
-      type="button"
-      (click)="onDelete()"
-      class="btn btn-wide orng-outline-btn"
-    >
-      <span class="black-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+                          <!-- filter Modal -->
+                          <ng-template #filterModal let-modal>
+                            <form autocomplete="off" ngbAutofocus>
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h4>
+                                    <span
+                                      class="material-symbols-rounded cursor"
+                                      (click)="modal.dismiss('Cross click')"
+                                      >arrow_back</span
+                                      >
+                                      <span class="popup_text">Filter</span>
+                                    </h4>
+                                  </div>
+                                  <div class="modal-body filtersec">
+                                    <div class="row m-0">
+                                      <div class="carosal w-100">
+                                        <ul class="px-3">
+                                          <li>
+                                            <a class="hz_carosal carosal_button"> By Status </a>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
 
-<!-- STATUS MODAL -->
-<ng-template #statusModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong
-        >Are you sure you want to
-        {{ deleteForm.status == "active" ? "Disable" : "Enable" }} the
-        <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>
-        order?</strong
-      >
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      id="closeModal"
-      class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click')"
-    >
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button
-      type="button"
-      (click)="onUpdateStatus()"
-      class="btn btn-wide btn-primary"
-    >
-      Yes
-    </button>
-  </div>
-</ng-template>
-
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span
-            class="material-symbols-rounded cursor"
-            (click)="modal.dismiss('Cross click')"
-            >arrow_back</span
-          >
-          <span class="popup_text">Filter</span>
-        </h4>
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0">
-          <div class="carosal w-100">
-            <ul class="px-3">
-              <li>
-                <a class="hz_carosal carosal_button"> By Status </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="row m-0 p-3" *ngIf="selectedItem === 'Status'">
-          <div class="modal-card col-md-12">
-            <ng-container *ngFor="let x of status_list">
-              <div class="radio_buttons col-12">
-                <input
-                  type="radio"
-                  id="{{ x.value }}"
-                  [value]="x.value"
-                  name="list_type"
-                  [(ngModel)]="filterForm.list_type"
-                />
-                <label for="{{ x.value }}">{{ x.name }}</label>
-              </div>
-              <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          id="closeModal"
-          class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('cancel')"
-        >
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button
-          type="button"
-          class="btn btn-wide orng-outline-btn m-1"
-          (click)="onTypeChange(filterForm.list_type)"
-        >
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+                                    @if (selectedItem === 'Status') {
+                                      <div class="row m-0 p-3">
+                                        <div class="modal-card col-md-12">
+                                          @for (x of status_list; track x) {
+                                            <div class="radio_buttons col-12">
+                                              <input
+                                                type="radio"
+                                                id="{{ x.value }}"
+                                                [value]="x.value"
+                                                name="list_type"
+                                                [(ngModel)]="filterForm.list_type"
+                                                />
+                                                <label for="{{ x.value }}">{{ x.name }}</label>
+                                              </div>
+                                              <div class="col-md-12 border-top"></div>
+                                            }
+                                          </div>
+                                        </div>
+                                      }
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button
+                                        type="button"
+                                        id="closeModal"
+                                        class="btn btn-wide black-outline-btn"
+                                        (click)="modal.dismiss('cancel')"
+                                        >
+                                        <span class="black-outline-txt">Cancel</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        class="btn btn-wide orng-outline-btn m-1"
+                                        (click)="onTypeChange(filterForm.list_type)"
+                                        >
+                                        <span class="orng-outline-txt">Apply</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </ng-template>

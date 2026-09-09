@@ -16,7 +16,7 @@ import { RecipeEventComponent } from './recipe-event.component';
     QuillModule.forRoot(environment.quill_config),
     TagInputModule,
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     RecipeEventRoutingModule
   ]
 })

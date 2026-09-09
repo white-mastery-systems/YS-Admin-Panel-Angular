@@ -1,62 +1,69 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" ngbDropdown role="group" aria-label="Select all">
-    <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-    <button ngbDropdownToggle class="p-0">
-      <span class="material-symbols-rounded">more_vert</span>
-    </button>
-    <div class="dropdown-menu" ngbDropdownMenu>
-      <button class="dropdown-item" (click)="addForm={}; modalService.open(addModal,{windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded mr-2">file_download</span> Import</button>
-      <button class="dropdown-item" (click)="exportAsXLSX();"><span class="material-symbols-rounded mr-2">file_upload</span> Export</button>
-      <button class="dropdown-item" (click)="resetForm={}; modalService.open(resetModal, { centered: true });"><span class="material-symbols-rounded mr-2">clear_all</span> Clear All</button>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-</div>
-</div>
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}</h1>
-         </div>
-        </div>      
-      </div>
-    </div>
-
-    <div class="top-filter-sec list-button">
-      <div class="row mb-4">
-        <div class="col-md-12 d-flex justify-content-end">
-          <button type="button" class="mr-3" (click)="addForm={}; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded">file_download</span> Import</button>
-          <button type="button" (click)="exportAsXLSX();" class="mr-3"><span class="material-symbols-rounded">file_upload</span> Export</button>
-          <button type="button" (click)="resetForm={}; modalService.open(resetModal, { centered: true });"><span class="material-symbols-rounded">clear_all</span> Clear All</button>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but" ngbDropdown role="group" aria-label="Select all">
+      <div ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+        <button ngbDropdownToggle class="p-0">
+          <span class="material-symbols-rounded">more_vert</span>
+        </button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" (click)="addForm={}; modalService.open(addModal,{windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded mr-2">file_download</span> Import</button>
+          <button class="dropdown-item" (click)="exportAsXLSX();"><span class="material-symbols-rounded mr-2">file_upload</span> Export</button>
+          <button class="dropdown-item" (click)="resetForm={}; modalService.open(resetModal, { centered: true });"><span class="material-symbols-rounded mr-2">clear_all</span> Clear All</button>
         </div>
       </div>
     </div>
-  </ng-container>
-
-  <div *ngIf="pincodes" class="row" class="list-horizontal">
-    <div class="col-md-12 list-item px-0">
-      <div class="card mb-4 d-flex flex-row">
-        <div class="flex-grow-1 d-flex">
-          <div class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
-            <p class="w-100 w-md-100 m-b-0" style="word-spacing: 30px; line-height: 400%;">{{ pincodes }}</p>
+  </div>
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <div class="top-filter-sec list-button">
+        <div class="row mb-4">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" class="mr-3" (click)="addForm={}; modalService.open(addModal, {windowClass: 'scroll-modal-xl', scrollable : true});"><span class="material-symbols-rounded">file_download</span> Import</button>
+            <button type="button" (click)="exportAsXLSX();" class="mr-3"><span class="material-symbols-rounded">file_upload</span> Export</button>
+            <button type="button" (click)="resetForm={}; modalService.open(resetModal, { centered: true });"><span class="material-symbols-rounded">clear_all</span> Clear All</button>
+          </div>
+        </div>
+      </div>
+    }
+    @if (pincodes) {
+      <div class="row" class="list-horizontal">
+        <div class="col-md-12 list-item px-0">
+          <div class="card mb-4 d-flex flex-row">
+            <div class="flex-grow-1 d-flex">
+              <div class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
+                <p class="w-100 w-md-100 m-b-0" style="word-spacing: 30px; line-height: 400%;">{{ pincodes }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!pincodes) {
+      <div class="row">
+        <div class="col-md-12">
+          <p align="center">No data found</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!pincodes" class="row">
-    <div class="col-md-12">
-      <p align="center">No data found</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- ADD MODAL -->
 <ng-template #addModal let-modal>
@@ -66,7 +73,7 @@
         <h4>
           <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
           <span class="popup_text">Pincodes</span>
-         </h4>     
+        </h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -77,24 +84,30 @@
                 <span>Use Excel</span><span class="checkmark"></span>
               </label>
             </div>
-            <div *ngIf="addForm.import" class="col-md-12 form-group mb-3">
-              <div class="custom-file mt-2">
-                <input type="file" name="excel" class="custom-file-input" (change)="onFileChange($event);" accept=".xlsx" required>
-                <label class="custom-file-label">Choose file</label>
+            @if (addForm.import) {
+              <div class="col-md-12 form-group mb-3">
+                <div class="custom-file mt-2">
+                  <input type="file" name="excel" class="custom-file-input" (change)="onFileChange($event);" accept=".xlsx" required>
+                  <label class="custom-file-label">Choose file</label>
+                </div>
               </div>
-            </div>
-            <div *ngIf="!addForm.import" class="col-md-12 form-group mb-3">
-              <tag-input class="w-100" name="options" [(ngModel)]="addForm.options" #options="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
-              [separatorKeyCodes]="[188]" required></tag-input>
-              <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-            </div>
+            }
+            @if (!addForm.import) {
+              <div class="col-md-12 form-group mb-3">
+                <tag-input class="w-100" name="options" [(ngModel)]="addForm.options" #options="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
+                [separatorKeyCodes]="[188]" required></tag-input>
+                <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+              </div>
+            }
           </div>
         </div>
-        <div *ngIf="addForm.errorMsg"><p class="text-danger">{{ addForm.errorMsg }}</p></div>
+        @if (addForm.errorMsg) {
+          <div><p class="text-danger">{{ addForm.errorMsg }}</p></div>
+        }
       </div>
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-        <span class="black-outline-txt">Cancel</span>
+          <span class="black-outline-txt">Cancel</span>
         </button>
         <button type="submit" (click)="addForm.type='add'" class="btn btn-wide btn-primary" [disabled]="addForm.submit">Add</button>
         <button type="submit" (click)="addForm.type='update'" class="btn btn-wide btn-primary" [disabled]="addForm.submit">Update</button>
@@ -109,9 +122,11 @@
     <p>
       <strong>Are you sure you want to clear all the pincodes?</strong>
     </p>
-    <div *ngIf="resetForm.errorMsg">
-      <p class="text-danger">{{ resetForm.errorMsg }}</p>
-    </div>
+    @if (resetForm.errorMsg) {
+      <div>
+        <p class="text-danger">{{ resetForm.errorMsg }}</p>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">

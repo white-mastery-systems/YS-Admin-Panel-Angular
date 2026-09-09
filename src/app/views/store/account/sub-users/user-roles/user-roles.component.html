@@ -1,80 +1,94 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="onAdd(permissionModal);">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but" (click)="onAdd(permissionModal);">
       <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-        </div>
-      </div>
     </div>
   </div>
-  
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button class="highbutton" type="button" (click)="onAdd(permissionModal);">
-          <span class="material-symbols-rounded">add</span>Add Role
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-9 col-8 first_col px-0 header-font">
-            <p class="w-100 w-sm-100">Name</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-9 col-8 first_col px-0">
-            <p class="w-100 w-sm-100 dark-font">{{x.name}}</p>
-          </div>
-          <div class="col-md-3 col-4">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, permissionModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'edit': 'chevron_right'}}</span> {{commonService.desktop_device? 'Edit': ''}}
-              </button> 
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
         </div>
-      </div>      
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button class="highbutton" type="button" (click)="onAdd(permissionModal);">
+              <span class="material-symbols-rounded">add</span>Add Role
+            </button>
+          </div>
+        }
+      </div>
     </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="col-md-12 mt-3">
-      <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-        maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
-    </div>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-9 col-8 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100">Name</p>
+                </div>
+              </div>
+            }
+            @for (x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-9 col-8 first_col px-0">
+                  <p class="w-100 w-sm-100 dark-font">{{x.name}}</p>
+                </div>
+                <div class="col-md-3 col-4">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, permissionModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'edit': 'chevron_right'}}</span> {{commonService.desktop_device? 'Edit': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="col-md-12 mt-3">
+          <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- PERMISSION MODAL -->
 <ng-template #permissionModal let-modal>
@@ -83,87 +97,101 @@
       <div class="modal-header">
         <h4>
           <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">{{ (permForm.form_type=='add')? 'Add Role': permForm.name }}</span>   
-        </h4>     
-      </div> 
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
+          <span class="popup_text">{{ (permForm.form_type=='add')? 'Add Role': permForm.name }}</span>
+        </h4>
       </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div *ngIf="permForm.form_type=='add'" class="col-md-6 form-group mb-3">
-          <label>Name</label>
-          <input type="text" name="name" class="form-control" [(ngModel)]="permForm.name" required />
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
         </div>
-        <ng-container *ngFor="let x of permissionList; let i=index;">
-          <div *ngIf="!x.sub_list?.length" class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label class="checkbox checkbox-primary">
-                <input class="form-check-input" type="checkbox" name="feature{{i+1}}" [(ngModel)]="x.checked">
-                <span>{{x.name}}</span>
-                <span class="checkmark"></span>
-              </label>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body">
+          @if (permForm.form_type=='add') {
+            <div class="col-md-6 form-group mb-3">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" [(ngModel)]="permForm.name" required />
             </div>
-          </div>
-          <!-- sub list -->
-          <ng-container *ngIf="x.sub_list?.length">
-            <div class="row">
-              <div class="col-md-12 px-0">
-                <p class="fw-600 mb-1 mt-2">{{x.title}}</p>
-              </div>
-            </div>
-            <div class="card py-2 mb-3">
+          }
+          @for (x of permissionList; track x; let i = $index) {
+            @if (!x.sub_list?.length) {
               <div class="row">
-                <div *ngFor="let y of x.sub_list; let j=index;" class="col-md-6 col-lg-4 form-group mt-1 mb-1">
-                  <label class="checkbox checkbox-success">
-                    <input class="form-check-input" type="checkbox" name="sub_feature{{i+1}}{{j+1}}"
-                      [(ngModel)]="y.checked">
-                    <span>{{y.name}}</span>
+                <div class="col-md-12 form-group mb-3">
+                  <label class="checkbox checkbox-primary">
+                    <input class="form-check-input" type="checkbox" name="feature{{i+1}}" [(ngModel)]="x.checked">
+                    <span>{{x.name}}</span>
                     <span class="checkmark"></span>
                   </label>
                 </div>
               </div>
-            </div>
-          </ng-container>
-        </ng-container>
-      </div>
-      <div class="modal-footer">
-        <div class="row" align="center">
-          <div *ngIf="permForm.errorMsg" class="col-md-12 form-group">
-            <p class="text-danger">{{ permForm.errorMsg }}</p>
+            }
+            <!-- sub list -->
+            @if (x.sub_list?.length) {
+              <div class="row">
+                <div class="col-md-12 px-0">
+                  <p class="fw-600 mb-1 mt-2">{{x.title}}</p>
+                </div>
+              </div>
+              <div class="card py-2 mb-3">
+                <div class="row">
+                  @for (y of x.sub_list; track y; let j = $index) {
+                    <div class="col-md-6 col-lg-4 form-group mt-1 mb-1">
+                      <label class="checkbox checkbox-success">
+                        <input class="form-check-input" type="checkbox" name="sub_feature{{i+1}}{{j+1}}"
+                          [(ngModel)]="y.checked">
+                          <span>{{y.name}}</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            }
           </div>
-          <div class="col-md-12 form-group mb-3">
-            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-              <span class="black-outline-txt">Cancel</span>
-            </button>
-            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="permForm.submit"
+        }
+        <div class="modal-footer">
+          <div class="row" align="center">
+            @if (permForm.errorMsg) {
+              <div class="col-md-12 form-group">
+                <p class="text-danger">{{ permForm.errorMsg }}</p>
+              </div>
+            }
+            <div class="col-md-12 form-group mb-3">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="permForm.submit"
               [ladda]="permForm.submit">Submit</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </form>
-</ng-template>
+    </form>
+  </ng-template>
 
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure you want to delete
-        <span class="txt-grdint-highlight">"{{deleteForm.name}}?"</span>
-      </strong>
-    </p>
-    <div class="col-md-12 pt-3" *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+  <!-- DELETE MODAL -->
+  <ng-template #deleteModal let-modal>
+    <div class="modal-body">
+      <p class="mt-3">
+        <strong>Are you sure you want to delete
+          <span class="txt-grdint-highlight">"{{deleteForm.name}}?"</span>
+        </strong>
+      </p>
+      @if (deleteForm.errorMsg) {
+        <div class="col-md-12 pt-3">
+          <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+        </div>
+      }
     </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
-    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+        (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+        [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+        <span class="orng-outline-txt">Yes</span>
+      </button>
+    </div>
+  </ng-template>

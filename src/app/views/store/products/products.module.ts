@@ -10,7 +10,7 @@ import { ProductsComponent } from './products.component';
   imports: [
     SharedModule,
     ProductsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

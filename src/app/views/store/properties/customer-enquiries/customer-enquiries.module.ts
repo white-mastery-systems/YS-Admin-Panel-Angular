@@ -12,7 +12,7 @@ import { CustomerEnquiriesComponent } from './customer-enquiries.component';
   imports: [
     SharedModule,
     CustomerEnquiriesRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

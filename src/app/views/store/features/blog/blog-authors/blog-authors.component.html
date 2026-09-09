@@ -1,85 +1,100 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>Blog Authors</h1>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="top-filter-sec list-button mt-2">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="highbutton" (click)="openPopup('add', null, authorModal);">
-          <span class="material-symbols-rounded">add</span>Add Blog Author
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-7 col-5 first_col px-0 header-font">
-            <p class="w-30 m-b-0">Author</p>
-            <p class="w-30 m-b-0">Role</p>
-            <p class="w-30 m-b-0">Count</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card"
-          *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index"
-          [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-7 col-5 first_col px-0 author-row">
-            <div class="w-30 w-sm-100 d-flex align-items-center">
-              <img *ngIf="x.avatar" [src]="imgBaseUrl+x.avatar" class="author-thumb mr-2" alt="">
-              <img *ngIf="!x.avatar" src="assets/images/default.png" class="author-thumb mr-2" alt="">
-              <p class="m-b-0 dark-font">{{x.name}}</p>
-            </div>
-            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.role || '-'}}</p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.count}} {{x.count === 1 ? 'blog' : 'blogs'}}</p>
-          </div>
-          <div class="col-md-5 col-7">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                (click)="authorForm = x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'"
-                (click)="openPopup('edit', x, authorModal);">
-                <span class="material-symbols-rounded">edit</span> {{commonService.desktop_device? 'Edit': ''}}
-              </button>
-            </div>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Blog Authors</h1>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    }
+    <div class="top-filter-sec list-button mt-2">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" class="highbutton" (click)="openPopup('add', null, authorModal);">
+              <span class="material-symbols-rounded">add</span>Add Blog Author
+            </button>
+          </div>
+        }
       </div>
     </div>
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-7 col-5 first_col px-0 header-font">
+                  <p class="w-30 m-b-0">Author</p>
+                  <p class="w-30 m-b-0">Role</p>
+                  <p class="w-30 m-b-0">Count</p>
+                </div>
+              </div>
+            }
+            @for (x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card"
+                [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-7 col-5 first_col px-0 author-row">
+                  <div class="w-30 w-sm-100 d-flex align-items-center">
+                    @if (x.avatar) {
+                      <img [src]="imgBaseUrl+x.avatar" class="author-thumb mr-2" alt="">
+                    }
+                    @if (!x.avatar) {
+                      <img src="assets/images/default.png" class="author-thumb mr-2" alt="">
+                    }
+                    <p class="m-b-0 dark-font">{{x.name}}</p>
+                  </div>
+                  <p class="w-30 w-sm-100 m-b-0 light-font">{{x.role || '-'}}</p>
+                  <p class="w-30 w-sm-100 m-b-0 light-font">{{x.count}} {{x.count === 1 ? 'blog' : 'blogs'}}</p>
+                </div>
+                <div class="col-md-5 col-7">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                      (click)="authorForm = x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'"
+                      (click)="openPopup('edit', x, authorModal);">
+                      <span class="material-symbols-rounded">edit</span> {{commonService.desktop_device? 'Edit': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <ng-template #authorModal let-modal>
   <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate ngbAutofocus>
@@ -88,48 +103,62 @@
         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click')">arrow_back</span>
         <h4 class="modal-title popup_text">{{ authorForm.form_type == "add" ? "Add" : "Update" }} Blog Author</h4>
       </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body px-0">
-        <div class="form-group mb-0">
-          <div class="row mt-3">
-            <div class="col-md-6 form-group mb-3">
-              <label>Name</label>
-              <input type="text" name="name" class="form-control" [(ngModel)]="authorForm.name" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Role</label>
-              <input type="text" name="role" class="form-control" [(ngModel)]="authorForm.role" />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Bio</label>
-              <textarea class="form-control" name="bio" [(ngModel)]="authorForm.bio" rows="4"></textarea>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Link</label>
-              <input type="text" name="link" class="form-control" [(ngModel)]="authorForm.link" />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Avatar</label>
-              <input type="file" class="form-control" accept="image/jpeg, image/png, image/webp" (change)="uploadAuthorAvatar($event)" />
-              <p *ngIf="authorForm.avatarLoader" class="light-font mt-2 mb-0">Uploading...</p>
-              <img *ngIf="authorForm.avatar" [src]="imgBaseUrl+authorForm.avatar" class="author-preview mt-2" alt="">
-            </div>
-            <div class="col-md-6 form-group mb-3" *ngIf="authorForm.form_type === 'edit'">
-              <label>Blog Count</label>
-              <input type="text" class="form-control" [value]="authorForm.count || 0" readonly />
-            </div>
-            <div class="col-md-6 form-group mb-3" *ngIf="authorForm.form_type === 'edit'">
-              <label>Status</label>
-              <input type="text" class="form-control" [value]="authorForm.status || 'active'" readonly />
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body px-0">
+          <div class="form-group mb-0">
+            <div class="row mt-3">
+              <div class="col-md-6 form-group mb-3">
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="authorForm.name" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Role</label>
+                <input type="text" name="role" class="form-control" [(ngModel)]="authorForm.role" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Bio</label>
+                <textarea class="form-control" name="bio" [(ngModel)]="authorForm.bio" rows="4"></textarea>
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Link</label>
+                <input type="text" name="link" class="form-control" [(ngModel)]="authorForm.link" />
+              </div>
+              <div class="col-md-12 form-group mb-3">
+                <label>Avatar</label>
+                <input type="file" class="form-control" accept="image/jpeg, image/png, image/webp" (change)="uploadAuthorAvatar($event)" />
+                @if (authorForm.avatarLoader) {
+                  <p class="light-font mt-2 mb-0">Uploading...</p>
+                }
+                @if (authorForm.avatar) {
+                  <img [src]="imgBaseUrl+authorForm.avatar" class="author-preview mt-2" alt="">
+                }
+              </div>
+              @if (authorForm.form_type === 'edit') {
+                <div class="col-md-6 form-group mb-3">
+                  <label>Blog Count</label>
+                  <input type="text" class="form-control" [value]="authorForm.count || 0" readonly />
+                </div>
+              }
+              @if (authorForm.form_type === 'edit') {
+                <div class="col-md-6 form-group mb-3">
+                  <label>Status</label>
+                  <input type="text" class="form-control" [value]="authorForm.status || 'active'" readonly />
+                </div>
+              }
             </div>
           </div>
+          @if (authorForm.errorMsg) {
+            <div style="text-align: center;">
+              <p class="text-danger mt-3">{{ authorForm.errorMsg }}</p>
+            </div>
+          }
         </div>
-        <div *ngIf="authorForm.errorMsg" style="text-align: center;">
-          <p class="text-danger mt-3">{{ authorForm.errorMsg }}</p>
-        </div>
-      </div>
+      }
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
           <span class="black-outline-txt">Cancel</span>
@@ -145,9 +174,11 @@
 <ng-template #deleteModal let-modal>
   <div class="modal-body">
     <p><strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{authorForm.name}}"</span> author?</strong></p>
-    <div *ngIf="authorForm.errorMsg">
-      <p class="text-danger">{{ authorForm.errorMsg }}</p>
-    </div>
+    @if (authorForm.errorMsg) {
+      <div>
+        <p class="text-danger">{{ authorForm.errorMsg }}</p>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">

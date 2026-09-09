@@ -1,101 +1,114 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but mr-3" (click)="exportAsXLSX();">
-    <span class="material-symbols-rounded">file_upload</span>
-</div>
-  <div class="add_but" routerLink="{{ (vendor_id)? '/product-extras/size-chart/create/'+vendor_id: '/product-extras/size-chart/create' }}">
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but mr-3" (click)="exportAsXLSX();">
+      <span class="material-symbols-rounded">file_upload</span>
+    </div>
+    <div class="add_but" routerLink="{{ (vendor_id)? '/product-extras/size-chart/create/'+vendor_id: '/product-extras/size-chart/create' }}">
       <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-<ng-container *ngIf="commonService.desktop_device">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-       </div>
-      </div>       
     </div>
   </div>
-</ng-container>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-          <div class="filter_icon" *ngIf="!commonService.desktop_device && commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor'" (click)="onOpenFilterModal(filterModal);"><span
-            class="material-symbols-rounded cursor">filter_alt</span></div>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button *ngIf="commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor'" type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);">
-          <span class="material-symbols-rounded">filter_alt</span>Filter
-        </button>
-        <button type="button" (click)="exportAsXLSX();" class="mr-3">
-          <span class="material-symbols-rounded">file_upload</span> Export
-        </button>
-        <button type="button" class="highbutton" routerLink="{{ (vendor_id)? '/product-extras/size-chart/create/'+vendor_id: '/product-extras/size-chart/create' }}">
-          <span class="material-symbols-rounded">add</span>Add Size Chart
-        </button>        
-      </div>      
-    </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-6 col-6 first_col px-0 header-font">
-            <p class="w-30 w-sm-100">Name</p>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+            @if (!commonService.desktop_device && commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor') {
+              <div class="filter_icon" (click)="onOpenFilterModal(filterModal);"><span
+              class="material-symbols-rounded cursor">filter_alt</span></div>
+            }
           </div>
         </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-6 col-6 first_col px-0">
-            <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
-            <!-- <p class="w-30 w-sm-100 m-b-0" *ngIf="commonService.master_token">{{x._id}}</p> -->
-          </div>
-          <div class="col-md-6 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            @if (commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor') {
+              <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);">
+                <span class="material-symbols-rounded">filter_alt</span>Filter
               </button>
-              <button  [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="{{ (vendor_id)? '/product-extras/size-chart/modify/'+x._id+'/'+vendor_id: '/product-extras/size-chart/modify/'+x._id }}" >
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-              </button>
-              
-            </div>            
+            }
+            <button type="button" (click)="exportAsXLSX();" class="mr-3">
+              <span class="material-symbols-rounded">file_upload</span> Export
+            </button>
+            <button type="button" class="highbutton" routerLink="{{ (vendor_id)? '/product-extras/size-chart/create/'+vendor_id: '/product-extras/size-chart/create' }}">
+              <span class="material-symbols-rounded">add</span>Add Size Chart
+            </button>
           </div>
-        </div>
-      </div>      
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        }
       </div>
     </div>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-6 col-6 first_col px-0 header-font">
+                  <p class="w-30 w-sm-100">Name</p>
+                </div>
+              </div>
+            }
+            @for (x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-6 col-6 first_col px-0">
+                  <p class="w-30 w-sm-100 dark-font">{{x.name}}</p>
+                  <!-- <p class="w-30 w-sm-100 m-b-0" *ngIf="commonService.master_token">{{x._id}}</p> -->
+                </div>
+                <div class="col-md-6 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button  [ngClass]="commonService.desktop_device? 'light-button  mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button  [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" routerLink="{{ (vendor_id)? '/product-extras/size-chart/modify/'+x._id+'/'+vendor_id: '/product-extras/size-chart/modify/'+x._id }}" >
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-
-</div>
+}
 
 <!-- DELETE MODAL -->
 <ng-template #deleteModal let-modal>
@@ -103,75 +116,77 @@
     <p>
       <strong>Are you sure you want to delete
         <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>?</strong>
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-         <span class="material-symbols-rounded cursor" (click)="vendor_id=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
-         <span class="popup_text">Filter</span>
-        </h4>        
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0">
-          <div class="carosal w-100">
-            <ul class="px-3">
-              <li>
-                <a class="hz_carosal carosal_button">
-                  By Vendor
-                </a>
-              </li>
-            </ul>
-          </div>
+      </p>
+      @if (deleteForm.errorMsg) {
+        <div>
+          <p class="text-danger">{{ deleteForm.errorMsg }}</p>
         </div>
-        
-
-        <div class="row m-0 p-3">
-          <div class="modal-card col-md-12">
-          
-            <div class="radio_buttons col-12">
-              <input type="radio" id="all" value="" name="vendor_id" [(ngModel)]="vendor_id">
-              <label for="all">All Vendors</label>
+      }
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+        (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">No</span>
+      </button>
+      <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn">
+        <span class="orng-outline-txt">Yes</span>
+      </button>
+    </div>
+  </ng-template>
+  <!-- filter Modal -->
+  <ng-template #filterModal let-modal>
+    <form autocomplete="off" ngbAutofocus>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>
+            <span class="material-symbols-rounded cursor" (click)="vendor_id=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
+            <span class="popup_text">Filter</span>
+          </h4>
+        </div>
+        <div class="modal-body filtersec">
+          <div class="row m-0">
+            <div class="carosal w-100">
+              <ul class="px-3">
+                <li>
+                  <a class="hz_carosal carosal_button">
+                    By Vendor
+                  </a>
+                </li>
+              </ul>
             </div>
-            <div class="col-md-12 border-top"></div>
-            <ng-container *ngFor="let x of commonService.vendor_list">
+          </div>
+
+
+          <div class="row m-0 p-3">
+            <div class="modal-card col-md-12">
+
               <div class="radio_buttons col-12">
-                <input type="radio" id="{{x._id}}" [value]="x._id" name="vendor_id" [(ngModel)]="vendor_id">
-                <label for="{{x._id}}">{{x.company_details.brand}}</label>
+                <input type="radio" id="all" value="" name="vendor_id" [(ngModel)]="vendor_id">
+                <label for="all">All Vendors</label>
               </div>
               <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>         
+              @for (x of commonService.vendor_list; track x) {
+                <div class="radio_buttons col-12">
+                  <input type="radio" id="{{x._id}}" [value]="x._id" name="vendor_id" [(ngModel)]="vendor_id">
+                  <label for="{{x._id}}">{{x.company_details.brand}}</label>
+                </div>
+                <div class="col-md-12 border-top"></div>
+              }
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
+          <button type="button" class="btn btn-wide black-outline-btn" (click)="vendor_id=tempFilter; modal.dismiss('cancel');">
+            <span class="black-outline-txt">Cancel</span>
+          </button>
+          <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit();">
+            <span class="orng-outline-txt">Apply</span>
+          </button>
         </div>
 
       </div>
-
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
-        <button type="button" class="btn btn-wide black-outline-btn" (click)="vendor_id=tempFilter; modal.dismiss('cancel');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="ngOnInit();">
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
-
-    </div>
-  </form>
-</ng-template>
+    </form>
+  </ng-template>

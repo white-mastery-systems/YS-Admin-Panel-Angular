@@ -1,122 +1,150 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb">
-    <h1>Enquiries</h1>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <form autocomplete="off" (ngSubmit)="page=1; ngOnInit();" ngNativeValidate ngbAutofocus>
-          <div class="form-group search_bar m-0">
-            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="filterForm.search" />
-            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-            <div class="filter_icon" *ngIf="!commonService.desktop_device" (click)="onOpenFilterModal(filterModal);">
-              <span class="material-symbols-rounded cursor">filter_alt</span>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb">
+        <h1>Enquiries</h1>
+      </div>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <form autocomplete="off" (ngSubmit)="page=1; ngOnInit();" ngNativeValidate ngbAutofocus>
+            <div class="form-group search_bar m-0">
+              <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="filterForm.search" />
+              <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+              @if (!commonService.desktop_device) {
+                <div class="filter_icon" (click)="onOpenFilterModal(filterModal);">
+                  <span class="material-symbols-rounded cursor">filter_alt</span>
+                </div>
+              }
+            </div>
+          </form>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);">
+              <span class="material-symbols-rounded">filter_alt</span>Filter
+            </button>
+            <button type="button" (click)="exportAsXLSX();" [disabled]="exportLoader">
+              <span class="material-symbols-rounded">file_upload</span>Export
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+    @if (list?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-10 col-10 first_col px-0 header-font">
+                  <p class="w-25 w-sm-100">Name</p>
+                  <p class="w-20 w-sm-100 m-b-0">Mobile</p>
+                  <p class="w-20 w-sm-100 m-b-0">Date</p>
+                  <p class="w-20 w-sm-100 m-b-0">Type</p>
+                  <p class="w-15 w-sm-100 m-b-0">Status</p>
+                </div>
+              </div>
+            }
+            @for (x of list; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-10 col-10 first_col px-0">
+                  <p class="w-25 w-sm-100 dark-font">{{x.name}}</p>
+                  <p class="w-20 w-sm-100 m-b-0 light-font">{{x.mobile}}</p>
+                  <p class="w-20 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y"}}</p>
+                  <p class="w-20 w-sm-100 m-b-0 light-font">
+                    @if (x.type=='customer_enquiry') {
+                      Contact Us
+                    }
+                    @if (x.type=='seller_enquiry') {
+                      Sell With Us
+                    }
+                    @if (x.type=='product_enquiry') {
+                      Product
+                    }
+                    @if (x.type=='vendor_enquiry') {
+                      Vendor
+                    }
+                  </p>
+                  <p class="w-15 w-sm-100 m-b-0">
+                    <span class="badge" [ngClass]="(x.status=='new')? 'badge-blue-background': 'badge-green-background'">
+                      {{ x.status | titlecase }}
+                    </span>
+                  </p>
+                </div>
+                <div class="col-md-2 col-2">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                      (click)="details=x; btnLoader=false; modalService.open(viewModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">
+                        {{commonService.desktop_device? 'visibility': 'chevron_right'}}
+                      </span> {{commonService.desktop_device? 'View': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        @if (list.length) {
+          <div class="row mt-4">
+            <div class="col-md-12 product-pagination-wrapper">
+              <ul role="navigation" class="ngx-pagination responsive product-pagination" aria-label="Pagination">
+                <li class="pagination-previous mr-2">
+                  <a (click)="(page>1)? onChangePage('prev'): ''" [ngClass]="(page>1)? 'cursor': 'disabled'"
+                    aria-label="page">
+                    <span class="cursor show-for-sr"></span>
+                  </a>
+                </li>
+                @if (commonService.desktop_device) {
+                  <li class="current">
+                    <span>{{page}}</span>
+                  </li>
+                }
+                @if (!commonService.desktop_device) {
+                  <li class="small-screen">
+                    {{page}} / {{totalPages}}
+                  </li>
+                }
+                <li class="pagination-next ml-2">
+                  <a (click)="(page<totalPages)? onChangePage('next'): ''" [ngClass]="(page<totalPages)? 'cursor': 'disabled'"
+                    aria-label="page">
+                    <span class="cursor show-for-sr"></span>
+                  </a>
+                </li>
+              </ul>
+              <div class="page-count-pagination">
+                <b class="mr-2">Go to page</b>
+                <select name="select_page" style="width: 70px; display: inline;" class="form-control select-arrow"
+                  [(ngModel)]="page" (change)="commonService.pageTop(0); ngOnInit();">
+                  @for (num of pagesList; track num; let i = $index) {
+                    <option [ngValue]="i+1">{{i+1}}</option>
+                  }
+                </select>
+              </div>
             </div>
           </div>
-        </form>
+        }
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);">
-          <span class="material-symbols-rounded">filter_alt</span>Filter
-        </button>
-        <button type="button" (click)="exportAsXLSX();" [disabled]="exportLoader">
-          <span class="material-symbols-rounded">file_upload</span>Export
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div *ngIf="list?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-10 col-10 first_col px-0 header-font">
-            <p class="w-25 w-sm-100">Name</p>
-            <p class="w-20 w-sm-100 m-b-0">Mobile</p>
-            <p class="w-20 w-sm-100 m-b-0">Date</p>
-            <p class="w-20 w-sm-100 m-b-0">Type</p>
-            <p class="w-15 w-sm-100 m-b-0">Status</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          
-          <div class="col-md-10 col-10 first_col px-0">
-            <p class="w-25 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.mobile}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y"}}</p>
-            <p class="w-20 w-sm-100 m-b-0 light-font">
-              <ng-container *ngIf="x.type=='customer_enquiry'">Contact Us</ng-container>
-              <ng-container *ngIf="x.type=='seller_enquiry'">Sell With Us</ng-container>
-              <ng-container *ngIf="x.type=='product_enquiry'">Product</ng-container>
-              <ng-container *ngIf="x.type=='vendor_enquiry'">Vendor</ng-container>
-            </p>
-            <p class="w-15 w-sm-100 m-b-0">
-              <span class="badge" [ngClass]="(x.status=='new')? 'badge-blue-background': 'badge-green-background'">
-                {{ x.status | titlecase }}
-              </span>
-            </p>
-          </div>
-          <div class="col-md-2 col-2">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
-                (click)="details=x; btnLoader=false; modalService.open(viewModal);">
-                <span class="material-symbols-rounded right_arrow transicon">
-                  {{commonService.desktop_device? 'visibility': 'chevron_right'}}
-                </span> {{commonService.desktop_device? 'View': ''}}
-              </button>
-            </div>
-          </div>
+    }
+    @if (!list?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
         </div>
       </div>
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div *ngIf="list.length" class="row mt-4">
-      <div class="col-md-12 product-pagination-wrapper">
-        <ul role="navigation" class="ngx-pagination responsive product-pagination" aria-label="Pagination">
-          <li class="pagination-previous mr-2">
-            <a (click)="(page>1)? onChangePage('prev'): ''" [ngClass]="(page>1)? 'cursor': 'disabled'"
-              aria-label="page">
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-          <li *ngIf="commonService.desktop_device" class="current">
-            <span>{{page}}</span>
-          </li>
-          <li *ngIf="!commonService.desktop_device" class="small-screen">
-            {{page}} / {{totalPages}}
-          </li>
-          <li class="pagination-next ml-2">
-            <a (click)="(page<totalPages)? onChangePage('next'): ''" [ngClass]="(page<totalPages)? 'cursor': 'disabled'"
-              aria-label="page">
-              <span class="cursor show-for-sr"></span>
-            </a>
-          </li>
-        </ul>
-        <div class="page-count-pagination">
-          <b class="mr-2">Go to page</b>
-          <select name="select_page" style="width: 70px; display: inline;" class="form-control select-arrow"
-            [(ngModel)]="page" (change)="commonService.pageTop(0); ngOnInit();">
-            <option [ngValue]="i+1" *ngFor="let num of pagesList; let i=index;">{{i+1}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
+    }
   </div>
-
-  <div *ngIf="!list?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- View Modal -->
 <ng-template #viewModal let-modal>
@@ -144,96 +172,104 @@
               <td><b>Enquired On</b></td>
               <td>{{details.created_on | date: "dd MMM y"}}</td>
             </tr>
-            <tr *ngIf="details.company_name">
-              <td><b>Company Name</b></td>
-              <td>{{details.company_name}}</td>
-            </tr>
-            <tr *ngIf="details.message">
-              <td><b>Message</b></td>
-              <td>{{details.message}}</td>
-            </tr>
-            <tr *ngIf="details.product_name">
-              <td><b>Product</b></td>
-              <td>
-                {{details.product_name}}<br>
-                SKU: {{details.product_sku}}
-                <ng-container *ngIf="details.product_qty">
-                  <br>Quantity: {{details.product_qty}}
-                </ng-container>
-              </td>
-            </tr>
-            <ng-container *ngIf="details.custom_fields?.length">
-              <tr *ngFor="let x of details.custom_fields;">
-                <td><b>{{x.name}}</b></td>
-                <td>{{x.value}}</td>
+            @if (details.company_name) {
+              <tr>
+                <td><b>Company Name</b></td>
+                <td>{{details.company_name}}</td>
               </tr>
-            </ng-container>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">Close</span>
-    </button>
-    <button type="button" class="btn btn-wide orng-outline-btn ladda-button m-1" [disabled]="btnLoader"
-      [ladda]="btnLoader" (click)="onUpdate();">
-      <span class="orng-outline-txt">{{ (details.status=='new')? 'Mark as Contacted': 'Mark as New' }}</span>
-    </button>
-  </div>
-</ng-template>
-
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor"
-            (click)="filterForm=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Filter</span>
-        </h4>
-      </div>
-      <div class="modal-body filtersec">
-        <div class="row m-0 p-3">
-          <div class="col-md-6 col-6 mb-4">
-            <!-- <label>Delivery Partners</label> -->
-            <select name="list_type" class="form-control select-arrow" [(ngModel)]="filterForm.type" required>
-              <option value="all">All</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-            </select>
-          </div>
-          <div class="col-md-6 col-6"></div>
-          <!-- from date -->
-          <div class="col-md-6 col-6">
-            <div class="form-group">
-              <input type="text" placeholder="Select Date" class="form-control" name="from_date"
-                [(ngModel)]="filterForm.from_date" bsDatepicker
-                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
-            </div>
-          </div>
-          <!-- to date -->
-          <div class="col-md-6 col-6">
-            <div class="form-group">
-              <input type="text" placeholder="Select Date" class="form-control" name="to_date"
-                [(ngModel)]="filterForm.to_date" bsDatepicker [minDate]="filterForm.from_date"
-                [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
-            </div>
-          </div>
+            }
+            @if (details.message) {
+              <tr>
+                <td><b>Message</b></td>
+                <td>{{details.message}}</td>
+              </tr>
+            }
+            @if (details.product_name) {
+              <tr>
+                <td><b>Product</b></td>
+                <td>
+                  {{details.product_name}}<br>
+                  SKU: {{details.product_sku}}
+                  @if (details.product_qty) {
+                    <br>Quantity: {{details.product_qty}}
+                    }
+                  </td>
+                </tr>
+              }
+              @if (details.custom_fields?.length) {
+                @for (x of details.custom_fields; track x) {
+                  <tr>
+                    <td><b>{{x.name}}</b></td>
+                    <td>{{x.value}}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
-        <button type="button" class="btn btn-wide black-outline-btn"
-          (click)="filterForm=tempFilter; modal.dismiss('cancel');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="page=1; ngOnInit();">
-          <span class="orng-outline-txt">Apply</span>
-        </button>
-      </div>
     </div>
-  </form>
-</ng-template>
+    <div class="modal-footer">
+      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Close</span>
+      </button>
+      <button type="button" class="btn btn-wide orng-outline-btn ladda-button m-1" [disabled]="btnLoader"
+        [ladda]="btnLoader" (click)="onUpdate();">
+        <span class="orng-outline-txt">{{ (details.status=='new')? 'Mark as Contacted': 'Mark as New' }}</span>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- filter Modal -->
+  <ng-template #filterModal let-modal>
+    <form autocomplete="off" ngbAutofocus>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>
+            <span class="material-symbols-rounded cursor"
+            (click)="filterForm=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
+            <span class="popup_text">Filter</span>
+          </h4>
+        </div>
+        <div class="modal-body filtersec">
+          <div class="row m-0 p-3">
+            <div class="col-md-6 col-6 mb-4">
+              <!-- <label>Delivery Partners</label> -->
+              <select name="list_type" class="form-control select-arrow" [(ngModel)]="filterForm.type" required>
+                <option value="all">All</option>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+              </select>
+            </div>
+            <div class="col-md-6 col-6"></div>
+            <!-- from date -->
+            <div class="col-md-6 col-6">
+              <div class="form-group">
+                <input type="text" placeholder="Select Date" class="form-control" name="from_date"
+                  [(ngModel)]="filterForm.from_date" bsDatepicker
+                  [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+                </div>
+              </div>
+              <!-- to date -->
+              <div class="col-md-6 col-6">
+                <div class="form-group">
+                  <input type="text" placeholder="Select Date" class="form-control" name="to_date"
+                    [(ngModel)]="filterForm.to_date" bsDatepicker [minDate]="filterForm.from_date"
+                    [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="d-none" (click)="modal.dismiss('cancel');"></button>
+              <button type="button" class="btn btn-wide black-outline-btn"
+                (click)="filterForm=tempFilter; modal.dismiss('cancel');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="page=1; ngOnInit();">
+                <span class="orng-outline-txt">Apply</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </ng-template>

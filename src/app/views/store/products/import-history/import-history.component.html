@@ -1,93 +1,110 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div routerLink="/product-sections/products/import" class="add_but">
-    <span class="material-symbols-rounded">file_download</span>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-</div>
+}
 
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-       </div>
-      </div>  
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div routerLink="/product-sections/products/import" class="add_but">
+      <span class="material-symbols-rounded">file_download</span>
     </div>
   </div>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div *ngIf="commonService.vendor_list.length" class="col-md-3 col-12">
-        <!-- <label>Vendor</label> -->
-        <select name="vendor_id" class="form-control" (change)="ngOnInit();" [(ngModel)]="vendorId" required>
-          <option value="all">Admin</option>
-          <option *ngFor="let x of commonService.vendor_list;" [ngValue]="x._id">Vendor - {{x.company_details?.brand}}</option>
-        </select>
-      </div>
-      <div class="col-12" [ngClass]="commonService.vendor_list.length? 'col-md-3': 'col-md-6'">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button routerLink="/product-sections/products/import" type="button">
-          <span class="material-symbols-rounded">file_download</span>Import
-        </button>
-      </div>      
-    </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-9 col-8 first_col px-0 header-font">
-            <p class="w-40 w-sm-100">File Name</p>
-            <p class="w-30 w-sm-100 m-b-0">Date</p>
-            <p class="w-30 w-sm-100 m-b-0">Upload Count</p>
-          </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderDesc:'created_on' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-9 col-8 first_col px-0">
-            <p class="w-40 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y"}}</p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.uploaded}} Added and {{x.total - x.uploaded}} Skipped</p>
-          </div>
-          <div class="col-md-3 col-4">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; deleteForm.submit=false; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Delete Upload': ''}}
-              </button>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        @if (commonService.vendor_list.length) {
+          <div class="col-md-3 col-12">
+            <!-- <label>Vendor</label> -->
+            <select name="vendor_id" class="form-control" (change)="ngOnInit();" [(ngModel)]="vendorId" required>
+              <option value="all">Admin</option>
+              @for (x of commonService.vendor_list; track x) {
+                <option [ngValue]="x._id">Vendor - {{x.company_details?.brand}}</option>
+              }
+            </select>
+          </div>
+        }
+        <div class="col-12" [ngClass]="commonService.vendor_list.length? 'col-md-3': 'col-md-6'">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            <button routerLink="/product-sections/products/import" type="button">
+              <span class="material-symbols-rounded">file_download</span>Import
+            </button>
+          </div>
+        }
       </div>
     </div>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-9 col-8 first_col px-0 header-font">
+                  <p class="w-40 w-sm-100">File Name</p>
+                  <p class="w-30 w-sm-100 m-b-0">Date</p>
+                  <p class="w-30 w-sm-100 m-b-0">Upload Count</p>
+                </div>
+              </div>
+            }
+            @for (x of list | numOrderDesc:'created_on' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-9 col-8 first_col px-0">
+                  <p class="w-40 w-sm-100 dark-font">{{x.name}}</p>
+                  <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date: "dd MMM y"}}</p>
+                  <p class="w-30 w-sm-100 m-b-0 light-font">{{x.uploaded}} Added and {{x.total - x.uploaded}} Skipped</p>
+                </div>
+                <div class="col-md-3 col-4">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm = x; deleteForm.submit=false; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Delete Upload': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- DELETE MODAL -->
 <ng-template #deleteModal let-modal>
@@ -97,16 +114,18 @@
         Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>? This action will delete all the products uploaded using <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>. Select Yes to confirm deletion.
       </strong>
     </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
+    @if (deleteForm.errorMsg) {
+      <div>
+        <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
       <span class="black-outline-txt">No</span>
     </button>
     <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
-    [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
       <span class="orng-outline-txt">Yes</span>
     </button>
   </div>

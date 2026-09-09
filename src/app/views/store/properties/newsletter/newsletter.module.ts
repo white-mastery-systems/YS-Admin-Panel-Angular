@@ -9,7 +9,7 @@ import { NewsletterComponent } from './newsletter.component';
   declarations: [NewsletterComponent],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     NewsletterRoutingModule
   ]
 })

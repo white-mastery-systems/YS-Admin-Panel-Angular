@@ -1,26 +1,32 @@
-<div *ngIf="router.url.indexOf('/customer/')==-1 && router.url.indexOf('/guest-user/')==-1" class="col-12 justify-content-between" [ngClass]="commonService.desktop_device?'carosal':'carosal-type2 px-0'">
-  <!-- abandoned cart -->
-  <ul *ngIf="router.url.indexOf('/abandoned-cart/')!=-1" class="justify-content-start">
-    <li>
-      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-cart/customer"
-        [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Sign Up User</a>
-    </li>
-    <li>
-      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-cart/guest-user"
-        [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Guest User</a>
-    </li>
-  </ul>
-  <!-- abandoned customer -->
-  <ul *ngIf="router.url.indexOf('/abandoned-quote/')!=-1" class="justify-content-start">
-    <li>
-      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-quote/customer"
-        [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Sign Up User</a>
-    </li>
-    <li>
-      <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-quote/guest-user"
-        [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Guest User</a>
-    </li>
-  </ul>
-</div>
+@if (router.url.indexOf('/customer/')==-1 && router.url.indexOf('/guest-user/')==-1) {
+  <div class="col-12 justify-content-between" [ngClass]="commonService.desktop_device?'carosal':'carosal-type2 px-0'">
+    <!-- abandoned cart -->
+    @if (router.url.indexOf('/abandoned-cart/')!=-1) {
+      <ul class="justify-content-start">
+        <li>
+          <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-cart/customer"
+          [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Sign Up User</a>
+        </li>
+        <li>
+          <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-cart/guest-user"
+          [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Guest User</a>
+        </li>
+      </ul>
+    }
+    <!-- abandoned customer -->
+    @if (router.url.indexOf('/abandoned-quote/')!=-1) {
+      <ul class="justify-content-start">
+        <li>
+          <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-quote/customer"
+          [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Sign Up User</a>
+        </li>
+        <li>
+          <a [ngClass]="commonService.desktop_device?'hz_carosal':''" routerLink="/orders/abandoned-quote/guest-user"
+          [routerLinkActive]="commonService.desktop_device?'carosal_button':'carosal_button_active'">Guest User</a>
+        </li>
+      </ul>
+    }
+  </div>
+}
 
 <router-outlet (activate)="commonService.onActivate($event)"></router-outlet>

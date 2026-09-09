@@ -1,122 +1,136 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div class="main-header" *ngIf="!commonService.desktop_device">
-  <h2>Appointments</h2>  
-</div>
-
-<div *ngIf="!pageLoader">
-
-
-  <ng-container *ngIf="commonService.desktop_device"> 
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>Appointments</h1>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-</ng-container>
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" autocomplete="off"
-            [(ngModel)]="search_bar" />
-          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-          <div *ngIf="!commonService.desktop_device" class="filter_icon" (click)="onOpenFilterModal(filterModal);"><span class="material-symbols-rounded cursor">filter_alt</span></div>
+}
+
+@if (!commonService.desktop_device) {
+  <div class="main-header">
+    <h2>Appointments</h2>
+  </div>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>Appointments</h1>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-        <button  type="button" (click)="onOpenFilterModal(filterModal);"><span class="material-symbols-rounded">filter_alt</span>Filter</button>
-      </div>      
-    </div>
-  </div>
-
-  <!-- DATA LIST -->
-  <div class="list-horizontal mt-3" *ngIf="list?.length">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-              <div class="col-md-8 col-6 first_col px-0 header-font">
-                <p class="w-30 w-sm-100 m-b-0">Id</p>
-                <p class="w-30 w-sm-100 m-b-0">Service Name</p>
-                <p class="w-40 w-sm-100 m-b-0">Date</p>
-              </div>
-              <div class="col-md-4 col-6 first_col align-items-center px-0 header-font">
-                <p class="w-50 w-sm-100 m-b-0">Customer Name</p>
-                <p class="w-50 w-sm-100 m-b-0">Contact No</p>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" autocomplete="off"
+              [(ngModel)]="search_bar" />
+              <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+              @if (!commonService.desktop_device) {
+                <div class="filter_icon" (click)="onOpenFilterModal(filterModal);"><span class="material-symbols-rounded cursor">filter_alt</span></div>
+              }
+            </div>
+          </div>
+          @if (commonService.desktop_device) {
+            <div class="col-md-6 list-button d-flex justify-content-end">
+              <button  type="button" (click)="onOpenFilterModal(filterModal);"><span class="material-symbols-rounded">filter_alt</span>Filter</button>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- DATA LIST -->
+      @if (list?.length) {
+        <div class="list-horizontal mt-3">
+          <div class="data-list-card-wrapper">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div class="list-item data-list-card">
+                  <div class="col-md-8 col-6 first_col px-0 header-font">
+                    <p class="w-30 w-sm-100 m-b-0">Id</p>
+                    <p class="w-30 w-sm-100 m-b-0">Service Name</p>
+                    <p class="w-40 w-sm-100 m-b-0">Date</p>
+                  </div>
+                  <div class="col-md-4 col-6 first_col align-items-center px-0 header-font">
+                    <p class="w-50 w-sm-100 m-b-0">Customer Name</p>
+                    <p class="w-50 w-sm-100 m-b-0">Contact No</p>
+                  </div>
+                </div>
+              }
+              @for (x of list | numOrderAsc:'booking_date' | gridSearch: { customer_name: search_bar, customer_email: search_bar, contact_no: search_bar, service_name: search_bar } | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+                <div class="list-item data-list-card type5-card"
+                  [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  @if (x.order_by=='admin') {
+                    <div class="ribbon-band blue-band">Manual Order</div>
+                  }
+                  <div class="col-md-8 col-6 first_col px-0">
+                    <p class="w-30 w-sm-100 m-b-0 dark-font">#{{x.order_number}}</p>
+                    <p class="w-30 w-sm-100 m-b-0 light-font">{{x.service_name}}</p>
+                    <p class="w-40 w-sm-100 m-b-0 light-font">{{x.booking_date | date: "dd MMM y"}} {{x.booking_date | date: "hh:mm a"}}</p>
+                  </div>
+                  <div class="col-md-4 col-6 first_col px-0 d-flex">
+                    <p class="w-50 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device? '': 'text-right'">{{x.customer_name}}</p>
+                    <p class="w-50 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device? '': 'text-right'">{{x.contact_no}}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- PAGINATION CONTROL -->
+          @if (list?.length) {
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+                maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
               </div>
             </div>
-        <div class="list-item data-list-card type5-card" *ngFor="let x of list | numOrderAsc:'booking_date' | gridSearch: { customer_name: search_bar, customer_email: search_bar, contact_no: search_bar, service_name: search_bar } | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index;"
-        [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-        <div *ngIf="x.order_by=='admin'" class="ribbon-band blue-band">Manual Order</div>
-          <div class="col-md-8 col-6 first_col px-0">
-            <p class="w-30 w-sm-100 m-b-0 dark-font">#{{x.order_number}}</p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">{{x.service_name}}</p>
-            <p class="w-40 w-sm-100 m-b-0 light-font">{{x.booking_date | date: "dd MMM y"}} {{x.booking_date | date: "hh:mm a"}}</p>
-          </div>
-          <div class="col-md-4 col-6 first_col px-0 d-flex">
-            <p class="w-50 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device? '': 'text-right'">{{x.customer_name}}</p>
-            <p class="w-50 w-sm-100 m-b-0 light-font" [ngClass]="commonService.desktop_device? '': 'text-right'">{{x.contact_no}}</p>
+          }
+        </div>
+      }
+      @if (!list?.length) {
+        <div class="row">
+          <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+            <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+            <p align="center">No data to display</p>
           </div>
         </div>
-      </div>
+      }
     </div>
-
-    
-  
-    <!-- PAGINATION CONTROL -->
-    <div class="row" *ngIf="list?.length">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
-      </div>
-    </div>
-   
-  </div>
-
-  <div *ngIf="!list?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+  }
 
 
-<!-- filter Modal -->
-<ng-template #filterModal let-modal>
-  <form autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-         <span class="popup_text">Filter</span>
-        </h4>        
-      </div>
-    <div class="modal-body filtersec">
-      <div class="row m-0">
-        <div class="carosal w-100">
-          <ul class="px-3">                   
-            <li>
-              <a class="hz_carosal carosal_button">
-                By Date
-              </a>
-            </li>
-          </ul>
+  <!-- filter Modal -->
+  <ng-template #filterModal let-modal>
+    <form autocomplete="off" ngbAutofocus>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>
+            <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+            <span class="popup_text">Filter</span>
+          </h4>
         </div>
-      </div>
+        <div class="modal-body filtersec">
+          <div class="row m-0">
+            <div class="carosal w-100">
+              <ul class="px-3">
+                <li>
+                  <a class="hz_carosal carosal_button">
+                    By Date
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
 
 
-      <div class="row m-0 p-3">
-              <!-- from date -->
-              <div class="col-md-6 col-6">
-                <div class="form-group">
-                  <input type="text" placeholder="Select Date" class="form-control" name="from_date"
-                    [(ngModel)]="filterForm.from_date" bsDatepicker
-                    [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+          <div class="row m-0 p-3">
+            <!-- from date -->
+            <div class="col-md-6 col-6">
+              <div class="form-group">
+                <input type="text" placeholder="Select Date" class="form-control" name="from_date"
+                  [(ngModel)]="filterForm.from_date" bsDatepicker
+                  [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
                 </div>
               </div>
               <!-- to date -->
@@ -125,20 +139,20 @@
                   <input type="text" placeholder="Select Date" class="form-control" name="to_date"
                     [(ngModel)]="filterForm.to_date" bsDatepicker [minDate]="filterForm.from_date"
                     [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+                  </div>
                 </div>
               </div>
-      </div>
 
 
-   </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
-        <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="getList();">
-        <span class="orng-outline-txt">Apply</span>
-      </button>
-    </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="getList();">
+                <span class="orng-outline-txt">Apply</span>
+              </button>
+            </div>
 
-</div></form>
-</ng-template>
+          </div></form>
+        </ng-template>

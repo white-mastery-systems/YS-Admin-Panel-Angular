@@ -1,93 +1,107 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
-  <div class="add_but" (click)="addForm = { rank: maxRank+1, answer_list: [{}] }; modalService.open(addModal, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
+    <div class="add_but" (click)="addForm = { rank: maxRank+1, answer_list: [{}] }; modalService.open(addModal, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
       <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-
-<div *ngIf="!pageLoader">
-<ng-container *ngIf="commonService.desktop_device">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-       </div>
-      </div>        
     </div>
   </div>
-</ng-container>
+}
 
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-        <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-        <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
-        <div class="filter_icon" *ngIf="!commonService.desktop_device && commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor'" (click)="onOpenFilterModal(filterModal);"><span
-          class="material-symbols-rounded cursor">filter_alt</span></div>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
-            <button *ngIf="commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor'" type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);"><span
-            class="material-symbols-rounded">filter_alt</span>Filter</button>
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+            @if (!commonService.desktop_device && commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor') {
+              <div class="filter_icon" (click)="onOpenFilterModal(filterModal);"><span
+              class="material-symbols-rounded cursor">filter_alt</span></div>
+            }
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
+            @if (commonService.ys_features.indexOf('vendors')!=-1 && commonService.store_details?.login_type!='vendor') {
+              <button type="button" class="mr-3" (click)="onOpenFilterModal(filterModal);"><span
+              class="material-symbols-rounded">filter_alt</span>Filter</button>
+            }
             <button type="button" class="highbutton" (click)="addForm = { rank: maxRank+1, answer_list: [{}] }; modalService.open(addModal, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});"><span
-          class="material-symbols-rounded">add</span>Add FAQ</button>
-       </div>      
-    </div>
-  </div>
-  <!-- DATA LIST -->
-  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-9 col-6 first_col px-0 header-font">
-            <p class="w-70 w-sm-100">Questions</p>
-            <p class="w-30 w-sm-100">Answers</p>
+            class="material-symbols-rounded">add</span>Add FAQ</button>
           </div>
-        </div>
-        <div class="list-item data-list-card" *ngFor="let x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-          <div class="col-md-9 col-6 first_col px-0">
-            <p class="w-70 w-sm-100 dark-font">{{x.name}}</p>
-            <p class="w-30 w-sm-100 light-font">{{x.answer_list?.length}} Answers</p>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-              <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
-                <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
-              </button>
-              <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, editModal);">
-                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-              </button>              
-            </div>            
-          </div>
-        </div>
-      </div>      
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+        }
       </div>
     </div>
-    
-
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch:'name':search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-9 col-6 first_col px-0 header-font">
+                  <p class="w-70 w-sm-100">Questions</p>
+                  <p class="w-30 w-sm-100">Answers</p>
+                </div>
+              </div>
+            }
+            @for (x of list | numOrderAsc:'rank' | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; track x; let i = $index) {
+              <div class="list-item data-list-card" [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                <div class="col-md-9 col-6 first_col px-0">
+                  <p class="w-70 w-sm-100 dark-font">{{x.name}}</p>
+                  <p class="w-30 w-sm-100 light-font">{{x.answer_list?.length}} Answers</p>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="deleteForm=x; modalService.open(deleteModal, { centered: true });">
+                      <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove': ''}}
+                    </button>
+                    <button [ngClass]="commonService.desktop_device? 'light-button': 'iconbutton'" (click)="onEdit(x, editModal);">
+                      <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+          </div>
+        </div>
+      </div>
+    }
+    @if (!(list | fieldSearch:'name':search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+          <p align="center">No data to display</p>
+        </div>
+      </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- ADD MODAL -->
 <ng-template #addModal let-modal>
@@ -95,7 +109,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-        <h4 class="modal-title popup_text">New FAQ</h4>        
+        <h4 class="modal-title popup_text">New FAQ</h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -108,34 +122,40 @@
               <label>Rank</label>
               <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="addForm.rank" #rank="ngModel" min="1"
                 max="{{maxRank+1}}" appNumberOnly required />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12" *ngFor="let x of addForm.answer_list; let i=index;">
-              <div class="row">
-                <div class="col-md-12 form-group mb-3 px-0">
-                  <!-- <div class="card p-2"> -->
-                    <label>Answer {{i+1}}</label>
-                    <span *ngIf="addForm.answer_list.length > 1" (click)="addForm.answer_list.splice(i, 1);"
-                        class="material-icons float-right round-btn-icon ab-item-close minus9" aria-hidden="true">close</span>
-                    <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer"
-                      #answer="ngModel" required></textarea>
-                  <!-- </div> -->
-                </div>
               </div>
             </div>
+            <div class="row">
+              @for (x of addForm.answer_list; track x; let i = $index) {
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-12 form-group mb-3 px-0">
+                      <!-- <div class="card p-2"> -->
+                      <label>Answer {{i+1}}</label>
+                      @if (addForm.answer_list.length > 1) {
+                        <span (click)="addForm.answer_list.splice(i, 1);"
+                        class="material-icons float-right round-btn-icon ab-item-close minus9" aria-hidden="true">close</span>
+                      }
+                      <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer"
+                      #answer="ngModel" required></textarea>
+                    <!-- </div> -->
+                  </div>
+                </div>
+              </div>
+            }
             <div class="col-md-12 form-group">
-                <button class="light-button" (click)="addForm.answer_list.push({});" type="button">
-                    <span class="material-symbols-rounded "
-                       >add</span>ADD ANSWER
-                  </button>
+              <button class="light-button" (click)="addForm.answer_list.push({});" type="button">
+                <span class="material-symbols-rounded "
+                >add</span>ADD ANSWER
+              </button>
               <!-- <span class="add-another  x-close" ><b>ADD ANSWER</b></span> -->
             </div>
           </div>
         </div>
-        <div *ngIf="addForm.errorMsg">
-          <p class="text-danger">{{ addForm.errorMsg }}</p>
-        </div>
+        @if (addForm.errorMsg) {
+          <div>
+            <p class="text-danger">{{ addForm.errorMsg }}</p>
+          </div>
+        }
       </div>
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
@@ -155,51 +175,61 @@
     <div class="modal-content">
       <div class="modal-header">
         <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-        <h4 class="modal-title popup_text">Update FAQ</h4>        
+        <h4 class="modal-title popup_text">Update FAQ</h4>
       </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label>Questions</label>
-              <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Rank</label>
-              <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
-                max="{{maxRank}}" appNumberOnly required />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12" *ngFor="let x of editForm.answer_list; let i=index;">
-              <div class="row">
-                <div class="col-md-12 form-group mb-3 px-0">
-                  <!-- <div class="card p-2"> -->
-                    <label>Answer {{i+1}}</label>
-                    <span *ngIf="editForm.answer_list.length > 1" (click)="editForm.answer_list.splice(i, 1);"
-                        class="material-icons float-right round-btn-icon ab-item-close minus9" aria-hidden="true">close</span>
-                    <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer"
-                      #answer="ngModel" required></textarea>
-                  <!-- </div> -->
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6 form-group mb-3">
+                <label>Questions</label>
+                <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label>Rank</label>
+                <input type="number" (wheel)="commonService.handleWheel($event)" name="rank" class="form-control" [(ngModel)]="editForm.rank" #rank="ngModel" min="1"
+                  max="{{maxRank}}" appNumberOnly required />
                 </div>
               </div>
-            </div>
-            <div class="col-md-12 form-group">
+              <div class="row">
+                @for (x of editForm.answer_list; track x; let i = $index) {
+                  <div class="col-md-12">
+                    <div class="row">
+                      <div class="col-md-12 form-group mb-3 px-0">
+                        <!-- <div class="card p-2"> -->
+                        <label>Answer {{i+1}}</label>
+                        @if (editForm.answer_list.length > 1) {
+                          <span (click)="editForm.answer_list.splice(i, 1);"
+                          class="material-icons float-right round-btn-icon ab-item-close minus9" aria-hidden="true">close</span>
+                        }
+                        <textarea class="form-control" aria-label="With textarea" name="answer{{i}}" [(ngModel)]="x.answer"
+                        #answer="ngModel" required></textarea>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </div>
+              }
+              <div class="col-md-12 form-group">
                 <button class="light-button"  (click)="editForm.answer_list.push({});" type="button">
-                    <span class="material-symbols-rounded "
-                       >add</span>ADD ANSWER
-                  </button>
-              <!-- <span class="add-another  x-close"><b>ADD ANSWER</b></span> -->
+                  <span class="material-symbols-rounded "
+                  >add</span>ADD ANSWER
+                </button>
+                <!-- <span class="add-another  x-close"><b>ADD ANSWER</b></span> -->
+              </div>
             </div>
           </div>
+          @if (editForm.errorMsg) {
+            <div>
+              <p class="text-danger">{{ editForm.errorMsg }}</p>
+            </div>
+          }
         </div>
-        <div *ngIf="editForm.errorMsg">
-          <p class="text-danger">{{ editForm.errorMsg }}</p>
-        </div>
-      </div>
+      }
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
           (click)="modal.dismiss('Cross click');">
@@ -216,21 +246,23 @@
 <ng-template #deleteModal let-modal>
   <div class="modal-body">
     <p><strong>Are you sure you want to delete <span class="txt-grdint-highlight">"{{deleteForm.name}}"</span>
-        FAQ?</strong></p>
-    <div *ngIf="deleteForm.errorMsg">
+  FAQ?</strong></p>
+  @if (deleteForm.errorMsg) {
+    <div>
       <p class="text-danger">{{ deleteForm.errorMsg }}</p>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
+  }
+</div>
+<div class="modal-footer">
+  <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+    (click)="modal.dismiss('Cross click');">
+    <span class="black-outline-txt">No</span>
+  </button>
+  <button type="button" (click)="onDelete();" class="btn btn-wide orng-outline-btn ladda-button m-1"
     [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
+    <span class="orng-outline-txt">Yes</span>
+  </button>
+</div>
 </ng-template>
 
 <!-- filter Modal -->
@@ -239,9 +271,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4>
-         <span class="material-symbols-rounded cursor" (click)="vendor_id=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
-         <span class="popup_text">Filter</span>
-        </h4>        
+          <span class="material-symbols-rounded cursor" (click)="vendor_id=tempFilter; modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text">Filter</span>
+        </h4>
       </div>
       <div class="modal-body filtersec">
         <div class="row m-0">
@@ -255,24 +287,24 @@
             </ul>
           </div>
         </div>
-        
+
 
         <div class="row m-0 p-3">
           <div class="modal-card col-md-12">
-          
+
             <div class="radio_buttons col-12">
               <input type="radio" id="all" value="" name="vendor_id" [(ngModel)]="vendor_id">
               <label for="all">All Vendors</label>
             </div>
             <div class="col-md-12 border-top"></div>
-            <ng-container *ngFor="let x of commonService.vendor_list">
+            @for (x of commonService.vendor_list; track x) {
               <div class="radio_buttons col-12">
                 <input type="radio" id="{{x._id}}" [value]="x._id" name="vendor_id" [(ngModel)]="vendor_id">
                 <label for="{{x._id}}">{{x.company_details.brand}}</label>
               </div>
               <div class="col-md-12 border-top"></div>
-            </ng-container>
-          </div>         
+            }
+          </div>
         </div>
 
       </div>

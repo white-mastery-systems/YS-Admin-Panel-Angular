@@ -1,23 +1,28 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{customerDetails.name}} <ng-container *ngIf="customerDetails?.unique_id"> -
-              {{customerDetails.unique_id}}</ng-container>
-          </h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{customerDetails.name}} @if (customerDetails?.unique_id) {
+                -
+                {{customerDetails.unique_id}}
+              }
+            </h1>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+  }
   <div class="list-horizontal order-details">
-
     <div class="row m-0 flex-sm-row-reverse">
       <!-- right-side -->
       <div class="col-md-4 col-12" [ngClass]="commonService.desktop_device?'':'px-0'">
@@ -27,43 +32,45 @@
           </div>
           <div class="col-md-8 col-6 d-flex justify-content-end px-0">
             <!-- quotations -->
-            <div class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end"
-              *ngIf="commonService.store_details?.type=='quot_based' && commonService.store_details?.sub_type=='quot'">
-              <button type="button" class="light-button" ngbDropdownToggle><span
-                  class="material-symbols-rounded">visibility</span>View Quotes</button>
-              <div class="dropdown-menu" ngbDropdownMenu>
-                <button (click)="goQuotPage(customerDetails, 'live')" class="dropdown-item">
-                  <span class="material-symbols-rounded">shopping_cart</span>Live
-                </button>
-                <button (click)="goQuotPage(customerDetails, 'confirmed')" class="dropdown-item">
-                  <span class="material-symbols-rounded">done</span>Confirmed
-                </button>
-                <button (click)="goQuotPage(customerDetails, 'cancelled')" class="dropdown-item">
-                  <span class="material-symbols-rounded">close</span>Cancelled
-                </button>
+            @if (commonService.store_details?.type=='quot_based' && commonService.store_details?.sub_type=='quot') {
+              <div class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end"
+                >
+                <button type="button" class="light-button" ngbDropdownToggle><span
+                class="material-symbols-rounded">visibility</span>View Quotes</button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button (click)="goQuotPage(customerDetails, 'live')" class="dropdown-item">
+                    <span class="material-symbols-rounded">shopping_cart</span>Live
+                  </button>
+                  <button (click)="goQuotPage(customerDetails, 'confirmed')" class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Confirmed
+                  </button>
+                  <button (click)="goQuotPage(customerDetails, 'cancelled')" class="dropdown-item">
+                    <span class="material-symbols-rounded">close</span>Cancelled
+                  </button>
+                </div>
               </div>
-            </div>
+            }
             <!-- orders -->
-            <div class="btn-group"
-              *ngIf="commonService.store_details?.type!='quot_based' || commonService.store_details?.sub_type=='order'"
-              ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-              <button class="light-button" ngbDropdownToggle><span
-                  class="material-symbols-rounded">visibility</span>View Orders</button>
-              <div class="dropdown-menu" ngbDropdownMenu>
-                <button (click)="goOrdersPage(customerDetails, 'live')" class="dropdown-item">
-                  <span class="material-symbols-rounded">shopping_cart</span>Live
-                </button>
-                <button (click)="goOrdersPage(customerDetails, 'delivered')" class="dropdown-item">
-                  <span class="material-symbols-rounded">done</span>Completed
-                </button>
-                <button (click)="goOrdersPage(customerDetails, 'cancelled')" class="dropdown-item">
-                  <span class="material-symbols-rounded">close</span>Cancelled
-                </button>
+            @if (commonService.store_details?.type!='quot_based' || commonService.store_details?.sub_type=='order') {
+              <div class="btn-group"
+                ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                <button class="light-button" ngbDropdownToggle><span
+                class="material-symbols-rounded">visibility</span>View Orders</button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button (click)="goOrdersPage(customerDetails, 'live')" class="dropdown-item">
+                    <span class="material-symbols-rounded">shopping_cart</span>Live
+                  </button>
+                  <button (click)="goOrdersPage(customerDetails, 'delivered')" class="dropdown-item">
+                    <span class="material-symbols-rounded">done</span>Completed
+                  </button>
+                  <button (click)="goOrdersPage(customerDetails, 'cancelled')" class="dropdown-item">
+                    <span class="material-symbols-rounded">close</span>Cancelled
+                  </button>
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
-
         <!-- customer details -->
         <div class="order-details-card">
           <div class="address-head d-flex justify-content-between">
@@ -92,7 +99,6 @@
           </div>
         </div>
       </div>
-
       <!-- address list -->
       <div class="col-md-8 col-12 px-0" [ngClass]="commonService.desktop_device? '': 'mt-5'">
         <div class="d-flex align-items-center mb-3">
@@ -105,143 +111,78 @@
             </button>
           </div>
         </div>
-        <div class="data-list-card-wrapper mt-3 mb-3" *ngIf="customerDetails?.address_list.length">
-          <div class="data-list-card-inner">
-            <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-              <div class="col-md-7 col-5 first_col px-0 cursor header-font">
-                <p class="w-50 w-sm-100 m-b-0">Address</p>
-                <p class="w-25 w-sm-100 m-b-0">Name</p>
-                <p class="w-25 w-sm-100 m-b-0">Mobile No</p>
-              </div>
-            </div>
-            <div class="list-item data-list-card" *ngFor="let x of customerDetails.address_list;let i=index"
-              [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-              <div *ngIf="x.billing_address || x.shipping_address" class="m-t--15">
-                <div class="ribbon-band pink-band">{{ (x.billing_address && x.shipping_address)? 'Billing & Shipping':
-                  (x.billing_address)?
-                  'Billing': 'Shipping' }} Address</div>
-              </div>
-
-              <div class="col-md-7 col-8 first_col px-0 align-items-center">
-                <p class="w-50 w-sm-100 m-b-0 dark-font breakword">{{x.address}}</p>
-                <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.name}}</p>
-                <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.dial_code}} {{x.mobile}}</p>
-              </div>
-              <div class="col-md-5 col-4">
-                <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                  <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                    (click)="selected_address=x; modalService.open(deleteAddressModal, { centered: true });">
-                    <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device?
-                    'Remove':
-                    ''}}
-                  </button>
-                  <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
-                    (click)="onEditAddress(x, addressModal);">
-                    <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
-                      'visibility': 'chevron_right'}}</span>
-                    {{commonService.desktop_device? 'View': ''}}
-                  </button>
+        @if (customerDetails?.address_list.length) {
+          <div class="data-list-card-wrapper mt-3 mb-3">
+            <div class="data-list-card-inner">
+              @if (commonService.desktop_device) {
+                <div class="list-item data-list-card">
+                  <div class="col-md-7 col-5 first_col px-0 cursor header-font">
+                    <p class="w-50 w-sm-100 m-b-0">Address</p>
+                    <p class="w-25 w-sm-100 m-b-0">Name</p>
+                    <p class="w-25 w-sm-100 m-b-0">Mobile No</p>
+                  </div>
                 </div>
-              </div>
+              }
+              @for (x of customerDetails.address_list; track x; let i = $index) {
+                <div class="list-item data-list-card"
+                  [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+                  @if (x.billing_address || x.shipping_address) {
+                    <div class="m-t--15">
+                      <div class="ribbon-band pink-band">{{ (x.billing_address && x.shipping_address)? 'Billing & Shipping':
+                        (x.billing_address)?
+                      'Billing': 'Shipping' }} Address</div>
+                    </div>
+                  }
+                  <div class="col-md-7 col-8 first_col px-0 align-items-center">
+                    <p class="w-50 w-sm-100 m-b-0 dark-font breakword">{{x.address}}</p>
+                    <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.name}}</p>
+                    <p class="w-25 w-sm-100 m-b-0 light-font breakword">{{x.dial_code}} {{x.mobile}}</p>
+                  </div>
+                  <div class="col-md-5 col-4">
+                    <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                      <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                        (click)="selected_address=x; modalService.open(deleteAddressModal, { centered: true });">
+                        <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device?
+                        'Remove':
+                        ''}}
+                      </button>
+                      <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                        (click)="onEditAddress(x, addressModal);">
+                        <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device?
+                        'visibility': 'chevron_right'}}</span>
+                        {{commonService.desktop_device? 'View': ''}}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
           </div>
-        </div>
-        <div *ngIf="!customerDetails.address_list?.length"
-          class="col-md-12 d-flex flex-column align-items-center justify-content-center">
-          <img class="no-rec-found mt-3" src="assets/images/no_records_found.png" alt="no-records">
-          <p align="center">No address found.</p>
-        </div>
+        }
+        @if (!customerDetails.address_list?.length) {
+          <div
+            class="col-md-12 d-flex flex-column align-items-center justify-content-center">
+            <img class="no-rec-found mt-3" src="assets/images/no_records_found.png" alt="no-records">
+            <p align="center">No address found.</p>
+          </div>
+        }
       </div>
     </div>
-
     <!-- note -->
-    <ng-container *ngIf="customerDetails.notes">
+    @if (customerDetails.notes) {
       <div class="col-md-12 mt-3">
         <p class="dark-font mt-3 mb-3">NOTE</p>
       </div>
-      <div *ngIf="customerDetails.notes" class="data-list-card-wrapper mt-1">
-        <div class="data-list-card-inner">
-          <div class="row m-0">
-            <div class="col-md-12 list-item data-list-card p-0">
-              <div class="d-flex flex-row">
-                <div class="flex-grow-1 d-flex">
-                  <div
-                    class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
-                    <p class="mb-0">{{customerDetails.notes}}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-    <!-- modal list -->
-    <ng-container *ngIf="customerDetails.model_list?.length">
-      <div class="col-md-12 d-flex align-items-center mb-4 mt-4">
-        <p class="dark-font mb-0">MODEL LIST</p>
-      </div>
-
-      <div class="data-list-card-wrapper">
-        <div class="data-list-card-inner">
-          <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-            <div class="col-md-9 col-4 first_col px-0 cursor header-font">
-              <p class="w-40 w-sm-100 m-b-0">Name</p>
-              <p class="w-30 w-sm-100 m-b-0">Created Date</p>
-              <p class="w-30 w-sm-100 m-b-0">Updated Date</p>
-            </div>
-          </div>
-          <div class="list-item data-list-card" *ngFor="let x of customerDetails.model_list;let i=index;"
-            [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
-            <div class="col-md-9 col-6 first_col align-items-center px-0">
-              <p class="w-40 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
-              <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date : "dd MMM y hh:mm a"}}</p>
-              <p class="w-30 w-sm-100 m-b-0 light-font">
-                <ng-container *ngIf="x.updated_on">{{x.updated_on | date : "dd MMM y hh:mm a"}}</ng-container>
-                <ng-container *ngIf="!x.updated_on">NA</ng-container>
-              </p>
-            </div>
-            <div class="col-md-3 col-6">
-              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                  (click)="commonService.custom_model=x; modalService.open(customizationModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-                  <span class="material-symbols-rounded">info</span> {{commonService.desktop_device?
-                  'Info':
-                  ''}}
-                </button>
-                <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
-                  *ngIf="commonService.ys_features.indexOf('custom_model_history')!=-1" (click)="onViewModelHistory(x);">
-                  <span class="material-symbols-rounded">folder</span> {{commonService.desktop_device?
-                  'Info':
-                  ''}}
-                </button>
-                <!-- <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="selected_model=x; modalService.open(deleteCustomModal, { centered: true });">
-                  <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':
-                  ''}}
-                </button> -->
-                <!-- <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
-                    routerLink="{{ vendor_id? '/product-extras/measurement-sets/'+x._id+'/'+maxRank+'/'+vendor_id: '/product-extras/measurement-sets/'+x._id+'/'+maxRank }}">
-                    <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
-                    {{commonService.desktop_device? 'View': ''}}
-                  </button> -->
-                <div class="btn-group">
-                  <div class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
-                    <button  [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'" ngbDropdownToggle>{{commonService.desktop_device? 'Action': ''}} <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''" title="three-dot"> 
-                      expand_more</span></button>
-                    <div class="dropdown-menu" ngbDropdownMenu>
-                      <button *ngIf="x.custom_list?.length" (click)="onEdit('custom', x._id, customModal);"
-                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
-                        >inbox_customize</span>Customization</button>
-                      <button *ngIf="x.mm_sets?.length" (click)="onEdit('measurement', x._id, measurementModal);"
-                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
-                        >straighten</span>Measurements</button>
-                      <button *ngIf="x.notes_list?.length" (click)="onEdit('notes', x._id, notesModal);"
-                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
-                        >description</span>Notes</button>
-                      <button (click)="selected_model=x; modalService.open(deleteCustomModal, { centered: true });"
-                        class="dropdown-item"> <span class="material-symbols-rounded mr-2"
-                        >delete</span>Remove</button>
+      @if (customerDetails.notes) {
+        <div class="data-list-card-wrapper mt-1">
+          <div class="data-list-card-inner">
+            <div class="row m-0">
+              <div class="col-md-12 list-item data-list-card p-0">
+                <div class="d-flex flex-row">
+                  <div class="flex-grow-1 d-flex">
+                    <div
+                      class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center flex-lg-row">
+                      <p class="mb-0">{{customerDetails.notes}}</p>
                     </div>
                   </div>
                 </div>
@@ -249,592 +190,764 @@
             </div>
           </div>
         </div>
+      }
+    }
+    <!-- modal list -->
+    @if (customerDetails.model_list?.length) {
+      <div class="col-md-12 d-flex align-items-center mb-4 mt-4">
+        <p class="dark-font mb-0">MODEL LIST</p>
       </div>
-    </ng-container>
-
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          @if (commonService.desktop_device) {
+            <div class="list-item data-list-card">
+              <div class="col-md-9 col-4 first_col px-0 cursor header-font">
+                <p class="w-40 w-sm-100 m-b-0">Name</p>
+                <p class="w-30 w-sm-100 m-b-0">Created Date</p>
+                <p class="w-30 w-sm-100 m-b-0">Updated Date</p>
+              </div>
+            </div>
+          }
+          @for (x of customerDetails.model_list; track x; let i = $index) {
+            <div class="list-item data-list-card"
+              [@animate]="{value:'*',params:{delay: (i*100)+'ms', y:'50px'}}">
+              <div class="col-md-9 col-6 first_col align-items-center px-0">
+                <p class="w-40 w-sm-100 m-b-0 dark-font">{{x.name}}</p>
+                <p class="w-30 w-sm-100 m-b-0 light-font">{{x.created_on | date : "dd MMM y hh:mm a"}}</p>
+                <p class="w-30 w-sm-100 m-b-0 light-font">
+                  @if (x.updated_on) {
+                    {{x.updated_on | date : "dd MMM y hh:mm a"}}
+                  }
+                  @if (!x.updated_on) {
+                    NA
+                  }
+                </p>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                  <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                    (click)="commonService.custom_model=x; modalService.open(customizationModal, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+                    <span class="material-symbols-rounded">info</span> {{commonService.desktop_device?
+                    'Info':
+                    ''}}
+                  </button>
+                  @if (commonService.ys_features.indexOf('custom_model_history')!=-1) {
+                    <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'"
+                      (click)="onViewModelHistory(x);">
+                      <span class="material-symbols-rounded">folder</span> {{commonService.desktop_device?
+                      'Info':
+                      ''}}
+                    </button>
+                  }
+                  <!-- <button [ngClass]="commonService.desktop_device? 'light-button mr-3': 'iconbutton'" (click)="selected_model=x; modalService.open(deleteCustomModal, { centered: true });">
+                  <span class="material-symbols-rounded">delete</span> {{commonService.desktop_device? 'Remove':
+                  ''}}
+                </button> -->
+                <!-- <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'"
+                routerLink="{{ vendor_id? '/product-extras/measurement-sets/'+x._id+'/'+maxRank+'/'+vendor_id: '/product-extras/measurement-sets/'+x._id+'/'+maxRank }}">
+                <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span>
+                {{commonService.desktop_device? 'View': ''}}
+              </button> -->
+              <div class="btn-group">
+                <div class="btn-group" ngbDropdown role="group" aria-label="Select all" placement="bottom-start bottom-end top-start top-end">
+                  <button  [ngClass]="commonService.desktop_device? 'light-button2': 'iconbutton'" ngbDropdownToggle>{{commonService.desktop_device? 'Action': ''}} <span class="material-symbols-rounded" [ngClass]="commonService.desktop_device? 'pr-0 pl-1': ''" title="three-dot">
+                  expand_more</span></button>
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    @if (x.custom_list?.length) {
+                      <button (click)="onEdit('custom', x._id, customModal);"
+                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
+                      >inbox_customize</span>Customization</button>
+                    }
+                    @if (x.mm_sets?.length) {
+                      <button (click)="onEdit('measurement', x._id, measurementModal);"
+                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
+                      >straighten</span>Measurements</button>
+                    }
+                    @if (x.notes_list?.length) {
+                      <button (click)="onEdit('notes', x._id, notesModal);"
+                        class="dropdown-item"><span class="material-symbols-rounded mr-2"
+                      >description</span>Notes</button>
+                    }
+                    <button (click)="selected_model=x; modalService.open(deleteCustomModal, { centered: true });"
+                      class="dropdown-item"> <span class="material-symbols-rounded mr-2"
+                    >delete</span>Remove</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   </div>
+}
 </div>
+</div>
+}
 
 <!-- EDIT CUSTOMER MODAL -->
 <ng-template #editCustomerModal let-modal>
   <form autocomplete="off" (ngSubmit)="onUpdateCustomer();" ngNativeValidate ngbAutofocus>
     <div class="modal-content">
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Update</span>
-    </h4>
-  </div>
-  
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-md-12 form-group mb-3">
-          <label>Name</label>
-          <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
-        </div>
-        <div class="col-md-12 form-group mb-3">
-          <label>Email</label>
-          <input type="text" name="email" class="form-control" [(ngModel)]="editForm.email" #email="ngModel"
-            required />
-        </div>
-        <div class="col-md-12 form-group mb-3">
-          <div class="input-group">
-            <div class="input-group-prepend flex-column w-20 w-sm-30 mr-3 c-sm-m-0">
-              <label>Mobile</label>
-              <select name="dial_code" class="form-control" [(ngModel)]="editForm.dial_code" #dial_code="ngModel">
-                <option *ngFor="let x of commonService.country_list | orderAsc: 'dial_code';" [ngValue]="x.dial_code">
-                  {{x.dial_code}}</option>
-              </select>
-            </div>
-            <div class="flex-column w-75 w-sm-60">
-              <label>&nbsp;</label>
-              <input type="tel" name="mobile" [(ngModel)]="editForm.mobile" #mobile="ngModel" class="form-control"
-                appNumberOnly />
-            </div>
-          </div>
-        </div>
-        <div class="col-md-12 form-group mb-3">
-          <label>Note</label>
-          <textarea class="form-control" rows="3" aria-label="With textarea" name="notes"
-            [(ngModel)]="editForm.notes"></textarea>
-        </div>
-      </div>
-      <div *ngIf="editForm.errorMsg">
-        <p class="text-danger">{{ editForm.errorMsg }}</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-        (click)="modal.dismiss('Cross click');"> <span class="black-outline-txt">Cancel</span>
-      </button>
-      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
-        [ladda]="btnLoader">Update</button>
-    </div>
-  </div></form>
-</ng-template>
-
-<!-- ADDRESS MODAL -->
-<ng-template #addressModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onAddressEvent();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
       <div class="modal-header">
         <h4>
           <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">{{ (addressFormType=='add')? 'Add ': 'Update' }} Address</span>
+          <span class="popup_text">Update</span>
         </h4>
       </div>
 
       <div class="modal-body">
-        <div class="p-2 mb-4">
-          <div class="row">
-            <div class="col-md-8 offset-md-2">
-              <div class="row address-radio-div">
-                <div class="col-4 d-flex justify-content-center">
-                  <label class="radio radio-primary mt-2 mb-2">
-                    <input type="radio" [(ngModel)]="addressForm.type" value="home" name="address_type" required> Home
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label class="radio radio-primary mt-2 mb-2">
-                    <input type="radio" [(ngModel)]="addressForm.type" value="office" name="address_type" required>
-                    Office
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                  <label class="radio radio-primary mt-2 mb-2">
-                    <input type="radio" [(ngModel)]="addressForm.type" value="other" name="address_type" required>
-                    Other
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="customerDetails?.address_list?.length" class=" mb-4">
-          <div class="row">
-            <div class="col-md-12 px-0">
-              <div class="row address-radio-div">
-                <div class="col-6 d-flex justify-content-center">
-                  <label class="checkbox checkbox-primary">
-                    <input class="form-check-input" type="checkbox" name="billing_address"
-                      [(ngModel)]="addressForm.billing_address" #billing_address="ngModel"
-                      [checked]="addressForm.exist_billing" [disabled]="addressForm.exist_billing">
-                    <span>{{ (addressForm.exist_billing)? '': 'Mark as' }} Default Billing Address</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-6 d-flex justify-content-center">
-                  <label class="checkbox checkbox-primary">
-                    <input class="form-check-input" type="checkbox" name="shipping_address"
-                      [(ngModel)]="addressForm.shipping_address" #shipping_address="ngModel"
-                      [checked]="addressForm.exist_shipping" [disabled]="addressForm.exist_shipping">
-                    <span>{{ (addressForm.exist_shipping)? '': 'Mark as' }} Default Shipping Address</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="row">
-          <div *ngIf="addressForm.type=='other'" class="col-lg-6 form-group mb-3">
-            <div class="p-2">
-              <label>Address Title</label>
-              <input type="text" name="other_place" [(ngModel)]="addressForm.other_place" #other_place="ngModel"
-                class="form-control" required />
-            </div>
+          <div class="col-md-12 form-group mb-3">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" [(ngModel)]="editForm.name" #name="ngModel" required />
           </div>
-          <div class="col-lg-6 form-group mb-3">
-            <div class="p-2">
-              <label>Full Name</label>
-              <input type="text" name="full_name" [(ngModel)]="addressForm.name" #name="ngModel" class="form-control"
-                required />
+          <div class="col-md-12 form-group mb-3">
+            <label>Email</label>
+            <input type="text" name="email" class="form-control" [(ngModel)]="editForm.email" #email="ngModel"
+              required />
             </div>
-          </div>
-          <div class="col-lg-6 form-group mb-3">
-            <div class="p-2">
-              <label>Country</label>
-              <select name="country" class="form-control"
-                (change)="addressForm.state=null; onEditCountryChange(addressForm.country);"
-                [(ngModel)]="addressForm.country" required>
-                <option *ngFor="let x of commonService.country_list | orderAsc: 'name';" [value]="x.name">{{x.name}}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="col-lg-6 form-group mb-3">
-            <div class="p-2">
-              <div class="input-group d-flex">
-                <div class="input-group-prepend flex-column w-100 w-sm-100 c-sm-m-0 c-sm-mb-3">
-                  <label>Mobile No</label>
-                  <div class="d-flex">
-                    <select name="dial_code" class="form-control w-30 mr-1" [(ngModel)]="addressForm.dial_code"
-                      #dial_code="ngModel" required>
-                      <option *ngFor="let x of commonService.country_list | orderAsc: 'dial_code';"
-                        [ngValue]="x.dial_code">
-                        {{x.dial_code}}</option>
-                    </select>
-                    <input type="tel" name="mobile" [(ngModel)]="addressForm.mobile" #mobile="ngModel"
-                      class="form-control w-70" appNumberOnly required />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <ng-container *ngFor="let field of address_fields; let j=index;">
-            <ng-container *ngIf="field.keyword=='state'">
-              <!-- if state list exist -->
-              <div *ngIf="state_list?.length" class="col-lg-6 form-group mb-3">
-                <div class="p-2">
-                  <p class="m-b-0">{{field.label}}:</p>
-                  <select class="form-control" name="field{{j}}" [(ngModel)]="field.value" required>
-                    <option *ngFor="let x of state_list | orderAsc: 'name';" [ngValue]="x.name">{{x.name}}</option>
+            <div class="col-md-12 form-group mb-3">
+              <div class="input-group">
+                <div class="input-group-prepend flex-column w-20 w-sm-30 mr-3 c-sm-m-0">
+                  <label>Mobile</label>
+                  <select name="dial_code" class="form-control" [(ngModel)]="editForm.dial_code" #dial_code="ngModel">
+                    @for (x of commonService.country_list | orderAsc: 'dial_code'; track x) {
+                      <option [ngValue]="x.dial_code">
+                      {{x.dial_code}}</option>
+                    }
                   </select>
                 </div>
-              </div>
-              <!-- if not state list exist -->
-              <div *ngIf="!state_list?.length" class="col-lg-6 form-group mb-3">
-                <div class="p-2">
-                  <p class="m-b-0"> {{field.label}}:</p>
-                  <input class="form-control" type="text" name="field{{j}}" [(ngModel)]="field.value" required>
-                </div>
-              </div>
-            </ng-container>
-            <div *ngIf="field.keyword!='state'" class="col-lg-6 form-group mb-3">
-              <div class="p-2">
-                <p class="m-b-0">{{field.label}}:</p>
-                <input class="form-control" type="text" name="field{{j}}" [(ngModel)]="field.value" required>
-              </div>
-            </div>
-          </ng-container>
-          <div class="col-lg-12 d-flex form-group mb-3">
-            <div class="w-100 p-2">
-              <label>Landmark</label>
-              <input type="text" name="landmark" [(ngModel)]="addressForm.landmark" #landmark="ngModel"
-                class="form-control" />
-            </div>
-          </div>
-          <div class="col-lg-12 form-group mb-3">
-            <div class="p-2">
-              <label>Complete Address</label>
-              <textarea name="completeAddress" [(ngModel)]="addressForm.address" #completeAddress="ngModel"
-                class="form-control" required></textarea>
-            </div>
-          </div>
-
-        </div>
-        <div class="mt-3" *ngIf="addressForm.error_msg" align="center">
-          <p class="text-danger m-0">{{addressForm.error_msg}}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click');"> <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
-          [ladda]="btnLoader">
-          {{ (addressFormType=='add')? 'Add': 'Update' }}
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- DELETE ADDRESS MODAL -->
-<ng-template #deleteAddressModal let-modal>
-  <div class="modal-body">
-    <p><strong>Are you sure you want to remove this address?</strong></p>
-    <div *ngIf="deleteForm?.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDeleteAddress();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
-
-<!-- CUSTOMIZATION MODAL -->
-<ng-template #customizationModal let-modal>
-  <div class="modal-header">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">{{commonService.custom_model?.name}}</span>
-    </h4>
-  </div>
-  <div class="modal-body modal-scroll slim-scroll">
-    <app-customization-details></app-customization-details>
-  </div>
-</ng-template>
-
-<!-- EDIT CUSTOMIZATION MODAL -->
-<ng-template #customModal let-modal>
-  <form id="custom-form" name="custom-form" autocomplete="off" ngbAutofocus>
-    <div class="modal-content">
-  <div class="modal-header pb-3">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Update Customization</span>
-    </h4>
-    <div class="d-flex">
-    </div>
-  </div>
-
-  <div class="modal-body">
-    
-      <div *ngIf="commonService.store_details?._id==configData.hungover_id" class="row">
-        <div class="col-md-12">
-          <label class="checkbox checkbox-primary">
-            <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
-            <span>Update this information in live orders</span>
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      </div>
-      <div class="p-2 m-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h6>Model Name<span class="req-star">*</span></h6>
-          </div>
-          <div class="col-md-12">
-            <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
-              id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
-              required />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 mt-4">
-          <h6>{{custom_list[customIndex]?.name}}</h6>
-          <div class="row">
-            <div *ngFor="let x of custom_list[customIndex]?.filtered_option_list; let i=index;"
-              class="col-md-4 col-6 d-flex justify-content-center mb-3">
-              <div class="card customize-model p-3">
-                <label class="m-0 p-0"
-                  [ngClass]="(custom_list[customIndex]?.type=='either_or')? 'radio radio-primary': 'checkbox checkbox-primary'">
-                  <!-- Radio -->
-                  <input *ngIf="custom_list[customIndex]?.type=='either_or'" type="radio" name="option"
-                    [checked]="custom_list[customIndex].selected_option==x.name"
-                    (change)="addonForm.alert_msg=null; custom_list[customIndex].selected_option=x.name; getRadioNextList(x.name);" />
-                  <!-- Checkbox -->
-                  <input *ngIf="custom_list[customIndex]?.type!='either_or'" type="checkbox" name="option{{i}}"
-                    [(ngModel)]="x.custom_option_checked"
-                    (change)="addonForm.alert_msg=null; getCheckboxNextList(); disableOption();"
-                    [disabled]="x.disabled" />
-                  <span class="checkmark"></span>
-                  <!-- Content -->
-                  <img *ngIf="x.image" [src]="imgBaseUrl+x.image" class="img-fluid" alt="model">
-                  <img class="addon-icon opacity6" *ngIf="!x.image" src="assets/images/addon.svg" alt="addon">
-                  <p class="text-center m-0">{{x.name}}</p>
-                  <p *ngIf="x.price>0" class="text-center m-0">{{ x.price |
-                    currency:commonService.store_currency?.country_code
-                    }}
-                  </p>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-  </div>
-
-  <div class="modal-footer flex-column">
-    
-    <div class="danger-alert" *ngIf="addonForm?.alert_msg">
-      <div class="alert-msg d-flex align-items-center justify-content-center p-2">
-        <span class="material-icons"></span>
-        <p class="m-0">{{addonForm?.alert_msg}}</p>
-      </div>
-    </div>
-    <div class="proceed-sec d-flex justify-content-between w-100 m-0">
-      
-      <!-- left btn -->
-      <button *ngIf="customIndex==0" (click)="modal.dismiss('Cross click');"
-        class="btn btn-wide btn-primary">CLOSE</button>
-      <button *ngIf="customIndex>0"
-        (click)="addonForm.alert_msg=null; customIndex=customIndex-1; commonService?.scrollModalTop(0);"
-        class="btn btn-wide btn-primary">PREVIOUS</button>
-      <!-- #left btn -->
-      <!-- right btn -->
-      <button *ngIf="custom_list[customIndex+1]?.filtered_option_list?.length" (click)="onCustomNext();"
-        class="btn btn-wide btn-primary">NEXT</button>
-      <button *ngIf="!custom_list[customIndex+1]?.filtered_option_list?.length" (click)="onUpdateCustom();"
-        [disabled]="addonForm.submit"
-        class="btn btn-wide btn-primary d-flex justify-content-center align-items-center">UPDATE</button>
-      <!-- #right btn -->
-    </div>
-  </div>
-</div></form>
-</ng-template>
-
-<!-- EDIT MEASUREMENT MODAL -->
-<ng-template #measurementModal let-modal>
-  <div class="modal-header pb-3">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Update Measurements</span>
-    </h4>
-
-    <div class="d-flex">
-      <!-- <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i> -->
-    </div>
-  </div>
-
-  <div class="modal-body lg-modal-body slim-scroll">
-    <form id="mm-form" name="mm-form" autocomplete="off" ngbAutofocus>
-      <div *ngIf="commonService.store_details?._id==configData.hungover_id" class="row">
-        <div class="col-md-12">
-          <label class="checkbox checkbox-primary">
-            <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
-            <span>Update this information in live orders</span>
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      </div>
-      <div class="p-2 m-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h6>Model Name<span class="req-star">*</span></h6>
-          </div>
-          <div class="col-md-12">
-            <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
-              id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
-              required />
-          </div>
-        </div>
-      </div>
-      <div *ngIf="addonForm?.mm_sets" class="row">
-        <div class="col-md-12 mt-4">
-          <div class="col-md-12">
-            <h6>Measurements</h6>
-          </div>
-          <div *ngIf="addonForm?.mm_sets[mmIndex]?.image" class="col-md-12 text-center">
-            <div class="d-flex align-items-center justify-content-center mb-3">
-              <img [src]="imgBaseUrl+addonForm?.mm_sets[mmIndex]?.image" alt="model">
-            </div>
-          </div>
-          <div class="row">
-
-            <div [ngClass]="(addonForm?.mm_sets[mmIndex]?.image)? 'col-md-12': 'col-md-12'">
-              <div class="row">
-                <!-- mm unit -->
-                <div class="col-md-12">
-                  <div class="card card-in-card p-3 mb-3">
-                    <div *ngIf="mmIndex==0" class="d-flex align-items-center justify-content-center">
-                      <label *ngFor="let unit of addonForm?.mm_sets[mmIndex]?.units;"
-                        class="radio radio-primary mr-2 mb-0">
-                        <input type="radio" [value]="unit.name" name="unit"
-                          (change)="addonForm.alert_msg=null; onChangeUnit();" [(ngModel)]="addonForm.mm_unit" />
-                        <span>in {{unit.name}}</span>
-                        <span class="checkmark"></span>
-                      </label>
-                    </div>
-                    <div *ngIf="mmIndex>0" class="d-flex align-items-center justify-content-center">
-                      <label class="radio radio-primary mr-2 mb-0">
-                        <input type="radio" checked />
-                        <span>in {{addonForm?.mm_unit}}</span>
-                        <span class="checkmark"></span>
-                      </label>
-                    </div>
+                <div class="flex-column w-75 w-sm-60">
+                  <label>&nbsp;</label>
+                  <input type="tel" name="mobile" [(ngModel)]="editForm.mobile" #mobile="ngModel" class="form-control"
+                    appNumberOnly />
                   </div>
                 </div>
-                <!-- #mm unit -->
               </div>
-              <div class="card card-in-card modal-inner-div-scroll slim-scroll p-3">
-                <div class="row mt-2">
-                  <div class="col-md-12 px-0">
-                    <h5>{{addonForm?.mm_sets[mmIndex]?.name}}</h5>
-                  </div>
-                  <div *ngFor="let x of addonForm?.mm_sets[mmIndex]?.list; let i=index;" class="col-md-12">
-                    <div class="row">
-                      <div class="col-sm-12 px-0">
-                        <label for="value{{mmIndex}}{{i}}">{{x.name}}<span class="req-star">*</span></label>
-                        <div class="input-group mb-3">
-                          <input class="form-control" type="tel" name="value{{mmIndex}}{{i}}"
-                            id="value{{mmIndex}}{{i}}" (input)="addonForm.alert_msg=null; x.alert_msg='';"
-                            [(ngModel)]="x.value" (focusout)="mmFocusOut(x);" #value="ngModel" appNumberOnly
-                            required />
-                          <div class="input-group-append">
-                            <span class="input-group-text">{{addonForm.mm_unit}}</span>
-                          </div>
-                        </div>
-                        <p *ngIf="x.alert_msg" style="font-size: 12px; color: red !important;">{{x.alert_msg}}</p>
+              <div class="col-md-12 form-group mb-3">
+                <label>Note</label>
+                <textarea class="form-control" rows="3" aria-label="With textarea" name="notes"
+                [(ngModel)]="editForm.notes"></textarea>
+              </div>
+            </div>
+            @if (editForm.errorMsg) {
+              <div>
+                <p class="text-danger">{{ editForm.errorMsg }}</p>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+              (click)="modal.dismiss('Cross click');"> <span class="black-outline-txt">Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
+            [ladda]="btnLoader">Update</button>
+          </div>
+        </div></form>
+      </ng-template>
+
+      <!-- ADDRESS MODAL -->
+      <ng-template #addressModal let-modal>
+        <form autocomplete="off" (ngSubmit)="onAddressEvent();" ngNativeValidate ngbAutofocus>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>
+                <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                <span class="popup_text">{{ (addressFormType=='add')? 'Add ': 'Update' }} Address</span>
+              </h4>
+            </div>
+
+            <div class="modal-body">
+              <div class="p-2 mb-4">
+                <div class="row">
+                  <div class="col-md-8 offset-md-2">
+                    <div class="row address-radio-div">
+                      <div class="col-4 d-flex justify-content-center">
+                        <label class="radio radio-primary mt-2 mb-2">
+                          <input type="radio" [(ngModel)]="addressForm.type" value="home" name="address_type" required> Home
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="col-4 d-flex justify-content-center">
+                        <label class="radio radio-primary mt-2 mb-2">
+                          <input type="radio" [(ngModel)]="addressForm.type" value="office" name="address_type" required>
+                          Office
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="col-4 d-flex justify-content-center">
+                        <label class="radio radio-primary mt-2 mb-2">
+                          <input type="radio" [(ngModel)]="addressForm.type" value="other" name="address_type" required>
+                          Other
+                          <span class="checkmark"></span>
+                        </label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+              @if (customerDetails?.address_list?.length) {
+                <div class=" mb-4">
+                  <div class="row">
+                    <div class="col-md-12 px-0">
+                      <div class="row address-radio-div">
+                        <div class="col-6 d-flex justify-content-center">
+                          <label class="checkbox checkbox-primary">
+                            <input class="form-check-input" type="checkbox" name="billing_address"
+                              [(ngModel)]="addressForm.billing_address" #billing_address="ngModel"
+                              [checked]="addressForm.exist_billing" [disabled]="addressForm.exist_billing">
+                              <span>{{ (addressForm.exist_billing)? '': 'Mark as' }} Default Billing Address</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="col-6 d-flex justify-content-center">
+                            <label class="checkbox checkbox-primary">
+                              <input class="form-check-input" type="checkbox" name="shipping_address"
+                                [(ngModel)]="addressForm.shipping_address" #shipping_address="ngModel"
+                                [checked]="addressForm.exist_shipping" [disabled]="addressForm.exist_shipping">
+                                <span>{{ (addressForm.exist_shipping)? '': 'Mark as' }} Default Shipping Address</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  <div class="row">
+                    @if (addressForm.type=='other') {
+                      <div class="col-lg-6 form-group mb-3">
+                        <div class="p-2">
+                          <label>Address Title</label>
+                          <input type="text" name="other_place" [(ngModel)]="addressForm.other_place" #other_place="ngModel"
+                            class="form-control" required />
+                          </div>
+                        </div>
+                      }
+                      <div class="col-lg-6 form-group mb-3">
+                        <div class="p-2">
+                          <label>Full Name</label>
+                          <input type="text" name="full_name" [(ngModel)]="addressForm.name" #name="ngModel" class="form-control"
+                            required />
+                          </div>
+                        </div>
+                        <div class="col-lg-6 form-group mb-3">
+                          <div class="p-2">
+                            <label>Country</label>
+                            <select name="country" class="form-control"
+                              (change)="addressForm.state=null; onEditCountryChange(addressForm.country);"
+                              [(ngModel)]="addressForm.country" required>
+                              @for (x of commonService.country_list | orderAsc: 'name'; track x) {
+                                <option [value]="x.name">{{x.name}}
+                                </option>
+                              }
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 form-group mb-3">
+                          <div class="p-2">
+                            <div class="input-group d-flex">
+                              <div class="input-group-prepend flex-column w-100 w-sm-100 c-sm-m-0 c-sm-mb-3">
+                                <label>Mobile No</label>
+                                <div class="d-flex">
+                                  <select name="dial_code" class="form-control w-30 mr-1" [(ngModel)]="addressForm.dial_code"
+                                    #dial_code="ngModel" required>
+                                    @for (x of commonService.country_list | orderAsc: 'dial_code'; track x) {
+                                      <option
+                                        [ngValue]="x.dial_code">
+                                      {{x.dial_code}}</option>
+                                    }
+                                  </select>
+                                  <input type="tel" name="mobile" [(ngModel)]="addressForm.mobile" #mobile="ngModel"
+                                    class="form-control w-70" appNumberOnly required />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          @for (field of address_fields; track field; let j = $index) {
+                            @if (field.keyword=='state') {
+                              <!-- if state list exist -->
+                              @if (state_list?.length) {
+                                <div class="col-lg-6 form-group mb-3">
+                                  <div class="p-2">
+                                    <p class="m-b-0">{{field.label}}:</p>
+                                    <select class="form-control" name="field{{j}}" [(ngModel)]="field.value" required>
+                                      @for (x of state_list | orderAsc: 'name'; track x) {
+                                        <option [ngValue]="x.name">{{x.name}}</option>
+                                      }
+                                    </select>
+                                  </div>
+                                </div>
+                              }
+                              <!-- if not state list exist -->
+                              @if (!state_list?.length) {
+                                <div class="col-lg-6 form-group mb-3">
+                                  <div class="p-2">
+                                    <p class="m-b-0"> {{field.label}}:</p>
+                                    <input class="form-control" type="text" name="field{{j}}" [(ngModel)]="field.value" required>
+                                  </div>
+                                </div>
+                              }
+                            }
+                            @if (field.keyword!='state') {
+                              <div class="col-lg-6 form-group mb-3">
+                                <div class="p-2">
+                                  <p class="m-b-0">{{field.label}}:</p>
+                                  <input class="form-control" type="text" name="field{{j}}" [(ngModel)]="field.value" required>
+                                </div>
+                              </div>
+                            }
+                          }
+                          <div class="col-lg-12 d-flex form-group mb-3">
+                            <div class="w-100 p-2">
+                              <label>Landmark</label>
+                              <input type="text" name="landmark" [(ngModel)]="addressForm.landmark" #landmark="ngModel"
+                                class="form-control" />
+                              </div>
+                            </div>
+                            <div class="col-lg-12 form-group mb-3">
+                              <div class="p-2">
+                                <label>Complete Address</label>
+                                <textarea name="completeAddress" [(ngModel)]="addressForm.address" #completeAddress="ngModel"
+                                class="form-control" required></textarea>
+                              </div>
+                            </div>
 
-  <div class="modal-footer flex-column">
-    <!-- alert -->
-    <div class="danger-alert" *ngIf="addonForm?.alert_msg">
-      <div class="alert-msg d-flex align-items-center justify-content-center p-2">
-        <span class="material-icons"></span>
-        <p class="m-0">{{addonForm?.alert_msg}}</p>
-      </div>
-    </div>
-    <!-- alert end -->
-    <div class="proceed-sec d-flex justify-content-between w-100 m-0">
-      <!-- left btn -->
-      <button *ngIf="mmIndex==0" (click)="modal.dismiss('Cross click');"
-        class="btn btn-wide btn-primary">CLOSE</button>
-      <button *ngIf="mmIndex>0" (click)="mmIndex=mmIndex-1; commonService?.scrollModalTop(0);"
-        class="btn btn-wide btn-primary">PREVIOUS</button>
-      <!-- #left btn -->
-      <!-- right btn -->
-      <button *ngIf="(addonForm?.mm_sets?.length-1)>mmIndex" (click)="onMmNext();"
-        class="btn btn-wide btn-primary">NEXT</button>
-      <button *ngIf="(addonForm?.mm_sets?.length-1)==mmIndex" (click)="onUpdateMeasurement();"
-        [disabled]="addonForm.submit" class="btn btn-wide btn-primary">UPDATE</button>
-      <!-- #right btn -->
-    </div>
-  </div>
-</ng-template>
+                          </div>
+                          @if (addressForm.error_msg) {
+                            <div class="mt-3" align="center">
+                              <p class="text-danger m-0">{{addressForm.error_msg}}</p>
+                            </div>
+                          }
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                            (click)="modal.dismiss('Cross click');"> <span class="black-outline-txt">Cancel</span>
+                          </button>
+                          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader"
+                            [ladda]="btnLoader">
+                            {{ (addressFormType=='add')? 'Add': 'Update' }}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </ng-template>
 
-<!-- EDIT NOTES MODAL -->
-<ng-template #notesModal let-modal>
-  <div class="modal-header pb-3">
-    <h4>
-      <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-      <span class="popup_text">Update Notes</span>
-    </h4>
-    <div class="d-flex">
-      <!-- <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i> -->
-    </div>
-  </div>
+                  <!-- DELETE ADDRESS MODAL -->
+                  <ng-template #deleteAddressModal let-modal>
+                    <div class="modal-body">
+                      <p><strong>Are you sure you want to remove this address?</strong></p>
+                      @if (deleteForm?.errorMsg) {
+                        <div>
+                          <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                        </div>
+                      }
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                        (click)="modal.dismiss('Cross click')">
+                        <span class="black-outline-txt">No</span>
+                      </button>
+                      <button type="button" (click)="onDeleteAddress();" class="btn btn-wide orng-outline-btn">
+                        <span class="orng-outline-txt">Yes</span>
+                      </button>
+                    </div>
+                  </ng-template>
 
-  <div class="modal-body slim-scroll">
-    <form id="notes-form" name="notes-form" autocomplete="off" ngbAutofocus>
-      <div *ngIf="commonService.store_details?._id==configData.hungover_id" class="row">
-        <div class="col-md-12">
-          <label class="checkbox checkbox-primary">
-            <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
-            <span>Update this information in live orders</span>
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      </div>
-      <div class="p-2 m-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h6 class="dark-font">Model Name<span class="req-star">*</span></h6>
-          </div>
-          <div class="col-md-12">
-            <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
-              id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
-              required />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 mt-3 p-2">
-          <div class="col-md-12 mb-3">
-            <h6 class="dark-font mb-0">Notes</h6>
-          </div>
-          <div class="row">
-            <div *ngFor="let x of addonForm?.notes_list; let i=index;" class="col-lg-12 mb-3 ">
-              <div class="card-in-card ">
-                <p class="mb-2 light-font">{{x.name}}<span *ngIf="x.required" class="req-star">*</span></p>
-                <input class="form-control w-100" type="text" id="notes_name{{i}}" name="notes_name{{i}}"
-                  [(ngModel)]="x.value" [required]="x.required">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+                  <!-- CUSTOMIZATION MODAL -->
+                  <ng-template #customizationModal let-modal>
+                    <div class="modal-header">
+                      <h4>
+                        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                        <span class="popup_text">{{commonService.custom_model?.name}}</span>
+                      </h4>
+                    </div>
+                    <div class="modal-body modal-scroll slim-scroll">
+                      <app-customization-details></app-customization-details>
+                    </div>
+                  </ng-template>
 
-  <div class="modal-footer flex-column">
-    <!-- alert -->
-    <div class="danger-alert" *ngIf="addonForm?.alert_msg">
-      <div class="alert-msg d-flex align-items-center justify-content-center p-2">
-        <span class="material-icons"></span>
-        <p class="m-0">{{addonForm?.alert_msg}}</p>
-      </div>
-    </div>
-    <!-- alert end -->
-    <div class="proceed-sec d-flex justify-content-between w-100 m-0">
-      <button (click)="modal.dismiss('Cross click');" class="btn btn-wide btn-primary">CLOSE</button>
-      <button (click)="onUpdateNotes();" [disabled]="addonForm.submit"
-        class="btn btn-wide btn-primary">UPDATE</button>
-    </div>
-  </div>
-</ng-template>
+                  <!-- EDIT CUSTOMIZATION MODAL -->
+                  <ng-template #customModal let-modal>
+                    <form id="custom-form" name="custom-form" autocomplete="off" ngbAutofocus>
+                      <div class="modal-content">
+                        <div class="modal-header pb-3">
+                          <h4>
+                            <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                            <span class="popup_text">Update Customization</span>
+                          </h4>
+                          <div class="d-flex">
+                          </div>
+                        </div>
 
-<!-- DELETE CUSTOMIZATION MODAL -->
-<ng-template #deleteCustomModal let-modal>
-  <div class="modal-body">
-    <p>
-      <strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{selected_model?.name}}"</span>
-        modal?</strong>
-    </p>
-    <div *ngIf="deleteForm?.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-      (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDeleteModel();" class="btn btn-wide orng-outline-btn">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+                        <div class="modal-body">
+
+                          @if (commonService.store_details?._id==configData.hungover_id) {
+                            <div class="row">
+                              <div class="col-md-12">
+                                <label class="checkbox checkbox-primary">
+                                  <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
+                                  <span>Update this information in live orders</span>
+                                  <span class="checkmark"></span>
+                                </label>
+                              </div>
+                            </div>
+                          }
+                          <div class="p-2 m-0">
+                            <div class="row">
+                              <div class="col-md-12">
+                                <h6>Model Name<span class="req-star">*</span></h6>
+                              </div>
+                              <div class="col-md-12">
+                                <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
+                                  id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
+                                  required />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12 mt-4">
+                                <h6>{{custom_list[customIndex]?.name}}</h6>
+                                <div class="row">
+                                  @for (x of custom_list[customIndex]?.filtered_option_list; track x; let i = $index) {
+                                    <div
+                                      class="col-md-4 col-6 d-flex justify-content-center mb-3">
+                                      <div class="card customize-model p-3">
+                                        <label class="m-0 p-0"
+                                          [ngClass]="(custom_list[customIndex]?.type=='either_or')? 'radio radio-primary': 'checkbox checkbox-primary'">
+                                          <!-- Radio -->
+                                          @if (custom_list[customIndex]?.type=='either_or') {
+                                            <input type="radio" name="option"
+                                              [checked]="custom_list[customIndex].selected_option==x.name"
+                                              (change)="addonForm.alert_msg=null; custom_list[customIndex].selected_option=x.name; getRadioNextList(x.name);" />
+                                          }
+                                          <!-- Checkbox -->
+                                          @if (custom_list[customIndex]?.type!='either_or') {
+                                            <input type="checkbox" name="option{{i}}"
+                                              [(ngModel)]="x.custom_option_checked"
+                                              (change)="addonForm.alert_msg=null; getCheckboxNextList(); disableOption();"
+                                              [disabled]="x.disabled" />
+                                          }
+                                          <span class="checkmark"></span>
+                                          <!-- Content -->
+                                          @if (x.image) {
+                                            <img [src]="imgBaseUrl+x.image" class="img-fluid" alt="model">
+                                          }
+                                          @if (!x.image) {
+                                            <img class="addon-icon opacity6" src="assets/images/addon.svg" alt="addon">
+                                          }
+                                          <p class="text-center m-0">{{x.name}}</p>
+                                          @if (x.price>0) {
+                                            <p class="text-center m-0">{{ x.price |
+                                              currency:commonService.store_currency?.country_code
+                                              }}
+                                            </p>
+                                          }
+                                        </label>
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <div class="modal-footer flex-column">
+
+                            @if (addonForm?.alert_msg) {
+                              <div class="danger-alert">
+                                <div class="alert-msg d-flex align-items-center justify-content-center p-2">
+                                  <span class="material-icons"></span>
+                                  <p class="m-0">{{addonForm?.alert_msg}}</p>
+                                </div>
+                              </div>
+                            }
+                            <div class="proceed-sec d-flex justify-content-between w-100 m-0">
+
+                              <!-- left btn -->
+                              @if (customIndex==0) {
+                                <button (click)="modal.dismiss('Cross click');"
+                                class="btn btn-wide btn-primary">CLOSE</button>
+                              }
+                              @if (customIndex>0) {
+                                <button
+                                  (click)="addonForm.alert_msg=null; customIndex=customIndex-1; commonService?.scrollModalTop(0);"
+                                class="btn btn-wide btn-primary">PREVIOUS</button>
+                              }
+                              <!-- #left btn -->
+                              <!-- right btn -->
+                              @if (custom_list[customIndex+1]?.filtered_option_list?.length) {
+                                <button (click)="onCustomNext();"
+                                class="btn btn-wide btn-primary">NEXT</button>
+                              }
+                              @if (!custom_list[customIndex+1]?.filtered_option_list?.length) {
+                                <button (click)="onUpdateCustom();"
+                                  [disabled]="addonForm.submit"
+                                class="btn btn-wide btn-primary d-flex justify-content-center align-items-center">UPDATE</button>
+                              }
+                              <!-- #right btn -->
+                            </div>
+                          </div>
+                        </div></form>
+                      </ng-template>
+
+                      <!-- EDIT MEASUREMENT MODAL -->
+                      <ng-template #measurementModal let-modal>
+                        <div class="modal-header pb-3">
+                          <h4>
+                            <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                            <span class="popup_text">Update Measurements</span>
+                          </h4>
+
+                          <div class="d-flex">
+                            <!-- <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i> -->
+                          </div>
+                        </div>
+
+                        <div class="modal-body lg-modal-body slim-scroll">
+                          <form id="mm-form" name="mm-form" autocomplete="off" ngbAutofocus>
+                            @if (commonService.store_details?._id==configData.hungover_id) {
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <label class="checkbox checkbox-primary">
+                                    <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
+                                    <span>Update this information in live orders</span>
+                                    <span class="checkmark"></span>
+                                  </label>
+                                </div>
+                              </div>
+                            }
+                            <div class="p-2 m-0">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <h6>Model Name<span class="req-star">*</span></h6>
+                                </div>
+                                <div class="col-md-12">
+                                  <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
+                                    id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
+                                    required />
+                                  </div>
+                                </div>
+                              </div>
+                              @if (addonForm?.mm_sets) {
+                                <div class="row">
+                                  <div class="col-md-12 mt-4">
+                                    <div class="col-md-12">
+                                      <h6>Measurements</h6>
+                                    </div>
+                                    @if (addonForm?.mm_sets[mmIndex]?.image) {
+                                      <div class="col-md-12 text-center">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                          <img [src]="imgBaseUrl+addonForm?.mm_sets[mmIndex]?.image" alt="model">
+                                        </div>
+                                      </div>
+                                    }
+                                    <div class="row">
+                                      <div [ngClass]="(addonForm?.mm_sets[mmIndex]?.image)? 'col-md-12': 'col-md-12'">
+                                        <div class="row">
+                                          <!-- mm unit -->
+                                          <div class="col-md-12">
+                                            <div class="card card-in-card p-3 mb-3">
+                                              @if (mmIndex==0) {
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                  @for (unit of addonForm?.mm_sets[mmIndex]?.units; track unit) {
+                                                    <label
+                                                      class="radio radio-primary mr-2 mb-0">
+                                                      <input type="radio" [value]="unit.name" name="unit"
+                                                        (change)="addonForm.alert_msg=null; onChangeUnit();" [(ngModel)]="addonForm.mm_unit" />
+                                                        <span>in {{unit.name}}</span>
+                                                        <span class="checkmark"></span>
+                                                      </label>
+                                                    }
+                                                  </div>
+                                                }
+                                                @if (mmIndex>0) {
+                                                  <div class="d-flex align-items-center justify-content-center">
+                                                    <label class="radio radio-primary mr-2 mb-0">
+                                                      <input type="radio" checked />
+                                                      <span>in {{addonForm?.mm_unit}}</span>
+                                                      <span class="checkmark"></span>
+                                                    </label>
+                                                  </div>
+                                                }
+                                              </div>
+                                            </div>
+                                            <!-- #mm unit -->
+                                          </div>
+                                          <div class="card card-in-card modal-inner-div-scroll slim-scroll p-3">
+                                            <div class="row mt-2">
+                                              <div class="col-md-12 px-0">
+                                                <h5>{{addonForm?.mm_sets[mmIndex]?.name}}</h5>
+                                              </div>
+                                              @for (x of addonForm?.mm_sets[mmIndex]?.list; track x; let i = $index) {
+                                                <div class="col-md-12">
+                                                  <div class="row">
+                                                    <div class="col-sm-12 px-0">
+                                                      <label for="value{{mmIndex}}{{i}}">{{x.name}}<span class="req-star">*</span></label>
+                                                      <div class="input-group mb-3">
+                                                        <input class="form-control" type="tel" name="value{{mmIndex}}{{i}}"
+                                                          id="value{{mmIndex}}{{i}}" (input)="addonForm.alert_msg=null; x.alert_msg='';"
+                                                          [(ngModel)]="x.value" (focusout)="mmFocusOut(x);" #value="ngModel" appNumberOnly
+                                                          required />
+                                                          <div class="input-group-append">
+                                                            <span class="input-group-text">{{addonForm.mm_unit}}</span>
+                                                          </div>
+                                                        </div>
+                                                        @if (x.alert_msg) {
+                                                          <p style="font-size: 12px; color: red !important;">{{x.alert_msg}}</p>
+                                                        }
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                }
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  }
+                                </form>
+                              </div>
+
+                              <div class="modal-footer flex-column">
+                                <!-- alert -->
+                                @if (addonForm?.alert_msg) {
+                                  <div class="danger-alert">
+                                    <div class="alert-msg d-flex align-items-center justify-content-center p-2">
+                                      <span class="material-icons"></span>
+                                      <p class="m-0">{{addonForm?.alert_msg}}</p>
+                                    </div>
+                                  </div>
+                                }
+                                <!-- alert end -->
+                                <div class="proceed-sec d-flex justify-content-between w-100 m-0">
+                                  <!-- left btn -->
+                                  @if (mmIndex==0) {
+                                    <button (click)="modal.dismiss('Cross click');"
+                                    class="btn btn-wide btn-primary">CLOSE</button>
+                                  }
+                                  @if (mmIndex>0) {
+                                    <button (click)="mmIndex=mmIndex-1; commonService?.scrollModalTop(0);"
+                                    class="btn btn-wide btn-primary">PREVIOUS</button>
+                                  }
+                                  <!-- #left btn -->
+                                  <!-- right btn -->
+                                  @if ((addonForm?.mm_sets?.length-1)>mmIndex) {
+                                    <button (click)="onMmNext();"
+                                    class="btn btn-wide btn-primary">NEXT</button>
+                                  }
+                                  @if ((addonForm?.mm_sets?.length-1)==mmIndex) {
+                                    <button (click)="onUpdateMeasurement();"
+                                    [disabled]="addonForm.submit" class="btn btn-wide btn-primary">UPDATE</button>
+                                  }
+                                  <!-- #right btn -->
+                                </div>
+                              </div>
+                            </ng-template>
+
+                            <!-- EDIT NOTES MODAL -->
+                            <ng-template #notesModal let-modal>
+                              <div class="modal-header pb-3">
+                                <h4>
+                                  <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                                  <span class="popup_text">Update Notes</span>
+                                </h4>
+                                <div class="d-flex">
+                                  <!-- <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i> -->
+                                </div>
+                              </div>
+
+                              <div class="modal-body slim-scroll">
+                                <form id="notes-form" name="notes-form" autocomplete="off" ngbAutofocus>
+                                  @if (commonService.store_details?._id==configData.hungover_id) {
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <label class="checkbox checkbox-primary">
+                                          <input class="form-check-input" type="checkbox" name="update_order" [(ngModel)]="addonForm.update_order">
+                                          <span>Update this information in live orders</span>
+                                          <span class="checkmark"></span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  }
+                                  <div class="p-2 m-0">
+                                    <div class="row">
+                                      <div class="col-md-12">
+                                        <h6 class="dark-font">Model Name<span class="req-star">*</span></h6>
+                                      </div>
+                                      <div class="col-md-12">
+                                        <input class="form-control w-100" type="text" name="name" placeholder="Enter a name for your modal"
+                                          id="custom_model_name" (input)="addonForm.alert_msg=null;" [(ngModel)]="addonForm.name" #name="ngModel"
+                                          required />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-12 mt-3 p-2">
+                                        <div class="col-md-12 mb-3">
+                                          <h6 class="dark-font mb-0">Notes</h6>
+                                        </div>
+                                        <div class="row">
+                                          @for (x of addonForm?.notes_list; track x; let i = $index) {
+                                            <div class="col-lg-12 mb-3 ">
+                                              <div class="card-in-card ">
+                                                <p class="mb-2 light-font">{{x.name}}@if (x.required) {
+                                                  <span class="req-star">*</span>
+                                                }</p>
+                                                <input class="form-control w-100" type="text" id="notes_name{{i}}" name="notes_name{{i}}"
+                                                  [(ngModel)]="x.value" [required]="x.required">
+                                                </div>
+                                              </div>
+                                            }
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </form>
+                                  </div>
+
+                                  <div class="modal-footer flex-column">
+                                    <!-- alert -->
+                                    @if (addonForm?.alert_msg) {
+                                      <div class="danger-alert">
+                                        <div class="alert-msg d-flex align-items-center justify-content-center p-2">
+                                          <span class="material-icons"></span>
+                                          <p class="m-0">{{addonForm?.alert_msg}}</p>
+                                        </div>
+                                      </div>
+                                    }
+                                    <!-- alert end -->
+                                    <div class="proceed-sec d-flex justify-content-between w-100 m-0">
+                                      <button (click)="modal.dismiss('Cross click');" class="btn btn-wide btn-primary">CLOSE</button>
+                                      <button (click)="onUpdateNotes();" [disabled]="addonForm.submit"
+                                      class="btn btn-wide btn-primary">UPDATE</button>
+                                    </div>
+                                  </div>
+                                </ng-template>
+
+                                <!-- DELETE CUSTOMIZATION MODAL -->
+                                <ng-template #deleteCustomModal let-modal>
+                                  <div class="modal-body">
+                                    <p>
+                                      <strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{selected_model?.name}}"</span>
+                                    modal?</strong>
+                                  </p>
+                                  @if (deleteForm?.errorMsg) {
+                                    <div>
+                                      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                                    </div>
+                                  }
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                                    (click)="modal.dismiss('Cross click')">
+                                    <span class="black-outline-txt">No</span>
+                                  </button>
+                                  <button type="button" (click)="onDeleteModel();" class="btn btn-wide orng-outline-btn">
+                                    <span class="orng-outline-txt">Yes</span>
+                                  </button>
+                                </div>
+                              </ng-template>

@@ -9,7 +9,7 @@ import { AdOrdersComponent } from './ad-orders.component';
   imports: [
     SharedModule,
     AdOrdersRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

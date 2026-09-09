@@ -10,7 +10,7 @@ import { QuotationsComponent } from './quotations.component';
   imports: [
     SharedModule,
     QuotationsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

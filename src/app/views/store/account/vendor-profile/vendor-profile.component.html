@@ -1,125 +1,136 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <div class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>Profile</h1>
-        <ul>
-          <li>View and manage your profile information</li>
-        </ul>
-      </div>
-      <div class="col-md-4 d-flex align-items-center justify-content-end mt-sm-15">
-        <button type="button" (click)="imgForm={ image: vendorDetails.image }; modalService.open(bannerModal, {scrollable : true});" class="btn btn-primary mr-3">Change Banner</button>
-        <button type="button" (click)="pwdForm={}; modalService.open(changePwdModal, {scrollable : true});" class="btn btn-primary">Change Password</button>
+@if (!pageLoader) {
+  <div>
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-8">
+          <h1>Profile</h1>
+          <ul>
+            <li>View and manage your profile information</li>
+          </ul>
+        </div>
+        <div class="col-md-4 d-flex align-items-center justify-content-end mt-sm-15">
+          <button type="button" (click)="imgForm={ image: vendorDetails.image }; modalService.open(bannerModal, {scrollable : true});" class="btn btn-primary mr-3">Change Banner</button>
+          <button type="button" (click)="pwdForm={}; modalService.open(changePwdModal, {scrollable : true});" class="btn btn-primary">Change Password</button>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="separator-breadcrumb border-top"></div>
-
-  <div class="row m-0">
-    <div class="col-md-12 col-lg-12 d-flex">
-      <div class="card setting-card mb-2 w-100 p-2">
-        <div class="d-flex justify-content-end align-items-center">
-          <i (click)="onEdit(vendorModal);" class="material-icons float-right round-btn-icon">edit</i>
-        </div>
-        <div class="row m-0">
-          <div class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">CONTACT INFORMATION</h5>
-              <div class="ml-3">
-                <p>{{vendorDetails?.contact_person}}</p>
-                <p>{{vendorDetails?.mobile}}</p>
-                <p>{{vendorDetails?.email}}</p>
-              </div>
-            </div>
+    <div class="separator-breadcrumb border-top"></div>
+    <div class="row m-0">
+      <div class="col-md-12 col-lg-12 d-flex">
+        <div class="card setting-card mb-2 w-100 p-2">
+          <div class="d-flex justify-content-end align-items-center">
+            <i (click)="onEdit(vendorModal);" class="material-icons float-right round-btn-icon">edit</i>
           </div>
-          <div class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">STORE INFORMATION</h5>
-              <div class="ml-3">
-                <p>{{vendorDetails?.company_details?.name}} ({{vendorDetails?.company_details?.brand}})</p>
-                <p *ngIf="vendorDetails?.company_details?.gst_no"><b>GST No:</b> {{vendorDetails?.company_details?.gst_no}}</p>
-                <p *ngIf="vendorDetails?.company_details?.pan_no"><b>PAN No:</b> {{vendorDetails?.company_details?.pan_no}}</p>
-                <p *ngIf="vendorDetails?.company_details?.tin_no"><b>TIN No:</b> {{vendorDetails?.company_details?.tin_no}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">REGISTERED ADDRESS</h5>
-              <div class="ml-3">
-                <p>{{vendorDetails?.registered_address?.address}}</p>
-                <p>{{vendorDetails?.registered_address?.city}} - {{vendorDetails?.registered_address?.pincode}}</p>
-                <p>{{vendorDetails?.registered_address?.state}}, {{vendorDetails?.registered_address?.country}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">PICKUP ADDRESS</h5>
-              <div class="ml-3">
-                <p>{{vendorDetails?.pickup_address?.address}}</p>
-                <p>{{vendorDetails?.pickup_address?.city}} - {{vendorDetails?.pickup_address?.pincode}}</p>
-                <p>{{vendorDetails?.pickup_address?.state}}, {{vendorDetails?.pickup_address?.country}}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">BANK INFORMATION</h5>
-              <div class="ml-3">
-                <p>{{vendorDetails?.bank_details?.beneficiary}}</p>
-                <p>{{vendorDetails?.bank_details?.name}}</p>
-                <p>{{vendorDetails?.bank_details?.acc_no}}</p>
-                <p>{{vendorDetails?.bank_details?.branch}} ({{vendorDetails?.bank_details?.ifsc_code}})</p>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="vendorDetails.documents?.length" class="col-md-6 col-12">
-            <div class="card card-in-card p-3 mb-3">
-              <h5 class="mb-3">DOCUMENTS</h5>
-              <div class="ml-3">
-                <div *ngFor="let x of vendorDetails.documents" class="d-flex">
-                  <p>{{ x.name }}</p>
-                  <a [href]="imgBaseUrl + x.path" class="ml-2" target="_blank">
-                    <span class="material-icons" aria-hidden="true">
-                      open_in_new
-                    </span>
-                  </a>
+          <div class="row m-0">
+            <div class="col-md-6 col-12">
+              <div class="card card-in-card p-3 mb-3">
+                <h5 class="mb-3">CONTACT INFORMATION</h5>
+                <div class="ml-3">
+                  <p>{{vendorDetails?.contact_person}}</p>
+                  <p>{{vendorDetails?.mobile}}</p>
+                  <p>{{vendorDetails?.email}}</p>
                 </div>
               </div>
             </div>
+            <div class="col-md-6 col-12">
+              <div class="card card-in-card p-3 mb-3">
+                <h5 class="mb-3">STORE INFORMATION</h5>
+                <div class="ml-3">
+                  <p>{{vendorDetails?.company_details?.name}} ({{vendorDetails?.company_details?.brand}})</p>
+                  @if (vendorDetails?.company_details?.gst_no) {
+                    <p><b>GST No:</b> {{vendorDetails?.company_details?.gst_no}}</p>
+                  }
+                  @if (vendorDetails?.company_details?.pan_no) {
+                    <p><b>PAN No:</b> {{vendorDetails?.company_details?.pan_no}}</p>
+                  }
+                  @if (vendorDetails?.company_details?.tin_no) {
+                    <p><b>TIN No:</b> {{vendorDetails?.company_details?.tin_no}}</p>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="card card-in-card p-3 mb-3">
+                <h5 class="mb-3">REGISTERED ADDRESS</h5>
+                <div class="ml-3">
+                  <p>{{vendorDetails?.registered_address?.address}}</p>
+                  <p>{{vendorDetails?.registered_address?.city}} - {{vendorDetails?.registered_address?.pincode}}</p>
+                  <p>{{vendorDetails?.registered_address?.state}}, {{vendorDetails?.registered_address?.country}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="card card-in-card p-3 mb-3">
+                <h5 class="mb-3">PICKUP ADDRESS</h5>
+                <div class="ml-3">
+                  <p>{{vendorDetails?.pickup_address?.address}}</p>
+                  <p>{{vendorDetails?.pickup_address?.city}} - {{vendorDetails?.pickup_address?.pincode}}</p>
+                  <p>{{vendorDetails?.pickup_address?.state}}, {{vendorDetails?.pickup_address?.country}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="card card-in-card p-3 mb-3">
+                <h5 class="mb-3">BANK INFORMATION</h5>
+                <div class="ml-3">
+                  <p>{{vendorDetails?.bank_details?.beneficiary}}</p>
+                  <p>{{vendorDetails?.bank_details?.name}}</p>
+                  <p>{{vendorDetails?.bank_details?.acc_no}}</p>
+                  <p>{{vendorDetails?.bank_details?.branch}} ({{vendorDetails?.bank_details?.ifsc_code}})</p>
+                </div>
+              </div>
+            </div>
+            @if (vendorDetails.documents?.length) {
+              <div class="col-md-6 col-12">
+                <div class="card card-in-card p-3 mb-3">
+                  <h5 class="mb-3">DOCUMENTS</h5>
+                  <div class="ml-3">
+                    @for (x of vendorDetails.documents; track x) {
+                      <div class="d-flex">
+                        <p>{{ x.name }}</p>
+                        <a [href]="imgBaseUrl + x.path" class="ml-2" target="_blank">
+                          <span class="material-icons" aria-hidden="true">
+                            open_in_new
+                          </span>
+                        </a>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row m-0 pt-3">
+      <div class="col-md-12 col-lg-12 d-flex">
+        <div class="card col-12 px-1">
+          <div class="data-list-card-inner p-3">
+            <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
+              <p class="m-b-0 dark-font medium-font">SEO Listing Preview
+                <span class="light-font mt-0 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other search engines</span>
+              </p>
+              <span (click)="onEditSeo(vendorDetails.seo_details, seoModal);" class="material-icons float-right round-btn-icon ab-item-close"
+              aria-hidden="true">edit</span>
+            </div>
+            <p class="light-font font-10 mb-1">
+              {{commonService.store_details?.base_url}}/vendor/{{vendorDetails.seo_details?.page_url}}
+            </p>
+            <h6 class="sec-desc mb-1 mt-2 seo-color">{{vendorDetails.seo_details.page_title}}</h6>
+            <p class="light-font font-10">{{vendorDetails.seo_details.meta_desc}}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="row m-0 pt-3">
-    <div class="col-md-12 col-lg-12 d-flex">
-      <div class="card col-12 px-1">
-        <div class="data-list-card-inner p-3">
-          <div class="col-md-12 col-12 d-flex justify-content-between add_but align-items-center px-0 mb-3">
-            <p class="m-b-0 dark-font medium-font">SEO Listing Preview
-              <span class="light-font mt-0 font-10 d-block">This is how your page looks on Google, Bing, Yahoo and other search engines</span>
-            </p>   
-            <span (click)="onEditSeo(vendorDetails.seo_details, seoModal);" class="material-icons float-right round-btn-icon ab-item-close"
-            aria-hidden="true">edit</span>
-          </div>
-          <p class="light-font font-10 mb-1">
-            {{commonService.store_details?.base_url}}/vendor/{{vendorDetails.seo_details?.page_url}}
-          </p>
-          <h6 class="sec-desc mb-1 mt-2 seo-color">{{vendorDetails.seo_details.page_title}}</h6>
-          <p class="light-font font-10">{{vendorDetails.seo_details.meta_desc}}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
+}
 
 <!-- vendor details modal -->
 <ng-template #vendorModal let-modal>
@@ -131,387 +142,447 @@
           <span class="popup_text">{{vendorForm.email}}</span>
         </h4>
       </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label>Contact Person Name</label>
-              <input type="text" name="contact_person" class="form-control" [(ngModel)]="vendorForm.contact_person" required />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label>Mobile</label>
-              <input type="text" name="mobile" class="form-control" [(ngModel)]="vendorForm.mobile" required />
-            </div>
-            <div *ngIf="commonService.store_details?.payout_gateway && vendorForm.payout_contact_id" class="col-md-12 mb-3">
-              <label class="checkbox checkbox-success">
-                <input class="form-check-input" type="checkbox" name="update_contact" [(ngModel)]="vendorForm.update_contact">
-                <b>Update Contact Information in RazorpayX</b>
-                <span class="checkmark"></span>
-              </label>
-            </div>
-          </div>
-          <hr class="mt-0 mb-3">
-          <div class="col-md-12">
-            <h6>STORE DETAILS</h6>
-          </div>
-          <div class="card">
-            <div class="row card-body">
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
               <div class="col-md-6 mb-3">
-                <label>Instagram Page URL</label>
-                <input type="text" name="instagram" class="form-control" [(ngModel)]="vendorForm.company_details.instagram" />
+                <label>Contact Person Name</label>
+                <input type="text" name="contact_person" class="form-control" [(ngModel)]="vendorForm.contact_person" required />
               </div>
               <div class="col-md-6 mb-3">
-                <label>Website URL (if available)</label>
-                <input type="text" name="website" class="form-control" [(ngModel)]="vendorForm.company_details.website" />
+                <label>Mobile</label>
+                <input type="text" name="mobile" class="form-control" [(ngModel)]="vendorForm.mobile" required />
               </div>
-              <ng-container *ngIf="commonService.store_details?.country=='India'">
+              @if (commonService.store_details?.payout_gateway && vendorForm.payout_contact_id) {
+                <div class="col-md-12 mb-3">
+                  <label class="checkbox checkbox-success">
+                    <input class="form-check-input" type="checkbox" name="update_contact" [(ngModel)]="vendorForm.update_contact">
+                    <b>Update Contact Information in RazorpayX</b>
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+              }
+            </div>
+            <hr class="mt-0 mb-3">
+            <div class="col-md-12">
+              <h6>STORE DETAILS</h6>
+            </div>
+            <div class="card">
+              <div class="row card-body">
                 <div class="col-md-6 mb-3">
-                  <label>GST No</label>
-                  <input type="text" name="gst_no" class="form-control" [(ngModel)]="vendorForm.company_details.gst_no" />
+                  <label>Instagram Page URL</label>
+                  <input type="text" name="instagram" class="form-control" [(ngModel)]="vendorForm.company_details.instagram" />
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label>PAN No</label>
-                  <input type="text" name="pan_no" class="form-control" [(ngModel)]="vendorForm.company_details.pan_no" />
+                  <label>Website URL (if available)</label>
+                  <input type="text" name="website" class="form-control" [(ngModel)]="vendorForm.company_details.website" />
                 </div>
-              </ng-container>
-              <div *ngIf="commonService.store_details?.country!='India'" class="col-md-6 mb-3">
-                <label>TIN No</label>
-                <input type="text" name="tin_no" class="form-control" [(ngModel)]="vendorForm.company_details.tin_no" />
+                @if (commonService.store_details?.country=='India') {
+                  <div class="col-md-6 mb-3">
+                    <label>GST No</label>
+                    <input type="text" name="gst_no" class="form-control" [(ngModel)]="vendorForm.company_details.gst_no" />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>PAN No</label>
+                    <input type="text" name="pan_no" class="form-control" [(ngModel)]="vendorForm.company_details.pan_no" />
+                  </div>
+                }
+                @if (commonService.store_details?.country!='India') {
+                  <div class="col-md-6 mb-3">
+                    <label>TIN No</label>
+                    <input type="text" name="tin_no" class="form-control" [(ngModel)]="vendorForm.company_details.tin_no" />
+                  </div>
+                }
               </div>
             </div>
-          </div>
-          <!-- registered address -->
-          <div class="col-md-12 mt-3">
-            <h6>REGISTERED ADDRESS</h6>
-          </div>
-          <div class="card">
-            <div class="row card-body">
-              <div class="col-md-6 mb-3">
-                <label>Country</label>
-                <input type="text" name="r_country" class="form-control" [(ngModel)]="vendorForm.registered_address.country" readonly required />
-              </div>
-              <ng-container *ngFor="let field of reg_address_fields; let j=index;">
-                <ng-container *ngIf="field.keyword=='state'">
-                  <!-- if state list exist -->
-                  <div *ngIf="state_list?.length" class="col-md-6 mb-3">
-                    <label>{{field.label}}</label>
-                    <select class="form-control" name="r_field{{j}}" [(ngModel)]="field.value" required>
-                      <option *ngFor="let x of state_list | orderAsc: 'name';" [ngValue]="x.name">{{x.name}}</option>
-                    </select>
-                  </div>
-                  <!-- if not state list exist -->
-                  <div *ngIf="!state_list?.length" class="col-md-6 mb-3">
-                    <label>{{field.label}}</label>
-                    <input class="form-control" type="text" name="r_field{{j}}" [(ngModel)]="field.value" required>
-                  </div>
-                </ng-container>
-                <div *ngIf="field.keyword!='state'" class="col-md-6 mb-3">
-                  <label>{{field.label}}</label>
-                  <input class="form-control" type="text" name="r_field{{j}}" [(ngModel)]="field.value" required>
-                </div>
-              </ng-container>
-              <div class="col-md-12 mb-3">
-                <label>Complete Address</label>
-                <textarea name="r_address" [(ngModel)]="vendorForm.registered_address.address" class="form-control" required></textarea>
-              </div>
-            </div>
-          </div>
-          <!-- pickup address -->
-          <ng-container *ngIf="!vendorForm.pickup_locations?.length">
+            <!-- registered address -->
             <div class="col-md-12 mt-3">
-              <h6>PICKUP ADDRESS</h6>
+              <h6>REGISTERED ADDRESS</h6>
             </div>
             <div class="card">
               <div class="row card-body">
                 <div class="col-md-6 mb-3">
                   <label>Country</label>
-                  <input type="text" name="p_country" class="form-control" [(ngModel)]="vendorForm.pickup_address.country" readonly required />
+                  <input type="text" name="r_country" class="form-control" [(ngModel)]="vendorForm.registered_address.country" readonly required />
                 </div>
-                <ng-container *ngFor="let field of pick_address_fields; let j=index;">
-                  <ng-container *ngIf="field.keyword=='state'">
+                @for (field of reg_address_fields; track field; let j = $index) {
+                  @if (field.keyword=='state') {
                     <!-- if state list exist -->
-                    <div *ngIf="state_list?.length" class="col-md-6 mb-3">
-                      <label>{{field.label}}</label>
-                      <select class="form-control" name="p_field{{j}}" [(ngModel)]="field.value" required>
-                        <option *ngFor="let x of state_list | orderAsc: 'name';" [ngValue]="x.name">{{x.name}}</option>
-                      </select>
-                    </div>
+                    @if (state_list?.length) {
+                      <div class="col-md-6 mb-3">
+                        <label>{{field.label}}</label>
+                        <select class="form-control" name="r_field{{j}}" [(ngModel)]="field.value" required>
+                          @for (x of state_list | orderAsc: 'name'; track x) {
+                            <option [ngValue]="x.name">{{x.name}}</option>
+                          }
+                        </select>
+                      </div>
+                    }
                     <!-- if not state list exist -->
-                    <div *ngIf="!state_list?.length" class="col-md-6 mb-3">
+                    @if (!state_list?.length) {
+                      <div class="col-md-6 mb-3">
+                        <label>{{field.label}}</label>
+                        <input class="form-control" type="text" name="r_field{{j}}" [(ngModel)]="field.value" required>
+                      </div>
+                    }
+                  }
+                  @if (field.keyword!='state') {
+                    <div class="col-md-6 mb-3">
                       <label>{{field.label}}</label>
-                      <input class="form-control" type="text" name="p_field{{j}}" [(ngModel)]="field.value" required>
+                      <input class="form-control" type="text" name="r_field{{j}}" [(ngModel)]="field.value" required>
                     </div>
-                  </ng-container>
-                  <div *ngIf="field.keyword!='state'" class="col-md-6 mb-3">
-                    <label>{{field.label}}</label>
-                    <input class="form-control" type="text" name="p_field{{j}}" [(ngModel)]="field.value" required>
-                  </div>
-                </ng-container>
+                  }
+                }
                 <div class="col-md-12 mb-3">
                   <label>Complete Address</label>
-                  <textarea name="p_address" [(ngModel)]="vendorForm.pickup_address.address" class="form-control" required></textarea>
+                  <textarea name="r_address" [(ngModel)]="vendorForm.registered_address.address" class="form-control" required></textarea>
                 </div>
               </div>
             </div>
-          </ng-container>
-          <!-- bank details -->
-          <div class="col-md-12 mt-3">
-            <h6>BANK DETAILS
-              <span *ngIf="vendorForm.bank_details?.payout_account_id">- {{vendorForm.bank_details.payout_account_id}}</span>
-            </h6>
-          </div>
-          <div class="card">
-            <div class="row card-body">
-              <div class="col-md-6 mb-3">
-                <label>Beneficiary Name</label>
-                <input type="text" name="beneficiary_name" class="form-control" [(ngModel)]="vendorForm.bank_details.beneficiary" required />
+            <!-- pickup address -->
+            @if (!vendorForm.pickup_locations?.length) {
+              <div class="col-md-12 mt-3">
+                <h6>PICKUP ADDRESS</h6>
               </div>
-              <div class="col-md-6 mb-3"></div>
-              <div class="col-md-6 mb-3">
-                <label>Bank Name</label>
-                <input type="text" name="bank_name" class="form-control" [(ngModel)]="vendorForm.bank_details.name" required />
+              <div class="card">
+                <div class="row card-body">
+                  <div class="col-md-6 mb-3">
+                    <label>Country</label>
+                    <input type="text" name="p_country" class="form-control" [(ngModel)]="vendorForm.pickup_address.country" readonly required />
+                  </div>
+                  @for (field of pick_address_fields; track field; let j = $index) {
+                    @if (field.keyword=='state') {
+                      <!-- if state list exist -->
+                      @if (state_list?.length) {
+                        <div class="col-md-6 mb-3">
+                          <label>{{field.label}}</label>
+                          <select class="form-control" name="p_field{{j}}" [(ngModel)]="field.value" required>
+                            @for (x of state_list | orderAsc: 'name'; track x) {
+                              <option [ngValue]="x.name">{{x.name}}</option>
+                            }
+                          </select>
+                        </div>
+                      }
+                      <!-- if not state list exist -->
+                      @if (!state_list?.length) {
+                        <div class="col-md-6 mb-3">
+                          <label>{{field.label}}</label>
+                          <input class="form-control" type="text" name="p_field{{j}}" [(ngModel)]="field.value" required>
+                        </div>
+                      }
+                    }
+                    @if (field.keyword!='state') {
+                      <div class="col-md-6 mb-3">
+                        <label>{{field.label}}</label>
+                        <input class="form-control" type="text" name="p_field{{j}}" [(ngModel)]="field.value" required>
+                      </div>
+                    }
+                  }
+                  <div class="col-md-12 mb-3">
+                    <label>Complete Address</label>
+                    <textarea name="p_address" [(ngModel)]="vendorForm.pickup_address.address" class="form-control" required></textarea>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6 mb-3">
-                <label>Branch</label>
-                <input type="text" name="branch" class="form-control" [(ngModel)]="vendorForm.bank_details.branch" required />
-              </div>
-              <div class="col-md-6">
-                <label>IFSC Code</label>
-                <input *ngIf="commonService.store_details?.payout_gateway" type="text" name="ifsc_code" class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code"
-                  pattern=".{11,11}" required title="Invalid Code" maxlength="11" required />
-                <input *ngIf="!commonService.store_details?.payout_gateway" type="text" name="ifsc_code" class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code" required />
-              </div>
-              <div class="col-md-6">
-                <label>Account No</label>
-                <input type="text" name="acc_no" class="form-control" [(ngModel)]="vendorForm.bank_details.acc_no" required />
-              </div>
-              <div *ngIf="commonService.store_details?.payout_gateway && vendorForm.bank_details?.payout_account_id" class="col-md-12 mt-3">
-                <label class="checkbox checkbox-success">
-                  <input class="form-check-input" type="checkbox" name="update_bank" [(ngModel)]="vendorForm.update_bank">
-                  <b>Update Bank Details in RazorpayX</b>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <!-- Upload Documents -->
-          <ng-container *ngIf="!vendorForm.documents?.length">
+            }
+            <!-- bank details -->
             <div class="col-md-12 mt-3">
-              <h6>UPLOAD VERIFIED GOVERNMENT ID PROOF</h6>
+              <h6>BANK DETAILS
+                @if (vendorForm.bank_details?.payout_account_id) {
+                  <span>- {{vendorForm.bank_details.payout_account_id}}</span>
+                }
+              </h6>
             </div>
             <div class="card">
               <div class="row card-body">
                 <div class="col-md-6 mb-3">
-                  <label>Business Registration Proof*</label>
-                  <div class="w-100">
-                    <div class="custom-file mt-2">
-                      <input type="file" id="input_file_1" name="input_file_1" class="custom-file-input" required
-                      (change)="fileChangeListenerDoc($event, 'Business Registration Proof', 'input_file_1')" accept="image/jpeg, image/png, application/pdf" />
-                      <label class="custom-file-label">
-                        {{ fileDetails["input_file_1"]?.temp_name? fileDetails["input_file_1"].temp_name: "Choose file" }}
-                      </label>
-                    </div>
-                  </div>
+                  <label>Beneficiary Name</label>
+                  <input type="text" name="beneficiary_name" class="form-control" [(ngModel)]="vendorForm.bank_details.beneficiary" required />
+                </div>
+                <div class="col-md-6 mb-3"></div>
+                <div class="col-md-6 mb-3">
+                  <label>Bank Name</label>
+                  <input type="text" name="bank_name" class="form-control" [(ngModel)]="vendorForm.bank_details.name" required />
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label>Any National ID Card*</label>
-                  <div class="w-100">
-                    <div class="custom-file mt-2">
-                      <input type="file" id="input_file_2" name="input_file_2" class="custom-file-input" required
-                      (change)="fileChangeListenerDoc($event, 'National ID Card', 'input_file_2')" accept="image/jpeg, image/png, application/pdf" />
-                      <label class="custom-file-label">
-                        {{ fileDetails["input_file_2"]?.temp_name? fileDetails["input_file_2"].temp_name: "Choose file" }}
-                      </label>
-                    </div>
+                  <label>Branch</label>
+                  <input type="text" name="branch" class="form-control" [(ngModel)]="vendorForm.bank_details.branch" required />
+                </div>
+                <div class="col-md-6">
+                  <label>IFSC Code</label>
+                  @if (commonService.store_details?.payout_gateway) {
+                    <input type="text" name="ifsc_code" class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code"
+                      pattern=".{11,11}" required title="Invalid Code" maxlength="11" required />
+                  }
+                  @if (!commonService.store_details?.payout_gateway) {
+                    <input type="text" name="ifsc_code" class="form-control" [(ngModel)]="vendorForm.bank_details.ifsc_code" required />
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label>Account No</label>
+                  <input type="text" name="acc_no" class="form-control" [(ngModel)]="vendorForm.bank_details.acc_no" required />
+                </div>
+                @if (commonService.store_details?.payout_gateway && vendorForm.bank_details?.payout_account_id) {
+                  <div class="col-md-12 mt-3">
+                    <label class="checkbox checkbox-success">
+                      <input class="form-check-input" type="checkbox" name="update_bank" [(ngModel)]="vendorForm.update_bank">
+                      <b>Update Bank Details in RazorpayX</b>
+                      <span class="checkmark"></span>
+                    </label>
                   </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label>Other Supporting Documents if any</label>
-                  <div class="w-100">
-                    <div class="custom-file mt-2">
-                      <input type="file" id="input_file_3" name="input_file_3" class="custom-file-input"
-                      (change)="fileChangeListenerDoc($event, 'Other Supporting Document', 'input_file_3')" accept="image/jpeg, image/png, application/pdf" />
-                      <label class="custom-file-label">
-                        {{ fileDetails["input_file_3"]?.temp_name? fileDetails["input_file_3"].temp_name: "Choose file" }}
-                      </label>
+                }
+              </div>
+            </div>
+            <!-- Upload Documents -->
+            @if (!vendorForm.documents?.length) {
+              <div class="col-md-12 mt-3">
+                <h6>UPLOAD VERIFIED GOVERNMENT ID PROOF</h6>
+              </div>
+              <div class="card">
+                <div class="row card-body">
+                  <div class="col-md-6 mb-3">
+                    <label>Business Registration Proof*</label>
+                    <div class="w-100">
+                      <div class="custom-file mt-2">
+                        <input type="file" id="input_file_1" name="input_file_1" class="custom-file-input" required
+                          (change)="fileChangeListenerDoc($event, 'Business Registration Proof', 'input_file_1')" accept="image/jpeg, image/png, application/pdf" />
+                          <label class="custom-file-label">
+                            {{ fileDetails["input_file_1"]?.temp_name? fileDetails["input_file_1"].temp_name: "Choose file" }}
+                          </label>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                    <div class="col-md-6 mb-3">
+                      <label>Any National ID Card*</label>
+                      <div class="w-100">
+                        <div class="custom-file mt-2">
+                          <input type="file" id="input_file_2" name="input_file_2" class="custom-file-input" required
+                            (change)="fileChangeListenerDoc($event, 'National ID Card', 'input_file_2')" accept="image/jpeg, image/png, application/pdf" />
+                            <label class="custom-file-label">
+                              {{ fileDetails["input_file_2"]?.temp_name? fileDetails["input_file_2"].temp_name: "Choose file" }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label>Other Supporting Documents if any</label>
+                        <div class="w-100">
+                          <div class="custom-file mt-2">
+                            <input type="file" id="input_file_3" name="input_file_3" class="custom-file-input"
+                              (change)="fileChangeListenerDoc($event, 'Other Supporting Document', 'input_file_3')" accept="image/jpeg, image/png, application/pdf" />
+                              <label class="custom-file-label">
+                                {{ fileDetails["input_file_3"]?.temp_name? fileDetails["input_file_3"].temp_name: "Choose file" }}
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  <!-- End Upload Documents -->
                 </div>
-              </div>
-            </div>
-          </ng-container>
-          <!-- End Upload Documents -->
-        </div>
-        <div *ngIf="vendorForm.errorMsg">
-          <p class="text-danger">{{ vendorForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="vendorForm.submit" [ladda]="vendorForm.submit">
-          Update
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- seo modal -->
-<ng-template #seoModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onUpdateSeo();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Update Page SEO</span>
-        </h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>H1 Tag</label>
-              <span *ngIf="seoForm?.h1_tag?.length" class="label_hint">{{seoForm?.h1_tag?.length}} of 70 characters used</span>
-              <input type="text" name="h1_tag" class="form-control" [(ngModel)]="seoForm.h1_tag" #h1_tag="ngModel" maxlength="70" required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Page Title</label>
-              <span *ngIf="seoForm?.page_title?.length" class="label_hint">{{seoForm?.page_title?.length}} of 70 characters used</span>
-              <input type="text" name="page_title" class="form-control" [(ngModel)]="seoForm.page_title" #page_title="ngModel" maxlength="70" required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Meta Description</label>
-              <span *ngIf="seoForm?.meta_desc?.length" class="label_hint">{{seoForm?.meta_desc?.length}} of 320 characters used</span>
-              <textarea rows="4" class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="seoForm.meta_desc" #meta_desc="ngModel" maxlength="320" required></textarea>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Meta Keywords</label>
-              <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="seoForm.meta_keyword_list"
-                #meta_keyword_list="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
-                [separatorKeyCodes]="[188]"></tag-input>
-              <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="seoForm.errorMsg">
-          <p class="text-danger">{{ seoForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="seoForm.submit" [ladda]="seoForm.submit">
-          Submit
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- change pwd modal -->
-<ng-template #changePwdModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onChangePwd();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Change Password</span>
-        </h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>Current Password</label>
-              <input type="text" name="current_pwd" class="form-control" [(ngModel)]="pwdForm.current_pwd" required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>New Password</label>
-              <div class="custom-input-prepend-append-group">
-                <input [type]="pwdForm.input_txt? 'text': 'password'" name="new_pwd" class="form-control" (input)="pwdForm.errorMsg=null;"
-                  style="padding: 10px;" [(ngModel)]="pwdForm.new_pwd" pattern=".{6,}" title="Six or more characters" required />
-                <div class="custom-input-append">
-                  <i class="material-icons mr-3" *ngIf="!pwdForm.input_txt" (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility</i>
-                  <i class="material-icons mr-3" *ngIf="pwdForm.input_txt" (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility_off</i>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Confirm New Password</label>
-              <div class="custom-input-prepend-append-group">
-                <input type="text" name="confirm_new_pwd" style="padding: 10px;" class="form-control" [(ngModel)]="pwdForm.confirm_new_pwd" required />
-                <div *ngIf="pwdForm.confirm_new_pwd && pwdForm.new_pwd==pwdForm.confirm_new_pwd" class="custom-input-append">
-                  <i class="material-icons mr-3" aria-hidden="true">check_circle_outline</i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="pwdForm.errorMsg">
-          <p class="text-danger">{{ pwdForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="pwdForm.new_pwd!=pwdForm.confirm_new_pwd || pwdForm.submit" [ladda]="pwdForm.submit">
-          Submit
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
-<!-- Banner Modal -->
-<ng-template #bannerModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onUpdateBanner();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Update Banner Image</span>
-        </h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-12" align="center">
-              <div *ngIf="imgForm.image">
-                <span (click)="imgForm.img_change=null; imgForm.image=null"
-                  class="material-icons float-right round-img-icon ab-item-close right15" aria-hidden="true">close</span>
-                <img *ngIf="imgForm.img_change" [src]="imgForm.image" height="100px;" width="auto;">
-                <img *ngIf="!imgForm.img_change" [src]="imgBaseUrl+imgForm.image" height="100px;" width="auto;">
-              </div>
-              <div *ngIf="!imgForm.image">
-                <label>
+                @if (vendorForm.errorMsg) {
                   <div>
-                    <i class="material-icons add-img">add_photo_alternate</i>
-                    <p>Click to upload image</p>
+                    <p class="text-danger">{{ vendorForm.errorMsg }}</p>
                   </div>
-                  <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
-                </label>
+                }
               </div>
+            }
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="vendorForm.submit" [ladda]="vendorForm.submit">
+                Update
+              </button>
             </div>
           </div>
-        </div>
-        <div *ngIf="imgForm.errorMsg">
-          <p class="text-danger">{{ imgForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="imgForm.submit" [ladda]="imgForm.submit">Update</button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+        </form>
+      </ng-template>
+
+      <!-- seo modal -->
+      <ng-template #seoModal let-modal>
+        <form autocomplete="off" (ngSubmit)="onUpdateSeo();" ngNativeValidate ngbAutofocus>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>
+                <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                <span class="popup_text">Update Page SEO</span>
+              </h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-12 form-group mb-3">
+                    <label>H1 Tag</label>
+                    @if (seoForm?.h1_tag?.length) {
+                      <span class="label_hint">{{seoForm?.h1_tag?.length}} of 70 characters used</span>
+                    }
+                    <input type="text" name="h1_tag" class="form-control" [(ngModel)]="seoForm.h1_tag" #h1_tag="ngModel" maxlength="70" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Page Title</label>
+                    @if (seoForm?.page_title?.length) {
+                      <span class="label_hint">{{seoForm?.page_title?.length}} of 70 characters used</span>
+                    }
+                    <input type="text" name="page_title" class="form-control" [(ngModel)]="seoForm.page_title" #page_title="ngModel" maxlength="70" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Description</label>
+                    @if (seoForm?.meta_desc?.length) {
+                      <span class="label_hint">{{seoForm?.meta_desc?.length}} of 320 characters used</span>
+                    }
+                    <textarea rows="4" class="form-control" aria-label="With textarea" name="meta_desc" [(ngModel)]="seoForm.meta_desc" #meta_desc="ngModel" maxlength="320" required></textarea>
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Meta Keywords</label>
+                    <tag-input class="w-100" name="meta_keyword_list" [(ngModel)]="seoForm.meta_keyword_list"
+                      #meta_keyword_list="ngModel" placeholder="" [secondaryPlaceholder]="'Enter options'"
+                    [separatorKeyCodes]="[188]"></tag-input>
+                    <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
+                  </div>
+                </div>
+              </div>
+              @if (seoForm.errorMsg) {
+                <div>
+                  <p class="text-danger">{{ seoForm.errorMsg }}</p>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                (click)="modal.dismiss('Cross click');">
+                <span class="black-outline-txt">Cancel</span>
+              </button>
+              <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="seoForm.submit" [ladda]="seoForm.submit">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+
+      <!-- change pwd modal -->
+      <ng-template #changePwdModal let-modal>
+        <form autocomplete="off" (ngSubmit)="onChangePwd();" ngNativeValidate ngbAutofocus>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>
+                <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                <span class="popup_text">Change Password</span>
+              </h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Current Password</label>
+                    <input type="text" name="current_pwd" class="form-control" [(ngModel)]="pwdForm.current_pwd" required />
+                  </div>
+                  <div class="col-md-12 form-group mb-3">
+                    <label>New Password</label>
+                    <div class="custom-input-prepend-append-group">
+                      <input [type]="pwdForm.input_txt? 'text': 'password'" name="new_pwd" class="form-control" (input)="pwdForm.errorMsg=null;"
+                        style="padding: 10px;" [(ngModel)]="pwdForm.new_pwd" pattern=".{6,}" title="Six or more characters" required />
+                        <div class="custom-input-append">
+                          @if (!pwdForm.input_txt) {
+                            <i class="material-icons mr-3" (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility</i>
+                          }
+                          @if (pwdForm.input_txt) {
+                            <i class="material-icons mr-3" (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility_off</i>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Confirm New Password</label>
+                      <div class="custom-input-prepend-append-group">
+                        <input type="text" name="confirm_new_pwd" style="padding: 10px;" class="form-control" [(ngModel)]="pwdForm.confirm_new_pwd" required />
+                        @if (pwdForm.confirm_new_pwd && pwdForm.new_pwd==pwdForm.confirm_new_pwd) {
+                          <div class="custom-input-append">
+                            <i class="material-icons mr-3" aria-hidden="true">check_circle_outline</i>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @if (pwdForm.errorMsg) {
+                  <div>
+                    <p class="text-danger">{{ pwdForm.errorMsg }}</p>
+                  </div>
+                }
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+                  <span class="black-outline-txt">Cancel</span>
+                </button>
+                <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="pwdForm.new_pwd!=pwdForm.confirm_new_pwd || pwdForm.submit" [ladda]="pwdForm.submit">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+
+        <!-- Banner Modal -->
+        <ng-template #bannerModal let-modal>
+          <form autocomplete="off" (ngSubmit)="onUpdateBanner();" ngNativeValidate ngbAutofocus>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4>
+                  <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                  <span class="popup_text">Update Banner Image</span>
+                </h4>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-md-12" align="center">
+                      @if (imgForm.image) {
+                        <div>
+                          <span (click)="imgForm.img_change=null; imgForm.image=null"
+                          class="material-icons float-right round-img-icon ab-item-close right15" aria-hidden="true">close</span>
+                          @if (imgForm.img_change) {
+                            <img [src]="imgForm.image" height="100px;" width="auto;">
+                          }
+                          @if (!imgForm.img_change) {
+                            <img [src]="imgBaseUrl+imgForm.image" height="100px;" width="auto;">
+                          }
+                        </div>
+                      }
+                      @if (!imgForm.image) {
+                        <div>
+                          <label>
+                            <div>
+                              <i class="material-icons add-img">add_photo_alternate</i>
+                              <p>Click to upload image</p>
+                            </div>
+                            <input type="file" name="image" style="display: none;" (change)="fileChangeListener($event);" accept="image/jpeg, image/png, image/webp" />
+                          </label>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                @if (imgForm.errorMsg) {
+                  <div>
+                    <p class="text-danger">{{ imgForm.errorMsg }}</p>
+                  </div>
+                }
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+                  <span class="black-outline-txt">Cancel</span>
+                </button>
+                <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="imgForm.submit" [ladda]="imgForm.submit">Update</button>
+              </div>
+            </div>
+          </form>
+        </ng-template>

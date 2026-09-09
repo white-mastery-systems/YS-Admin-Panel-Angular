@@ -15,7 +15,7 @@ import { StoreSettingComponent } from './store-setting.component';
     SharedModule,
     TagInputModule,
     ColorPickerModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     StoreSettingRoutingModule
   ]
 })

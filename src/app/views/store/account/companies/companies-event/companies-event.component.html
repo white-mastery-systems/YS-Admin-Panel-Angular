@@ -1,162 +1,186 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{commonService.secondary_header}}</h1>
-        </div>
-      </div>
-      <div class="col-md-6 list-button d-flex justify-content-end px-0" *ngIf="commonService.desktop_device && compForm.form_type!='add'">
-        <button type="button" (click)="btnLoader=false; errorMsg=null; modalService.open(deleteModal, { centered: true });">
-          <span class="material-symbols-rounded mr-2 mb-0">delete</span> Remove
-        </button>
-      </div>
-    </div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
   </div>
-  <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate>
-    <div class="row">
-      <div class="col-md-6 form-group mb-3">
-        <label>Name</label>
-        <input type="text" name="name" class="form-control" [(ngModel)]="compForm.name" required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" [(ngModel)]="compForm.email" required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>GST Number</label>
-        <input type="text" name="gst_no" class="form-control" [(ngModel)]="compForm.gst_no" maxlength="15" appNoSplChar />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Website</label>
-        <input type="text" name="website" class="form-control" [(ngModel)]="compForm.website" />
-      </div>
+}
 
-      <!-- address -->
-      <div class="col-md-12 mt-3 mb-3">
-        <h6 class="dark-font">ADDRESS DETAILS</h6>
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Address Line 1</label>
-        <input type="text" name="address_line_1" class="form-control" [(ngModel)]="compForm.address_line_1" required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Address Line 2</label>
-        <input type="text" name="address_line_2" class="form-control" [(ngModel)]="compForm.address_line_2" />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Country</label>
-        <select name="country" class="form-control" [(ngModel)]="compForm.country" (change)="onCountryChange(compForm.country);" required>
-          <option *ngFor="let x of commonService.country_list | orderAsc: 'name';" [ngValue]="x.name">
-            {{x.name}}
-          </option>
-        </select>
-      </div>
-      <div  class="col-md-6 form-group mb-3">
-        <label>State</label>
-        <select *ngIf="state_list.length" name="state" class="form-control" [(ngModel)]="compForm.state" #state="ngModel" required>
-          <option *ngFor="let x of state_list | orderAsc: 'name';" [ngValue]="x.name">{{x.name}}</option>
-        </select>
-        <input *ngIf="!state_list.length" type="text" name="state" class="form-control" [(ngModel)]="compForm.state" required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>City</label>
-        <input type="text" name="city" class="form-control" [(ngModel)]="compForm.city" required />
-      </div>
-      <div class="col-md-6 form-group mb-3">
-        <label>Pincode</label>
-        <input type="text" name="pincode" class="form-control" [(ngModel)]="compForm.pincode" required />
-      </div>
-
-      <!-- contact person -->
-      <div class="col-md-12 mt-3 mb-3">
-        <h6 class="dark-font">CONTACT PERSONS</h6>
-      </div>
-      <div class="col-md-6 mb-3" *ngFor="let x of compForm.contact_person; let i=index;">
-        <div class="card card-in-card p-3">
-          <div class="row d-flex">
-            <div *ngIf="compForm.contact_person?.length>1">
-              <span (click)="compForm.contact_person.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5">close</span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label class="light-font fw-500">Name</label>
-              <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label class="light-font fw-500">Email</label>
-              <input type="text" name="email{{i}}" class="form-control" [(ngModel)]="x.email"  required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label class="light-font fw-500">Designation</label>
-              <input type="text" name="designation{{i}}" class="form-control" [(ngModel)]="x.designation" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label class="light-font fw-500">Dial Code</label>
-              <select name="dial_code{{i}}" class="form-control" [(ngModel)]="x.dial_code" required>
-                <option *ngFor="let x of commonService.country_list | orderAsc: 'dial_code';" [ngValue]="x.dial_code">
-                  {{x.dial_code}}
-                </option>
-              </select>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label class="light-font fw-500">Mobile</label>
-              <input type="tel" name="mobile{{i}}" class="form-control" [(ngModel)]="x.mobile" appNumberOnly required />
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}</h1>
             </div>
           </div>
+          @if (commonService.desktop_device && compForm.form_type!='add') {
+            <div class="col-md-6 list-button d-flex justify-content-end px-0">
+              <button type="button" (click)="btnLoader=false; errorMsg=null; modalService.open(deleteModal, { centered: true });">
+                <span class="material-symbols-rounded mr-2 mb-0">delete</span> Remove
+              </button>
+            </div>
+          }
         </div>
       </div>
-      <div class="ml-1 col-md-12 mb-3" [ngClass]="compForm.contact_person.length? 'mt-3': ''">
-        <button class="light-button" type="button" (click)="compForm.contact_person.push({dial_code: defdial_code});">
-          <span class="material-symbols-rounded">add</span> ADD ANOTHER
-        </button>
-      </div>
-
-      <!-- Designation -->
-      <div class="col-md-12 mt-3 mb-3">
-        <h6 class="dark-font">APPROVED DESIGNATIONS</h6>
-      </div>
-      <div class="col-md-6 mb-2" *ngFor="let y of compForm.designation; let j=index;">
-        <div class="card card-in-card p-3">
-          <div class="row d-flex">
-            <div *ngIf="compForm.designation?.length>1">
-              <span (click)="compForm.designation.splice(j, 1);" class="material-icons float-right round-btn-icon ab-item-close top5">close</span>
-            </div>
-            <div class="col-md-12 form-group">
-              <label class="light-font fw-500">Name</label>
-              <input type="text" name="designation_name{{j}}" class="form-control" [(ngModel)]="y.name" required />
+    }
+    <form autocomplete="off" (ngSubmit)="onSubmit()" ngNativeValidate>
+      <div class="row">
+        <div class="col-md-6 form-group mb-3">
+          <label>Name</label>
+          <input type="text" name="name" class="form-control" [(ngModel)]="compForm.name" required />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control" [(ngModel)]="compForm.email" required />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>GST Number</label>
+          <input type="text" name="gst_no" class="form-control" [(ngModel)]="compForm.gst_no" maxlength="15" appNoSplChar />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Website</label>
+          <input type="text" name="website" class="form-control" [(ngModel)]="compForm.website" />
+        </div>
+        <!-- address -->
+        <div class="col-md-12 mt-3 mb-3">
+          <h6 class="dark-font">ADDRESS DETAILS</h6>
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Address Line 1</label>
+          <input type="text" name="address_line_1" class="form-control" [(ngModel)]="compForm.address_line_1" required />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Address Line 2</label>
+          <input type="text" name="address_line_2" class="form-control" [(ngModel)]="compForm.address_line_2" />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Country</label>
+          <select name="country" class="form-control" [(ngModel)]="compForm.country" (change)="onCountryChange(compForm.country);" required>
+            @for (x of commonService.country_list | orderAsc: 'name'; track x) {
+              <option [ngValue]="x.name">
+                {{x.name}}
+              </option>
+            }
+          </select>
+        </div>
+        <div  class="col-md-6 form-group mb-3">
+          <label>State</label>
+          @if (state_list.length) {
+            <select name="state" class="form-control" [(ngModel)]="compForm.state" #state="ngModel" required>
+              @for (x of state_list | orderAsc: 'name'; track x) {
+                <option [ngValue]="x.name">{{x.name}}</option>
+              }
+            </select>
+          }
+          @if (!state_list.length) {
+            <input type="text" name="state" class="form-control" [(ngModel)]="compForm.state" required />
+          }
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>City</label>
+          <input type="text" name="city" class="form-control" [(ngModel)]="compForm.city" required />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label>Pincode</label>
+          <input type="text" name="pincode" class="form-control" [(ngModel)]="compForm.pincode" required />
+        </div>
+        <!-- contact person -->
+        <div class="col-md-12 mt-3 mb-3">
+          <h6 class="dark-font">CONTACT PERSONS</h6>
+        </div>
+        @for (x of compForm.contact_person; track x; let i = $index) {
+          <div class="col-md-6 mb-3">
+            <div class="card card-in-card p-3">
+              <div class="row d-flex">
+                @if (compForm.contact_person?.length>1) {
+                  <div>
+                    <span (click)="compForm.contact_person.splice(i, 1);" class="material-icons float-right round-btn-icon ab-item-close top5">close</span>
+                  </div>
+                }
+                <div class="col-md-6 form-group mb-3">
+                  <label class="light-font fw-500">Name</label>
+                  <input type="text" name="name{{i}}" class="form-control" [(ngModel)]="x.name" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label class="light-font fw-500">Email</label>
+                  <input type="text" name="email{{i}}" class="form-control" [(ngModel)]="x.email"  required />
+                </div>
+                <div class="col-md-12 form-group mb-3">
+                  <label class="light-font fw-500">Designation</label>
+                  <input type="text" name="designation{{i}}" class="form-control" [(ngModel)]="x.designation" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label class="light-font fw-500">Dial Code</label>
+                  <select name="dial_code{{i}}" class="form-control" [(ngModel)]="x.dial_code" required>
+                    @for (x of commonService.country_list | orderAsc: 'dial_code'; track x) {
+                      <option [ngValue]="x.dial_code">
+                        {{x.dial_code}}
+                      </option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label class="light-font fw-500">Mobile</label>
+                  <input type="tel" name="mobile{{i}}" class="form-control" [(ngModel)]="x.mobile" appNumberOnly required />
+                </div>
+              </div>
             </div>
           </div>
+        }
+        <div class="ml-1 col-md-12 mb-3" [ngClass]="compForm.contact_person.length? 'mt-3': ''">
+          <button class="light-button" type="button" (click)="compForm.contact_person.push({dial_code: defdial_code});">
+            <span class="material-symbols-rounded">add</span> ADD ANOTHER
+          </button>
+        </div>
+        <!-- Designation -->
+        <div class="col-md-12 mt-3 mb-3">
+          <h6 class="dark-font">APPROVED DESIGNATIONS</h6>
+        </div>
+        @for (y of compForm.designation; track y; let j = $index) {
+          <div class="col-md-6 mb-2">
+            <div class="card card-in-card p-3">
+              <div class="row d-flex">
+                @if (compForm.designation?.length>1) {
+                  <div>
+                    <span (click)="compForm.designation.splice(j, 1);" class="material-icons float-right round-btn-icon ab-item-close top5">close</span>
+                  </div>
+                }
+                <div class="col-md-12 form-group">
+                  <label class="light-font fw-500">Name</label>
+                  <input type="text" name="designation_name{{j}}" class="form-control" [(ngModel)]="y.name" required />
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        <div class="ml-1 col-md-12 mb-3" [ngClass]="compForm.designation.length? 'mt-3': ''">
+          <button class="light-button" type="button" (click)="compForm.designation.push({});">
+            <span class="material-symbols-rounded">add</span> ADD ANOTHER
+          </button>
         </div>
       </div>
-      <div class="ml-1 col-md-12 mb-3" [ngClass]="compForm.designation.length? 'mt-3': ''">
-        <button class="light-button" type="button" (click)="compForm.designation.push({});">
-          <span class="material-symbols-rounded">add</span> ADD ANOTHER
-        </button>
+      <div class="separator-breadcrumb border-top mt-5"></div>
+      <div class="row">
+        @if (compForm.errorMsg) {
+          <div class="col-md-12 mt-3 mb-3">
+            <p class="text-danger" align="center">{{ compForm.errorMsg }}</p>
+          </div>
+        }
+        <div align="center" class="col-md-12 z-i-0">
+          <button type="button" routerLink="/setting/customers/companies" class="btn btn-wide black-outline-btn">
+            <span class="black-outline-txt">Cancel</span>
+          </button>&nbsp; &nbsp; &nbsp;
+          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="compForm.submit"
+            [ladda]="compForm.submit">
+            {{ (compForm?.form_type=='add')? 'Add': 'Update' }}
+          </button>
+        </div>
       </div>
-    </div>
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div class="col-md-12 mt-3 mb-3" *ngIf="compForm.errorMsg">
-        <p class="text-danger" align="center">{{ compForm.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" routerLink="/setting/customers/companies" class="btn btn-wide black-outline-btn">
-          <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="compForm.submit"
-          [ladda]="compForm.submit">
-          {{ (compForm?.form_type=='add')? 'Add': 'Update' }}
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>
+}
 
 
 <!-- Delete Modal -->
@@ -165,9 +189,11 @@
     <p>
       <strong>Are you sure you want to remove <span class="txt-grdint-highlight">"{{compForm.name}}"</span> company?</strong>
     </p>
-    <div *ngIf="errorMsg">
-      <p class="text-danger">{{ errorMsg }}</p>
-    </div>
+    @if (errorMsg) {
+      <div>
+        <p class="text-danger">{{ errorMsg }}</p>
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel')">

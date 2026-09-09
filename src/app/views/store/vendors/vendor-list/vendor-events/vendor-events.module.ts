@@ -13,7 +13,7 @@ import { VendorEventsComponent } from './vendor-events.component';
   imports: [
     SharedModule,
     TagInputModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     VendorEventsRoutingModule
   ]
 })

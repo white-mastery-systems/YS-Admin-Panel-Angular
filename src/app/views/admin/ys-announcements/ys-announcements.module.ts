@@ -12,7 +12,7 @@ import { YsAnnouncementsComponent } from './ys-announcements.component';
   ],
   imports: [
     AmazingTimePickerModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     SharedModule,
     YsAnnouncementsRoutingModule
   ]

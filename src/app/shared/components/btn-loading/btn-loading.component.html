@@ -1,15 +1,21 @@
 <!-- <button class="btn {{btnClass}}" [type]="type" [disabled]="loading" [ngClass]="{loading: loading}">
-  <div class="btn-spinner float-left" *ngIf="loading"></div>
-  <span *ngIf="!loading">  
-    <ng-content></ng-content>
-  </span>
-  <span *ngIf="loading">{{loadingText}}</span>
+<div class="btn-spinner float-left" *ngIf="loading"></div>
+<span *ngIf="!loading">
+  <ng-content></ng-content>
+</span>
+<span *ngIf="loading">{{loadingText}}</span>
 </button> -->
 <button class="btn {{btnClass}}" [type]="type" [disabled]="loading" [ngClass]="{loading: loading}">
   <!-- <div class="btn-spinner float-left" ></div> -->
-  <div class="pulse-spinner float-left" *ngIf="loading"></div>
-  <span *ngIf="!loading">
-    <ng-content></ng-content>
-  </span>
-  <span *ngIf="loading">{{loadingText}}</span>
+  @if (loading) {
+    <div class="pulse-spinner float-left"></div>
+  }
+  @if (!loading) {
+    <span>
+      <ng-content></ng-content>
+    </span>
+  }
+  @if (loading) {
+    <span>{{loadingText}}</span>
+  }
 </button>

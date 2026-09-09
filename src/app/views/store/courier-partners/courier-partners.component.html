@@ -1,7 +1,10 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-<div class="inner-dots" *ngIf="!commonService.desktop_device">
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
+@if (!commonService.desktop_device) {
+  <div class="inner-dots">
   <div class="add_but" (click)="
       cpForm = { form_type: 'add', metadata: {} };
       modalService.open(cpModal, {
@@ -9,32 +12,36 @@
         scrollable: true
       })
     ">
-    <span class="material-symbols-rounded">add</span>
-  </div>
-</div>
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="d-flex align-items-center">
-          <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-          <h1>{{ commonService.secondary_header }}</h1>
-        </div>
-      </div>
+      <span class="material-symbols-rounded">add</span>
     </div>
   </div>
-
-  <div class="top-filter-sec list-button">
-    <div class="row mb-4">
-      <div class="col-md-6 col-12">
-        <div class="form-group search_bar m-0">
-          <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
-          <div class="search_icon">
-            <span class="material-symbols-rounded">search</span>
+}
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{ commonService.secondary_header }}</h1>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-6 list-button d-flex justify-content-end" *ngIf="commonService.desktop_device">
+    }
+    <div class="top-filter-sec list-button">
+      <div class="row mb-4">
+        <div class="col-md-6 col-12">
+          <div class="form-group search_bar m-0">
+            <input type="text" name="search_bar" placeholder="Search" class="form-control" [(ngModel)]="search_bar" />
+            <div class="search_icon">
+              <span class="material-symbols-rounded">search</span>
+            </div>
+          </div>
+        </div>
+        @if (commonService.desktop_device) {
+          <div class="col-md-6 list-button d-flex justify-content-end">
         <button class="highbutton" type="button" (click)="
             cpForm = { form_type: 'add', metadata: {} };
             modalService.open(cpModal, {
@@ -42,56 +49,63 @@
               scrollable: true
             })
           ">
-          <span class="material-symbols-rounded">add</span>Add New
-        </button>
-      </div>
-      <!-- search box -->
-    </div>
-  </div>
-  <!-- DATA LIST -->
-
-  <div *ngIf="(list | fieldSearch : 'name' : search_bar)?.length" class="list-horizontal">
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-          <div class="col-md-6 col-6 first_col px-0 header-font">
-            <p class="w-100 w-sm-100">Name</p>
+              <span class="material-symbols-rounded">add</span>Add New
+            </button>
           </div>
-        </div>
-        <div *ngFor="
-            let x of list
+        }
+        <!-- search box -->
+      </div>
+    </div>
+    <!-- DATA LIST -->
+    @if ((list | fieldSearch : 'name' : search_bar)?.length) {
+      <div class="list-horizontal">
+        <div class="data-list-card-wrapper">
+          <div class="data-list-card-inner">
+            @if (commonService.desktop_device) {
+              <div class="list-item data-list-card">
+                <div class="col-md-6 col-6 first_col px-0 header-font">
+                  <p class="w-100 w-sm-100">Name</p>
+                </div>
+              </div>
+            }
+            @for (
+              x of list
               | fieldSearch : 'name' : search_bar
-              | paginate : { itemsPerPage: pageSize, currentPage: page };
-            let i = index
-          " class="list-item data-list-card" [@animate]="{
+              | paginate : { itemsPerPage: pageSize, currentPage: page }; track
+              x; let i = $index) {
+<div class="list-item data-list-card" [@animate]="{
             value: '*',
             params: { delay: i * 100 + 'ms', y: '50px' }
           }">
-          <div class="col-md-4 col-6 first_col px-0">
-            <p class="w-100 w-sm-100 dark-font">{{ x.name }}</p>
-          </div>
-          <div class="col-md-8 col-6">
-            <div class="row justify-content-end" [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
-              <button *ngIf="x.status != 'active'" [ngClass]="
+                <div class="col-md-4 col-6 first_col px-0">
+                  <p class="w-100 w-sm-100 dark-font">{{ x.name }}</p>
+                </div>
+                <div class="col-md-8 col-6">
+                  <div class="row justify-content-end" [ngClass]="commonService.desktop_device ? '' : 'more_icons'">
+                    @if (x.status != 'active') {
+<button [ngClass]="
                   commonService.desktop_device
                     ? 'light-button  mr-3'
                     : 'iconbutton'
                 " (click)="
                   cpForm = x; modalService.open(statusModal, { centered: true })
                 ">
-                <span class="material-symbols-rounded">visibility</span>
-                {{ commonService.desktop_device ? "Enable" : "" }}
-              </button>
-              <button *ngIf="x.status == 'active'" [ngClass]="
+                        <span class="material-symbols-rounded">visibility</span>
+                        {{ commonService.desktop_device ? "Enable" : "" }}
+                      </button>
+                    }
+                    @if (x.status == 'active') {
+<button [ngClass]="
                   commonService.desktop_device
                     ? 'light-button  mr-3'
                     : 'iconbutton'
                 " (click)="
                   cpForm = x; modalService.open(statusModal, { centered: true })
                 ">
-                <span class="material-symbols-rounded">visibility_off</span>
-                {{ commonService.desktop_device ? "Disable" : "" }}
-              </button>
+                        <span class="material-symbols-rounded">visibility_off</span>
+                        {{ commonService.desktop_device ? "Disable" : "" }}
+                      </button>
+                    }
               <button [ngClass]="
                   commonService.desktop_device
                     ? 'light-button  mr-3'
@@ -100,42 +114,45 @@
                   deleteForm = x;
                   modalService.open(deleteModal, { centered: true })
                 ">
-                <span class="material-symbols-rounded">delete</span>
-                {{ commonService.desktop_device ? "Remove" : "" }}
-              </button>
+                      <span class="material-symbols-rounded">delete</span>
+                      {{ commonService.desktop_device ? "Remove" : "" }}
+                    </button>
               <button [ngClass]="
                   commonService.desktop_device ? 'light-button' : 'iconbutton'
                 " (click)="onEdit(x, cpModal)">
-                <span class="material-symbols-rounded right_arrow transicon">{{
-                  commonService.desktop_device
-                  ? "visibility"
-                  : "chevron_right"
-                  }}
-                </span>
-                {{ commonService.desktop_device ? "View" : "" }}
-              </button>
-            </div>
+                      <span class="material-symbols-rounded right_arrow transicon">{{
+                        commonService.desktop_device
+                        ? "visibility"
+                        : "chevron_right"
+                        }}
+                      </span>
+                      {{ commonService.desktop_device ? "View" : "" }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- PAGINATION CONTROL -->
+        <div class="row">
+          <div class="col-md-12 mt-3">
+            <pagination-controls (pageChange)="page = $event; commonService.pageTop(0)" autoHide="true" responsive="true"
+            maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- PAGINATION CONTROL -->
-    <div class="row">
-      <div class="col-md-12 mt-3">
-        <pagination-controls (pageChange)="page = $event; commonService.pageTop(0)" autoHide="true" responsive="true"
-          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+    }
+    @if (!(list | fieldSearch : 'name' : search_bar)?.length) {
+      <div class="row">
+        <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+          <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
+          <p align="center">No data to display</p>
+        </div>
       </div>
-    </div>
+    }
   </div>
-
-  <div *ngIf="!(list | fieldSearch : 'name' : search_bar)?.length" class="row">
-    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
-      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records" />
-      <p align="center">No data to display</p>
-    </div>
-  </div>
-</div>
+}
 
 <!-- COURIER PARTNER MODAL -->
 <ng-template #cpModal let-modal>
@@ -147,218 +164,246 @@
           {{ cpForm.form_type == "add" ? "Add" : "Update" }}
         </h4>
       </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body px-0">
-        <div class="form-group mb-0">
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>Type</label>
-              <select name="name" class="form-control select-arrow" [(ngModel)]="cpForm.name" required
-                [disabled]="cpForm.form_type != 'add'">
-                <option value="">-- Select --</option>
-                <option *ngIf="commonService.store_details?.country == 'India'" value="Delhivery">
-                  Delhivery
-                </option>
-                <option value="DHL">DHL</option>
-                <option value="DHL INDIA">DHL INDIA</option>
-                <option value="Aramex">Aramex</option>
-                <option *ngIf="commonService.store_details?.country != 'India'" value="Shippo">
-                  Shippo
-                </option>
-                <option *ngIf="commonService.store_details?.country == 'Ghana'" value="EMS">
-                  EMS
-                </option>
-                <option *ngIf="commonService.store_details?.country == 'Ghana'" value="Speedaf">
-                  Speedaf
-                </option>
-              </select>
-            </div>
-            <ng-container *ngIf="cpForm.name">
-              <div *ngIf="cpForm.name != 'Shippo'" class="col-md-12 form-group mb-3">
-                <label>Mode</label>
-                <select name="mode" class="form-control select-arrow" [(ngModel)]="cpForm.mode" required>
-                  <option *ngIf="commonService.host_name == 'localhost'" value="test">
-                    Test
-                  </option>
-                  <option value="live">Live</option>
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body px-0">
+          <div class="form-group mb-0">
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Type</label>
+                <select name="name" class="form-control select-arrow" [(ngModel)]="cpForm.name" required
+                  [disabled]="cpForm.form_type != 'add'">
+                  <option value="">-- Select --</option>
+                  @if (commonService.store_details?.country == 'India') {
+                    <option value="Delhivery">
+                      Delhivery
+                    </option>
+                  }
+                  <option value="DHL">DHL</option>
+                  <option value="DHL INDIA">DHL INDIA</option>
+                  <option value="Aramex">Aramex</option>
+                  @if (commonService.store_details?.country != 'India') {
+                    <option value="Shippo">
+                      Shippo
+                    </option>
+                  }
+                  @if (commonService.store_details?.country == 'Ghana') {
+                    <option value="EMS">
+                      EMS
+                    </option>
+                  }
+                  @if (commonService.store_details?.country == 'Ghana') {
+                    <option value="Speedaf">
+                      Speedaf
+                    </option>
+                  }
                 </select>
               </div>
-              <div *ngIf="cpForm.name != 'Aramex' && cpForm.name != 'Speedaf'" class="col-md-12 form-group mb-3">
-                <label>{{ (cpForm.name == 'DHL INDIA')? 'Account Number': 'Token' }}</label>
-                <input type="text" name="dp_token" class="form-control" [(ngModel)]="cpForm.token" required />
-              </div>
-            </ng-container>
-            <!-- Delhivery -->
-            <div *ngIf="cpForm.name == 'Delhivery'" class="col-md-12 form-group mb-3">
-              <label>Pickup ID</label>
-              <input type="text" name="pickup_id" class="form-control" [(ngModel)]="cpForm.metadata.pickup_id"
-                required />
-            </div>
-            <!-- DHL -->
-            <div *ngIf="cpForm.name == 'DHL'" class="col-md-12 form-group mb-3">
-              <label>Account Number</label>
-              <input type="text" name="acc_number" class="form-control" [(ngModel)]="cpForm.metadata.acc_number"
-                required />
-            </div>
-            <!-- DHL INDIA -->
-            <ng-container *ngIf="cpForm.name == 'DHL INDIA'">
-              <div class="col-md-6 form-group mb-3">
-                <label>site ID</label>
-                <input type="text" name="site_id" class="form-control" [(ngModel)]="cpForm.metadata.site_id" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Password</label>
-                <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.password" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Bank Ad Code</label>
-                <input type="text" name="bank_ad_code" class="form-control" [(ngModel)]="cpForm.metadata.bank_ad_code" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Bank Acc No</label>
-                <input type="text" name="bank_acc_no" class="form-control" [(ngModel)]="cpForm.metadata.bank_acc_no" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>IEC No</label>
-                <input type="text" name="iec_no" class="form-control" [(ngModel)]="cpForm.metadata.iec_no" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>State Code</label>
-                <input type="text" name="state_code" class="form-control" [(ngModel)]="cpForm.metadata.state_code" required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Address</label>
-                <input type="text" name="address" class="form-control" [(ngModel)]="cpForm.metadata.address" required />
-              </div>
-            </ng-container>
-            <!-- EMS (Ghana post) -->
-            <ng-container *ngIf="cpForm.name == 'EMS'">
-              <div class="col-md-12 form-group mb-3">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" [(ngModel)]="cpForm.metadata.username"
-                  required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Password</label>
-                <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.password"
-                  required />
-              </div>
-            </ng-container>
-            <!-- Speedaf (Ghana post) -->
-            <ng-container *ngIf="cpForm.name == 'Speedaf'">
-              <div class="col-md-12 form-group mb-3">
-                <label>App Code</label>
-                <input type="text" name="app_code" class="form-control" [(ngModel)]="cpForm.metadata.app_code" required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Customer Code</label>
-                <input type="text" name="customer_code" class="form-control" [(ngModel)]="cpForm.metadata.customer_code" required />
-              </div>
-              <div class="col-md-12 form-group mb-3">
-                <label>Secret Key</label>
-                <input type="text" name="secret_key" class="form-control" [(ngModel)]="cpForm.metadata.secret_key" required />
-              </div>
-            </ng-container>
-            <!-- ARAMEX -->
-            <ng-container *ngIf="cpForm.name == 'Aramex'">
-              <div class="col-md-12 form-group mb-3">
-                <label>UserName</label>
-                <input type="text" name="username" class="form-control" [(ngModel)]="cpForm.metadata.UserName"
-                  required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Password</label>
-                <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.Password"
-                  required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Version</label>
-                <input type="text" name="version" class="form-control" [(ngModel)]="cpForm.metadata.Version" required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Account Number</label>
-                <input type="text" name="acc_no" class="form-control" [(ngModel)]="cpForm.metadata.AccountNumber"
-                  required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Account Pin</label>
-                <input type="text" name="acc_pin" class="form-control" [(ngModel)]="cpForm.metadata.AccountPin"
-                  required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Account Entity</label>
-                <input type="text" name="acc_entity" class="form-control" [(ngModel)]="cpForm.metadata.AccountEntity"
-                  required />
-              </div>
-              <div class="col-md-6 form-group mb-3">
-                <label>Account Country Code</label>
-                <input type="text" name="country_code" class="form-control"
-                  [(ngModel)]="cpForm.metadata.AccountCountryCode" required />
-              </div>
-            </ng-container>
-          </div>
-        </div>
-        <div *ngIf="cpForm.errorMsg">
-          <p class="text-danger">{{ cpForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click')">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="cpForm.submit"
-          [ladda]="cpForm.submit">
-          {{ cpForm.form_type == "add" ? "Add" : "Update" }}
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+              @if (cpForm.name) {
+                @if (cpForm.name != 'Shippo') {
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Mode</label>
+                    <select name="mode" class="form-control select-arrow" [(ngModel)]="cpForm.mode" required>
+                      @if (commonService.host_name == 'localhost') {
+                        <option value="test">
+                          Test
+                        </option>
+                      }
+                      <option value="live">Live</option>
+                    </select>
+                  </div>
+                }
+                @if (cpForm.name != 'Aramex' && cpForm.name != 'Speedaf') {
+                  <div class="col-md-12 form-group mb-3">
+                    <label>{{ (cpForm.name == 'DHL INDIA')? 'Account Number': 'Token' }}</label>
+                    <input type="text" name="dp_token" class="form-control" [(ngModel)]="cpForm.token" required />
+                  </div>
+                }
+              }
+              <!-- Delhivery -->
+              @if (cpForm.name == 'Delhivery') {
+                <div class="col-md-12 form-group mb-3">
+                  <label>Pickup ID</label>
+                  <input type="text" name="pickup_id" class="form-control" [(ngModel)]="cpForm.metadata.pickup_id"
+                    required />
+                  </div>
+                }
+                <!-- DHL -->
+                @if (cpForm.name == 'DHL') {
+                  <div class="col-md-12 form-group mb-3">
+                    <label>Account Number</label>
+                    <input type="text" name="acc_number" class="form-control" [(ngModel)]="cpForm.metadata.acc_number"
+                      required />
+                    </div>
+                  }
+                  <!-- DHL INDIA -->
+                  @if (cpForm.name == 'DHL INDIA') {
+                    <div class="col-md-6 form-group mb-3">
+                      <label>site ID</label>
+                      <input type="text" name="site_id" class="form-control" [(ngModel)]="cpForm.metadata.site_id" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Password</label>
+                      <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.password" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Bank Ad Code</label>
+                      <input type="text" name="bank_ad_code" class="form-control" [(ngModel)]="cpForm.metadata.bank_ad_code" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>Bank Acc No</label>
+                      <input type="text" name="bank_acc_no" class="form-control" [(ngModel)]="cpForm.metadata.bank_acc_no" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>IEC No</label>
+                      <input type="text" name="iec_no" class="form-control" [(ngModel)]="cpForm.metadata.iec_no" required />
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                      <label>State Code</label>
+                      <input type="text" name="state_code" class="form-control" [(ngModel)]="cpForm.metadata.state_code" required />
+                    </div>
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Address</label>
+                      <input type="text" name="address" class="form-control" [(ngModel)]="cpForm.metadata.address" required />
+                    </div>
+                  }
+                  <!-- EMS (Ghana post) -->
+                  @if (cpForm.name == 'EMS') {
+                    <div class="col-md-12 form-group mb-3">
+                      <label>Username</label>
+                      <input type="text" name="username" class="form-control" [(ngModel)]="cpForm.metadata.username"
+                        required />
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label>Password</label>
+                        <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.password"
+                          required />
+                        </div>
+                      }
+                      <!-- Speedaf (Ghana post) -->
+                      @if (cpForm.name == 'Speedaf') {
+                        <div class="col-md-12 form-group mb-3">
+                          <label>App Code</label>
+                          <input type="text" name="app_code" class="form-control" [(ngModel)]="cpForm.metadata.app_code" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Customer Code</label>
+                          <input type="text" name="customer_code" class="form-control" [(ngModel)]="cpForm.metadata.customer_code" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Secret Key</label>
+                          <input type="text" name="secret_key" class="form-control" [(ngModel)]="cpForm.metadata.secret_key" required />
+                        </div>
+                      }
+                      <!-- ARAMEX -->
+                      @if (cpForm.name == 'Aramex') {
+                        <div class="col-md-12 form-group mb-3">
+                          <label>UserName</label>
+                          <input type="text" name="username" class="form-control" [(ngModel)]="cpForm.metadata.UserName"
+                            required />
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Password</label>
+                            <input type="text" name="password" class="form-control" [(ngModel)]="cpForm.metadata.Password"
+                              required />
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                              <label>Version</label>
+                              <input type="text" name="version" class="form-control" [(ngModel)]="cpForm.metadata.Version" required />
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                              <label>Account Number</label>
+                              <input type="text" name="acc_no" class="form-control" [(ngModel)]="cpForm.metadata.AccountNumber"
+                                required />
+                              </div>
+                              <div class="col-md-6 form-group mb-3">
+                                <label>Account Pin</label>
+                                <input type="text" name="acc_pin" class="form-control" [(ngModel)]="cpForm.metadata.AccountPin"
+                                  required />
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                  <label>Account Entity</label>
+                                  <input type="text" name="acc_entity" class="form-control" [(ngModel)]="cpForm.metadata.AccountEntity"
+                                    required />
+                                  </div>
+                                  <div class="col-md-6 form-group mb-3">
+                                    <label>Account Country Code</label>
+                                    <input type="text" name="country_code" class="form-control"
+                                      [(ngModel)]="cpForm.metadata.AccountCountryCode" required />
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                              @if (cpForm.errorMsg) {
+                                <div>
+                                  <p class="text-danger">{{ cpForm.errorMsg }}</p>
+                                </div>
+                              }
+                            </div>
+                          }
+                          <div class="modal-footer">
+                            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                              (click)="modal.dismiss('Cross click')">
+                              <span class="black-outline-txt">Cancel</span>
+                            </button>
+                            <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="cpForm.submit"
+                              [ladda]="cpForm.submit">
+                              {{ cpForm.form_type == "add" ? "Add" : "Update" }}
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </ng-template>
 
-<!-- STATUS MODAL -->
-<ng-template #statusModal let-modal>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure you want to
-        {{ cpForm.status == "active" ? "disable" : "enable" }} the
-        <span class="txt-grdint-highlight">"{{ cpForm.name }}"</span>?</strong>
-    </p>
-    <div *ngIf="cpForm.errorMsg">
-      <p class="text-danger">{{ cpForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onUpdateStatus()" class="btn btn-wide orng-outline-btn ladda-button m-1"
-      [disabled]="cpForm.submit" [ladda]="cpForm.submit">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+                    <!-- STATUS MODAL -->
+                    <ng-template #statusModal let-modal>
+                      <div class="modal-body">
+                        <p class="mt-3">
+                          <strong>Are you sure you want to
+                            {{ cpForm.status == "active" ? "disable" : "enable" }} the
+                            <span class="txt-grdint-highlight">"{{ cpForm.name }}"</span>?</strong>
+                          </p>
+                          @if (cpForm.errorMsg) {
+                            <div>
+                              <p class="text-danger">{{ cpForm.errorMsg }}</p>
+                            </div>
+                          }
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                            <span class="black-outline-txt">No</span>
+                          </button>
+                          <button type="button" (click)="onUpdateStatus()" class="btn btn-wide orng-outline-btn ladda-button m-1"
+                            [disabled]="cpForm.submit" [ladda]="cpForm.submit">
+                            <span class="orng-outline-txt">Yes</span>
+                          </button>
+                        </div>
+                      </ng-template>
 
-<!-- DELETE MODAL -->
-<ng-template #deleteModal let-modal>
-  <div class="modal-body">
-    <p class="mt-3">
-      <strong>Are you sure you want to remove
-        <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>?</strong>
-    </p>
-    <div *ngIf="deleteForm.errorMsg">
-      <p class="text-danger">{{ deleteForm.errorMsg }}</p>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
-      <span class="black-outline-txt">No</span>
-    </button>
-    <button type="button" (click)="onDelete()" class="btn btn-wide orng-outline-btn ladda-button m-1"
-      [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
-      <span class="orng-outline-txt">Yes</span>
-    </button>
-  </div>
-</ng-template>
+                      <!-- DELETE MODAL -->
+                      <ng-template #deleteModal let-modal>
+                        <div class="modal-body">
+                          <p class="mt-3">
+                            <strong>Are you sure you want to remove
+                              <span class="txt-grdint-highlight">"{{ deleteForm.name }}"</span>?</strong>
+                            </p>
+                            @if (deleteForm.errorMsg) {
+                              <div>
+                                <p class="text-danger">{{ deleteForm.errorMsg }}</p>
+                              </div>
+                            }
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click')">
+                              <span class="black-outline-txt">No</span>
+                            </button>
+                            <button type="button" (click)="onDelete()" class="btn btn-wide orng-outline-btn ladda-button m-1"
+                              [disabled]="deleteForm.submit" [ladda]="deleteForm.submit">
+                              <span class="orng-outline-txt">Yes</span>
+                            </button>
+                          </div>
+                        </ng-template>

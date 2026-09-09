@@ -12,7 +12,7 @@ import { AdManagementComponent } from './ad-management.component';
     SharedModule,
     AdManagementRoutingModule,
     AmazingTimePickerModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

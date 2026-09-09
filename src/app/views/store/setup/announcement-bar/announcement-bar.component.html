@@ -1,165 +1,185 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>{{commonService.secondary_header}}</h1>          
-      </div>
-    </div>
-  </div>
-
+@if (pageLoader) {
   <div class="row">
-    <div class="col-md-8 form-group mb-3">
-      <div class="card card-in-card p-4 mb-3">
-        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
-          <div class="row">
-            <div class="form-group mb-3 col-md-12 d-flex justify-content-end align-items-center">
-              Enable <label class="switch"><input type="checkbox" name="announcebar_status" [(ngModel)]="app_setting.announcebar_status"
+    <app-spinner></app-spinner>
+  </div>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col-md-8 form-group mb-3">
+        <div class="card card-in-card p-4 mb-3">
+          <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+            <div class="row">
+              <div class="form-group mb-3 col-md-12 d-flex justify-content-end align-items-center">
+                Enable <label class="switch"><input type="checkbox" name="announcebar_status" [(ngModel)]="app_setting.announcebar_status"
                 (change)="!app_setting.announcebar_config? app_setting.announcebar_config={}: '';" #announcebar_status="ngModel" /><div></div>
               </label>
             </div>
             <!-- <div class="form-group mb-3 col-md-12">
-              <label class="checkbox checkbox-primary">
-                <input class="form-check-input" type="checkbox" name="announcebar_status" [(ngModel)]="app_setting.announcebar_status"
+            <label class="checkbox checkbox-primary">
+              <input class="form-check-input" type="checkbox" name="announcebar_status" [(ngModel)]="app_setting.announcebar_status"
                 (change)="!app_setting.announcebar_config? app_setting.announcebar_config={}: '';" #announcebar_status="ngModel">
                 <span>Enable</span>
                 <span class="checkmark"></span>
               </label>
             </div> -->
-            <ng-container *ngIf="app_setting.announcebar_config">
+            @if (app_setting.announcebar_config) {
               <div class="col-md-12 form-group mb-3">
                 <label>Content</label>
                 <input type="text" name="content" class="form-control"
                   [(ngModel)]="app_setting.announcebar_config.content" #content="ngModel" required />
-              </div>
-              <!-- timer -->
-              <div class="col-md-12 mb-3 border-top0"></div>
-              <div class="form-group mb-3 col-md-12 d-flex align-items-center justify-content-end">
-                Enable Timer <label class="switch"><input type="checkbox" name="timer" (change)="enableTimer();"
+                </div>
+                <!-- timer -->
+                <div class="col-md-12 mb-3 border-top0"></div>
+                <div class="form-group mb-3 col-md-12 d-flex align-items-center justify-content-end">
+                  Enable Timer <label class="switch"><input type="checkbox" name="timer" (change)="enableTimer();"
                   [(ngModel)]="app_setting.announcebar_config.timer" #timer="ngModel" /><div></div>
                 </label>
               </div>
               <!-- <div class="form-group mb-3 col-md-12 d-flex align-items-center">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="timer" (change)="enableTimer();"
-                    [(ngModel)]="app_setting.announcebar_config.timer" #timer="ngModel">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="timer" (change)="enableTimer();"
+                  [(ngModel)]="app_setting.announcebar_config.timer" #timer="ngModel">
                   <span>Enable Timer</span>
                   <span class="checkmark"></span>
                 </label>
               </div> -->
-              <ng-container *ngIf="app_setting.announcebar_config.timer">
+              @if (app_setting.announcebar_config.timer) {
                 <div class="col-md-12">
                   <p><b class="add-another">Note:</b> Use <b>TIMER</b> keyword in the above content to display the
-                    countdown</p>
-                </div>
-                <div class="col-6 form-group mb-3">
-                  <label>End Date</label>
-                  <input type="text" class="form-control" name="end_date" autocomplete="off"
-                    [(ngModel)]="app_setting.announcebar_config.end_date" [minDate]="curr_date" bsDatepicker
-                    [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
+                countdown</p>
+              </div>
+              <div class="col-6 form-group mb-3">
+                <label>End Date</label>
+                <input type="text" class="form-control" name="end_date" autocomplete="off"
+                  [(ngModel)]="app_setting.announcebar_config.end_date" [minDate]="curr_date" bsDatepicker
+                  [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" required readonly />
                 </div>
                 <div class="col-6 form-group mb-3">
                   <label>End Time</label>
                   <input type="text" name="end_time" class="form-control"
                     [(ngModel)]='app_setting.announcebar_config.end_time' (click)="timePicker();" required readonly />
-                </div>
-              </ng-container>
-              <div class="col-md-12 mb-3 border-top0"></div>
-              <!-- link -->
-              <div class="col-md-12 form-group mb-3">
-                <label class="checkbox checkbox-primary">
-                  <input class="form-check-input" type="checkbox" name="link_status"
-                    [(ngModel)]="app_setting.announcebar_config.link_status"
-                    (change)="app_setting.announcebar_config.link_type='category';" #link_status="ngModel">
-                  <span>Enable Link</span>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <ng-container *ngIf="app_setting.announcebar_config.link_status">
-                <div class="col-6 form-group mb-3">
-                  <label class="radio radio-primary">
-                    <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
-                      value="category">
-                    <span>Link to Catalog</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-6 form-group mb-3">
-                  <label class="radio radio-primary">
-                    <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
-                      value="product">
-                    <span>Link to Product</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-6 form-group mb-3">
-                  <label class="radio radio-primary">
-                    <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
-                      value="internal">
-                    <span>Link to Internal Link</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="col-6 form-group mb-3">
-                  <label class="radio radio-primary">
-                    <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
-                      value="external">
-                    <span>Link to External Link</span>
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div *ngIf="app_setting.announcebar_config.link_type=='category' || app_setting.announcebar_config.link_type=='product'" class="col-md-12 form-group mb-3">
-                  <label>{{app_setting.announcebar_config.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
-                  <select name="category_id" class="form-control select-arrow" [(ngModel)]="app_setting.announcebar_config.category_id" (change)="productList=[]" required>
-                    <option [ngValue]="x._id" *ngFor="let x of commonService.catalog_list | orderAsc: 'name'">{{x.name}}</option>
-                  </select>
-                </div>
-                <ng-container *ngIf="app_setting.announcebar_config.link_type=='product'">
-                  <div class="col-md-9 form-group mb-3">
-                    <input type="text" name="search_bar" placeholder="Search" class="form-control" (input)="productList=[]" [(ngModel)]="app_setting.announcebar_config.search_bar" />
                   </div>
-                  <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
-                    <button [disabled]="!app_setting.announcebar_config.category_id || app_setting.announcebar_config.search_bar?.length<3" type="button"
-                    (click)="searchProduct(app_setting.announcebar_config.category_id, app_setting.announcebar_config.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
-                  </div>
-                  <div class="col-md-12 form-group mb-3">
-                    <label>Link to Product
-                      <i *ngIf="searchLoader" class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
-                      <ng-container *ngIf="!searchLoader && app_setting.announcebar_config.category_id && app_setting.announcebar_config.search_bar?.length>=3">
-                        ({{productList.length}} products found)
-                      </ng-container>
+                }
+                <div class="col-md-12 mb-3 border-top0"></div>
+                <!-- link -->
+                <div class="col-md-12 form-group mb-3">
+                  <label class="checkbox checkbox-primary">
+                    <input class="form-check-input" type="checkbox" name="link_status"
+                      [(ngModel)]="app_setting.announcebar_config.link_status"
+                      (change)="app_setting.announcebar_config.link_type='category';" #link_status="ngModel">
+                      <span>Enable Link</span>
+                      <span class="checkmark"></span>
                     </label>
-                    <select name="product_id" class="form-control select-arrow" [(ngModel)]="app_setting.announcebar_config.product_id" required>
-                      <option [ngValue]="x._id"
-                        *ngFor="let x of productList;">{{x.name}}</option>
-                    </select>
                   </div>
-                </ng-container>
-                <div
-                  *ngIf="app_setting.announcebar_config.link_type=='internal' || app_setting.announcebar_config.link_type=='external'"
-                  class="col-md-12 form-group mb-3">
-                  <label
-                    *ngIf="app_setting.announcebar_config.link_type=='internal'">{{commonService.store_details?.base_url}}{{app_setting.announcebar_config.link}}</label>
-                  <label *ngIf="app_setting.announcebar_config.link_type=='external'">External Link</label>
-                  <input type="text" name="link" class="form-control" [(ngModel)]="app_setting.announcebar_config.link"
-                    #int_link="ngModel" required />
+                  @if (app_setting.announcebar_config.link_status) {
+                    <div class="col-6 form-group mb-3">
+                      <label class="radio radio-primary">
+                        <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
+                          value="category">
+                          <span>Link to Catalog</span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="col-6 form-group mb-3">
+                        <label class="radio radio-primary">
+                          <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
+                            value="product">
+                            <span>Link to Product</span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                        <div class="col-6 form-group mb-3">
+                          <label class="radio radio-primary">
+                            <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
+                              value="internal">
+                              <span>Link to Internal Link</span>
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="col-6 form-group mb-3">
+                            <label class="radio radio-primary">
+                              <input type="radio" name="link_type" [(ngModel)]="app_setting.announcebar_config.link_type"
+                                value="external">
+                                <span>Link to External Link</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </div>
+                            @if (app_setting.announcebar_config.link_type=='category' || app_setting.announcebar_config.link_type=='product') {
+                              <div class="col-md-12 form-group mb-3">
+                                <label>{{app_setting.announcebar_config.link_type=='category'? 'Link to Catalog': 'Catalogs'}}</label>
+                                <select name="category_id" class="form-control select-arrow" [(ngModel)]="app_setting.announcebar_config.category_id" (change)="productList=[]" required>
+                                  @for (x of commonService.catalog_list | orderAsc: 'name'; track x) {
+                                    <option [ngValue]="x._id">{{x.name}}</option>
+                                  }
+                                </select>
+                              </div>
+                            }
+                            @if (app_setting.announcebar_config.link_type=='product') {
+                              <div class="col-md-9 form-group mb-3">
+                                <input type="text" name="search_bar" placeholder="Search" class="form-control" (input)="productList=[]" [(ngModel)]="app_setting.announcebar_config.search_bar" />
+                              </div>
+                              <div class="col-md-3 form-group mb-3 d-flex justify-content-end">
+                                <button [disabled]="!app_setting.announcebar_config.category_id || app_setting.announcebar_config.search_bar?.length<3" type="button"
+                                (click)="searchProduct(app_setting.announcebar_config.category_id, app_setting.announcebar_config.search_bar);" class="btn search-btn btn-wide btn-primary">Search</button>
+                              </div>
+                              <div class="col-md-12 form-group mb-3">
+                                <label>Link to Product
+                                  @if (searchLoader) {
+                                    <i class="ml-1 fa fa-circle-o-notch fa-spin search-spin"></i>
+                                  }
+                                  @if (!searchLoader && app_setting.announcebar_config.category_id && app_setting.announcebar_config.search_bar?.length>=3) {
+                                    ({{productList.length}} products found)
+                                  }
+                                </label>
+                                <select name="product_id" class="form-control select-arrow" [(ngModel)]="app_setting.announcebar_config.product_id" required>
+                                  @for (x of productList; track x) {
+                                    <option [ngValue]="x._id"
+                                    >{{x.name}}</option>
+                                  }
+                                </select>
+                              </div>
+                            }
+                            @if (app_setting.announcebar_config.link_type=='internal' || app_setting.announcebar_config.link_type=='external') {
+                              <div
+                                class="col-md-12 form-group mb-3">
+                                @if (app_setting.announcebar_config.link_type=='internal') {
+                                  <label
+                                  >{{commonService.store_details?.base_url}}{{app_setting.announcebar_config.link}}</label>
+                                }
+                                @if (app_setting.announcebar_config.link_type=='external') {
+                                  <label>External Link</label>
+                                }
+                                <input type="text" name="link" class="form-control" [(ngModel)]="app_setting.announcebar_config.link"
+                                  #int_link="ngModel" required />
+                                </div>
+                              }
+                            }
+                          }
+                          @if (app_setting.errorMsg) {
+                            <div align="center" class="col-md-12 z-i-0">
+                              <p class="text-danger">{{ app_setting.errorMsg }}</p>
+                            </div>
+                          }
+                          <div align="center" class="col-md-12 z-i-0">
+                            <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
+                              Update
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
                 </div>
-              </ng-container>
-            </ng-container>
-            <div align="center" class="col-md-12 z-i-0" *ngIf="app_setting.errorMsg">
-              <p class="text-danger">{{ app_setting.errorMsg }}</p>
-            </div>
-            <div align="center" class="col-md-12 z-i-0">
-              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
-                Update
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+              </div>
+            }

@@ -1,27 +1,28 @@
 <div class="row poss-rel">
-  <div class="col-xl-6 col-md-5 col-12 d-flex align-items-end" *ngIf="deployInProgress">
-    <div class="row mb-0 align-items-end">
-      <div class="col-md-8 col-7 align-items-end mt-33">
-        <div class="welcome_card">
-          <h4>Welcome to yourstore</h4>
-          <p>Your automatic e-commerce website created in 5 easy steps</p>
+  @if (deployInProgress) {
+    <div class="col-xl-6 col-md-5 col-12 d-flex align-items-end">
+      <div class="row mb-0 align-items-end">
+        <div class="col-md-8 col-7 align-items-end mt-33">
+          <div class="welcome_card">
+            <h4>Welcome to yourstore</h4>
+            <p>Your automatic e-commerce website created in 5 easy steps</p>
+          </div>
         </div>
-      </div>
-
-      <div class="col-md-4 col-5 d-flex justify-content-end align-items-end">
-        <div class="container">
-          <div class="box">
-            <div class="chart" [attr.data-percent]="completedPercentage" data-scale-color="#000000">
-              <div class="h2">
-                <h2 class="dark-font text-dark">{{completedPercentage}}%</h2>
-                <p class="mb-0 text-dark">completed</p>
+        <div class="col-md-4 col-5 d-flex justify-content-end align-items-end">
+          <div class="container">
+            <div class="box">
+              <div class="chart" [attr.data-percent]="completedPercentage" data-scale-color="#000000">
+                <div class="h2">
+                  <h2 class="dark-font text-dark">{{completedPercentage}}%</h2>
+                  <p class="mb-0 text-dark">completed</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  }
   <div class="col-md-6 col-12 justify-content-center align-items-center mt-3 mt-md-0" [ngClass]="deployInProgress? 'col-xl-6 offset-xl-0 offset-md-1': ''">
     <div class="col-md-12 col-12 desktop_card">
       <div class="row d-flex">
@@ -30,30 +31,33 @@
           <h6 class="shop">
             <a href="{{commonService.store_details?.base_url}}" target="_blank"
               class="card-data-b-head text-decoration-unl mb-0">
-              {{baseUrl}} </a>
+            {{baseUrl}} </a>
           </h6>
         </div>
         <div class="d-inline-flex justify-content-end col-2 cursor" (click)="shareDomain(infoModal, false);">
           <button class="custom_button2">
             <span class="material-symbols-rounded">language</span>
-            <span>View</span><span *ngIf="commonService.desktop_device">&nbsp;Website</span>
-          </button>
-        </div>
+            <span>View</span>@if (commonService.desktop_device) {
+            <span>&nbsp;Website</span>
+          }
+        </button>
       </div>
-      <div class="row d-flex card-button align-items-center">
-        <div class="col-7 d-flex">
-          <button class="custom_button" (click)="commonService.getCoustomDomain();">{{ (baseUrl.indexOf('shop.yourstore.io')!=-1) ? 'Get Custom domain' : 'Domain Settings'}}</button>
-        </div>
-        <div class="col-5 d-flex justify-content-end align-items-end cursor poss-rel" style="color: #ffffff;"
-          (click)="shareDomain(infoModal, true); share=!share; commonService.copyLink=false;" >
-          <span class="material-symbols-rounded mb-0">send</span> &nbsp;Share Link
-        </div>
+    </div>
+    <div class="row d-flex card-button align-items-center">
+      <div class="col-7 d-flex">
+        <button class="custom_button" (click)="commonService.getCoustomDomain();">{{ (baseUrl.indexOf('shop.yourstore.io')!=-1) ? 'Get Custom domain' : 'Domain Settings'}}</button>
+      </div>
+      <div class="col-5 d-flex justify-content-end align-items-end cursor poss-rel" style="color: #ffffff;"
+        (click)="shareDomain(infoModal, true); share=!share; commonService.copyLink=false;" >
+        <span class="material-symbols-rounded mb-0">send</span> &nbsp;Share Link
       </div>
     </div>
   </div>
-  <div class="mt-2 shared" *ngIf="commonService.isDesktop && share">
+</div>
+@if (commonService.isDesktop && share) {
+  <div class="mt-2 shared">
     <div class="bubble_head"></div>
-    <div class="bubble_body"> 
+    <div class="bubble_body">
       <span (click)="commonService.onShare('facebook', ''); share=false;">
         <img src="assets/images/facebook.svg" alt="facebook">
         <p>Facebook</p>
@@ -64,7 +68,7 @@
       </span>
       <span (click)="commonService.onShare('twitter', ''); share=false;">
         <img src="assets/images/twitter.svg" alt="twitter">
-      <p>Twitter</p>
+        <p>Twitter</p>
       </span>
       <span (click)="commonService.onShare('copy_link', '');">
         <img src="assets/images/link.svg" alt="link">
@@ -72,140 +76,165 @@
       </span>
     </div>
   </div>
+}
 </div>
 
 <!-- deployment stages -->
-<div *ngIf="deployInProgress" class="row ml-0 mr-0 mt-4 mb-4">
-  <div class="col-md-12 p-0">
-
-    <div class="data-list-card-wrapper">
-      <div class="data-list-card-inner">
-        <div class="list-item data-list-card" *ngFor="let x of deployList; let i=index;">
-          <div class="col-xl-10 col-md-7 col-5 first_col px-0">
-            <p class="w-30 w-sm-100 m-b-0 font-weight-500">{{x.heading}} <span *ngIf="commonService.desktop_device && x.sub_heading" class="d-block light-font">{{x.sub_heading}}</span></p>
-            <p class="w-40 w-sm-100 m-b-0 pr-3" *ngIf="commonService.desktop_device">{{x.description}}</p>
-            <p class="w-30 w-sm-100 m-b-0 d-flex align-items-center light-font" *ngIf="commonService.desktop_device">
-              <i class="material-icons-outlined mr-1">timer</i> Estimate:{{x.duration}} min
-            </p>
-          </div>
-          <div class="col-xl-2 col-md-5 col-7">
-            <div class="row justify-content-end">
-              <button class="done_button mr-3" *ngIf="x.completed">
-                <span class="material-symbols-rounded">done</span> Done
-              </button>
-              <button class="pending_button mr-3" *ngIf="!x.completed">
-                Pending
-              </button>
-              <button [ngClass]="x.completed? 'view_button': 'startbtn'" type="button" (click)="routeChange();" [routerLink]="x.redirect">
-                <span [ngClass]="x.completed? 'black-outline-txt': ''" class="outline-primary-txt">{{ (x.completed)?
-                  'View': 'Start' }}</span>
-              </button>
+@if (deployInProgress) {
+  <div class="row ml-0 mr-0 mt-4 mb-4">
+    <div class="col-md-12 p-0">
+      <div class="data-list-card-wrapper">
+        <div class="data-list-card-inner">
+          @for (x of deployList; track x; let i = $index) {
+            <div class="list-item data-list-card">
+              <div class="col-xl-10 col-md-7 col-5 first_col px-0">
+                <p class="w-30 w-sm-100 m-b-0 font-weight-500">{{x.heading}} @if (commonService.desktop_device && x.sub_heading) {
+                  <span class="d-block light-font">{{x.sub_heading}}</span>
+                }</p>
+                @if (commonService.desktop_device) {
+                  <p class="w-40 w-sm-100 m-b-0 pr-3">{{x.description}}</p>
+                }
+                @if (commonService.desktop_device) {
+                  <p class="w-30 w-sm-100 m-b-0 d-flex align-items-center light-font">
+                    <i class="material-icons-outlined mr-1">timer</i> Estimate:{{x.duration}} min
+                  </p>
+                }
+              </div>
+              <div class="col-xl-2 col-md-5 col-7">
+                <div class="row justify-content-end">
+                  @if (x.completed) {
+                    <button class="done_button mr-3">
+                      <span class="material-symbols-rounded">done</span> Done
+                    </button>
+                  }
+                  @if (!x.completed) {
+                    <button class="pending_button mr-3">
+                      Pending
+                    </button>
+                  }
+                  <button [ngClass]="x.completed? 'view_button': 'startbtn'" type="button" (click)="routeChange();" [routerLink]="x.redirect">
+                    <span [ngClass]="x.completed? 'black-outline-txt': ''" class="outline-primary-txt">{{ (x.completed)?
+                    'View': 'Start' }}</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="show-more-data-list-card">
-          <div class="show-more-accordian">
-            <div id="accordionOne">
-              <div class="card acc-card">
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionOne">
-                  <div class="card-body p-0">
-                    <div class="data-list-card-wrapper py-0">
-                      <div class="data-list-card-inner">
-                        <div class="list-item data-list-card" *ngFor="let x of moreDeployList; let i=index;">
-                          <div class="col-xl-10 col-md-7 col-5 first_col px-0">
-                            <p class="w-30 w-sm-100 m-b-0 font-weight-500">{{x.heading}} <span *ngIf="commonService.desktop_device && x.sub_heading" class="d-block light-font">{{x.sub_heading}}</span></p>
-                            <p class="w-40 w-sm-100 m-b-0 pr-3" *ngIf="commonService.desktop_device">{{x.description}}</p>
-                            <p class="w-30 w-sm-100 m-b-0 d-flex align-items-center light-font" *ngIf="commonService.desktop_device">
-                              <i class="material-icons-outlined mr-1">timer</i> Estimate:{{x.duration}} min
-                            </p>
-                          </div>
-                          <div class="col-xl-2 col-md-5 col-7">
-                            <div class="row justify-content-end">
-                              <button class="done_button mr-3" *ngIf="x.completed">
-                                <span class="material-symbols-rounded">done</span> Done
-                              </button>
-                              <button class="pending_button mr-3" *ngIf="!x.completed">
-                                Pending
-                              </button>
-                              <button [ngClass]="x.completed? 'view_button': 'startbtn'" (click)="routeChange();" type="button"
-                                [routerLink]="x.redirect">
-                                <span [ngClass]="x.completed? 'black-outline-txt': ''" class="outline-primary-txt">{{
-                                  (x.completed)? 'View': 'Start' }}</span>
-                              </button>
+          }
+          <div class="show-more-data-list-card">
+            <div class="show-more-accordian">
+              <div id="accordionOne">
+                <div class="card acc-card">
+                  <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionOne">
+                    <div class="card-body p-0">
+                      <div class="data-list-card-wrapper py-0">
+                        <div class="data-list-card-inner">
+                          @for (x of moreDeployList; track x; let i = $index) {
+                            <div class="list-item data-list-card">
+                              <div class="col-xl-10 col-md-7 col-5 first_col px-0">
+                                <p class="w-30 w-sm-100 m-b-0 font-weight-500">{{x.heading}} @if (commonService.desktop_device && x.sub_heading) {
+                                  <span class="d-block light-font">{{x.sub_heading}}</span>
+                                }</p>
+                                @if (commonService.desktop_device) {
+                                  <p class="w-40 w-sm-100 m-b-0 pr-3">{{x.description}}</p>
+                                }
+                                @if (commonService.desktop_device) {
+                                  <p class="w-30 w-sm-100 m-b-0 d-flex align-items-center light-font">
+                                    <i class="material-icons-outlined mr-1">timer</i> Estimate:{{x.duration}} min
+                                  </p>
+                                }
+                              </div>
+                              <div class="col-xl-2 col-md-5 col-7">
+                                <div class="row justify-content-end">
+                                  @if (x.completed) {
+                                    <button class="done_button mr-3">
+                                      <span class="material-symbols-rounded">done</span> Done
+                                    </button>
+                                  }
+                                  @if (!x.completed) {
+                                    <button class="pending_button mr-3">
+                                      Pending
+                                    </button>
+                                  }
+                                  <button [ngClass]="x.completed? 'view_button': 'startbtn'" (click)="routeChange();" type="button"
+                                    [routerLink]="x.redirect">
+                                    <span [ngClass]="x.completed? 'black-outline-txt': ''" class="outline-primary-txt">{{
+                                    (x.completed)? 'View': 'Start' }}</span>
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                          }
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="card-header topborder" id="headingOne">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link collapsed w-100 p-0 m-0" data-toggle="collapse"
-                      data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                      Explore Optional Setup
-                      <span class="gray-icon-btn ml-3">
-                        <i class="material-icons">expand_more</i>
-                      </span>
-                    </button>
-                  </h5>
+                  <div class="card-header topborder" id="headingOne">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed w-100 p-0 m-0" data-toggle="collapse"
+                        data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        Explore Optional Setup
+                        <span class="gray-icon-btn ml-3">
+                          <i class="material-icons">expand_more</i>
+                        </span>
+                      </button>
+                    </h5>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
-
   </div>
-</div>
+}
 
 <!-- dashboard -->
-<div *ngIf="dispDashboard" class="mt-4"> 
-  <div class="row" [ngClass]="commonService.screen_width<=767 ? 'flex-column-reverse' : ''">
-    <div class="col-lg-6 col-md-6 mb-4">
-      <div class="card p-3 ">
-        
-        <div class="top-filter-sec">
-          <div class="row mb-2">
-            <div class="col-md-12 d-flex align-items-center mb-3"><h5 class="card-title mb-0">Filter</h5></div>
-            <div class="col-xl-6 col-md-12 col-12 poss-rel">
-              <div class="mb-0 ">
-                <select  name="type" class="form-control select-arrow" [(ngModel)]="filterForm.type"
-                  (change)="filterForm.type!='custom' ? onFilterChange(filterForm.type): ''">
-                  <option value="today">Today</option>
-                  <option value="yesterday">Yesterday</option>
-                  <option value="last_7_days">Last 7 days</option>
-                  <option value="last_30_days">Last 30 days</option>
-                  <option value="current_month">Current month</option>
-                  <option value="last_month">Last month</option>
-                  <option value="current_year">Current year</option>
-                  <option value="last_year">Last year</option>
-                  <option value="current_fin_year">Current financial year</option>
-                  <option value="last_fin_year">Last financial year</option>
-                  <option value="all_time">All time</option>
-                  <option value="custom">Custom</option>
-                </select>
-                <i class="material-icons-outlined mr-1 calender-icon">date_range</i>
+@if (dispDashboard) {
+  <div class="mt-4">
+    <div class="row" [ngClass]="commonService.screen_width<=767 ? 'flex-column-reverse' : ''">
+      <div class="col-lg-6 col-md-6 mb-4">
+        <div class="card p-3 ">
+          <div class="top-filter-sec">
+            <div class="row mb-2">
+              <div class="col-md-12 d-flex align-items-center mb-3"><h5 class="card-title mb-0">Filter</h5></div>
+              <div class="col-xl-6 col-md-12 col-12 poss-rel">
+                <div class="mb-0 ">
+                  <select  name="type" class="form-control select-arrow" [(ngModel)]="filterForm.type"
+                    (change)="filterForm.type!='custom' ? onFilterChange(filterForm.type): ''">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="last_7_days">Last 7 days</option>
+                    <option value="last_30_days">Last 30 days</option>
+                    <option value="current_month">Current month</option>
+                    <option value="last_month">Last month</option>
+                    <option value="current_year">Current year</option>
+                    <option value="last_year">Last year</option>
+                    <option value="current_fin_year">Current financial year</option>
+                    <option value="last_fin_year">Last financial year</option>
+                    <option value="all_time">All time</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                  <i class="material-icons-outlined mr-1 calender-icon">date_range</i>
+                </div>
               </div>
-            </div>
-            <div class="col-12 col-md-6 form-group poss-rel" *ngIf="filterForm.type=='custom'" [ngClass]="commonService.desktop_device? '': 'mt-3'">
-              <input type="text" placeholder="Select Date" class="form-control"  name="dates" [(ngModel)]="filterForm.dates" (ngModelChange)="getDashboardData();" bsDaterangepicker [bsConfig]="{  rangeInputFormat: 'DD/MM/YYYY' ,isAnimated: true, showWeekNumbers: false}" readonly>
-              <i class="material-icons-outlined mr-1 calender-icon">date_range</i>
-            </div>
-            <!-- <ng-container *ngIf="filterForm.type=='custom'">
+              @if (filterForm.type=='custom') {
+                <div class="col-12 col-md-6 form-group poss-rel" [ngClass]="commonService.desktop_device? '': 'mt-3'">
+                  <input type="text" placeholder="Select Date" class="form-control"  name="dates" [(ngModel)]="filterForm.dates" (ngModelChange)="getDashboardData();" bsDaterangepicker [bsConfig]="{  rangeInputFormat: 'DD/MM/YYYY' ,isAnimated: true, showWeekNumbers: false}" readonly>
+                  <i class="material-icons-outlined mr-1 calender-icon">date_range</i>
+                </div>
+              }
+              <!-- <ng-container *ngIf="filterForm.type=='custom'">
               <div class="col-12 col-md-6"></div>
               <div class="col-12 col-md-6 form-group mt-3 mb-3 poss-rel" >
                 <input type="text" placeholder="Select Date" class="form-control"  name="dates" [(ngModel)]="filterForm.dates" (ngModelChange)="getDashboardData();" bsDaterangepicker [bsConfig]="{  rangeInputFormat: 'DD/MM/YYYY' ,isAnimated: true, showWeekNumbers: false}">
                 <i class="material-icons-outlined mr-1 calender-icon">date_range</i>
               </div> -->
               <!-- <div class="col-md-6 col-6 mt-3">
-                <div class="form-group">
-                  <input type="text" placeholder="Select From Date" class="form-control" name="from_date" autocomplete="off"
-                    [(ngModel)]="filterForm.from_date" (ngModelChange)="filterForm.type='custom'; getDashboardData();"
-                    bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
+              <div class="form-group">
+                <input type="text" placeholder="Select From Date" class="form-control" name="from_date" autocomplete="off"
+                  [(ngModel)]="filterForm.from_date" (ngModelChange)="filterForm.type='custom'; getDashboardData();"
+                  bsDatepicker [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
                 </div>
               </div>
               <div class="col-md-6 col-6 mt-3">
@@ -214,559 +243,694 @@
                     [(ngModel)]="filterForm.to_date" (ngModelChange)="filterForm.type='custom'; getDashboardData();"
                     bsDatepicker [minDate]="filterForm.from_date"
                     [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD-MM-YYYY' }" readonly />
-                </div>
-              </div> -->
-            <!-- </ng-container> -->
+                  </div>
+                </div> -->
+              <!-- </ng-container> -->
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-6 col-md-6 d-flex mb-4">
-      <!-- whats new -->
-      <div class="whats-new-acc card w-100">
-        <div id="accordionTwo" class="h-100">
-          <div class="acc-card">
-            <div class="card-header p-3" id="headingTwo">
-              <h5 class="mb-0">
-                <button class="btn btn-link collapsed w-100 p-0 m-0" data-toggle="collapse" data-target="#collapseTwo"
-                  aria-expanded="false" aria-controls="collapseTwo">
-                  <div class="breadcrumb home-breadcrumb mb-0">
-                    <h1>
-                      What's New  
-                      <span class="mb-0 date-span">{{whats_new_list[whatsNewStep]?.date}}</span>
-                    </h1>
-                    <div class="home-headlines mt-2">
-                      <h4>Yourstore Version 3.0</h4>                   
+      <div class="col-lg-6 col-md-6 d-flex mb-4">
+        <!-- whats new -->
+        <div class="whats-new-acc card w-100">
+          <div id="accordionTwo" class="h-100">
+            <div class="acc-card">
+              <div class="card-header p-3" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed w-100 p-0 m-0" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="false" aria-controls="collapseTwo">
+                    <div class="breadcrumb home-breadcrumb mb-0">
+                      <h1>
+                        What's New
+                        <span class="mb-0 date-span">{{whats_new_list[whatsNewStep]?.date}}</span>
+                      </h1>
+                      <div class="home-headlines mt-2">
+                        <h4>Yourstore Version 3.0</h4>
+                      </div>
                     </div>
+                    <div class="d-flex align-items-center">
+                      <span class="learn-more-text">Learn more</span>
+                      <span class="gray-icon-btn ml-3">
+                        <i class="material-icons">expand_more</i>
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionTwo">
+                <div class="card-body p-3">
+                  <div class="row">
+                    @for (x of whats_new_list[whatsNewStep]?.steps; track x) {
+                      <div class="col-md-12 p-0 home-card-main">
+                        <div class="col-md-12">
+                          <div class="card home-card mb-3">
+                            <h5 class="card-title">{{x.title}}
+                              @if (x.badge) {
+                                <span class="badge badge-purple-background ml-2">{{x.badge}}</span>
+                              }
+                            </h5>
+                            <p [innerHtml]="x.description"></p>
+                          </div>
+                        </div>
+                      </div>
+                    }
                   </div>
-                  <div class="d-flex align-items-center">
-                    <span class="learn-more-text">Learn more</span>
-                    <span class="gray-icon-btn ml-3">
-                      <i class="material-icons">expand_more</i>
-                    </span>
-                  </div>
-                </button>
-              </h5>
-            </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionTwo">
-              <div class="card-body p-3">
-                <div class="row">
-                  <div *ngFor="let x of whats_new_list[whatsNewStep]?.steps;" class="col-md-12 p-0 home-card-main">
-                    <div class="col-md-12">
-                      <div class="card home-card mb-3">
-                        <h5 class="card-title">{{x.title}}
-                          <span *ngIf="x.badge" class="badge badge-purple-background ml-2">{{x.badge}}</span>
-                        </h5>
-                        <p [innerHtml]="x.description"></p>
+                  <!-- pagination -->
+                  <!-- <div class="separator mb-3"></div> -->
+                  <div class="row">
+                    <div class="col-md-6 offset-md-6">
+                      <div class="whats-new-pagination">
+                        <button type="button" (click)="whatsNewStep = whatsNewStep-1;" [disabled]="whatsNewStep<=1"
+                          class="btn btn-wide btn-primary mr-3">
+                          <i class="material-icons-outlined">chevron_left</i>
+                        </button>
+                        <button type="button" (click)="whatsNewStep = whatsNewStep+1;"
+                          [disabled]="whatsNewStep>=totalWhatsNewScreen" class="btn btn-wide btn-primary">
+                          <i class="material-icons-outlined">chevron_right</i>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-                <!-- pagination -->
-                <!-- <div class="separator mb-3"></div> -->
-                <div class="row">
-                  <div class="col-md-6 offset-md-6">
-                    <div class="whats-new-pagination">
-                      <button type="button" (click)="whatsNewStep = whatsNewStep-1;" [disabled]="whatsNewStep<=1"
-                        class="btn btn-wide btn-primary mr-3">
-                        <i class="material-icons-outlined">chevron_left</i>
-                      </button>
-                      <button type="button" (click)="whatsNewStep = whatsNewStep+1;"
-                        [disabled]="whatsNewStep>=totalWhatsNewScreen" class="btn btn-wide btn-primary">
-                        <i class="material-icons-outlined">chevron_right</i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <!-- cards -->
-    <div class="col-lg-6 mb-2" [ngClass]="(dashType=='enquiry')? 'col-lg-12': 'col-lg-6'">
-      <div class="row mx-0 h-100">
-        <div class="col-md-4 col-4 d-flex px-0 pr-2">
-          <div class="dashcard w-100">
-            <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-              <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-              <h4 *ngIf="!preLoader">{{order_details?.products}}</h4>
-            </div>
-            <div class="col-md-12 px-0">
-              <span class="material-symbols-rounded">upload</span>
-              <p>Uploads</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
-          <div class="dashcard w-100">
-            <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-              <i *ngIf="customerLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-              <h4 *ngIf="!customerLoader">{{customer_details?.total_customers}}</h4>
-            </div>
-            <div class="col-md-12 px-0">
-              <span class="material-symbols-rounded">person</span>
-              <p>New Signups</p>
-            </div>
-          </div>
-        </div>
-
-        <ng-container *ngIf="dashType!='enquiry'">
-          <div class="col-md-4 col-4 d-flex px-0 pl-2">
+    <div class="row">
+      <!-- cards -->
+      <div class="col-lg-6 mb-2" [ngClass]="(dashType=='enquiry')? 'col-lg-12': 'col-lg-6'">
+        <div class="row mx-0 h-100">
+          <div class="col-md-4 col-4 d-flex px-0 pr-2">
             <div class="dashcard w-100">
               <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                <i *ngIf="customerLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                <h4 *ngIf="!customerLoader">{{customer_details?.abandoned_count}}</h4>
-              </div>
-              <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-                <span class="material-symbols-rounded">remove_shopping_cart</span>
-                <p>Abandoned</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- for order -->
-          <ng-container *ngIf="dashType=='order'">
-            <div class="col-md-4 col-4 d-flex px-0 pr-2">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader">{{order_details?.order_list?.length}}</h4>
-                </div>
-                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-                  <span class="material-symbols-rounded">shopping_cart</span>
-                  <p>Total Orders</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader && order_details?.order_list?.length">{{ (order_details?.total_sales /
-                    order_details?.order_list?.length).toFixed(0) | number : '1.0-0' }}</h4>
-                  <h4 *ngIf="!preLoader && !order_details?.order_list?.length">0</h4>
-                </div>
-                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-                  <span class="material-symbols-rounded">all_out</span>
-                  <p>Avg Order</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 col-4 d-flex px-0 pl-2">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader">{{order_details?.total_sales | number : '1.0-0'}}</h4>
-                </div>
-                <div class="col-md-12 px-0">
-                  <span class="material-symbols-rounded">monetization_on</span>
-                  <p>Total Sales</p>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-
-          <!-- for quot -->
-          <ng-container *ngIf="dashType=='quot'">
-            <div class="col-md-4 col-4 d-flex px-0 pr-2">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader">{{order_details?.quot_list?.length}}</h4>
-                </div>
-                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-                  <span class="material-symbols-rounded">shopping_cart</span>
-                  <p>New Quotes</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader && order_details?.quot_list?.length">{{ (order_details?.total_sales /
-                    order_details?.quot_list?.length).toFixed(0) | number : '1.0-0' }}</h4>
-                  <h4 *ngIf="!preLoader && !order_details?.quot_list?.length">0</h4>
-                </div>
-                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-                  <span class="material-symbols-rounded">all_out</span>
-                  <p>Avg Value</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 col-4 d-flex px-0 pl-2">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader">{{order_details?.total_sales | number : '1.0-0'}}</h4>
-                </div>
-                <div class="col-md-12 px-0">
-                  <span class="material-symbols-rounded">monetization_on</span>
-                  <p>Total Value</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 col-4 d-flex px-0 pr-2">
-              <div class="dashcard w-100">
-                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                  <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                  <h4 *ngIf="!preLoader">{{order_details?.quot_orders | number : '1.0-0'}}</h4>
-                </div>
-                <div class="col-md-12 px-0">
-                  <span class="material-symbols-rounded">monetization_on</span>
-                  <p>Quote Converted</p>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-
-          <div *ngIf="commonService.desktop_device" class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
-            <div class="dashcard w-100">
-              <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                <h4 *ngIf="!preLoader">{{order_details?.total_revenue + order_details?.net_sales | number : '1.0-0'}}</h4>
+                @if (preLoader) {
+                  <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                }
+                @if (!preLoader) {
+                  <h4>{{order_details?.products}}</h4>
+                }
               </div>
               <div class="col-md-12 px-0">
-                <span class="material-symbols-rounded">monetization_on</span>
-                <p>Net Sales</p>
+                <span class="material-symbols-rounded">upload</span>
+                <p>Uploads</p>
               </div>
             </div>
           </div>
-        </ng-container>
-
-        <!-- for giftcard -->
-        <ng-container *ngIf="commonService.ys_features.indexOf('giftcard')!=-1 && commonService.desktop_device">
           <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
             <div class="dashcard w-100">
               <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                <h4 *ngIf="!preLoader">{{order_details?.gc_list?.length}}</h4>
+                @if (customerLoader) {
+                  <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                }
+                @if (!customerLoader) {
+                  <h4>{{customer_details?.total_customers}}</h4>
+                }
               </div>
               <div class="col-md-12 px-0">
-                <span class="material-symbols-rounded">redeem</span>
-                <p>Gift Card Orders</p>
+                <span class="material-symbols-rounded">person</span>
+                <p>New Signups</p>
               </div>
             </div>
           </div>
-
-          <div class="col-md-4 col-4 d-flex px-0 pl-2">
-            <div class="dashcard w-100">
-              <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-                <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                <h4 *ngIf="!preLoader">{{order_details?.gc_total_sales | number : '1.0-0'}}</h4>
-              </div>
-              <div class="col-md-12 px-0">
-                <span class="material-symbols-rounded">monetization_on</span>
-                <p>Total GC Sales</p>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-        <!-- for enquires -->
-        <div *ngIf="dashType=='enquiry'" class="col-md-4 col-4 d-flex px-0 pl-2">
-          <div class="dashcard w-100">
-            <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
-              <i *ngIf="customerLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-              <h4 *ngIf="!customerLoader">{{order_details?.enq_list?.length}}</h4>
-            </div>
-            <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
-              <span class="material-symbols-rounded">unknown_document</span>
-              <p>Total Enquiries</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Line Chart-->
-    <div class="col-xl-6 col-md-6 col-12 d-flex mb-2">
-      <div class="card w-100 h-100">
-        <div class="card-body">
-          <h5 class="card-title">
-            {{ (dashType=='quot')? 'Quote': (dashType=='order')? 'Order': 'Enquiry' }} Volume
-          </h5>
-          <div *ngIf="preLoader" class="d-flex justify-content-center">
-            <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
-          </div>
-          <ng-container *ngIf="!preLoader">
-            <div *ngIf="order_details?.order_list?.length || order_details?.quot_list?.length || order_details?.enq_list?.length">
-              <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis" [dataLabels]="chartOptions.dataLabels"
-              [grid]="chartOptions.grid" [stroke]="chartOptions.stroke" [title]="chartOptions.title" [fill]="chartOptions.fill"
-              [tooltip]="chartOptions.tooltip" [colors]="chartOptions.colors" [markers]="chartOptions.markers" ></apx-chart>
-            </div>
-            <div *ngIf="!order_details?.order_list?.length && !order_details?.quot_list?.length && !order_details?.enq_list?.length" class="d-flex align-items-center justify-content-center">
-              <p>No records found</p>
-            </div>
-          </ng-container>
-        </div>
-      </div>
-    </div>
-
-    <!-- list with pie chart -->
-    <div class="col-lg-6 col-md-12 d-flex" *ngIf="commonService.desktop_device && commonService.ys_features.indexOf('vendors')==-1">
-      <div class="card w-100 h-100">
-        <div class="card-body">
-          <h5 class="card-title">
-            {{ (dashType=='quot')? 'Quotes': (dashType=='order')? 'Orders': 'Enquiries' }}
-          </h5>
-          <div class="row">
-            <div class="col-md-12 mb-1">
-              <div class="data-list-card-wrapper">
-                <div class="data-list-card-inner">
-                  <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-                    <div class="col-md-8 col-6 first_col px-0 cursor header-font">
-                      <p class="w-35 w-sm-100 m-b-0">Status</p>
-                    </div>
-                    <div class="col-md-4 col-6 first_col align-items-center header-font px-0">
-                      <p class="w-35 w-sm-100 m-b-0">{{ (dashType=='enquiry')? 'Count': 'Quantity' }}</p>
-                    </div>
-                  </div>
-                  <!-- for order or quote -->
-                  <ng-container *ngIf="dashType!='enquiry'">
-                    <div class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Awaiting Confirmation</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.placed_orders}}</p>
-                      </div>
-                    </div>
-
-                    <div *ngIf="dashType=='quot'" class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Processing</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.processing_orders}}</p>
-                      </div>
-                    </div>
-
-                    <div class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Confirmed</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.confirmed_orders}}</p>
-                      </div>
-                    </div>
-
-                    <ng-container *ngIf="dashType=='order'">
-                      <div class="list-item data-list-card">
-                        <div class="col-md-8 col-6 first_col px-0 cursor">
-                          <p class="w-35 w-sm-100 m-b-0 dark-font">In Transit</p>
-                        </div>
-                        <div class="col-md-4 col-6 first_col align-items-center">
-                          <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                          <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.dispatched_orders}}</p>
-                        </div>
-                      </div>
-
-                      <div class="list-item data-list-card">
-                        <div class="col-md-8 col-6 first_col px-0 cursor">
-                          <p class="w-35 w-sm-100 m-b-0 dark-font">Completed</p>
-                        </div>
-                        <div class="col-md-4 col-6 first_col align-items-center">
-                          <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                          <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.completed_orders}}</p>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                    <div class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Cancelled</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.cancelled_orders}}</p>
-                      </div>
-                    </div>
-                    <div *ngIf="dashType=='order'" class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Payment Pending</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.pending_orders}}</p>
-                      </div>
-                    </div>
-                  </ng-container>
-
-                  <!-- for enquiry -->
-                  <ng-container *ngIf="dashType=='enquiry'">
-                    <div class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">New</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.new_enqs}}</p>
-                      </div>
-                    </div>
-                    <div class="list-item data-list-card">
-                      <div class="col-md-8 col-6 first_col px-0 cursor">
-                        <p class="w-35 w-sm-100 m-b-0 dark-font">Contacted</p>
-                      </div>
-                      <div class="col-md-4 col-6 first_col align-items-center">
-                        <i *ngIf="preLoader" class="fa fa-circle-o-notch fa-spin load-spin"></i>
-                        <p *ngIf="!preLoader" class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.contacted_enqs}}</p>
-                      </div>
-                    </div>
-                  </ng-container>
+          @if (dashType!='enquiry') {
+            <div class="col-md-4 col-4 d-flex px-0 pl-2">
+              <div class="dashcard w-100">
+                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                  @if (customerLoader) {
+                    <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                  }
+                  @if (!customerLoader) {
+                    <h4>{{customer_details?.abandoned_count}}</h4>
+                  }
+                </div>
+                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                  <span class="material-symbols-rounded">remove_shopping_cart</span>
+                  <p>Abandoned</p>
                 </div>
               </div>
             </div>
-            <div class="col-md-12 mt-3">
-              <div *ngIf="preLoader">
+            <!-- for order -->
+            @if (dashType=='order') {
+              <div class="col-md-4 col-4 d-flex px-0 pr-2">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.order_list?.length}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                    <span class="material-symbols-rounded">shopping_cart</span>
+                    <p>Total Orders</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader && order_details?.order_list?.length) {
+                      <h4>{{ (order_details?.total_sales /
+                      order_details?.order_list?.length).toFixed(0) | number : '1.0-0' }}</h4>
+                    }
+                    @if (!preLoader && !order_details?.order_list?.length) {
+                      <h4>0</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                    <span class="material-symbols-rounded">all_out</span>
+                    <p>Avg Order</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-4 d-flex px-0 pl-2">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.total_sales | number : '1.0-0'}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0">
+                    <span class="material-symbols-rounded">monetization_on</span>
+                    <p>Total Sales</p>
+                  </div>
+                </div>
+              </div>
+            }
+            <!-- for quot -->
+            @if (dashType=='quot') {
+              <div class="col-md-4 col-4 d-flex px-0 pr-2">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.quot_list?.length}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                    <span class="material-symbols-rounded">shopping_cart</span>
+                    <p>New Quotes</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader && order_details?.quot_list?.length) {
+                      <h4>{{ (order_details?.total_sales /
+                      order_details?.quot_list?.length).toFixed(0) | number : '1.0-0' }}</h4>
+                    }
+                    @if (!preLoader && !order_details?.quot_list?.length) {
+                      <h4>0</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                    <span class="material-symbols-rounded">all_out</span>
+                    <p>Avg Value</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-4 d-flex px-0 pl-2">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.total_sales | number : '1.0-0'}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0">
+                    <span class="material-symbols-rounded">monetization_on</span>
+                    <p>Total Value</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-4 d-flex px-0 pr-2">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.quot_orders | number : '1.0-0'}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0">
+                    <span class="material-symbols-rounded">monetization_on</span>
+                    <p>Quote Converted</p>
+                  </div>
+                </div>
+              </div>
+            }
+            @if (commonService.desktop_device) {
+              <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
+                <div class="dashcard w-100">
+                  <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                    @if (preLoader) {
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    }
+                    @if (!preLoader) {
+                      <h4>{{order_details?.total_revenue + order_details?.net_sales | number : '1.0-0'}}</h4>
+                    }
+                  </div>
+                  <div class="col-md-12 px-0">
+                    <span class="material-symbols-rounded">monetization_on</span>
+                    <p>Net Sales</p>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+          <!-- for giftcard -->
+          @if (commonService.ys_features.indexOf('giftcard')!=-1 && commonService.desktop_device) {
+            <div class="col-md-4 col-4 d-flex px-0 pr-1 pl-1">
+              <div class="dashcard w-100">
+                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                  @if (preLoader) {
+                    <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                  }
+                  @if (!preLoader) {
+                    <h4>{{order_details?.gc_list?.length}}</h4>
+                  }
+                </div>
+                <div class="col-md-12 px-0">
+                  <span class="material-symbols-rounded">redeem</span>
+                  <p>Gift Card Orders</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-4 d-flex px-0 pl-2">
+              <div class="dashcard w-100">
+                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                  @if (preLoader) {
+                    <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                  }
+                  @if (!preLoader) {
+                    <h4>{{order_details?.gc_total_sales | number : '1.0-0'}}</h4>
+                  }
+                </div>
+                <div class="col-md-12 px-0">
+                  <span class="material-symbols-rounded">monetization_on</span>
+                  <p>Total GC Sales</p>
+                </div>
+              </div>
+            </div>
+          }
+          <!-- for enquires -->
+          @if (dashType=='enquiry') {
+            <div class="col-md-4 col-4 d-flex px-0 pl-2">
+              <div class="dashcard w-100">
+                <div class="col-md-12 justify-content-end d-flex px-0" style="padding-top: 5px;">
+                  @if (customerLoader) {
+                    <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                  }
+                  @if (!customerLoader) {
+                    <h4>{{order_details?.enq_list?.length}}</h4>
+                  }
+                </div>
+                <div class="col-md-12 px-0" style="padding-bottom: 4px; padding-left:4px;">
+                  <span class="material-symbols-rounded">unknown_document</span>
+                  <p>Total Enquiries</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- Line Chart-->
+      <div class="col-xl-6 col-md-6 col-12 d-flex mb-2">
+        <div class="card w-100 h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ (dashType=='quot')? 'Quote': (dashType=='order')? 'Order': 'Enquiry' }} Volume
+            </h5>
+            @if (preLoader) {
+              <div class="d-flex justify-content-center">
                 <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
               </div>
-              <div *ngIf="!preLoader && pieChartStatus" class="align-items-center center">
-                <apx-chart [series]="piechartOptions.series" [chart]="piechartOptions.chart" [labels]="piechartOptions.labels"
-                [responsive]="piechartOptions.responsive" [colors]="piechartOptions.colors" [legend]="piechartOptions.legend"
-                [dataLabels]="piechartOptions.dataLabels" [plotOptions]="piechartOptions.plotOptions" ></apx-chart>
+            }
+            @if (!preLoader) {
+              @if (order_details?.order_list?.length || order_details?.quot_list?.length || order_details?.enq_list?.length) {
+                <div>
+                  <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis" [dataLabels]="chartOptions.dataLabels"
+                    [grid]="chartOptions.grid" [stroke]="chartOptions.stroke" [title]="chartOptions.title" [fill]="chartOptions.fill"
+                  [tooltip]="chartOptions.tooltip" [colors]="chartOptions.colors" [markers]="chartOptions.markers" ></apx-chart>
+                </div>
+              }
+              @if (!order_details?.order_list?.length && !order_details?.quot_list?.length && !order_details?.enq_list?.length) {
+                <div class="d-flex align-items-center justify-content-center">
+                  <p>No records found</p>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+      <!-- list with pie chart -->
+      @if (commonService.desktop_device && commonService.ys_features.indexOf('vendors')==-1) {
+        <div class="col-lg-6 col-md-12 d-flex">
+          <div class="card w-100 h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ (dashType=='quot')? 'Quotes': (dashType=='order')? 'Orders': 'Enquiries' }}
+              </h5>
+              <div class="row">
+                <div class="col-md-12 mb-1">
+                  <div class="data-list-card-wrapper">
+                    <div class="data-list-card-inner">
+                      @if (commonService.desktop_device) {
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor header-font">
+                            <p class="w-35 w-sm-100 m-b-0">Status</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center header-font px-0">
+                            <p class="w-35 w-sm-100 m-b-0">{{ (dashType=='enquiry')? 'Count': 'Quantity' }}</p>
+                          </div>
+                        </div>
+                      }
+                      <!-- for order or quote -->
+                      @if (dashType!='enquiry') {
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor">
+                            <p class="w-35 w-sm-100 m-b-0 dark-font">Awaiting Confirmation</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center">
+                            @if (preLoader) {
+                              <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                            }
+                            @if (!preLoader) {
+                              <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.placed_orders}}</p>
+                            }
+                          </div>
+                        </div>
+                        @if (dashType=='quot') {
+                          <div class="list-item data-list-card">
+                            <div class="col-md-8 col-6 first_col px-0 cursor">
+                              <p class="w-35 w-sm-100 m-b-0 dark-font">Processing</p>
+                            </div>
+                            <div class="col-md-4 col-6 first_col align-items-center">
+                              @if (preLoader) {
+                                <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                              }
+                              @if (!preLoader) {
+                                <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.processing_orders}}</p>
+                              }
+                            </div>
+                          </div>
+                        }
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor">
+                            <p class="w-35 w-sm-100 m-b-0 dark-font">Confirmed</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center">
+                            @if (preLoader) {
+                              <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                            }
+                            @if (!preLoader) {
+                              <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.confirmed_orders}}</p>
+                            }
+                          </div>
+                        </div>
+                        @if (dashType=='order') {
+                          <div class="list-item data-list-card">
+                            <div class="col-md-8 col-6 first_col px-0 cursor">
+                              <p class="w-35 w-sm-100 m-b-0 dark-font">In Transit</p>
+                            </div>
+                            <div class="col-md-4 col-6 first_col align-items-center">
+                              @if (preLoader) {
+                                <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                              }
+                              @if (!preLoader) {
+                                <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.dispatched_orders}}</p>
+                              }
+                            </div>
+                          </div>
+                          <div class="list-item data-list-card">
+                            <div class="col-md-8 col-6 first_col px-0 cursor">
+                              <p class="w-35 w-sm-100 m-b-0 dark-font">Completed</p>
+                            </div>
+                            <div class="col-md-4 col-6 first_col align-items-center">
+                              @if (preLoader) {
+                                <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                              }
+                              @if (!preLoader) {
+                                <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.completed_orders}}</p>
+                              }
+                            </div>
+                          </div>
+                        }
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor">
+                            <p class="w-35 w-sm-100 m-b-0 dark-font">Cancelled</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center">
+                            @if (preLoader) {
+                              <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                            }
+                            @if (!preLoader) {
+                              <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.cancelled_orders}}</p>
+                            }
+                          </div>
+                        </div>
+                        @if (dashType=='order') {
+                          <div class="list-item data-list-card">
+                            <div class="col-md-8 col-6 first_col px-0 cursor">
+                              <p class="w-35 w-sm-100 m-b-0 dark-font">Payment Pending</p>
+                            </div>
+                            <div class="col-md-4 col-6 first_col align-items-center">
+                              @if (preLoader) {
+                                <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                              }
+                              @if (!preLoader) {
+                                <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.pending_orders}}</p>
+                              }
+                            </div>
+                          </div>
+                        }
+                      }
+                      <!-- for enquiry -->
+                      @if (dashType=='enquiry') {
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor">
+                            <p class="w-35 w-sm-100 m-b-0 dark-font">New</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center">
+                            @if (preLoader) {
+                              <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                            }
+                            @if (!preLoader) {
+                              <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.new_enqs}}</p>
+                            }
+                          </div>
+                        </div>
+                        <div class="list-item data-list-card">
+                          <div class="col-md-8 col-6 first_col px-0 cursor">
+                            <p class="w-35 w-sm-100 m-b-0 dark-font">Contacted</p>
+                          </div>
+                          <div class="col-md-4 col-6 first_col align-items-center">
+                            @if (preLoader) {
+                              <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                            }
+                            @if (!preLoader) {
+                              <p class="w-35 w-sm-100 m-b-0 light-font">{{order_details?.contacted_enqs}}</p>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                  @if (preLoader) {
+                    <div>
+                      <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                    </div>
+                  }
+                  @if (!preLoader && pieChartStatus) {
+                    <div class="align-items-center center">
+                      <apx-chart [series]="piechartOptions.series" [chart]="piechartOptions.chart" [labels]="piechartOptions.labels"
+                        [responsive]="piechartOptions.responsive" [colors]="piechartOptions.colors" [legend]="piechartOptions.legend"
+                      [dataLabels]="piechartOptions.dataLabels" [plotOptions]="piechartOptions.plotOptions" ></apx-chart>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Top Customers -->
-    <div *ngIf="dashType!='enquiry'" class="col-xl-6 col-md-6 col-12 d-flex">
-      <div class="card w-100 h-100">
-        <div class="card-body">
-          <div class="card-title fw-500">Top Customers</div>
-          <div *ngIf="customerLoader" class="d-flex justify-content-center">
-            <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
-          </div>
-          <div *ngIf="!customerLoader">
-            <ng-container *ngIf="customer_details?.top_customers?.length">
-              <div class="data-list-card-wrapper">
-                <div class="data-list-card-inner">
-                  <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-                    <div class="col-md-9 col-9 first_col px-0 cursor header-font">
-                      <p class="w-40">Name</p>
-                      <p class="w-30">Items</p>
-                      <p class="w-30">Spent</p>
+      }
+      <!-- Top Customers -->
+      @if (dashType!='enquiry') {
+        <div class="col-xl-6 col-md-6 col-12 d-flex">
+          <div class="card w-100 h-100">
+            <div class="card-body">
+              <div class="card-title fw-500">Top Customers</div>
+              @if (customerLoader) {
+                <div class="d-flex justify-content-center">
+                  <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                </div>
+              }
+              @if (!customerLoader) {
+                <div>
+                  @if (customer_details?.top_customers?.length) {
+                    <div class="data-list-card-wrapper">
+                      <div class="data-list-card-inner">
+                        @if (commonService.desktop_device) {
+                          <div class="list-item data-list-card">
+                            <div class="col-md-9 col-9 first_col px-0 cursor header-font">
+                              <p class="w-40">Name</p>
+                              <p class="w-30">Items</p>
+                              <p class="w-30">Spent</p>
+                            </div>
+                          </div>
+                        }
+                        @for (x of customer_details.top_customers; track x) {
+                          <div class="list-item data-list-card type5-card">
+                            <div class="col-md-9 col-6 first_col px-0 cursor">
+                              <p class="w-40 w-sm-100 dark-font d-flex align-items-center">
+                                <span class="icons mr-2"><span class="material-symbols-rounded">person</span></span>
+                                {{x?.name}}
+                              </p>
+                              <p class="w-30 w-sm-100 light-font"><span class="paid_dot"></span> {{x.total_qty}} {{ (x.total_qty?.length>1)? 'items': 'item' }}</p>
+                              @if (commonService.desktop_device) {
+                                <p class="w-30 w-sm-100 light-font">{{x.total_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                              }
+                            </div>
+                            <div class="col-md-3 col-6 first_col">
+                              <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
+                                <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" [routerLink]="(x.user_type=='signup')? '/setting/customers/signup-user/'+x._id: '/setting/customers/guest-user/'+x._id">
+                                  <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
+                                </button>
+                                @if (!commonService.desktop_device) {
+                                  <p class="w-30 w-sm-100 light-font text-right fw-600">{{x.total_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
                     </div>
-                  </div>
-                  <div class="list-item data-list-card type5-card" *ngFor="let x of customer_details.top_customers;">
-                    <div class="col-md-9 col-6 first_col px-0 cursor">
-                      <p class="w-40 w-sm-100 dark-font d-flex align-items-center">
-                        <span class="icons mr-2"><span class="material-symbols-rounded">person</span></span> 
-                        {{x?.name}}
-                      </p>
-                      <p class="w-30 w-sm-100 light-font"><span class="paid_dot"></span> {{x.total_qty}} {{ (x.total_qty?.length>1)? 'items': 'item' }}</p>
-                      <p class="w-30 w-sm-100 light-font" *ngIf="commonService.desktop_device">{{x.total_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                  }
+                  @if (!customer_details?.top_customers?.length) {
+                    <div
+                      class="d-flex align-items-center justify-content-center">
+                      <p>No customers found</p>
                     </div>
-                    <div class="col-md-3 col-6 first_col">
-                      <div class="row justify-content-end" [ngClass]="commonService.desktop_device? '': 'more_icons'">
-                        <button [ngClass]="commonService.desktop_device? 'dark-button': 'iconbutton'" [routerLink]="(x.user_type=='signup')? '/setting/customers/signup-user/'+x._id: '/setting/customers/guest-user/'+x._id">
-                          <span class="material-symbols-rounded right_arrow transicon">{{commonService.desktop_device? 'visibility': 'chevron_right'}}</span> {{commonService.desktop_device? 'View': ''}}
-                        </button> 
-                        <p *ngIf="!commonService.desktop_device" class="w-30 w-sm-100 light-font text-right fw-600">{{x.total_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
-                      </div>            
-                    </div>
-                  </div>
-                </div>      
-              </div>
-              
-            </ng-container>
-            <div *ngIf="!customer_details?.top_customers?.length"
-              class="d-flex align-items-center justify-content-center">
-              <p>No customers found</p>
+                  }
+                </div>
+              }
             </div>
           </div>
-
         </div>
-      </div>
-    </div>
-
-    <!-- Top Vendors -->
-    <div *ngIf="commonService.store_details?.type=='multi_vendor'" class="col-xl-6 col-md-6 col-12 d-flex">
-      <div class="card w-100 h-100">
-        <div class="card-body">
-          <div class="card-title fw-500">Top Vendors</div>
-          <div *ngIf="preLoader" class="d-flex justify-content-center">
-            <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
-          </div>
-          <div *ngIf="!preLoader">
-            <ng-container *ngIf="order_details?.vendor_list?.length">
-              <div class="data-list-card-wrapper">
-                <div class="data-list-card-inner">
-                  <div class="list-item data-list-card" *ngIf="commonService.desktop_device">
-                    <div class="col-md-12 col-6 first_col px-0 cursor header-font">
-                      <p class="w-40">Name</p>
-                      <p class="w-30">Orders</p>
-                      <p class="w-30">Amount</p>
+      }
+      <!-- Top Vendors -->
+      @if (commonService.store_details?.type=='multi_vendor') {
+        <div class="col-xl-6 col-md-6 col-12 d-flex">
+          <div class="card w-100 h-100">
+            <div class="card-body">
+              <div class="card-title fw-500">Top Vendors</div>
+              @if (preLoader) {
+                <div class="d-flex justify-content-center">
+                  <i class="fa fa-circle-o-notch fa-spin load-spin"></i>
+                </div>
+              }
+              @if (!preLoader) {
+                <div>
+                  @if (order_details?.vendor_list?.length) {
+                    <div class="data-list-card-wrapper">
+                      <div class="data-list-card-inner">
+                        @if (commonService.desktop_device) {
+                          <div class="list-item data-list-card">
+                            <div class="col-md-12 col-6 first_col px-0 cursor header-font">
+                              <p class="w-40">Name</p>
+                              <p class="w-30">Orders</p>
+                              <p class="w-30">Amount</p>
+                            </div>
+                          </div>
+                        }
+                        @for (x of order_details.vendor_list | numOrderDesc:'value' | paginate: { itemsPerPage: 4, currentPage: vendorPage }; track x) {
+                          <div class="list-item data-list-card type5-card">
+                            <div class="col-md-12 col-6 first_col px-0 cursor">
+                              <p class="w-40 w-sm-100 dark-font d-flex align-items-center">
+                                <span class="icons mr-2"><span class="material-symbols-rounded">person</span></span>
+                                {{x?.name}}
+                              </p>
+                              <p class="w-30 w-sm-100 light-font"><span class="paid_dot"></span> {{x.orders}} {{ (x.orders>1)? 'orders': 'order' }}</p>
+                              @if (commonService.desktop_device) {
+                                <p class="w-30 w-sm-100 light-font">{{x.value | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                              }
+                            </div>
+                          </div>
+                        }
+                        <!-- PAGINATION CONTROL -->
+                        <div class="col-md-12 pt-1 pb-1">
+                          <pagination-controls (pageChange)="vendorPage=$event;" autoHide="true" responsive="true" maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="list-item data-list-card type5-card" *ngFor="let x of order_details.vendor_list | numOrderDesc:'value' | paginate: { itemsPerPage: 4, currentPage: vendorPage };">
-                    <div class="col-md-12 col-6 first_col px-0 cursor">
-                      <p class="w-40 w-sm-100 dark-font d-flex align-items-center">
-                        <span class="icons mr-2"><span class="material-symbols-rounded">person</span></span> 
-                        {{x?.name}}
-                      </p>
-                      <p class="w-30 w-sm-100 light-font"><span class="paid_dot"></span> {{x.orders}} {{ (x.orders>1)? 'orders': 'order' }}</p>
-                      <p class="w-30 w-sm-100 light-font" *ngIf="commonService.desktop_device">{{x.value | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
+                  }
+                  @if (!order_details?.vendor_list?.length) {
+                    <div class="d-flex align-items-center justify-content-center">
+                      <p>No vendors found</p>
                     </div>
-                  </div>
-                  <!-- PAGINATION CONTROL -->
-                  <div class="col-md-12 pt-1 pb-1">
-                    <pagination-controls (pageChange)="vendorPage=$event;" autoHide="true" responsive="true" maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
-                  </div>
-                </div>      
-              </div>
-              
-            </ng-container>
-            <div *ngIf="!order_details?.vendor_list?.length" class="d-flex align-items-center justify-content-center">
-              <p>No vendors found</p>
+                  }
+                </div>
+              }
             </div>
           </div>
-
         </div>
-      </div>
+      }
     </div>
   </div>
-</div>
+}
 
 <div class="row mt-2 mb-2 analytics-main" [ngClass]="promotions.length>3 ? 'mar-m25' : ''">
   <div class="col-md-12 analytics_image">
-    <div class="analytics-scroll"> 
-      <ng-container *ngIf="promotions.length<=3 && commonService.desktop_device">
-        <div class="col-md-4 py-3 cursor" *ngFor="let x of promotions;">    
-          <img (click)="onRedirect(x);" src="{{imageBaseUrl+x.image}}" alt="">    
+    <div class="analytics-scroll">
+      @if (promotions.length<=3 && commonService.desktop_device) {
+        @for (x of promotions; track x) {
+          <div class="col-md-4 py-3 cursor">
+            <img (click)="onRedirect(x);" src="{{imageBaseUrl+x.image}}" alt="">
+          </div>
+        }
+      }
+      @if (promotions.length>3 || !commonService.desktop_device) {
+        <div class="d-flex px-3 py-3">
+          @for (x of promotions; track x) {
+            <img (click)="onRedirect(x);" src="{{imageBaseUrl+x.image}}" alt="" class="mx-2 img-width-scroll">
+          }
         </div>
-      </ng-container>
-      <div *ngIf="promotions.length>3 || !commonService.desktop_device" class="d-flex px-3 py-3">
-        <ng-container *ngFor="let x of promotions;">
-          <img (click)="onRedirect(x);" src="{{imageBaseUrl+x.image}}" alt="" class="mx-2 img-width-scroll">
-        </ng-container>              
-      </div>
-    </div>  
+      }
+    </div>
   </div>
 </div>
 
 <!-- <div class="row shoructs_buttons" style="margin-bottom:32px;" *ngIf="commonService.desktop_device">
-  <div class="col-6 d-flex justify-content-center px-0" >
-    <div class="btnstyle">
-      <button>Expert store setup</button>
-    </div>
+<div class="col-6 d-flex justify-content-center px-0" >
+  <div class="btnstyle">
+    <button>Expert store setup</button>
   </div>
-  <div class="col-6 d-flex justify-content-center px-0" >
-    <div class="btnstyle">
-      <button>Professional Theme</button>
-    </div>
+</div>
+<div class="col-6 d-flex justify-content-center px-0" >
+  <div class="btnstyle">
+    <button>Professional Theme</button>
   </div>
+</div>
 </div> -->
 
 <div class="row">
@@ -779,51 +943,53 @@
         <div class="col-md-12 p-0 card-tricks">
           <div class="col-md-12">
             <div class="home-card">
-              <h5 class="card-title mb-1"><b>Tips & Tricks</b></h5> 
-              
+              <h5 class="card-title mb-1"><b>Tips & Tricks</b></h5>
+
               <!--Accordion-->
               <div class="row ml-0 mr-0 mt-3">
                 <div class="col-md-12 p-0">
-                    <div class="col-md-12 px-0" *ngFor="let x of tipsList; let i=index;" [ngClass]="x.bdr_bottom?'bdrbottom':''">             
+                  @for (x of tipsList; track x; let i = $index) {
+                    <div class="col-md-12 px-0" [ngClass]="x.bdr_bottom?'bdrbottom':''">
                       <div id="accordion">
                         <div class="card0 acc-card">
                           <div class="py-3" id="tipshead">
-                                <div class="row m-0 tricks">
-                                  <div class="col-11 px-0 d-flex align-items-start justify-content-center flex-column">
-                                    <h6>{{x.heading}}</h6>
-                                    <p class="mb-0" [ngClass]="!x.tips_expand?'parafirst':'paranormal'">{{x.description}}</p>   
-                                  </div>
-                                  <div class="col-1 pr-0 d-flex justify-content-end" (click)="x.tips_expand=!x.tips_expand">
-                                    <span class="expand-btn">
-                                      <i class="material-icons-two-tone" [ngStyle]="{'transform': !x.tips_expand? '': 'rotate(180deg)' }">
-                                        expand_more
-                                      </i>
-                                    </span>
-                                  </div>
-                                </div>
-                          </div>       
-                        </div>  
+                            <div class="row m-0 tricks">
+                              <div class="col-11 px-0 d-flex align-items-start justify-content-center flex-column">
+                                <h6>{{x.heading}}</h6>
+                                <p class="mb-0" [ngClass]="!x.tips_expand?'parafirst':'paranormal'">{{x.description}}</p>
+                              </div>
+                              <div class="col-1 pr-0 d-flex justify-content-end" (click)="x.tips_expand=!x.tips_expand">
+                                <span class="expand-btn">
+                                  <i class="material-icons-two-tone" [ngStyle]="{'transform': !x.tips_expand? '': 'rotate(180deg)' }">
+                                    expand_more
+                                  </i>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>                 
+                    </div>
+                  }
                 </div>
               </div>
               <!--#Accordion-->
-  
-              
-              
+
+
+
             </div>
           </div>
         </div>
       </div>
     </div>
-     
-</div>
 
-<div class="col-md-6 cursor" routerLink="/enquiry/marketing-automation">
-  <div class="dashboard-desk h-100">     
-      <img src="assets/images/marketing.png" alt="">  
-  </div>  
-</div>
+  </div>
+
+  <div class="col-md-6 cursor" routerLink="/enquiry/marketing-automation">
+    <div class="dashboard-desk h-100">
+      <img src="assets/images/marketing.png" alt="">
+    </div>
+  </div>
 
 </div>
 

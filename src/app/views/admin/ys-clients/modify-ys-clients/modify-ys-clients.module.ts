@@ -10,7 +10,7 @@ import { ModifyYsClientsComponent } from './modify-ys-clients.component';
   imports: [
     SharedModule,
     ModifyYsClientsRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 

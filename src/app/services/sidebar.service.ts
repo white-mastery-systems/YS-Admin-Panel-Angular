@@ -17,6 +17,7 @@ export interface IMenuItem {
 	sub?: IChildItem[]; // Dropdown items
 	badges?: IBadge[];
 	active?: boolean;
+  expand?: boolean;
   hidden_routes?: any[];
 }
 

@@ -1,5 +1,5 @@
 <div>
-  <ng-container *ngIf="commonService.desktop_device">
+  @if (commonService.desktop_device) {
     <div class="breadcrumb with-back-btn">
       <div class="row">
         <div class="col-md-12">
@@ -7,7 +7,7 @@
         </div>
       </div>
     </div>
-  </ng-container>
+  }
 
 
   <div class="row">
@@ -24,12 +24,14 @@
                 (click)="onEdit(storeModal);">
                 <span class="material-symbols-rounded">edit</span> {{commonService.desktop_device? 'Edit': ''}}
               </button>
-              <button *ngIf="commonService.store_details.login_type=='admin'"
-                [ngClass]="commonService.desktop_device? 'dark-button mx-3': 'iconbutton mr-3'"
-                (click)="pwdForm={}; modalService.open(changePwdModal,  {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-                <span class="material-symbols-rounded">lock</span> {{commonService.desktop_device? 'Change Password':
-                ''}}
-              </button>
+              @if (commonService.store_details.login_type=='admin') {
+                <button
+                  [ngClass]="commonService.desktop_device? 'dark-button mx-3': 'iconbutton mr-3'"
+                  (click)="pwdForm={}; modalService.open(changePwdModal,  {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+                  <span class="material-symbols-rounded">lock</span> {{commonService.desktop_device? 'Change Password':
+                  ''}}
+                </button>
+              }
             </div>
             <!-- <i (click)="onEdit(storeModal);" class="material-icons edit-icon">edit</i> -->
           </div>
@@ -40,27 +42,31 @@
           <p>{{commonService.store_details?.gst_no}}</p>
           <p>{{commonService.store_details?.company_details?.contact_person}}</p>
           <p>{{commonService.store_details?.company_details?.dial_code}}
-            {{commonService.store_details?.company_details?.mobile}}</p>
+          {{commonService.store_details?.company_details?.mobile}}</p>
           <p>{{commonService.store_details?.company_details?.address}}</p>
           <p class="mb-0">{{addressInfo.join(', ')}}.</p>
         </div>
       </div>
     </div>
 
-    <div *ngIf="!account_deact" class="col-md-10 d-flex justify-content-end mt-3">
-      <button class="light-button" (click)="openDeactivate(deactivestore);">
-        <span class="material-symbols-rounded mb-0">dangerous</span>Deactivate Store
-      </button>
-    </div>
+    @if (!account_deact) {
+      <div class="col-md-10 d-flex justify-content-end mt-3">
+        <button class="light-button" (click)="openDeactivate(deactivestore);">
+          <span class="material-symbols-rounded mb-0">dangerous</span>Deactivate Store
+        </button>
+      </div>
+    }
 
-    <div class="col-md-10 d-flex justify-content-end mt-3" *ngIf="account_deact">
-      <div class="badge-alert success-badge-alert mb-3">
-        <div class="badge-alert-inner">
-          <i class="material-icons"></i>
-          <span>Your account will be deleted within 48hrs. Thank you for using Yourstore!</span>
+    @if (account_deact) {
+      <div class="col-md-10 d-flex justify-content-end mt-3">
+        <div class="badge-alert success-badge-alert mb-3">
+          <div class="badge-alert-inner">
+            <i class="material-icons"></i>
+            <span>Your account will be deleted within 48hrs. Thank you for using Yourstore!</span>
+          </div>
         </div>
       </div>
-    </div>
+    }
 
   </div>
 
@@ -77,265 +83,295 @@
         </h4>
       </div>
 
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label>Store Name</label>
-              <input type="text" name="store_name" class="form-control" [(ngModel)]="storeData.name"
-                #store_name="ngModel" required />
-            </div>
-            <div class="col-md-6">
-              <ng-container *ngIf="commonService.store_details?.enable_reset">
-                <label>Category</label>
-                <select name="type" class="form-control select-arrow" [(ngModel)]="storeData.category" required>
-                  <option [ngValue]="x.name" *ngFor="let x of commonService.store_categories;">{{x.display}}</option>
-                </select>
-              </ng-container>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Company Name</label>
-              <input type="text" name="company_name" class="form-control" [(ngModel)]="storeData.company_details.name"
-                #company_name="ngModel" required />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>GST Number</label>
-              <input type="text" name="gst_no" class="form-control" [(ngModel)]="storeData.gst_no" #gst_no="ngModel" />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Contact Person</label>
-              <input type="text" name="contact_person" class="form-control"
-                [(ngModel)]="storeData.company_details.contact_person" #contact_person="ngModel" required />
-            </div>
-            <div class="col-lg-6 form-group mb-3">
-              <div class="input-group flex-nowrap align-items-center">
-                <div class="input-group-prepend flex-column w-35 w-sm-80">
-                  <label>Dial Code</label>
-                  <select name="dial_code" class="form-control" [(ngModel)]="storeData.company_details.dial_code"
-                    #dial_code="ngModel" required>
-                    <option *ngFor="let x of commonService.country_list | orderAsc: 'name';" [ngValue]="x.dial_code">
-                      {{x.dial_code}}
-                    </option>
-                  </select>
+      @if (popupLoader) {
+        <div class="modal-body">
+          <app-popup-spinner></app-popup-spinner>
+        </div>
+      }
+      @if (!popupLoader) {
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6 form-group mb-3">
+                <label>Store Name</label>
+                <input type="text" name="store_name" class="form-control" [(ngModel)]="storeData.name"
+                  #store_name="ngModel" required />
                 </div>
-                <div class="flex-column w-45 w-sm-100 ml-3">
-                  <label>Mobile</label>
-                  <input type="tel" name="mobile" class="form-control" [(ngModel)]="storeData.company_details.mobile"
-                    #mobile="ngModel" appNumberOnly required />
+                <div class="col-md-6">
+                  @if (commonService.store_details?.enable_reset) {
+                    <label>Category</label>
+                    <select name="type" class="form-control select-arrow" [(ngModel)]="storeData.category" required>
+                      @for (x of commonService.store_categories; track x) {
+                        <option [ngValue]="x.name">{{x.display}}</option>
+                      }
+                    </select>
+                  }
                 </div>
-              </div>
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>Complete Address</label>
-              <textarea name="address" [(ngModel)]="storeData.company_details.address" #address="ngModel"
-                class="form-control" required></textarea>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Country</label>
-              <input type="text" name="country" class="form-control" [(ngModel)]="storeData.country" #country="ngModel"
-                disabled />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>State</label>
-              <input *ngIf="!state_list.length" type="text" name="state" class="form-control"
-                [(ngModel)]="storeData.company_details.state" #state="ngModel" required />
-              <select *ngIf="state_list.length" name="state" class="form-control"
-                [(ngModel)]="storeData.company_details.state" #state="ngModel" required>
-                <option *ngFor="let x of state_list | orderAsc: 'name';" [ngValue]="x.name">{{x.name}}</option>
-              </select>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>City</label>
-              <input type="text" name="city" class="form-control" [(ngModel)]="storeData.company_details.city"
-                #city="ngModel" />
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label>Pincode</label>
-              <input type="text" name="pincode" class="form-control" [(ngModel)]="storeData.company_details.pincode"
-                #pincode="ngModel" />
-            </div>
-          </div>
-        </div>
-        <div *ngIf="storeData.errorMsg">
-          <p class="text-danger">{{ storeData.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="storeData.submit"
-          [ladda]="storeData.submit">
-          Update
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Company Name</label>
+                  <input type="text" name="company_name" class="form-control" [(ngModel)]="storeData.company_details.name"
+                    #company_name="ngModel" required />
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label>GST Number</label>
+                    <input type="text" name="gst_no" class="form-control" [(ngModel)]="storeData.gst_no" #gst_no="ngModel" />
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label>Contact Person</label>
+                    <input type="text" name="contact_person" class="form-control"
+                      [(ngModel)]="storeData.company_details.contact_person" #contact_person="ngModel" required />
+                    </div>
+                    <div class="col-lg-6 form-group mb-3">
+                      <div class="input-group flex-nowrap align-items-center">
+                        <div class="input-group-prepend flex-column w-35 w-sm-80">
+                          <label>Dial Code</label>
+                          <select name="dial_code" class="form-control" [(ngModel)]="storeData.company_details.dial_code"
+                            #dial_code="ngModel" required>
+                            @for (x of commonService.country_list | orderAsc: 'name'; track x) {
+                              <option [ngValue]="x.dial_code">
+                                {{x.dial_code}}
+                              </option>
+                            }
+                          </select>
+                        </div>
+                        <div class="flex-column w-45 w-sm-100 ml-3">
+                          <label>Mobile</label>
+                          <input type="tel" name="mobile" class="form-control" [(ngModel)]="storeData.company_details.mobile"
+                            #mobile="ngModel" appNumberOnly required />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 form-group mb-3">
+                        <label>Complete Address</label>
+                        <textarea name="address" [(ngModel)]="storeData.company_details.address" #address="ngModel"
+                        class="form-control" required></textarea>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label>Country</label>
+                        <input type="text" name="country" class="form-control" [(ngModel)]="storeData.country" #country="ngModel"
+                          disabled />
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label>State</label>
+                          @if (!state_list.length) {
+                            <input type="text" name="state" class="form-control"
+                              [(ngModel)]="storeData.company_details.state" #state="ngModel" required />
+                          }
+                          @if (state_list.length) {
+                            <select name="state" class="form-control"
+                              [(ngModel)]="storeData.company_details.state" #state="ngModel" required>
+                              @for (x of state_list | orderAsc: 'name'; track x) {
+                                <option [ngValue]="x.name">{{x.name}}</option>
+                              }
+                            </select>
+                          }
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label>City</label>
+                          <input type="text" name="city" class="form-control" [(ngModel)]="storeData.company_details.city"
+                            #city="ngModel" />
+                          </div>
+                          <div class="col-md-6 form-group mb-3">
+                            <label>Pincode</label>
+                            <input type="text" name="pincode" class="form-control" [(ngModel)]="storeData.company_details.pincode"
+                              #pincode="ngModel" />
+                            </div>
+                          </div>
+                        </div>
+                        @if (storeData.errorMsg) {
+                          <div>
+                            <p class="text-danger">{{ storeData.errorMsg }}</p>
+                          </div>
+                        }
+                      </div>
+                    }
+                    <div class="modal-footer">
+                      <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                        (click)="modal.dismiss('Cross click');">
+                        <span class="black-outline-txt">Cancel</span>
+                      </button>
+                      <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="storeData.submit"
+                        [ladda]="storeData.submit">
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </ng-template>
 
-<!-- change pwd modal -->
-<ng-template #changePwdModal let-modal>
-  <form autocomplete="off" (ngSubmit)="onChangePwd();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>
-          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-          <span class="popup_text">Change Password</span>
-        </h4>
-      </div>
+              <!-- change pwd modal -->
+              <ng-template #changePwdModal let-modal>
+                <form autocomplete="off" (ngSubmit)="onChangePwd();" ngNativeValidate ngbAutofocus>
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4>
+                        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                        <span class="popup_text">Change Password</span>
+                      </h4>
+                    </div>
 
-      <div class="modal-body px-0">
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>Current Password</label>
-              <input type="text" name="current_pwd" class="form-control" [(ngModel)]="pwdForm.current_pwd" required />
-            </div>
-            <div class="col-md-12 form-group mb-3">
-              <label>New Password</label>
-              <div class="custom-input-prepend-append-group">
-                <input [type]="pwdForm.input_txt? 'text': 'password'" name="new_pwd" class="form-control"
-                  (input)="pwdForm.errorMsg=null;" style="padding: 10px;" [(ngModel)]="pwdForm.new_pwd" pattern=".{6,}"
-                  title="Six or more characters" required />
-                <div class="custom-input-append">
-                  <i class="material-icons mr-3" *ngIf="!pwdForm.input_txt"
-                    (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility</i>
-                  <i class="material-icons mr-3" *ngIf="pwdForm.input_txt"
-                    (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility_off</i>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12 form-group mb-0">
-              <label>Confirm New Password</label>
-              <div class="custom-input-prepend-append-group">
-                <input type="text" name="confirm_new_pwd" style="padding: 10px;" class="form-control"
-                  [(ngModel)]="pwdForm.confirm_new_pwd" required />
-                <div *ngIf="pwdForm.confirm_new_pwd && pwdForm.new_pwd==pwdForm.confirm_new_pwd"
-                  class="custom-input-append">
-                  <i class="material-icons mr-3" aria-hidden="true">check_circle_outline</i>
-                </div>
-              </div>
-            </div>
+                    <div class="modal-body px-0">
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-12 form-group mb-3">
+                            <label>Current Password</label>
+                            <input type="text" name="current_pwd" class="form-control" [(ngModel)]="pwdForm.current_pwd" required />
+                          </div>
+                          <div class="col-md-12 form-group mb-3">
+                            <label>New Password</label>
+                            <div class="custom-input-prepend-append-group">
+                              <input [type]="pwdForm.input_txt? 'text': 'password'" name="new_pwd" class="form-control"
+                                (input)="pwdForm.errorMsg=null;" style="padding: 10px;" [(ngModel)]="pwdForm.new_pwd" pattern=".{6,}"
+                                title="Six or more characters" required />
+                                <div class="custom-input-append">
+                                  @if (!pwdForm.input_txt) {
+                                    <i class="material-icons mr-3"
+                                    (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility</i>
+                                  }
+                                  @if (pwdForm.input_txt) {
+                                    <i class="material-icons mr-3"
+                                    (click)="pwdForm.input_txt = !pwdForm.input_txt" aria-hidden="true">visibility_off</i>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12 form-group mb-0">
+                              <label>Confirm New Password</label>
+                              <div class="custom-input-prepend-append-group">
+                                <input type="text" name="confirm_new_pwd" style="padding: 10px;" class="form-control"
+                                  [(ngModel)]="pwdForm.confirm_new_pwd" required />
+                                  @if (pwdForm.confirm_new_pwd && pwdForm.new_pwd==pwdForm.confirm_new_pwd) {
+                                    <div
+                                      class="custom-input-append">
+                                      <i class="material-icons mr-3" aria-hidden="true">check_circle_outline</i>
+                                    </div>
+                                  }
+                                </div>
+                              </div>
 
-          </div>
-        </div>
-        <div *ngIf="pwdForm.errorMsg">
-          <p class="text-danger">{{ pwdForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1"
-          [disabled]="pwdForm.new_pwd!=pwdForm.confirm_new_pwd || pwdForm.submit" [ladda]="pwdForm.submit">
-          Submit
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+                            </div>
+                          </div>
+                          @if (pwdForm.errorMsg) {
+                            <div>
+                              <p class="text-danger">{{ pwdForm.errorMsg }}</p>
+                            </div>
+                          }
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                            (click)="modal.dismiss('Cross click');">
+                            <span class="black-outline-txt">Cancel</span>
+                          </button>
+                          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1"
+                            [disabled]="pwdForm.new_pwd!=pwdForm.confirm_new_pwd || pwdForm.submit" [ladda]="pwdForm.submit">
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </ng-template>
 
-<ng-template #infoModal let-modal>
-  <div class="modal-body">
-    <h6>Changing business category will reset the homepage elements to default template</h6>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
-      <span class="black-outline-txt">Cancel</span>
-    </button>
-    <button type="button" class="btn btn-wide btn-primary"
-      (click)="storeData.change_category=true; onUpdate(infoModal); modal.dismiss('Cross click');">
-      Submit
-    </button>
-  </div>
-</ng-template>
+                  <ng-template #infoModal let-modal>
+                    <div class="modal-body">
+                      <h6>Changing business category will reset the homepage elements to default template</h6>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+                        <span class="black-outline-txt">Cancel</span>
+                      </button>
+                      <button type="button" class="btn btn-wide btn-primary"
+                        (click)="storeData.change_category=true; onUpdate(infoModal); modal.dismiss('Cross click');">
+                        Submit
+                      </button>
+                    </div>
+                  </ng-template>
 
-<!-- Deactivate Store -->
-<ng-template #deactivestore let-modal>
-  <form autocomplete="off" (ngSubmit)="deactivate_store();" ngNativeValidate ngbAutofocus>
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
-        <h4 class="modal-title popup_text">Deactivate Store</h4>
-      </div>
-      <div *ngIf="popupLoader" class="modal-body">
-        <app-popup-spinner></app-popup-spinner>
-      </div>
-      <div *ngIf="!popupLoader" class="modal-body">
-        <div class="form-group">
-          <div class="col-md-12 mb-3 form-group">
-            <label>Please select the primary reason for deleting your account</label>
-            <select name="reason" class="form-control select-arrow" required [(ngModel)]="deactiveForm.reason">
-              <option value="">Please select reason</option>
-              <option>I’m finding Yourstore to be too expensive</option>
-              <option>I don’t have enough time to run this store</option>
-              <option>I’m switching to another platform</option>
-              <option>I’m struggling to get my store set up or launched</option>
-              <option>I’m permanently closing the business associated with this store</option>
-              <option>I’m not making enough sales</option>
-              <option>I was just testing Yourstore out</option>
-              <option>I plan to still use Yourstore, but work on a different store</option>
-              <option>Other reason</option>
-            </select>
-          </div>
-          <div class="col-md-12 form-group mb-3">
-            <label>If there are any other reasons, please let us know (Optional)</label>
-            <textarea name="remark" rows="2" class="form-control" required [(ngModel)]="deactiveForm.remark"></textarea>
-          </div>
-        </div>
-        <div *ngIf="deactiveForm.errorMsg">
-          <p class="text-danger">{{ deactiveForm.errorMsg }}</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
-          (click)="modal.dismiss('Cross click');">
-          <span class="black-outline-txt">Cancel</span>
-        </button>
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="deactiveForm.submit"
-          [ladda]="deactiveForm.submit">
-          Submit
-        </button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+                  <!-- Deactivate Store -->
+                  <ng-template #deactivestore let-modal>
+                    <form autocomplete="off" (ngSubmit)="deactivate_store();" ngNativeValidate ngbAutofocus>
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+                          <h4 class="modal-title popup_text">Deactivate Store</h4>
+                        </div>
+                        @if (popupLoader) {
+                          <div class="modal-body">
+                            <app-popup-spinner></app-popup-spinner>
+                          </div>
+                        }
+                        @if (!popupLoader) {
+                          <div class="modal-body">
+                            <div class="form-group">
+                              <div class="col-md-12 mb-3 form-group">
+                                <label>Please select the primary reason for deleting your account</label>
+                                <select name="reason" class="form-control select-arrow" required [(ngModel)]="deactiveForm.reason">
+                                  <option value="">Please select reason</option>
+                                  <option>I’m finding Yourstore to be too expensive</option>
+                                  <option>I don’t have enough time to run this store</option>
+                                  <option>I’m switching to another platform</option>
+                                  <option>I’m struggling to get my store set up or launched</option>
+                                  <option>I’m permanently closing the business associated with this store</option>
+                                  <option>I’m not making enough sales</option>
+                                  <option>I was just testing Yourstore out</option>
+                                  <option>I plan to still use Yourstore, but work on a different store</option>
+                                  <option>Other reason</option>
+                                </select>
+                              </div>
+                              <div class="col-md-12 form-group mb-3">
+                                <label>If there are any other reasons, please let us know (Optional)</label>
+                                <textarea name="remark" rows="2" class="form-control" required [(ngModel)]="deactiveForm.remark"></textarea>
+                              </div>
+                            </div>
+                            @if (deactiveForm.errorMsg) {
+                              <div>
+                                <p class="text-danger">{{ deactiveForm.errorMsg }}</p>
+                              </div>
+                            }
+                          </div>
+                        }
+                        <div class="modal-footer">
+                          <button type="button" id="closeModal" class="btn btn-wide black-outline-btn"
+                            (click)="modal.dismiss('Cross click');">
+                            <span class="black-outline-txt">Cancel</span>
+                          </button>
+                          <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="deactiveForm.submit"
+                            [ladda]="deactiveForm.submit">
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </ng-template>
 
-<!-- discount modal -->
-<a id="openDiscModal" (click)="modalService.open(discountModal, { centered: true });"></a>
-<ng-template #discountModal let-modal>
-  <div class="modal-header pr-2 pt-2 pb-2">
-    <div></div>
-    <div class="d-flex">
-      <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i>
-    </div>
-  </div>
-  <div class="modal-body">
-    <h3 style="text-align: center;padding: 0 40px;">
-      We’re sorry to hear that you’re considering deactivating your store.
-    </h3>
-    <div class="pb-2">
-      <img src="assets/images/creative-1.png">
-    </div>
-    <p style="text-align: center;padding: 0 40px;" class="mb-0">
-      As a gesture of appreciation, we’re happy to offer you 3 months at
-      <span style="font-weight: 700;">{{discAmount | currency:commonService.store_currency?.country_code}}/month (90% off)</span>
-      to encourage you to continue your subscription with us. Offer ends on
-      <span style="font-weight: 700;">{{commonService.store_details?.package_details.trial_expiry | date: "dd MMM YYYY"}}.</span>
-    </p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel'); modalService.open(deactivestore, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
-      <span class="black-outline-txt">Deactivate</span>
-    </button>
-    <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="modal.dismiss('Cross click');" routerLink="/deployment/plans">
-      <span class="orng-outline-txt">Claim Offer</span>
-    </button>
-  </div>
-</ng-template>
+                  <!-- discount modal -->
+                  <a id="openDiscModal" (click)="modalService.open(discountModal, { centered: true });"></a>
+                  <ng-template #discountModal let-modal>
+                    <div class="modal-header pr-2 pt-2 pb-2">
+                      <div></div>
+                      <div class="d-flex">
+                        <i class="material-icons" id="closeModal" (click)="modal.dismiss('Cross click');">close</i>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <h3 style="text-align: center;padding: 0 40px;">
+                        We’re sorry to hear that you’re considering deactivating your store.
+                      </h3>
+                      <div class="pb-2">
+                        <img src="assets/images/creative-1.png">
+                      </div>
+                      <p style="text-align: center;padding: 0 40px;" class="mb-0">
+                        As a gesture of appreciation, we’re happy to offer you 3 months at
+                        <span style="font-weight: 700;">{{discAmount | currency:commonService.store_currency?.country_code}}/month (90% off)</span>
+                        to encourage you to continue your subscription with us. Offer ends on
+                        <span style="font-weight: 700;">{{commonService.store_details?.package_details.trial_expiry | date: "dd MMM YYYY"}}.</span>
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('cancel'); modalService.open(deactivestore, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});">
+                        <span class="black-outline-txt">Deactivate</span>
+                      </button>
+                      <button type="button" class="btn btn-wide orng-outline-btn m-1" (click)="modal.dismiss('Cross click');" routerLink="/deployment/plans">
+                        <span class="orng-outline-txt">Claim Offer</span>
+                      </button>
+                    </div>
+                  </ng-template>

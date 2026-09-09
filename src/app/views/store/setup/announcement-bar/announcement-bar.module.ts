@@ -11,7 +11,7 @@ import { AnnouncementBarComponent } from './announcement-bar.component';
   imports: [
     AmazingTimePickerModule,
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     AnnouncementBarRoutingModule
   ]
 })

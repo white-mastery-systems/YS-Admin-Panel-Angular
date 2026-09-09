@@ -1,152 +1,180 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
+@if (pageLoader) {
+  <div class="row">
+    <app-spinner></app-spinner>
+  </div>
+}
 
-<div *ngIf="!pageLoader">
-  <ng-container *ngIf="commonService.desktop_device">
-    <div class="breadcrumb with-back-btn">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="d-flex align-items-center">
-            <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
-            <h1>{{commonService.secondary_header}}- {{sizingDetails.name}}</h1>
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <span class="material-symbols-rounded pr-2 cursor" [routerLink]="commonService.redirect">arrow_back</span>
+              <h1>{{commonService.secondary_header}}- {{sizingDetails.name}}</h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-
-  <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
-    <div class="card mb-3 p-3" *ngFor="let x of sizingDetails.assistant_types; let i=index;">
-      <div>
-        <span (click)="sizingDetails.assistant_types.splice(i, 1);" class="material-icons item-close absolute-item-close float-right "
-          aria-hidden="true">close</span>
-      </div>
-      <div class="row">
-        <div class="col-md-12 mb-2" align="center">
-          <label>
-            <div *ngIf="!x.image">
-              <i class="material-icons add-img">add_photo_alternate</i>
-              <p>Click to upload image (Resolution: 150 x 150)</p>
-            </div>
-            <ng-container *ngIf="x.image">
-              <span (click)="x.img_change=null; x.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
-              <img *ngIf="x?.img_change" [src]="x.image" height="100px;" width="auto;">
-              <img *ngIf="!x?.img_change" [src]="imgBaseUrl+x.image" height="100px;" width="auto;">
-            </ng-container>
-            <input type="file" name="sec_img{{i+1}}" style="display: none;" (change)="sectionFileChangeListener(i, $event);" accept="image/jpeg, image/png, image/webp"
-            />
-          </label>
-        </div>
-        <div class="col-md-4 form-group mb-3">
-          <label>Section Heading</label>
-          <input type="text" name="section_heading{{i+1}}" class="form-control" [(ngModel)]="x.heading" #section_heading="ngModel"
-            required />
-        </div>
-        <div class="col-md-4 form-group mb-3">
-          <label>Section Sub-heading</label>
-          <input type="text" name="section_sub_heading{{i+1}}" class="form-control" [(ngModel)]="x.sub_heading" #sub_heading="ngModel"
-          />
-        </div>
-        <div class="col-md-4 form-group mb-3">
-          <label>Choice Type</label>
-          <select name="type{{i+1}}" id="type" class="form-control" [(ngModel)]="x.type" #type="ngModel" required>
-            <option value="either_or">Choose One</option>
-            <option value="multiple">Unlimited Choice</option>
-          </select>
-        </div>
-        <!-- Option List -->
-        <div class="col-md-6 col-lg-4" *ngFor="let y of x.option_list; let j=index;">
-          <div class="card card-in-card p-3 mb-3">
-            <ng-container *ngIf="x.option_list.length > 1">
-              <span (click)="x.option_list.splice(j, 1);" class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
-            </ng-container>
-            <div class="mb-2" align="center">
+    }
+    <form autocomplete="off" (ngSubmit)="onUpdate();" ngNativeValidate ngbAutofocus>
+      @for (x of sizingDetails.assistant_types; track x; let i = $index) {
+        <div class="card mb-3 p-3">
+          <div>
+            <span (click)="sizingDetails.assistant_types.splice(i, 1);" class="material-icons item-close absolute-item-close float-right "
+            aria-hidden="true">close</span>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-2" align="center">
               <label>
-                <div *ngIf="!y.image">
-                  <i class="material-icons add-img">add_photo_alternate</i>
-                  <p>Click to upload image (Resolution: 150 x 150)</p>
-                </div>
-                <ng-container *ngIf="y.image">
-                  <span (click)="y.img_change=null; y.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
-                  <img *ngIf="y?.img_change" [src]="y.image" height="100px;" width="auto;">
-                  <img *ngIf="!y?.img_change" [src]="imgBaseUrl+y.image" height="100px;" width="auto;">
-                </ng-container>
-                <input type="file" name="opt_img{{i+1}}{{j+1}}" style="display: none;" (change)="fileChangeListener(i, j, $event);" accept="image/jpeg, image/png, image/webp"
-                />
-              </label>
-            </div>
-            <div *ngIf="i>0" class="form-group">
-              <label>Option Link To</label>
-              <select name="link_to{{i+1}}{{j+1}}" id="link_to" class="form-control" [(ngModel)]="y.link_to" #link_to="ngModel" required>
-                <option value="all">All</option>
-                <option *ngFor="let opt_link of sizingDetails.assistant_types[i-1].option_list;" [ngValue]="opt_link.unique_name">{{opt_link.unique_name}}</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Unique Name (For Linking)</label>
-              <input type="text" name="unique_name{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.unique_name" #unique_name="ngModel" required />
-            </div>
-            <div class="form-group">
-              <label>Option Heading</label>
-              <input type="text" name="option_heading{{i+1}}{{j+1}}" placeholder="Title your option here" class="form-control" [(ngModel)]="y.heading"
-                #option_heading="ngModel" required />
-            </div>
-            <div class="form-group">
-              <label>Option Sub-heading</label>
-              <input type="text" name="option_sub_heading{{i+1}}{{j+1}}" placeholder="Enter the hint for this option" class="form-control"
-                [(ngModel)]="y.sub_heading" #option_sub_heading="ngModel" />
-            </div>
-            <!-- mm set -->
-            <b *ngIf="y.mm_sets?.length" class="mb-1 mt-1" align="center">
-              <u>{{ (i>0)? 'MEASUREMENT DIFFERENCES': 'BASE MEASUREMENTS' }}</u>
-            </b>
-            <div *ngFor="let z of y.mm_sets; let k=index;">
-              <p class="primary-color mb-2">
-                <b>{{z.name}}</b>
-              </p>
-              <div class="card card-in-card p-3 mb-3">
-                <div *ngFor="let opt of z.list; let l=index;" class="form-group">
-                  <label>{{opt.name}} ({{sizingDetails.unit}})</label>
-                  <input type="tel" name="mm_list_option{{i+1}}{{j+1}}{{k+1}}{{l+1}}" class="form-control" [(ngModel)]="opt.value" appNumberOnly
-                    required />
-                </div>
+                @if (!x.image) {
+                  <div>
+                    <i class="material-icons add-img">add_photo_alternate</i>
+                    <p>Click to upload image (Resolution: 150 x 150)</p>
+                  </div>
+                }
+                @if (x.image) {
+                  <span (click)="x.img_change=null; x.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
+                  @if (x?.img_change) {
+                    <img [src]="x.image" height="100px;" width="auto;">
+                  }
+                  @if (!x?.img_change) {
+                    <img [src]="imgBaseUrl+x.image" height="100px;" width="auto;">
+                  }
+                }
+                <input type="file" name="sec_img{{i+1}}" style="display: none;" (change)="sectionFileChangeListener(i, $event);" accept="image/jpeg, image/png, image/webp"
+                  />
+                </label>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-12 p-0">
-          <div class="col-md-6 col-lg-4 z-i-0">
-            <div class="add-another-opt" (click)="addOption(i);">
-              <p class="w-100 x-close">ADD OPTION</p>
-            </div>
-          </div>
-        </div>
-        <!-- #Option List -->
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        <span class="add-another  x-close" (click)="addSection();">
-          <b>{{ sizingDetails.assistant_types?.length? 'ADD SECTION': 'ADD SECTION' }}</b>
-        </span>
-      </div>
-    </div>
-    <!-- #Customization List -->
-
-    <div class="separator-breadcrumb border-top mt-5"></div>
-    <div class="row">
-      <div *ngIf="sizingDetails?.errorMsg" class="col-md-12 mt-3 mb-3">
-        <p class="text-danger" align="center">{{ sizingDetails?.errorMsg }}</p>
-      </div>
-      <div align="center" class="col-md-12 z-i-0">
-        <button type="button" routerLink="/setting/sizing-assistant" class="btn btn-wide black-outline-btn">
-          <span class="black-outline-txt">Cancel</span>
-        </button>&nbsp; &nbsp; &nbsp;
-        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">Update</button>
-      </div>
-    </div>
-  </form>
-
-</div>
+              <div class="col-md-4 form-group mb-3">
+                <label>Section Heading</label>
+                <input type="text" name="section_heading{{i+1}}" class="form-control" [(ngModel)]="x.heading" #section_heading="ngModel"
+                  required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Section Sub-heading</label>
+                  <input type="text" name="section_sub_heading{{i+1}}" class="form-control" [(ngModel)]="x.sub_heading" #sub_heading="ngModel"
+                    />
+                  </div>
+                  <div class="col-md-4 form-group mb-3">
+                    <label>Choice Type</label>
+                    <select name="type{{i+1}}" id="type" class="form-control" [(ngModel)]="x.type" #type="ngModel" required>
+                      <option value="either_or">Choose One</option>
+                      <option value="multiple">Unlimited Choice</option>
+                    </select>
+                  </div>
+                  <!-- Option List -->
+                  @for (y of x.option_list; track y; let j = $index) {
+                    <div class="col-md-6 col-lg-4">
+                      <div class="card card-in-card p-3 mb-3">
+                        @if (x.option_list.length > 1) {
+                          <span (click)="x.option_list.splice(j, 1);" class="material-icons item-close absolute-item-close float-right " aria-hidden="true">close</span>
+                        }
+                        <div class="mb-2" align="center">
+                          <label>
+                            @if (!y.image) {
+                              <div>
+                                <i class="material-icons add-img">add_photo_alternate</i>
+                                <p>Click to upload image (Resolution: 150 x 150)</p>
+                              </div>
+                            }
+                            @if (y.image) {
+                              <span (click)="y.img_change=null; y.image=null" class="material-icons item-close float-right" aria-hidden="true">close</span>
+                              @if (y?.img_change) {
+                                <img [src]="y.image" height="100px;" width="auto;">
+                              }
+                              @if (!y?.img_change) {
+                                <img [src]="imgBaseUrl+y.image" height="100px;" width="auto;">
+                              }
+                            }
+                            <input type="file" name="opt_img{{i+1}}{{j+1}}" style="display: none;" (change)="fileChangeListener(i, j, $event);" accept="image/jpeg, image/png, image/webp"
+                              />
+                            </label>
+                          </div>
+                          @if (i>0) {
+                            <div class="form-group">
+                              <label>Option Link To</label>
+                              <select name="link_to{{i+1}}{{j+1}}" id="link_to" class="form-control" [(ngModel)]="y.link_to" #link_to="ngModel" required>
+                                <option value="all">All</option>
+                                @for (opt_link of sizingDetails.assistant_types[i-1].option_list; track opt_link) {
+                                  <option [ngValue]="opt_link.unique_name">{{opt_link.unique_name}}</option>
+                                }
+                              </select>
+                            </div>
+                          }
+                          <div class="form-group">
+                            <label>Unique Name (For Linking)</label>
+                            <input type="text" name="unique_name{{i+1}}{{j+1}}" class="form-control" [(ngModel)]="y.unique_name" #unique_name="ngModel" required />
+                          </div>
+                          <div class="form-group">
+                            <label>Option Heading</label>
+                            <input type="text" name="option_heading{{i+1}}{{j+1}}" placeholder="Title your option here" class="form-control" [(ngModel)]="y.heading"
+                              #option_heading="ngModel" required />
+                            </div>
+                            <div class="form-group">
+                              <label>Option Sub-heading</label>
+                              <input type="text" name="option_sub_heading{{i+1}}{{j+1}}" placeholder="Enter the hint for this option" class="form-control"
+                                [(ngModel)]="y.sub_heading" #option_sub_heading="ngModel" />
+                              </div>
+                              <!-- mm set -->
+                              @if (y.mm_sets?.length) {
+                                <b class="mb-1 mt-1" align="center">
+                                  <u>{{ (i>0)? 'MEASUREMENT DIFFERENCES': 'BASE MEASUREMENTS' }}</u>
+                                </b>
+                              }
+                              @for (z of y.mm_sets; track z; let k = $index) {
+                                <div>
+                                  <p class="primary-color mb-2">
+                                    <b>{{z.name}}</b>
+                                  </p>
+                                  <div class="card card-in-card p-3 mb-3">
+                                    @for (opt of z.list; track opt; let l = $index) {
+                                      <div class="form-group">
+                                        <label>{{opt.name}} ({{sizingDetails.unit}})</label>
+                                        <input type="tel" name="mm_list_option{{i+1}}{{j+1}}{{k+1}}{{l+1}}" class="form-control" [(ngModel)]="opt.value" appNumberOnly
+                                          required />
+                                        </div>
+                                      }
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          }
+                          <div class="col-md-12 p-0">
+                            <div class="col-md-6 col-lg-4 z-i-0">
+                              <div class="add-another-opt" (click)="addOption(i);">
+                                <p class="w-100 x-close">ADD OPTION</p>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- #Option List -->
+                        </div>
+                      </div>
+                    }
+                    <div class="row">
+                      <div class="col-md-12">
+                        <span class="add-another  x-close" (click)="addSection();">
+                          <b>{{ sizingDetails.assistant_types?.length? 'ADD SECTION': 'ADD SECTION' }}</b>
+                        </span>
+                      </div>
+                    </div>
+                    <!-- #Customization List -->
+                    <div class="separator-breadcrumb border-top mt-5"></div>
+                    <div class="row">
+                      @if (sizingDetails?.errorMsg) {
+                        <div class="col-md-12 mt-3 mb-3">
+                          <p class="text-danger" align="center">{{ sizingDetails?.errorMsg }}</p>
+                        </div>
+                      }
+                      <div align="center" class="col-md-12 z-i-0">
+                        <button type="button" routerLink="/setting/sizing-assistant" class="btn btn-wide black-outline-btn">
+                          <span class="black-outline-txt">Cancel</span>
+                        </button>&nbsp; &nbsp; &nbsp;
+                        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="btnLoader" [ladda]="btnLoader">Update</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              }

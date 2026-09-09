@@ -11,7 +11,7 @@ import { YsFeedbacksComponent } from './ys-feedbacks.component';
   ],
   imports: [
     SharedModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule,
     YsFeedbacksRoutingModule
   ]
 })

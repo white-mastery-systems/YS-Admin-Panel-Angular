@@ -1,61 +1,70 @@
-<div *ngIf="pageLoader" class="row">
-  <app-spinner></app-spinner>
-</div>
-
-<div *ngIf="!pageLoader">
-  <div *ngIf="commonService.desktop_device" class="breadcrumb with-back-btn">
-    <div class="row">
-      <div class="col-md-8">
-        <h1>{{commonService.secondary_header}}</h1>          
-      </div>
-    </div>
-  </div>
-
+@if (pageLoader) {
   <div class="row">
-    <div class="col-md-6 form-group mb-3">
-      <div class="card card-in-card p-4 mb-3">
-        <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
-          <div class="row">
-            <div class="col-md-12 form-group mb-3">
-              <label>Type</label>
-              <select name="sub_type" class="form-control" [(ngModel)]="app_setting.sub_type" required>
-                <option value="order">Tier Based Pricing</option>
-                <option value="quot">Quote Based</option>
-                <option value="enquiry">Enquiry Based</option>
-              </select>
-            </div>
-            <div class="col-md-12 pl-0 mb-3">
-              <div *ngIf="commonService.store_details?.type=='quot_based' && app_setting.sub_type=='enquiry'" class="list-item data-list-card">
-                <div class="col-md-10 col-10 first_col px-0 cursor">
-                  <p class="w-100 w-sm-100 m-b-0  m-b-0 dark-font">
-                    Hide Product Price<br>
-                    <span class="light-font">Hide the product price on the website</span>
-                  </p>
-                </div>
-                <div class="col-md-2 col-2 d-flex justify-content-end px-0">
-                  <div class="row justify-content-end d-flex">
-                    <label class="switch">
-                      <input type="checkbox" name="hide_amount" [(ngModel)]="app_setting.hide_amount" />
-                      <div></div>
-                    </label>
+    <app-spinner></app-spinner>
+  </div>
+}
+
+@if (!pageLoader) {
+  <div>
+    @if (commonService.desktop_device) {
+      <div class="breadcrumb with-back-btn">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>{{commonService.secondary_header}}</h1>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="row">
+      <div class="col-md-6 form-group mb-3">
+        <div class="card card-in-card p-4 mb-3">
+          <form autocomplete="off" (ngSubmit)="onSubmit();" ngNativeValidate>
+            <div class="row">
+              <div class="col-md-12 form-group mb-3">
+                <label>Type</label>
+                <select name="sub_type" class="form-control" [(ngModel)]="app_setting.sub_type" required>
+                  <option value="order">Tier Based Pricing</option>
+                  <option value="quot">Quote Based</option>
+                  <option value="enquiry">Enquiry Based</option>
+                </select>
+              </div>
+              <div class="col-md-12 pl-0 mb-3">
+                @if (commonService.store_details?.type=='quot_based' && app_setting.sub_type=='enquiry') {
+                  <div class="list-item data-list-card">
+                    <div class="col-md-10 col-10 first_col px-0 cursor">
+                      <p class="w-100 w-sm-100 m-b-0  m-b-0 dark-font">
+                        Hide Product Price<br>
+                        <span class="light-font">Hide the product price on the website</span>
+                      </p>
+                    </div>
+                    <div class="col-md-2 col-2 d-flex justify-content-end px-0">
+                      <div class="row justify-content-end d-flex">
+                        <label class="switch">
+                          <input type="checkbox" name="hide_amount" [(ngModel)]="app_setting.hide_amount" />
+                          <div></div>
+                        </label>
+                      </div>
+                    </div>
                   </div>
+                }
+              </div>
+              <div class="col-md-12">
+                <div class="separator-breadcrumb border-top"></div>
+              </div>
+              @if (app_setting.errorMsg) {
+                <div align="center" class="col-md-12 z-i-0">
+                  <p class="text-danger">{{ app_setting.errorMsg }}</p>
                 </div>
+              }
+              <div align="center" class="col-md-12 z-i-0">
+                <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
+                  Update
+                </button>
               </div>
             </div>
-            <div class="col-md-12">
-              <div class="separator-breadcrumb border-top"></div>
-            </div>
-            <div align="center" class="col-md-12 z-i-0" *ngIf="app_setting.errorMsg">
-              <p class="text-danger">{{ app_setting.errorMsg }}</p>
-            </div>
-            <div align="center" class="col-md-12 z-i-0">
-              <button type="submit" class="btn btn-wide btn-primary ml-3 ladda-button m-1" [disabled]="app_setting.submit" [ladda]="app_setting.submit">
-                Update
-              </button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}

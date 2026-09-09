@@ -12,7 +12,7 @@ import { VendorWalletMgmtComponent } from './vendor-wallet-mgmt.component';
   imports: [
     SharedModule,
     VendorWalletMgmtRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule
   ]
 })
 
