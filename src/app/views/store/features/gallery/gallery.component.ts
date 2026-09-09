@@ -62,6 +62,11 @@ export class GalleryComponent implements OnInit {
     this.api.GALLERY_DETAILS(x._id).subscribe((result) => {
       if(result.status) {
         this.galForm = result.data;
+        this.galForm.form_type = 'update';
+        this.galForm.prev_rank = this.galForm.rank;
+        if(!this.galForm.seo_details) {
+          this.galForm.seo_details = { page_url: '', h1_tag: '', page_title: '', meta_desc: '' };
+        }
         this.popupLoader = false;
       }
       else console.log("response",result);
@@ -69,6 +74,9 @@ export class GalleryComponent implements OnInit {
     this.galForm = {...x}
     this.galForm.form_type='update'
     this.galForm.prev_rank = this.galForm.rank
+    if(!this.galForm.seo_details) {
+      this.galForm.seo_details = { page_url: '', h1_tag: '', page_title: '', meta_desc: '' };
+    }
   }
 
   onUpdate() {

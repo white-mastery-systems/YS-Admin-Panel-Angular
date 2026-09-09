@@ -19,12 +19,13 @@ const routes: Routes = [
   { path: 'newsletter', loadChildren: () => import('../properties/newsletter/newsletter.module').then(m => m.NewsletterModule), canActivate: [PermissionGuard], data: { name: "newsletter" } },  
 
   { path: 'blogs', loadChildren: () => import('../features/blog/blog.module').then(m => m.BlogModule), canActivate: [PermissionGuard], data: { name: "blogs" } },
+  { path: 'blogs-authors', loadChildren: () => import('../features/blog/blog-authors/blog-authors.module').then(m => m.BlogAuthorsModule), canActivate: [PermissionGuard], data: { name: "blog_authors" } },
   { path: 'advanced-blogs', loadChildren: () => import('../features/blog/blog.module').then(m => m.BlogModule), canActivate: [PermissionGuard], data: { name: "advanced_blogs" } },
   { path: 'recipes', loadChildren: () => import('../features/recipe/recipe.module').then(m => m.RecipeModule), canActivate: [PermissionGuard], data: { name: "recipes" } },
   { path: 'articles', loadChildren: () => import('../features/articles/articles.module').then(m => m.ArticlesModule), canActivate: [PermissionGuard], data: { name: "articles" } },
   { path: 'collections', loadChildren: () => import('../features/collections/collections.module').then(m => m.CollectionsModule), canActivate: [PermissionGuard], data: { name: "collections" } },
   { path: 'coupon-codes', loadChildren: () => import('../features/coupon-codes/coupon-codes.module').then(m => m.CouponCodesModule), canActivate: [PermissionGuard], data: { name: "offers" } },
-  { path: 'catalog-page', loadChildren: () => import('../features/discounts-page/discounts-page.module').then(m => m.DiscountsPageModule), canActivate: [PermissionGuard], data: { name: "discounts_page" } },
+  { path: 'catalog-page', loadChildren: () => import('../features/discounts-page/discounts-page.module').then(m => m.DiscountsPageModule), canActivate: [PermissionGuard], data: { name: "catalog_page" } },
   { path: 'giftcard', loadChildren: () => import('../features/giftcard/giftcard.module').then(m => m.GiftcardModule), canActivate: [PermissionGuard], data: { name: "giftcard" } },
   { path: 'appointment-categories', loadChildren: () => import('../features/appointment-categories/appointment-categories.module').then(m => m.AppointmentCategoriesModule), canActivate: [PermissionGuard], data: { name: "appointment_services" } },
 

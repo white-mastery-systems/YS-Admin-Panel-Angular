@@ -1,0 +1,265 @@
+<div *ngIf="pageLoader" class="row">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!pageLoader && !isTulsiAiStore" class="row">
+  <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+    <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+    <p align="center">AI Catalogue Mapping is available only for Tulsi Silks store.</p>
+  </div>
+</div>
+
+<div class="inner-dots" *ngIf="!commonService.desktop_device && !pageLoader && isTulsiAiStore">
+  <div class="add_but" (click)="onAddModal(ruleModal);">
+    <span class="material-symbols-rounded">add</span>
+  </div>
+</div>
+
+<div *ngIf="!pageLoader && isTulsiAiStore">
+  <ng-container *ngIf="commonService.desktop_device">
+    <div class="breadcrumb with-back-btn">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>AI Catalogue Mapping</h1>
+          <p class="text-muted mb-0">Link AI-detected tags to catalogues when admin uses Tag this Product.</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="top-filter-sec list-button">
+    <div class="row mb-4">
+      <div class="col-md-6 col-12">
+        <div class="form-group search_bar m-0">
+          <input type="text" name="search_bar" placeholder="Search rules" class="form-control" [(ngModel)]="search_bar" (ngModelChange)="onSearchChange()" />
+          <div class="search_icon"><span class="material-symbols-rounded">search</span></div>
+        </div>
+      </div>
+      <div class="col-md-6 list-button d-flex justify-content-end flex-wrap" *ngIf="commonService.desktop_device">
+        <button type="button" class="btn btn-outline-secondary mr-3 mb-2" (click)="modalService.open(deleteAllModal, { centered: true })" [disabled]="deleteAllLoader || importLoader">
+          <span *ngIf="deleteAllLoader" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Delete all rules
+        </button>
+        <button type="button" class="btn btn-outline-primary mr-3 mb-2" (click)="onImportModal(importModal)" [disabled]="importLoader || deleteAllLoader">
+          Import JSON/CSV
+        </button>
+        <button type="button" class="btn btn-outline-primary mr-3 mb-2" (click)="loadStarterRules()" [disabled]="seedLoader">
+          <span *ngIf="seedLoader" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Load curated rules
+        </button>
+        <ng-container *ngIf="showAdvancedMappingActions">
+          <button type="button" class="btn btn-outline-secondary mr-3 mb-2" (click)="relinkStarterCatalogues()" [disabled]="relinkLoader">
+            <span *ngIf="relinkLoader" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Fix catalogue links
+          </button>
+        </ng-container>
+        <button type="button" class="highbutton mb-2" (click)="onAddModal(ruleModal);">
+          <span class="material-symbols-rounded">add</span>Create Rule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="seedMessage" class="alert alert-info py-2 mb-3 catalogue-mapping-alert">
+    {{ seedMessage }}
+  </div>
+
+  <!-- DATA LIST -->
+  <div *ngIf="(list | fieldSearch:'name':search_bar)?.length" class="list-horizontal">
+    <div class="data-list-card-wrapper">
+      <div class="data-list-card-inner">
+        <div class="list-item data-list-card catalogue-mapping-header" *ngIf="commonService.desktop_device">
+          <div class="col-md-9 col-8 first_col px-0 header-font">
+            <p class="w-25">Rule name</p>
+            <p class="w-25">Catalogue</p>
+            <p class="w-40 m-b-0">Tag conditions</p>
+          </div>
+        </div>
+        <div class="list-item data-list-card" *ngFor="let x of list | fieldSearch:'name':search_bar | paginate: { itemsPerPage: pageSize, currentPage: page }; let i=index;">
+          <div class="col-md-9 col-8 first_col px-0">
+            <p class="w-25 w-sm-100 dark-font">{{ x.name }}</p>
+            <p class="w-25 w-sm-100 light-font">{{ getCatalogName(x.category_id) }}</p>
+            <p class="w-40 w-sm-100 m-b-0 light-font mapping-conditions-text">{{ formatConditions(x) }}</p>
+          </div>
+          <div class="col-md-3 col-4">
+            <div class="row justify-content-end more_icons">
+              <button type="button" class="iconbutton" (click)="onEdit(x, ruleModal);">
+                <span class="material-symbols-rounded">edit</span>
+              </button>
+              <button type="button" class="iconbutton" (click)="deleteForm = { _id: x._id }; modalService.open(deleteModal);">
+                <span class="material-symbols-rounded">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <pagination-controls (pageChange)="page=$event; commonService.pageTop(0);" autoHide="true" responsive="true"
+          maxSize="5" previousLabel="" nextLabel=""></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!(list | fieldSearch:'name':search_bar)?.length" class="row">
+    <div class="col-md-12 d-flex flex-column align-items-center justify-content-center no-rec-found-wrapper">
+      <img class="no-rec-found" src="assets/images/no_records_found.png" alt="no-records">
+      <p align="center">No catalogue mapping rules yet. Create a rule to auto-link products after AI tagging.</p>
+    </div>
+  </div>
+</div>
+
+<ng-template #ruleModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ ruleForm?.formType === 'add' ? 'Create Mapping Rule' : 'Edit Mapping Rule' }}</h4>
+    <button type="button" class="close" id="closeCatalogueMappingModal" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-6 form-group">
+        <label>Rule name</label>
+        <input type="text" class="form-control" [(ngModel)]="ruleForm.name" placeholder="Black Mysore Silk">
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Link to catalogue</label>
+        <div class="catalogue-combobox">
+          <div class="search_bar m-0 catalogue-combobox-field">
+            <input
+              type="text"
+              class="form-control"
+              name="catalog_search"
+              [(ngModel)]="catalogSearch"
+              (focus)="openCatalogDropdown()"
+              (input)="openCatalogDropdown()"
+              (blur)="onCatalogSearchBlur()"
+              placeholder="Search and select catalogue"
+              autocomplete="off"
+            />
+            <button type="button" class="catalogue-combobox-toggle" tabindex="-1" (mousedown)="$event.preventDefault(); toggleCatalogDropdown()">
+              <span class="material-symbols-rounded">{{ catalogDropdownOpen ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+          </div>
+          <div class="catalogue-combobox-menu" *ngIf="catalogDropdownOpen">
+            <p class="catalogue-combobox-empty" *ngIf="!catalogSearch?.trim()">Type to search catalogues</p>
+            <button
+              type="button"
+              class="catalogue-combobox-option"
+              *ngFor="let catalog of getFilteredCatalogList()"
+              [class.active]="catalog._id === ruleForm.category_id"
+              (mousedown)="$event.preventDefault(); selectCatalog(catalog)">
+              {{ catalog.name }}
+            </button>
+            <p class="catalogue-combobox-empty" *ngIf="catalogSearch?.trim() && !getFilteredCatalogList().length">No catalogues found</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <label class="d-block mb-2">When all of these tag conditions match</label>
+        <div class="card card-in-card p-3 mb-3" *ngFor="let condition of ruleForm.conditions; let i=index;">
+          <div class="row align-items-end">
+            <div class="col-md-4 form-group">
+              <label>Tag field</label>
+              <select class="form-control" [(ngModel)]="condition.field">
+                <option *ngFor="let field of tagFields" [value]="field.value">{{ field.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-3 form-group">
+              <label>Operator</label>
+              <select class="form-control" [(ngModel)]="condition.operator">
+                <option *ngFor="let operator of operatorOptions" [value]="operator.value">{{ operator.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group">
+              <label>Tag value</label>
+              <input type="text" class="form-control" [(ngModel)]="condition.value" placeholder="e.g. Soft Silk">
+            </div>
+            <div class="col-md-1 form-group">
+              <button type="button" class="btn btn-link text-danger p-0" (click)="removeCondition(i)" [disabled]="ruleForm.conditions.length === 1">
+                <span class="material-symbols-rounded">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="addCondition()">
+          <span class="material-symbols-rounded">add</span> Add condition
+        </button>
+      </div>
+      <div class="col-md-12" *ngIf="ruleForm?.errorMsg">
+        <p class="text-danger mt-3 mb-0">{{ ruleForm.errorMsg }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-wide btn-primary ladda-button" [disabled]="ruleForm?.submit" [ladda]="ruleForm?.submit" (click)="onSubmit()">
+      Save Rule
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #importModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Import catalogue mapping rules</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="text-muted">Upload a JSON or CSV file. Duplicate catalogue or rule names are skipped.</p>
+    <p class="small text-muted mb-2">JSON: array of <code>name</code>, <code>catalogue_name</code> or <code>category_id</code>, and <code>conditions</code>.</p>
+    <p class="small text-muted mb-3">CSV columns: <code>name</code>, <code>catalogue_name</code> (or <code>category_id</code>), <code>field</code>, <code>operator</code>, <code>value</code>. Repeat rows to add multiple AND conditions.</p>
+    <div class="form-group">
+      <input type="file" class="form-control" accept=".json,.csv,application/json,text/csv" (change)="onImportFileSelected($event)" />
+      <p class="small text-muted mt-2 mb-0" *ngIf="importForm?.fileName">Selected: {{ importForm.fileName }}</p>
+    </div>
+    <p *ngIf="importForm?.errorMsg" class="text-danger mb-0">{{ importForm.errorMsg }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-wide btn-primary ladda-button" [disabled]="importForm?.submit" [ladda]="importForm?.submit" (click)="onImportSubmit(modal)">
+      Import
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteAllModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Delete all rules?</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>This permanently deletes every catalogue mapping rule for this store.</p>
+    <p class="mb-0 text-muted">After deleting, use Import JSON/CSV or Load curated rules to rebuild the mapping table.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-wide btn-danger ladda-button" [disabled]="deleteAllLoader" [ladda]="deleteAllLoader" (click)="deleteAllRules(modal)">
+      Delete all
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Delete Rule</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Delete this catalogue mapping rule?</p>
+    <p *ngIf="deleteForm?.errorMsg" class="text-danger">{{ deleteForm.errorMsg }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-wide btn-primary ladda-button" [disabled]="deleteForm?.submit" [ladda]="deleteForm?.submit" (click)="onDelete()">
+      Delete
+    </button>
+  </div>
+</ng-template>

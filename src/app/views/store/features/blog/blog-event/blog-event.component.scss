@@ -10,7 +10,7 @@
     background: #f4f4f4;
   }
   
-  .active {
+.active {
     color: white;
     background: #ec848b;
   
@@ -20,3 +20,932 @@
       margin-top: -2px;
     }
   }
+
+.author-preview-card {
+  border: 1px solid #ececec;
+}
+
+.author-preview-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 64px;
+}
+
+.editorjs-wrapper {
+  min-height: 320px;
+  padding: 18px 24px 24px 64px;
+  border: 1px solid #ececec;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+  overflow: visible;
+}
+
+.blog-image-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blog-image-slot-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.blog-image-slot-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.blog-image-slot-hint {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+.blog-image-upload-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-reimport-panel {
+  border: 1px solid #f0c4c7;
+  background: #fff8f8;
+}
+
+.blog-reimport-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-image-selected-files {
+  padding-left: 18px;
+  font-size: 12px;
+  color: #444;
+}
+
+.blog-image-upload-report {
+  font-size: 13px;
+}
+
+:host ::ng-deep .editorjs-wrapper .codex-editor {
+  position: relative;
+}
+
+:host ::ng-deep .editorjs-wrapper .codex-editor__redactor {
+  padding-bottom: 40px !important;
+  margin-right: 0 !important;
+}
+
+:host ::ng-deep .editorjs-wrapper .codex-editor__redactor .ce-block {
+  margin-bottom: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .codex-editor__redactor .ce-block:last-child {
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-block__content,
+:host ::ng-deep .editorjs-wrapper .ce-toolbar__content {
+  max-width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-toolbar__content {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-toolbar {
+  left: -30px !important;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-toolbar__plus,
+:host ::ng-deep .editorjs-wrapper .ce-toolbar__settings-btn,
+:host ::ng-deep .editorjs-wrapper .ce-inline-toolbar,
+:host ::ng-deep .editorjs-wrapper .ce-conversion-toolbar {
+  z-index: 3;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-block {
+  padding-left: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-paragraph {
+  line-height: 1.65;
+  margin: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-header {
+  margin: 0;
+  line-height: 1.3;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-header[data-level='2'] {
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-header[data-level='3'] {
+  font-size: 22px;
+}
+
+:host ::ng-deep .editorjs-wrapper .ce-header[data-level='4'] {
+  font-size: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .cdx-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+:host ::ng-deep .editorjs-wrapper .cdx-list li + li {
+  margin-top: 6px;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-wrap,
+:host ::ng-deep .editorjs-wrapper .tc-table,
+:host ::ng-deep .editorjs-wrapper .tc-row,
+:host ::ng-deep .editorjs-wrapper .tc-cell {
+  max-width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-wrap {
+  width: calc(100% - 52px);
+  margin-left: 24px;
+  margin-right: 12px;
+  min-width: 0;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-table {
+  min-width: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-toolbox--row {
+  left: -22px;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-toolbox--column {
+  transform: translateX(calc(var(--toggler-click-zone-size) * -0.5 - 6px));
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-add-column {
+  justify-content: flex-start;
+  padding-left: 6px;
+}
+
+:host ::ng-deep .editorjs-wrapper .tc-add-row {
+  padding-left: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom {
+  border: 1px solid #e7ebf1;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+  padding: 16px 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--toc {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--toc > .editorjs-custom__field {
+  margin-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--toc > .editorjs-custom__stack {
+  margin-top: 6px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--heading {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--button {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--product {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--cta-block {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--product-carousel {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--product-list {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--iframe {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--image-cards {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__label {
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+  color: #21314c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__cards {
+  display: grid;
+  gap: 16px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card {
+  border: 1px solid #e6e9ef;
+  border-radius: 14px;
+  background: #fbfcfe;
+  padding: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__card-title {
+  color: #21314c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-card,
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-item,
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__inline-btn {
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 10px;
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options {
+  width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__image-field {
+  margin-bottom: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-box {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  height: 160px;
+  border: 1px dashed #d7deea;
+  border-radius: 12px;
+  background: #f7f8fb;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-placeholder {
+  color: #8a94a6;
+  font-size: 13px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__preview-image[hidden] {
+  display: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__file-input {
+  display: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__choose-btn {
+  border: 1px solid #ec848b;
+  border-radius: 10px;
+  background: #fff;
+  color: #c9565f;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  line-height: 1;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__choose-btn:hover {
+  background: #fff8f8;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
+  display: grid;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-input {
+  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__remove-option:hover {
+  border-color: #ec848b;
+  background: #fff1f2;
+  color: #d6455d;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
+  grid-template-columns: minmax(0, 1fr) 160px minmax(0, 1.2fr) 96px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom--key-features > .editorjs-custom__field {
+  margin-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__label {
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+  color: #21314c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn:hover {
+  border-color: #ec848b;
+  background: #fff8f8;
+  color: #c9565f;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__add-btn span {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__panel {
+  border: 1px solid #e6e9ef;
+  border-radius: 12px;
+  background: #fbfcfe;
+  padding: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__list {
+  display: grid;
+  gap: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e8dde0;
+  border-radius: 10px;
+  background: #fff;
+  color: #9a6b73;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features__remove:hover {
+  border-color: #ec848b;
+  background: #fff1f2;
+  color: #d6455d;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview {
+  margin-top: 18px;
+  border: 1px solid #e8e2d8;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fdfbf7 0%, #f8f4ee 100%);
+  padding: 16px 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__label {
+  display: block;
+  margin-bottom: 10px;
+  color: #8a8178;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__title {
+  margin: 0 0 14px;
+  color: #4a3426;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #4f4f4f;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__item--empty {
+  grid-column: 1 / -1;
+  color: #8a8178;
+  font-size: 13px;
+  font-style: italic;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__check {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f0c14b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__text {
+  flex: 1 1 auto;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__grid {
+  display: grid;
+  gap: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__stack {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__row {
+  display: grid;
+  grid-template-columns: 88px minmax(280px, 1.35fr) minmax(220px, 1fr) 96px;
+  gap: 10px;
+  align-items: end;
+  border: 1px solid #edf1f7;
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px 12px 14px 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__carousel-row {
+  grid-template-columns: minmax(0, 1fr) 124px;
+  align-items: start;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-picker {
+  border: 1px solid #e6e9ef;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  margin-top: 4px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-picker__list {
+  margin-top: 10px;
+  max-height: 180px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-product-list__results {
+  margin-top: 10px;
+  max-height: 220px;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-product-list__selected {
+  display: grid;
+  gap: 10px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-chip {
+  border: 1px solid #d6dce8;
+  background: #f7f8fb;
+  color: #2f3b52;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-catalog-chip.is-selected {
+  background: #ec848b;
+  border-color: #ec848b;
+  color: #fff;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__caption {
+  color: #576074;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__hint {
+  color: #6b7487;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__input,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__textarea,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__select,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__file {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d7deea;
+  border-radius: 10px;
+  background: #fff;
+  color: #22304a;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__input,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__select {
+  height: 44px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-image-cards__option-row .editorjs-custom__input {
+  width: 100%;
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__input:focus,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__textarea:focus,
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__select:focus {
+  border-color: #ec848b;
+  box-shadow: 0 0 0 3px rgba(236, 132, 139, 0.16);
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__button {
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  min-height: 40px;
+  align-self: end;
+  justify-self: stretch;
+  width: 100%;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__button--compact {
+  width: auto;
+  min-width: 116px;
+  min-height: 36px;
+  padding: 8px 14px;
+  justify-self: start;
+  align-self: start;
+  border-radius: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__button--ghost {
+  background: #f3f6fb;
+  color: #21314c;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__button--danger {
+  background: #fff1f2;
+  color: #d6455d;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__status {
+  color: #6b7487;
+  font-size: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__preview {
+  margin-top: 14px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-custom__preview-image {
+  max-width: 180px;
+  border-radius: 12px;
+  border: 1px solid #e7ebf1;
+  display: block;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview {
+  margin-top: 14px;
+  border: 1px solid #d8d3cd;
+  border-radius: 16px;
+  background: #ece8e4;
+  padding: 24px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 24px;
+  align-items: center;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__text {
+  margin: 0;
+  color: #1f1f25;
+  font-size: 34px;
+  line-height: 1.35;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__actions {
+  display: grid;
+  gap: 12px;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button--primary {
+  background: #191724;
+  color: #ffffff;
+}
+
+:host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__button--secondary {
+  background: #f0efee;
+  color: #191724;
+  border: 1px solid #c4c0bb;
+}
+
+:host ::ng-deep .editorjs-wrapper .image-tool,
+:host ::ng-deep .editorjs-wrapper .cdx-image {
+  margin: 0;
+}
+
+:host ::ng-deep .editorjs-wrapper .image-tool__image-picture,
+:host ::ng-deep .editorjs-wrapper .cdx-image img {
+  border-radius: 14px;
+  overflow: hidden;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .editorjs-wrapper {
+    padding: 16px 14px 18px 14px;
+    overflow: visible;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .ce-toolbar {
+    left: -10px !important;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .ce-popover,
+  :host ::ng-deep .editorjs-wrapper .ce-settings {
+    max-width: calc(100vw - 32px);
+  }
+
+  :host ::ng-deep .editorjs-wrapper .tc-wrap {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .tc-toolbox--row {
+    left: -30px;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-custom__grid--two,
+  :host ::ng-deep .editorjs-wrapper .editorjs-custom__row {
+    grid-template-columns: 1fr;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-custom__button {
+    justify-self: start;
+    width: auto;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-cta-preview {
+    grid-template-columns: 1fr;
+    padding: 18px 16px;
+    gap: 16px;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-cta-preview__text {
+    font-size: 24px;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-key-features-preview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  :host ::ng-deep .editorjs-wrapper .editorjs-image-cards__options-list,
+  :host ::ng-deep .editorjs-wrapper .editorjs-image-cards__button-row {
+    grid-template-columns: 1fr;
+  }
+}

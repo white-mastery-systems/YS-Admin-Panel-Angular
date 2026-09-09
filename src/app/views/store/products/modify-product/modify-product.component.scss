@@ -1,3 +1,7 @@
+.ai-tag-btn {
+  font-weight: 500;
+}
+
 .checking {
   span {
     padding: 6px;
@@ -13,12 +17,41 @@
 .active {
   color: white;
   background: #ec848b;
+  border: 2.5px solid transparent;
 
   .material-icons {
     font-size: 16px;
     vertical-align: middle;
     margin-top: -2px;
   }
+}
+
+.active-ai {
+  color: #d0656e;
+  background: #fdf3f3;
+  border: 2.5px solid #ec848b;
+
+  .material-icons {
+    font-size: 16px;
+    vertical-align: middle;
+    margin-top: -2px;
+    color: #d0656e;
+  }
+}
+
+.ai-selection-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.legend-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .long-content-sec {

@@ -52,7 +52,7 @@ export class StoreSettingComponent implements OnInit {
   configData: any= environment.config_data;
   btnLoader: boolean; invoiceNum: string;
   list: any = []; popupLoader: boolean;
-  rewardForm: any = {};  popupForm: any = {};
+  rewardForm: any = {};  popupForm: any = {}; livePricingForm: any = {};
 
   constructor(
     config: NgbModalConfig, public modalService: NgbModal, public commonService: CommonService,
@@ -130,6 +130,41 @@ export class StoreSettingComponent implements OnInit {
     }
     // load chat
     if(this.commonService.payment_list.findIndex(obj => obj.name=='COD') != -1) this.codExist = true;
+  }
+
+  onOpenLivePricingModal(modalName) {
+    this.popupLoader = true;
+    this.livePricingForm = { enabled: false, gold_18kt: 0, gold_22kt: 0, silver: 0, platinum: 0 };
+    this.modalService.open(modalName, { windowClass: 'scroll-modal-xl', scrollable: true });
+    this.api.STORE_PROPERTY_DETAILS().subscribe((result) => {
+      if (result.status) {
+        this.popupLoader = false;
+        if (result.data.live_pricing) this.livePricingForm = { ...this.livePricingForm, ...result.data.live_pricing };
+      }
+      else console.log("response", result);
+    });
+  }
+  onUpdateLivePricing() {
+    this.livePricingForm.submit = true;
+    delete this.livePricingForm.errorMsg;
+    this.api.UPDATE_STORE_PROPERTY_DETAILS({
+      "live_pricing.enabled": this.livePricingForm.enabled,
+      "live_pricing.gold_18kt": this.livePricingForm.gold_18kt || 0,
+      "live_pricing.gold_22kt": this.livePricingForm.gold_22kt || 0,
+      "live_pricing.silver": this.livePricingForm.silver || 0,
+      "live_pricing.platinum": this.livePricingForm.platinum || 0,
+      "live_pricing.last_updated": new Date()
+    }).subscribe((result) => {
+      this.livePricingForm.submit = false;
+      if (result.status) {
+        if (result.data?.live_pricing) this.livePricingForm = { ...this.livePricingForm, ...result.data.live_pricing };
+        document.getElementById('closeModal').click();
+      }
+      else {
+        this.livePricingForm.errorMsg = result.message;
+        console.log("response", result);
+      }
+    });
   }
 
   onOpenPopupModal(modalName) {

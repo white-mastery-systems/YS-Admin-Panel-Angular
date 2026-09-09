@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { StoreApiService } from '../../../../services/store-api.service';
 import { CommonService } from '../../../../services/common.service';
+import { SetupService } from '../../setup/setup.service';
 
 @Component({
   selector: 'app-catalog-event',
@@ -15,19 +16,24 @@ export class CatalogEventComponent implements OnInit {
 
   pageLoader: boolean;
   catForm: any;
+  catalogPageList: any[] = [];
+  catalogPageOptions: any[] = [];
   imgBaseUrl = environment.img_baseurl;
   configData: any= environment.config_data;
 
   constructor(
     private router: Router, public modalService: NgbModal,
-    private activeRoute: ActivatedRoute, private api: StoreApiService, public commonService: CommonService
+    private activeRoute: ActivatedRoute, private api: StoreApiService, private setupApi: SetupService, public commonService: CommonService
   ) { }
 
   ngOnInit(): void {
+    this.loadCatalogOptions();
+    this.loadCatalogPages();
     this.activeRoute.params.subscribe((params: Params) => {
       this.commonService.redirect = "/product-sections/catalogs";
       this.commonService.secondary_header = "Add Catalog";
-      this.catForm = { form_type: 'add', social_media_links: [], seo_details: {}, faqs: [] };
+      this.catForm = { form_type: 'add', social_media_links: [], seo_details: {}, faqs: [], catalog_page_id: null };
+      this.refreshCatalogPageOptions();
       if(params.id!='add') {
         this.pageLoader = true;
         this.commonService.secondary_header = "Update Catalog";
@@ -35,6 +41,7 @@ export class CatalogEventComponent implements OnInit {
           if(result.status) {
             this.catForm = result.data;
             this.catForm.form_type = 'edit';
+            this.catForm.catalog_page_id = this.catForm.catalog_page_id || null;
             if(!this.catForm.seo_details) this.catForm.seo_details = {};
             if(this.catForm.social_media_links.length) this.catForm.social_media_status = true;
             this.catForm.seo_details.meta_keyword_list = [];
@@ -50,6 +57,7 @@ export class CatalogEventComponent implements OnInit {
               });
             }
             if(this.catForm.faqs.length) this.catForm.faq_status = true;
+            this.refreshCatalogPageOptions();
           }
           else console.log("response", result);
           setTimeout(() => { this.pageLoader = false; }, 500);
@@ -61,6 +69,7 @@ export class CatalogEventComponent implements OnInit {
   onSubmit() {
     this.catForm.submit = true;
     this.catForm.seo_status = true;
+    this.catForm.catalog_page_id = this.catForm.catalog_page_id || null;
     this.catForm.seo_details.meta_keywords = [];
     if(this.catForm.seo_details?.meta_keyword_list) {
       this.catForm.seo_details.meta_keyword_list.forEach(obj => {
@@ -151,6 +160,46 @@ export class CatalogEventComponent implements OnInit {
   onChangeDesc() {
     if(this.catForm.form_type=='add')
       this.catForm.seo_details.meta_desc = this.commonService.stripHtml(this.catForm.description).substring(0, 320);
+  }
+
+  loadCatalogOptions() {
+    this.api.CATALOG_LIST().subscribe(result => {
+      if(result.status) {
+        this.commonService.catalog_list = result.list.sort((a, b) => 0 - (a.name > b.name ? -1 : 1));
+        this.commonService.updateLocalData('catalog_list', this.commonService.catalog_list);
+        this.refreshCatalogPageOptions();
+      }
+      else console.log("response", result);
+    });
+  }
+
+  loadCatalogPages() {
+    this.setupApi.CATALOG_PAGE_LIST().subscribe(result => {
+      if(result.status) {
+        this.catalogPageList = result.list || [];
+        this.refreshCatalogPageOptions();
+      }
+      else console.log("response", result);
+    });
+  }
+
+  refreshCatalogPageOptions() {
+    const currentCatalogId = this.toIdString(this.catForm?._id);
+    const selectedPageId = this.toIdString(this.catForm?.catalog_page_id);
+    const linkedPageIds = new Set(
+      (this.commonService.catalog_list || [])
+        .filter(obj => obj.catalog_page_id && this.toIdString(obj._id) !== currentCatalogId)
+        .map(obj => obj.catalog_page_id.toString())
+    );
+
+    this.catalogPageOptions = (this.catalogPageList || [])
+      .filter(obj => obj.page_kind === 'property_product')
+      .filter(obj => !linkedPageIds.has(this.toIdString(obj._id)) || this.toIdString(obj._id) === selectedPageId)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  toIdString(value) {
+    return value ? value.toString() : '';
   }
 
 }

@@ -33,12 +33,18 @@
         <button *ngIf="commonService.ys_features.indexOf('blog_catalogs')!=-1" type="button" class="mr-3" routerLink="/setting/blogs/catalogs">
           <span class="material-symbols-rounded">visibility</span> View Catalogs
         </button>
+        <button type="button" class="mr-3" routerLink="/setting/blogs-authors">
+          <span class="material-symbols-rounded">group</span> View Authors
+        </button>
         <button type="button" class="mr-3" (click)="open_website()">
           <span class="material-symbols-rounded">visibility</span>View Page
         </button>
         <button type="button" class="mr-3" (click)="openSettingModal(settingModal);"><span class="material-symbols-rounded">settings</span> SEO Setting</button>
-        <button class="highbutton" type="button" (click)="onAdd();"><span class="material-symbols-rounded">add</span>Create Blog</button>        
-      </div> 
+        <button *ngIf="!isAdvanced && commonService.master_token" type="button" class="mr-3" (click)="openImportDialog(importModal);">
+          <span class="material-symbols-rounded">upload_file</span>Import Doc
+        </button>
+        <button class="highbutton" type="button" (click)="onAdd();"><span class="material-symbols-rounded">add</span>Create Blog</button>
+      </div>
     </div>
   </div>
 
@@ -60,8 +66,8 @@
           <div class="col-md-2 col-2 first_col px-0 cursor">            
             <div class="list-thumb d-flex align-self-center">
               <div class="col-md-12 col-12 col-xxl-12 px-0">
-                <img *ngIf="x.image" [src]="imgBaseUrl+x.image" alt=""> 
-                <img *ngIf="!x.image" src="assets/images/default.png" alt=""> 
+                <img *ngIf="x.image || x.thumbnail" [src]="toAbsoluteAssetUrl(x.thumbnail || x.coverImage || x.image)" alt=""> 
+                <img *ngIf="!x.image && !x.thumbnail" src="assets/images/default.png" alt=""> 
               </div>
             </div>
           </div>
@@ -217,4 +223,50 @@
       </div>
     </div>
   </form>
+</ng-template>
+
+<!-- Import blog from document -->
+<ng-template #importModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4>
+        <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+        <span class="popup_text">Import Blog from Document</span>
+      </h4>
+    </div>
+    <div class="modal-body blog-import-modal">
+      <div class="form-group mb-3">
+        <label>Editor Type</label>
+        <div class="import-type-options">
+          <label class="import-type-option" [class.active]="importEditorType==='basic'">
+            <input type="radio" name="importEditorType" value="basic" [(ngModel)]="importEditorType" />
+            <span class="import-type-title">Basic</span>
+            <span class="import-type-desc">Simple rich-text blog</span>
+          </label>
+          <label class="import-type-option" [class.active]="importEditorType==='advanced'">
+            <input type="radio" name="importEditorType" value="advanced" [(ngModel)]="importEditorType" />
+            <span class="import-type-title">Advanced</span>
+            <span class="import-type-desc">EditorJS blocks (TOC, sections)</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label>Document</label>
+        <div class="import-file-box" (click)="importInput.click();">
+          <span class="material-symbols-rounded">upload_file</span>
+          <span class="import-file-name">{{ importFileName || 'Choose a .docx or .md file (max 10 MB)' }}</span>
+        </div>
+        <input #importInput type="file" accept=".docx,.md,.markdown,.txt" hidden (change)="onImportFileSelect($event);" />
+      </div>
+      <div *ngIf="importError"><p class="text-danger mb-0">{{ importError }}</p></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+        <span class="black-outline-txt">Cancel</span>
+      </button>
+      <button type="button" class="btn btn-wide btn-primary" [disabled]="!importFile || importLoader" (click)="submitImport(modal);">
+        {{ importLoader ? 'Importing...' : 'Upload' }}
+      </button>
+    </div>
+  </div>
 </ng-template>

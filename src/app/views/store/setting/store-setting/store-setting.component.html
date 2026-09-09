@@ -157,6 +157,14 @@
         <label class="text-title cursor pl-3">Popup Settings</label>
       </div>
     </div>
+    <div *ngIf="commonService.store_details?._id==configData.live_pricing_store_id" class="col-6 col-md-4 px-2 mb-3">
+      <div class="card p-3 d-flex justify-content-start align-items-center flex-row" (click)="onOpenLivePricingModal(livePricingModal);">
+        <div class="icons mb-0">
+          <span class="material-symbols-rounded">trending_up</span>
+        </div>
+        <label class="text-title cursor pl-3">Live Pricing</label>
+      </div>
+    </div>
   </div>
 </div>
 <!-- #Store Settings -->
@@ -1074,6 +1082,69 @@
           <span class="black-outline-txt">Cancel</span>
         </button>
         <button type="submit" class="btn btn-wide btn-primary">Update</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Live Pricing -->
+<ng-template #livePricingModal let-modal>
+  <form autocomplete="off" (ngSubmit)="onUpdateLivePricing();" ngNativeValidate ngbAutofocus>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>
+          <span class="material-symbols-rounded cursor" (click)="modal.dismiss('Cross click');">arrow_back</span>
+          <span class="popup_text" id="modal-basic-title">Live Pricing</span>
+        </h4>
+      </div>
+      <div *ngIf="popupLoader" class="modal-body">
+        <app-popup-spinner></app-popup-spinner>
+      </div>
+      <div *ngIf="!popupLoader" class="modal-body">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-12 form-group mb-3 d-flex align-items-center justify-content-between">
+              <strong>Enable Live Pricing</strong>
+              <label class="switch mb-0">
+                <input type="checkbox" name="live_pricing_enabled" [(ngModel)]="livePricingForm.enabled" />
+                <div></div>
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Gold 18Kt / 1gm (₹)</label>
+              <input type="number" step="any" (wheel)="commonService.handleWheel($event)" name="gold_18kt" class="form-control"
+                [(ngModel)]="livePricingForm.gold_18kt" min="0" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Gold 22KT / 1gm (₹)</label>
+              <input type="number" step="any" (wheel)="commonService.handleWheel($event)" name="gold_22kt" class="form-control"
+                [(ngModel)]="livePricingForm.gold_22kt" min="0" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Silver (₹)</label>
+              <input type="number" step="any" (wheel)="commonService.handleWheel($event)" name="silver" class="form-control"
+                [(ngModel)]="livePricingForm.silver" min="0" required />
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label>Platinum (₹)</label>
+              <input type="number" step="any" (wheel)="commonService.handleWheel($event)" name="platinum" class="form-control"
+                [(ngModel)]="livePricingForm.platinum" min="0" required />
+            </div>
+            <div *ngIf="livePricingForm.last_updated" class="col-md-12 form-group mb-0">
+              <small class="text-muted">Last updated: {{ livePricingForm.last_updated | date:'medium' }}</small>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="livePricingForm.errorMsg">
+          <p class="text-danger">{{ livePricingForm.errorMsg }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="closeModal" class="btn btn-wide black-outline-btn" (click)="modal.dismiss('Cross click');">
+          <span class="black-outline-txt">Cancel</span>
+        </button>
+        <button type="submit" class="btn btn-wide btn-primary ladda-button m-1" [disabled]="livePricingForm.submit"
+          [ladda]="livePricingForm.submit">Update</button>
       </div>
     </div>
   </form>

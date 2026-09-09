@@ -172,11 +172,21 @@ export class ImportProductComponent implements OnInit {
         }
         // seo_details
         prodData.seo_status = true;
-        prodData.seo_details.page_url = this.commonService.urlFormat(prodData.name+' '+prodData.sku);
         let tempName = prodData.name.substring(0, 70);
+        let defaultPageUrl = this.commonService.urlFormat(prodData.name+' '+prodData.sku);
+        let defaultMetaDesc = this.commonService.stripHtml(prodData.description).substring(0, 320);
+        prodData.seo_details.page_url = defaultPageUrl;
+        if(obj.seo_page_url) prodData.seo_details.page_url = this.commonService.urlFormat(obj.seo_page_url.toString().trim());
+        else if(obj.page_url) prodData.seo_details.page_url = this.commonService.urlFormat(obj.page_url.toString().trim());
         prodData.seo_details.h1_tag = tempName;
+        if(obj.seo_h1_tag) prodData.seo_details.h1_tag = obj.seo_h1_tag.toString().trim();
+        else if(obj.h1_tag) prodData.seo_details.h1_tag = obj.h1_tag.toString().trim();
         prodData.seo_details.page_title = tempName;
-        prodData.seo_details.meta_desc = this.commonService.stripHtml(prodData.description).substring(0, 320);
+        if(obj.seo_page_title) prodData.seo_details.page_title = obj.seo_page_title.toString().trim();
+        else if(obj.page_title) prodData.seo_details.page_title = obj.page_title.toString().trim();
+        prodData.seo_details.meta_desc = defaultMetaDesc;
+        if(obj.seo_meta_desc) prodData.seo_details.meta_desc = obj.seo_meta_desc.toString().trim();
+        else if(obj.meta_desc) prodData.seo_details.meta_desc = obj.meta_desc.toString().trim();
         if(obj.meta_keywords) {
           obj.meta_keywords = obj.meta_keywords.toString().trim();
           prodData.seo_details.meta_keywords = obj.meta_keywords.split(', ');

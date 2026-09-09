@@ -104,7 +104,17 @@
               <ng-container *ngIf="x.type=='multi_grid_featured_section'">{{ x.multigrid_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='multiple_featured_product'">{{ x.multitab_list?.length }} Tiles</ng-container>
               <ng-container *ngIf="x.type=='multi_categories'">{{ x.multicategory_list?.length }} Tiles</ng-container>
-              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories'].indexOf(x.type)==-1">
+              <ng-container *ngIf="x.type=='amenities'">{{ x.text_list?.length }} Tiles</ng-container>
+              <ng-container *ngIf="x.type=='icon_card_grid'">{{ x.icon_card_list?.length }} Cards</ng-container>
+              <ng-container *ngIf="x.type=='dual_map'">{{ x.map_list?.length }} Maps</ng-container>
+              <ng-container *ngIf="x.type=='store_locator'">1 Tile</ng-container>
+              <ng-container *ngIf="x.type=='story_section'">1 Tile</ng-container>
+              <ng-container *ngIf="x.type=='featured_cards'">{{ x.featured_cards_list?.length }} Groups</ng-container>
+              <ng-container *ngIf="x.type=='feature_split'">{{ getFeatureSplitCount(x) }} Features</ng-container>
+              <ng-container *ngIf="x.type=='feature_list'">{{ x.feature_list?.length }} Tiles</ng-container>
+              <ng-container *ngIf="x.type=='faq'">{{ x.faq_list?.length }} Tiles</ng-container>
+              <ng-container *ngIf="x.type=='internal_links'">{{ getInternalLinksCount(x) }} Links</ng-container>
+              <ng-container *ngIf="['scrolling_text', 'multi_grid_featured_section', 'multiple_featured_product', 'multi_categories', 'amenities', 'icon_card_grid', 'dual_map', 'store_locator', 'story_section', 'featured_cards', 'feature_split', 'feature_list', 'faq', 'internal_links'].indexOf(x.type)==-1">
                 {{ x.image_list?.length }} Tiles
               </ng-container>
             </p>
@@ -127,7 +137,7 @@
                     <span class="material-symbols-rounded mr-2">{{commonService.desktop_device? 'visibility':
                       'visibility'}}</span> Details
                   </button>
-                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'flexible', 'instagram', 'multi_grid_featured_section'].indexOf(x.type)==-1"
+                  <button *ngIf="['scrolling_text', 'featured_product', 'multiple_featured_product', 'blogs', 'site_gallery', 'flexible', 'instagram', 'multi_grid_featured_section', 'faq'].indexOf(x.type)==-1"
                     class="dropdown-item d-flex" routerLink="/setup/layouts/home/{{x._id}}">
                     <span class="material-symbols-rounded mr-2">image</span> Images
                   </button>
@@ -179,7 +189,7 @@
               <label>Type</label>
               <select name="type" class="form-control select-arrow" [(ngModel)]="addForm.type"
                 (change)="onChangeType(addForm.type);" required>
-                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1:20;">{{x.name}}</option>
+                <option [ngValue]="x.value" *ngFor="let x of layoutTypes | slice:1;">{{x.name}}</option>
               </select>
             </div>
             <div *ngIf="addForm.grid_list?.length" class="col-md-12 form-group mt-2 mb-3">
@@ -214,7 +224,7 @@
                 </label>
               </div>
             </ng-container>
-            <ng-container *ngIf="addForm.type!='primary_slider' && addForm.type!='slider' && addForm.type!='flexible' && addForm.type!='secondary' && addForm.type!='highlights'">
+            <ng-container *ngIf="addForm.type!='slider'">
               <div *ngIf="addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -225,8 +235,27 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="addForm.type=='featured_section'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="featured_section_type" class="form-control select-arrow" [(ngModel)]="addForm.featured_section_type"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div *ngIf="addForm.type=='site_gallery'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="gallery_type" class="form-control select-arrow" [(ngModel)]="addForm.gallery_type"
+                  (change)="addForm.section_grid_type=gridList[0].type;"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div class="form-group mb-3"
-                [ngClass]="(addForm.type=='blogs' || addForm.type=='featured_product' || addForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(addForm.type=='blogs' || addForm.type=='site_gallery' || addForm.type=='featured_product' || addForm.type=='instagram' || addForm.type=='featured_section')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="addForm.heading"
                   #heading="ngModel" />
@@ -235,6 +264,11 @@
                 <label>Sub-heading</label>
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="addForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="addForm.type!='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="addForm.description"></textarea>
               </div>
               <div *ngIf="addForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
@@ -245,13 +279,19 @@
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
                 <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
               </div>
+              <div *ngIf="addForm.type=='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Section variant key</label>
+                <input type="text" name="add_section_key" class="form-control" [(ngModel)]="addForm.section_key" maxlength="64" autocomplete="off"
+                  placeholder="e.g. tulsi_heritage" />
+                <p class="mb-0 mt-1 text-muted small">Optional. Used on the site to tell this Highlighted Section apart from others.</p>
+              </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && addForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
-                <label>Description</label>
+                <label>Content</label>
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="addForm.content"></textarea>
               </div>
-              <div *ngIf="gridList.length && addForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+              <div *ngIf="gridList.length && (addForm.blogs_type=='grid' || addForm.gallery_type=='grid')" class="col-md-12 form-group mt-2 mb-3">
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">
@@ -282,12 +322,209 @@
                   <option value="top_rated">/top-rated</option>
                 </select>
               </div>
+              <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label>Text Align</label>
+                <select name="fp_text_align" class="form-control select-arrow" [(ngModel)]="addForm.text_align">
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="top">Top</option>
+                  <option value="bottom">Bottom</option>
+                </select>
+              </div>
+              <div *ngIf="addForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="fp_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="addForm.type=='featured_product' && addForm.btn_status" class="col-md-12 form-group mb-3">
+                <label>Button Text</label>
+                <input type="text" name="fp_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" />
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='featured_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="fs_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="fs_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="fs_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="fs_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" required />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='dual_image_highlight'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="dih_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="dih_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Icon Name</label>
+                  <input type="text" name="dih_btn_icon_name" class="form-control" [(ngModel)]="addForm.btn_icon_name" placeholder="e.g. whatsapp" />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="dih_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="dih_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" required />
+                </div>
+              </ng-container>
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Background and foreground images can be uploaded in the segment image view.</p>
+              </div>
             </ng-container>
             <!-- flexible -->
             <div *ngIf="addForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
               <label>Content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="addForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <ng-container *ngIf="addForm.type=='story_section'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icon image, content, and button can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="hcta_btn_status" [(ngModel)]="addForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="addForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="hcta_btn_text" class="form-control" [(ngModel)]="addForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="hcta_btn_style" class="form-control select-arrow" [(ngModel)]="addForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="hcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="addForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="hcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="addForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="hcta_btn_link" class="form-control" [(ngModel)]="addForm.btn_link" />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='featured_cards'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image and CTA buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='feature_split'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image, quote, and feature items can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='feature_list'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Feature tiles, images, and CTA buttons can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='icon_card_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icons, card content, and buttons can be edited in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='dual_map'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Map locations, property images, highlights, address, and map links can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='store_locator'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Store image, address, and map can be configured in the segment image view after creating.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of addForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="addForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="af_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="af_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="addForm.faq_list.push({ ques: '', answer: '', rank: addForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="addForm.type=='internal_links'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Internal link groups and links can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="bg_color" class="form-control" [(ngModel)]="addForm.bg_color" placeholder="#ffffff" />
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="is_margin" [(ngModel)]="addForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
           </div>
           <!-- multiple_featured_product -->
@@ -415,7 +652,7 @@
                 </label>
               </div>
             </ng-container>
-            <ng-container *ngIf="editForm.type!='primary_slider' && editForm.type!='slider' && editForm.type!='flexible' && editForm.type!='secondary' && editForm.type!='highlights'">
+            <ng-container *ngIf="editForm.type!='slider'">
               <div *ngIf="editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram'"
                 class="col-md-6 form-group mb-3">
                 <label>Type</label>
@@ -426,8 +663,27 @@
                   <option value="slider">Slider</option>
                 </select>
               </div>
+              <div *ngIf="editForm.type=='featured_section'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="e_featured_section_type" class="form-control select-arrow" [(ngModel)]="editForm.featured_section_type"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
+              <div *ngIf="editForm.type=='site_gallery'"
+                class="col-md-6 form-group mb-3">
+                <label>Type</label>
+                <select name="e_gallery_type" class="form-control select-arrow" [(ngModel)]="editForm.gallery_type"
+                  (change)="editForm.section_grid_type=gridList[0].type;"
+                  required>
+                  <option value="grid">Grid</option>
+                  <option value="slider">Slider</option>
+                </select>
+              </div>
               <div class="form-group mb-3"
-                [ngClass]="(editForm.type=='blogs' || editForm.type=='featured_product' || editForm.type=='instagram')? 'col-md-6': 'col-md-12'">
+                [ngClass]="(editForm.type=='blogs' || editForm.type=='site_gallery' || editForm.type=='featured_product' || editForm.type=='instagram' || editForm.type=='featured_section')? 'col-md-6': 'col-md-12'">
                 <label>Heading</label>
                 <input type="text" name="heading" class="form-control" [(ngModel)]="editForm.heading"
                   #heading="ngModel" />
@@ -436,6 +692,11 @@
                 <label>Sub-heading</label>
                 <textarea class="form-control" aria-label="With textarea" name="sub_heading"
                   [(ngModel)]="editForm.sub_heading"></textarea>
+              </div>
+              <div *ngIf="editForm.type!='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Description</label>
+                <textarea class="form-control" aria-label="With textarea" name="description"
+                  [(ngModel)]="editForm.description"></textarea>
               </div>
               <div *ngIf="editForm.type=='live2ai'" class="col-md-12 form-group mb-3" >
                 <label>Publish ID</label>
@@ -446,13 +707,19 @@
                 [secondaryPlaceholder]="'Enter options'" [separatorKeyCodes]="[188]" required></tag-input>
                 <p class="pt-3 mb-0" style="font-size:12px;opacity:0.8;">Hint: Separate each option by adding a comma, between them or press enter</p>
               </div>
+              <div *ngIf="editForm.type=='highlighted_section'" class="col-md-12 form-group mb-3">
+                <label>Section variant key</label>
+                <input type="text" name="edit_section_key" class="form-control" [(ngModel)]="editForm.section_key" maxlength="64" autocomplete="off"
+                  placeholder="e.g. tulsi_heritage" />
+                <p class="mb-0 mt-1 text-muted small">Optional. Used on the site to tell this Highlighted Section apart from others.</p>
+              </div>
               <div *ngIf="configData.hunan==commonService.store_details._id && editForm.type=='highlighted_section'"
                 class="col-md-12 form-group mb-3">
-                <label>Description</label>
+                <label>Content</label>
                 <textarea class="form-control" aria-label="With textarea" name="content"
                   [(ngModel)]="editForm.content"></textarea>
               </div>
-              <div *ngIf="gridList.length && editForm.blogs_type=='grid'" class="col-md-12 form-group mt-2 mb-3">
+              <div *ngIf="gridList.length && (editForm.blogs_type=='grid' || editForm.gallery_type=='grid')" class="col-md-12 form-group mt-2 mb-3">
                 <div>
                   <ng-container *ngFor="let x of gridList | fieldSearch:'status':'enabled'; let i=index;">
                     <label class="radio radio-primary display-inline-b mr-5 mb-3">
@@ -483,12 +750,209 @@
                   <option value="top_rated">/top-rated</option>
                 </select>
               </div>
+              <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label>Text Align</label>
+                <select name="efp_text_align" class="form-control select-arrow" [(ngModel)]="editForm.text_align">
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="top">Top</option>
+                  <option value="bottom">Bottom</option>
+                </select>
+              </div>
+              <div *ngIf="editForm.type=='featured_product'" class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="efp_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div *ngIf="editForm.type=='featured_product' && editForm.btn_status" class="col-md-12 form-group mb-3">
+                <label>Button Text</label>
+                <input type="text" name="efp_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" />
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='featured_section'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="efs_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-12 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="efs_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="efs_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="efs_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" required />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='dual_image_highlight'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="edih_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="edih_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" maxlength="50" required />
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Icon Name</label>
+                  <input type="text" name="edih_btn_icon_name" class="form-control" [(ngModel)]="editForm.btn_icon_name" placeholder="e.g. whatsapp" />
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Button Link Type</label>
+                  <select name="edih_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type" required>
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="edih_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" required />
+                </div>
+              </ng-container>
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Background and foreground images can be uploaded in the segment image view.</p>
+              </div>
             </ng-container>
             <!-- flexible -->
             <div *ngIf="editForm.type=='flexible'" class="col-md-12 form-group mb-3 quill-mb-5">
               <label>content</label>
               <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="editForm.content"
                 [ngModelOptions]="{standalone: true}"></quill-editor>
+            </div>
+            <ng-container *ngIf="editForm.type=='story_section'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icon image, content, and button can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='hero_cta'">
+              <div class="col-md-12 form-group mb-3">
+                <label class="checkbox checkbox-primary">
+                  <input class="form-check-input" type="checkbox" name="ehcta_btn_status" [(ngModel)]="editForm.btn_status">
+                  <span>Enable Button</span>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <ng-container *ngIf="editForm.btn_status">
+                <div class="col-md-6 form-group mb-3">
+                  <label>Button Text</label>
+                  <input type="text" name="ehcta_btn_text" class="form-control" [(ngModel)]="editForm.btn_text" />
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Style</label>
+                  <select name="ehcta_btn_style" class="form-control select-arrow" [(ngModel)]="editForm.btn_style">
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label>Button Text Color</label>
+                  <select name="ehcta_btn_text_color" class="form-control select-arrow" [(ngModel)]="editForm.btn_text_color">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group mb-3">
+                  <label>Link Type</label>
+                  <select name="ehcta_btn_link_type" class="form-control select-arrow" [(ngModel)]="editForm.btn_link_type">
+                    <option value="internal">Internal</option>
+                    <option value="external">External</option>
+                  </select>
+                </div>
+                <div class="col-md-8 form-group mb-3">
+                  <label>Button Link</label>
+                  <input type="text" name="ehcta_btn_link" class="form-control" [(ngModel)]="editForm.btn_link" />
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='featured_cards'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image and CTA buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='feature_split'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Cover image, quote, and feature items are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='feature_list'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Feature tiles, images, and CTA buttons are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='icon_card_grid'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Icons, card content, and buttons can be edited in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='dual_map'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Map locations, property images, highlights, address, and map links are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='store_locator'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Store image, address, and map can be configured in the segment image view.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='faq'">
+              <div class="col-md-12 px-0">
+                <div class="row px-3">
+                  <div class="col-md-6 form-group mb-3" *ngFor="let x of editForm.faq_list; let fi=index;">
+                    <div class="card p-3">
+                      <div class="row poss-rel">
+                        <span (click)="editForm.faq_list.splice(fi, 1);" class="material-icons float-right round-btn-icon ab-item-close right15" aria-hidden="true">close</span>
+                        <div class="col-md-12 form-group mb-3">
+                          <label>Question</label>
+                          <input type="text" name="ef_ques{{fi}}" class="form-control" [(ngModel)]="x.ques" required />
+                        </div>
+                        <div class="col-md-12 form-group mb-0">
+                          <label>Answer</label>
+                          <textarea class="form-control" name="ef_answer{{fi}}" rows="3" [(ngModel)]="x.answer" required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-3">
+                <button class="light-button" type="button"
+                  (click)="editForm.faq_list.push({ ques: '', answer: '', rank: editForm.faq_list.length + 1 });">
+                  <span class="material-symbols-rounded">add</span> NEW FAQ
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editForm.type=='internal_links'">
+              <div class="col-md-12 mb-0">
+                <p class="light-font font-12 mb-0">Internal link groups and links are available in the segment image view.</p>
+              </div>
+            </ng-container>
+            <div class="col-md-6 form-group mb-3">
+              <label>Background Color</label>
+              <input type="text" name="e_bg_color" class="form-control" [(ngModel)]="editForm.bg_color" placeholder="#ffffff" />
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="checkbox checkbox-primary">
+                <input class="form-check-input" type="checkbox" name="e_is_margin" [(ngModel)]="editForm.is_margin">
+                <span>Enable Margin</span>
+                <span class="checkmark"></span>
+              </label>
             </div>
           </div>
           <!-- multiple_featured_product -->

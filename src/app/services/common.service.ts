@@ -95,6 +95,11 @@ export class CommonService {
     { type: "grid_2", name: "Grid 2", count: 3, icon: "assets/images/grid/Grid-3.png", status: "enabled" },
     { type: "grid_3", name: "Grid 3", count: 4, icon: "assets/images/grid/Grid-5.png", status: "enabled" }
   ];
+  gallery_grid_list: any = [
+    { type: "grid_1", name: "Grid 1", count: 2, icon: "assets/images/grid/Grid-1.png", status: "enabled" },
+    { type: "grid_2", name: "Grid 2", count: 3, icon: "assets/images/grid/Grid-3.png", status: "enabled" },
+    { type: "grid_3", name: "Grid 3", count: 4, icon: "assets/images/grid/Grid-5.png", status: "enabled" }
+  ];
   insta_grid_list: any = [
     { type: "grid_1", name: "Grid 1", icon: "assets/images/grid/Grid-3.png", status: "enabled" },
     { type: "grid_2", name: "Grid 2", icon: "assets/images/grid/Grid-4.png", status: "enabled" },
@@ -190,6 +195,7 @@ export class CommonService {
   selected_catalog: string;
   selected_blog_catalog: any;
   selected_article_catalog: any;
+  blog_author_list: any = [];
 
   admin_packages: any = [];
   admin_features: any = [];
@@ -273,6 +279,7 @@ export class CommonService {
     if(localStorage.getItem('store_branch_list')) this.store_branch_list = this.decryptData(localStorage.getItem("store_branch_list"));
     if(localStorage.getItem('blog_catalog_list')) this.blog_catalog_list = this.decryptData(localStorage.getItem("blog_catalog_list"));
     if(localStorage.getItem('article_catalog_list')) this.article_catalog_list = this.decryptData(localStorage.getItem("article_catalog_list"));
+    if(localStorage.getItem('blog_author_list')) this.blog_author_list = this.decryptData(localStorage.getItem("blog_author_list"));
     if(localStorage.getItem('payment_list')) this.payment_list = this.decryptData(localStorage.getItem("payment_list"));
     if(localStorage.getItem('ys_payment_list')) this.ys_payment_list = this.decryptData(localStorage.getItem("ys_payment_list"));
     if(localStorage.getItem('branch_list')) this.branch_list = this.decryptData(localStorage.getItem("branch_list"));
@@ -289,6 +296,19 @@ export class CommonService {
 
   updateLocalData(key: string, value: any) {
     localStorage.setItem(key, this.encryptData(value));
+  }
+
+  // Insert/refresh a blog author in the cached list (memory + localStorage) so a
+  // newly created author (e.g. auto-created on doc import) shows in the dropdown
+  // immediately, without waiting for the list cache to be rebuilt elsewhere.
+  mergeBlogAuthor(author: any) {
+    if(!author || !author._id) return;
+    const list = Array.isArray(this.blog_author_list) ? [...this.blog_author_list] : [];
+    const idx = list.findIndex((a) => a && a._id === author._id);
+    if(idx === -1) list.push(author);
+    else list[idx] = { ...list[idx], ...author };
+    this.blog_author_list = list.sort((a, b) => 0 - (a.name > b.name ? -1 : 1));
+    this.updateLocalData('blog_author_list', this.blog_author_list);
   }
 
   onActivate(event) {
@@ -402,6 +422,7 @@ export class CommonService {
     this.catalog_list = [];
     this.blog_catalog_list = [];
     this.article_catalog_list = [];
+    this.blog_author_list = [];
     this.payment_list = [];
     this.currency_types = [];
     

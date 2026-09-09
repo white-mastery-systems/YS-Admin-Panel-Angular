@@ -21,31 +21,66 @@ export class ExtraPagesEventComponent implements OnInit {
   page = 1; pageSize = 10; maxRank: any = 0; addForm: any = {};
   editForm: any = {}; gridList: any = [];
   layoutTypes: any = [
-    { name: 'Main Slider', value: 'slider' },
-    { name: 'Grid', value: 'grid' },
-    { name: 'Featured Sections', value: 'featured_section' },
-    { name: 'Highlighted Section', value: 'highlighted_section' },
-    { name: 'Multi-Highlighted Section', value: 'multiple_highlighted_section' },
-    { name: 'Secondary Banner', value: 'secondary' },
-    { name: 'Flexible Segment', value: 'flexible' },
-    { name: 'Scrolling Text', value: 'scrolling_text' },
-    { name: 'Testimonial', value: 'testimonial' },
-    { name: 'Video Section', value: 'video_section' },
-    { name: 'Highlights', value: 'highlights' }
+    { name: "Main Slider", value: "slider" },
+    { name: "Hero CTA", value: "hero_cta" },
+    { name: "FAQ", value: "faq" },
+    { name: "Internal Links", value: "internal_links" },
+    { name: "Dual Map", value: "dual_map" },
+    { name: "Amenities", value: "amenities" },
+    { name: "Feature List", value: "feature_list" },
+    { name: "Section Grid", value: "section" },
+    { name: "Featured Sections", value: "featured_section" },
+    { name: "Featured Products", value: "featured_product" },
+    { name: "Highlighted Section", value: "highlighted_section" },
+    { name: "Multi-Highlighted Section", value: "multiple_highlighted_section" },
+    { name: "Multi-Tab Featured Products", value: "multiple_featured_product" },
+    { name: "Secondary Banner", value: "secondary" },
+    { name: "Flexible Segment", value: "flexible" },
+    { name: "Scrolling Text", value: "scrolling_text" },
+    { name: "Social Video", value: "social_video" },
+    { name: "Content Grid", value: "content_grid" },
+    { name: "Content Section", value: "content_section" },
+    { name: "Rich Text", value: "rich_text" },
+    { name: "Icon Card Grid", value: "icon_card_grid" },
+    { name: "Contact Info", value: "contact_info" },
+    { name: "CTA", value: "cta" }
   ];
   multiTabOptions: any = [
-    { type: 'featured', disp_name: 'Featured' },
-    { type: 'new_arrivals', disp_name: 'New Arrivals' },
-    { type: 'discounted', disp_name: 'Discounted' },
-    { type: 'category', disp_name: 'Catalog' },
+    { type: "featured", disp_name: "Featured" },
+    { type: "new_arrivals", disp_name: "New Arrivals" },
+    { type: "discounted", disp_name: "Discounted" },
+    { type: "category", disp_name: "Catalog" }
   ];
+  themeColorExists: boolean;
 
   constructor(
     private router: Router, config: NgbModalConfig, public modalService: NgbModal,
     private activeRoute: ActivatedRoute, private api: SetupService, public commonService: CommonService
   ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
+    config.backdrop = 'static'; config.keyboard = false;
+    if(this.commonService.deploy_details.theme_colors && this.commonService.deploy_details.theme_colors.primary)
+      this.themeColorExists = true;
+    if(this.commonService.ys_features.indexOf('testimonials') !== -1)
+      this.layoutTypes.push({ name: "Testimonial", value: "testimonial" });
+    if(this.commonService.ys_features.indexOf('shopping_assistant') !== -1)
+      this.layoutTypes.push({ name: "Shopping Assistant", value: "shopping_assistant" });
+    if(this.commonService.ys_features.indexOf('blogs') !== -1)
+      this.layoutTypes.push({ name: "Blogs", value: "blogs" });
+    if(this.commonService.ys_features.indexOf('shop_the_look') !== -1)
+      this.layoutTypes.push({ name: "Shop the Look", value: "shop_the_look" });
+    if(this.commonService.store_details?.package_info?.category!='genie') {
+      this.layoutTypes.push({ name: "Video Section", value: "video_section" });
+      this.layoutTypes.push({ name: "Highlights", value: "highlights" });
+      this.layoutTypes.push({ name: "Instagram", value: "instagram" });
+    }
+    if(this.commonService.store_details?._id==environment.config_data.chettinad_id)
+      this.layoutTypes.push({ name: "Multi-Grid Featured Sections", value: "multi_grid_featured_section" });
+    if(this.commonService.store_details?._id==environment.config_data.surgical_id)
+      this.layoutTypes.push({ name: "Featured Sections with Products", value: "featured_section_product" });
+    if(this.commonService.store_details?._id==environment.config_data.tulsi_madras_id)
+      this.layoutTypes.push({ name: "Live2ai Segment", value: "live2ai" });
+    if(this.commonService.store_details?._id==environment.config_data.oneafrica)
+      this.layoutTypes.push({ name: "Multi Categories", value: "multi_categories" });
   }
 
   ngOnInit(): void {
@@ -107,8 +142,16 @@ export class ExtraPagesEventComponent implements OnInit {
 
   //Open add modal
   onAddNewSegment(modalName) {
-    this.addForm = { rank: this.maxRank + 1, type: '' };
-    this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
+    if(!this.commonService.deploy_stages.logo)
+      this.commonService.openDeployAlertModal('logo', 'Please add logo for your business before adding a new segment');
+    else if(!this.themeColorExists)
+      this.commonService.openDeployAlertModal('color', 'Please set colors for your website before adding a new segment');
+    else if(this.commonService.store_details?.package_details?.package_id==environment.config_data.free_package_id)
+      document.getElementById("openCommonUpgradeModal").click();
+    else {
+      this.addForm = { layout_list: [{}], rank: this.maxRank+1, type: '', is_margin: true };
+      this.modalService.open(modalName, { size: 'xl', windowClass: 'scroll-modal-xl', scrollable: true });
+    }
   }
 
   //Add segment
@@ -120,6 +163,7 @@ export class ExtraPagesEventComponent implements OnInit {
         this.addForm.text_list.push({ name: el.value });
       });
     }
+    if(this.addForm.type!="multiple_featured_product") delete this.addForm.multitab_list;
     this.addForm.page_id = this.formData._id;
     this.addForm.store_id = this.commonService.store_details._id;
     this.api.ADD_SEGMENT_EXTRA_PAGE(this.addForm).subscribe((result) => {
@@ -145,7 +189,33 @@ export class ExtraPagesEventComponent implements OnInit {
     }
     this.editForm.page_id = this.formData._id;
     this.editForm.store_id = this.commonService.store_details._id;
-		this.api.UPDATE_SEGMENT_EXTRA_PAGE(this.editForm).subscribe(result => {
+    const updatePayload = { ...this.editForm };
+    // Content fields for internal_links are edited in segment image view only.
+    if (updatePayload.type === 'internal_links') {
+      delete updatePayload.group_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+    if (updatePayload.type === 'dual_map') {
+      delete updatePayload.map_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+    // Content for rich_text is edited in segment image view only.
+    if (updatePayload.type === 'rich_text') {
+      delete updatePayload.content;
+    }
+    if (updatePayload.type === 'cta') {
+      delete updatePayload.image_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+		this.api.UPDATE_SEGMENT_EXTRA_PAGE(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if(result.status) {
         document.getElementById('closeModal').click();
@@ -170,10 +240,44 @@ export class ExtraPagesEventComponent implements OnInit {
         this.editForm.options = [];
         this.editForm.prev_rank = this.editForm.rank;
         this.editForm.dup_type = this.findType(this.editForm.type);
-        if(this.editForm.type!='grid') delete this.editForm.grid_type;
-        if(this.editForm.grid_type)
-          this.editForm.dup_grid_type = this.findGridType(this.editForm.grid_type);
-        if(this.editForm.type == 'scrolling_text') {
+        if(this.editForm.is_margin === undefined) this.editForm.is_margin = true;
+        if(this.editForm.type == 'amenities' && !this.editForm.text_list?.length) {
+          this.editForm.text_list = [this.getDefaultAmenityItem()];
+        }
+        if(this.editForm.type == 'faq' && !this.editForm.faq_list?.length) {
+          this.editForm.faq_list = [this.getDefaultFaqItem()];
+        }
+        if(this.editForm.type == 'internal_links') {
+          this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
+          if(!this.editForm.group_list.length) {
+            this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
+          }
+        }
+        if(this.editForm.type == 'dual_map') {
+          this.editForm.map_list = this.normalizeDualMapList(this.editForm.map_list);
+          if(!this.editForm.map_list.length) {
+            this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+          }
+        }
+        if(this.editForm.type == 'feature_list' && !this.editForm.feature_list?.length) {
+          this.editForm.feature_list = [this.getDefaultFeatureListItem()];
+        }
+        if(this.editForm.type == 'icon_card_grid' && !this.editForm.icon_card_list?.length) {
+          this.editForm.icon_card_list = [this.getDefaultIconCardItem()];
+        }
+        if(this.editForm.type == 'contact_info' && !this.editForm.contact_info_list?.length) {
+          this.editForm.contact_info_list = [this.getDefaultContactInfoItem()];
+        }
+        if(this.editForm.type == 'cta' && !this.editForm.cta_list?.length) {
+          this.editForm.cta_list = [this.getDefaultCtaItem()];
+        }
+        if(this.editForm.type!='section' && this.editForm.type!='multi_grid_featured_section')
+          delete this.editForm.section_grid_type;
+        if(this.editForm.section_grid_type)
+          this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
+        if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
+        else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
+        else if (this.editForm.type == 'scrolling_text') {
           this.editForm.text_list?.forEach((el) => {
             this.editForm.options.push({ display: el.name, value: el.name });
           });
@@ -203,12 +307,52 @@ export class ExtraPagesEventComponent implements OnInit {
   }
 
   onChangeType(x) {
-    if (x == 'grid') {
+    this.addForm.grid_list = []; this.gridList = [];
+    delete this.addForm.section_grid_type;
+    this.addForm.multitab_list = [{}];
+    if(x=='amenities' && !this.addForm.text_list?.length) {
+      this.addForm.text_list = [this.getDefaultAmenityItem()];
+    }
+    if(x=='faq' && !this.addForm.faq_list?.length) {
+      this.addForm.faq_list = [this.getDefaultFaqItem()];
+    }
+    if(x=='internal_links' && !this.addForm.group_list?.length) {
+      this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
+    }
+    if(x=='dual_map' && !this.addForm.map_list?.length) {
+      this.addForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+    }
+    if(x=='feature_list' && !this.addForm.feature_list?.length) {
+      this.addForm.feature_list = [this.getDefaultFeatureListItem()];
+    }
+    if(x=='icon_card_grid' && !this.addForm.icon_card_list?.length) {
+      this.addForm.icon_card_list = [this.getDefaultIconCardItem()];
+    }
+    if(x=='contact_info' && !this.addForm.contact_info_list?.length) {
+      this.addForm.contact_info_list = [this.getDefaultContactInfoItem()];
+    }
+    if(x=='cta' && !this.addForm.cta_list?.length) {
+      this.addForm.cta_list = [this.getDefaultCtaItem()];
+    }
+    if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
-      this.addForm.grid_type = this.addForm.grid_list[0].type;
-    } else {
-      this.addForm.grid_list = [];
-      this.addForm.grid_type = '';
+      this.addForm.section_grid_type = this.addForm.grid_list[0].type;
+    }
+    else if(x=='multi_grid_featured_section') {
+      this.addForm.grid_list = this.commonService.multi_grid_list;
+      this.addForm.section_grid_type = this.addForm.grid_list[0].type;
+      this.addForm.grid_count = this.addForm.grid_list[0].count;
+    }
+    else if(x=='instagram') {
+      this.addForm.insta_config = {};
+      this.gridList = this.commonService.insta_grid_list;
+      this.addForm.blogs_type = 'grid';
+      this.addForm.section_grid_type = this.gridList[0].type;
+    }
+    else if(x=='blogs') {
+      this.gridList = this.commonService.blog_grid_list;
+      this.addForm.blogs_type = 'grid';
+      this.addForm.section_grid_type = this.gridList[0].type;
     }
   }
 
@@ -224,6 +368,181 @@ export class ExtraPagesEventComponent implements OnInit {
     );
     if (index != -1) return this.commonService.grid_list[index].name;
     else return '';
+  }
+
+  getDefaultContactInfoItem() {
+    return {
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_link_type: 'external',
+      btn_link: ''
+    };
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  getDefaultHeroCtaItem() {
+    return {
+      heading: '',
+      description: '',
+      btn_status: true,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultCtaItem() {
+    return {
+      heading: '',
+      sub_heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultAmenityItem() {
+    return {
+      image: '',
+      icon_name: '',
+      name: '',
+      description: ''
+    };
+  }
+
+  getDefaultFaqItem() {
+    return {
+      ques: '',
+      answer: '',
+      rank: 1
+    };
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      rank: 1,
+      image: '',
+      img_alt: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultMapFeature()],
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_icon_name: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [{ icon_name: '', name: '', detail: '' }],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
   }
 
   onEditSeo(modalName) {

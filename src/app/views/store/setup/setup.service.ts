@@ -85,6 +85,48 @@ export class SetupService {
     return this.http.put<any>(environment.ws_url+'/store/extra_page/image_list',x, httpOptions);
   }
 
+  // catalog page
+  CATALOG_PAGE_LIST() {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/catalog_page', httpOptions);
+  }
+  CATALOG_PAGE_DETAILS(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/catalog_page?_id='+x, httpOptions);
+  }
+  ADD_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalog_page', x, httpOptions);
+  }
+  UPDATE_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.put<any>(environment.ws_url+'/store/catalog_page', x, httpOptions);
+  }
+  DELETE_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.patch<any>(environment.ws_url+'/store/catalog_page', x, httpOptions);
+  }
+  ADD_SEGMENT_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalog_page/segment', x, httpOptions);
+  }
+  UPDATE_SEGMENT_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.put<any>(environment.ws_url+'/store/catalog_page/segment', x, httpOptions);
+  }
+  REMOVE_SEGMENT_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.patch<any>(environment.ws_url+'/store/catalog_page/segment', x, httpOptions);
+  }
+  GET_SEGMENT_CATALOG_PAGE(pageId, segId) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/catalog_page/segment?page_id='+pageId+'&_id='+segId, httpOptions);
+  }
+  SEGMENT_IMAGE_CATALOG_PAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.put<any>(environment.ws_url+'/store/catalog_page/image_list', x, httpOptions);
+  }
+
   // payment types
   PAYMENT_LIST() {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };

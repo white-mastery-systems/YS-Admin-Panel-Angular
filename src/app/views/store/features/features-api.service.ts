@@ -64,19 +64,24 @@ export class FeaturesApiService {
   }
 
   // BLOG
-  BLOG_LIST(catId, type) {
-    if(catId) {
-      let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
-      return this.http.get<any>(environment.ws_url+'/store/blog?type='+type+'&cat_id='+catId, httpOptions);
-    }
-    else{
-      let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
-      return this.http.get<any>(environment.ws_url+'/store/blog?type='+type, httpOptions);
-    }
+  BLOG_LIST(catId, type, editorType?, status?) {
+    let query = environment.ws_url+'/store/blog';
+    const queryParams = [];
+    if(type) queryParams.push('type='+type);
+    if(catId) queryParams.push('cat_id='+catId);
+    if(editorType) queryParams.push('editor_type='+editorType);
+    if(status) queryParams.push('status='+status);
+    if(queryParams.length) query += '?'+queryParams.join('&');
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(query, httpOptions);
   }
   BLOG_DETAILS(x) {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.get<any>(environment.ws_url+'/store/blog?id='+x, httpOptions);
+  }
+  BLOG_DETAILS_BY_SLUG(slug) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/blog?slug='+slug, httpOptions);
   }
   ADD_BLOG(x) {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
@@ -89,6 +94,34 @@ export class FeaturesApiService {
   DELETE_BLOG(x) {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.patch<any>(environment.ws_url+'/store/blog', x, httpOptions);
+  }
+  BLOG_UPLOAD_IMAGE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/upload', x, httpOptions);
+  }
+  BLOG_IMAGE_SLOTS(blogId) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/blog/image-slots?blog_id='+blogId, httpOptions);
+  }
+  BLOG_PLACE_IMAGES(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/images/place', x, httpOptions);
+  }
+  IMPORT_BLOG_DOC(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/import-doc', x, httpOptions);
+  }
+  REIMPORT_BLOG_DOC(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog/reimport-doc', x, httpOptions);
+  }
+  BLOG_PRODUCT_LIST(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/product_list', x, httpOptions);
+  }
+  BLOG_MULTI_PRODUCT_LIST(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/multi_product_list', x, httpOptions);
   }
 
   // Blog segments
@@ -140,6 +173,27 @@ export class FeaturesApiService {
   DELETE_BLOG_CATALOG(x) {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
     return this.http.patch<any>(environment.ws_url+'/store/blog-catalog', x, httpOptions);
+  }
+
+  BLOG_AUTHOR_LIST() {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/blog-author', httpOptions);
+  }
+  BLOG_AUTHOR_DETAILS(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/blog-author?id='+x, httpOptions);
+  }
+  ADD_BLOG_AUTHOR(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/blog-author', x, httpOptions);
+  }
+  UPDATE_BLOG_AUTHOR(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.put<any>(environment.ws_url+'/store/blog-author', x, httpOptions);
+  }
+  DELETE_BLOG_AUTHOR(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.patch<any>(environment.ws_url+'/store/blog-author', x, httpOptions);
   }
 
   // RECIPE

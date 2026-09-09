@@ -247,6 +247,18 @@ export class ProductsComponent implements OnInit {
         if(tInd!=-1) sendData['taxonomy'] = this.taxonomyList[tInd].name;
       }
       sendData['description'] = prod.description;
+      sendData['seo_page_url'] = "";
+      sendData['seo_h1_tag'] = "";
+      sendData['seo_page_title'] = "";
+      sendData['seo_meta_desc'] = "";
+      sendData['meta_keywords'] = "";
+      if(prod.seo_details) {
+        if(prod.seo_details.page_url) sendData['seo_page_url'] = prod.seo_details.page_url;
+        if(prod.seo_details.h1_tag) sendData['seo_h1_tag'] = prod.seo_details.h1_tag;
+        if(prod.seo_details.page_title) sendData['seo_page_title'] = prod.seo_details.page_title;
+        if(prod.seo_details.meta_desc) sendData['seo_meta_desc'] = prod.seo_details.meta_desc;
+        if(prod.seo_details.meta_keywords?.length) sendData['meta_keywords'] = prod.seo_details.meta_keywords.join(', ');
+      }
       sendData['discount'] = "No";
       if(prod.disc_status) sendData['discount'] = "Yes";
       sendData['hsn_code'] = "";

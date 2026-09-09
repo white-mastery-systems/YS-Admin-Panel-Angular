@@ -21,13 +21,26 @@ export class HomeLayoutComponent implements OnInit {
   layoutTypes: any = [
     { name: "Primary Slider", value: "primary_slider" },
     { name: "Main Slider", value: "slider" },
+    { name: "Hero CTA", value: "hero_cta" },
     { name: "Section Grid", value: "section" },
     { name: "Featured Sections", value: "featured_section" },
     { name: "Featured Products", value: "featured_product" },
+    { name: "Amenities", value: "amenities" },
+    { name: "Icon Card Grid", value: "icon_card_grid" },
+    { name: "Featured Cards", value: "featured_cards" },
+    { name: "Feature Split", value: "feature_split" },
+    { name: "Feature List", value: "feature_list" },
+    { name: "CTA", value: "cta" },
+    { name: "Story Section", value: "story_section" },
+    { name: "Dual Map", value: "dual_map" },
+    { name: "Store Locator", value: "store_locator" },
+    { name: "FAQ", value: "faq" },
+    { name: "Internal Links", value: "internal_links" },
     { name: "Highlighted Section", value: "highlighted_section" },
     { name: "Multi-Highlighted Section", value: "multiple_highlighted_section" },
     { name: "Multi-Tab Featured Products", value: "multiple_featured_product" },
     { name: "Secondary Banner", value: "secondary" },
+    { name: "Dual Image Highlight", value: "dual_image_highlight" },
     { name: "Flexible Segment", value: "flexible" },
     { name: "Scrolling Text", value: "scrolling_text" },
     { name: "Social Video", value: "social_video" },
@@ -54,6 +67,8 @@ export class HomeLayoutComponent implements OnInit {
       this.layoutTypes.push({ name: "Shopping Assistant", value: "shopping_assistant" });
     if(this.commonService.ys_features.indexOf('blogs') !== -1)
       this.layoutTypes.push({ name: "Blogs", value: "blogs" });
+    if(environment.config_data.gallery.indexOf(this.commonService.store_details?._id) !== -1)
+      this.layoutTypes.push({ name: "Site Gallery", value: "site_gallery" });
     if(this.commonService.ys_features.indexOf('shop_the_look') !== -1)
       this.layoutTypes.push({ name: "Shop the Look", value: "shop_the_look" });
     if(this.commonService.store_details?.package_info?.category!='genie') {
@@ -103,7 +118,7 @@ export class HomeLayoutComponent implements OnInit {
     else if(this.commonService.store_details?.package_details?.package_id==environment.config_data.free_package_id)
       document.getElementById("openCommonUpgradeModal").click();
     else {
-      this.addForm = { layout_list: [{}], rank: this.maxRank+1 };
+      this.addForm = { layout_list: [{}], rank: this.maxRank+1, is_margin: true, bg_color: '' };
       this.modalService.open(modalName, {size: 'xl', windowClass: 'scroll-modal-xl', scrollable : true});
     }
   }
@@ -140,6 +155,8 @@ export class HomeLayoutComponent implements OnInit {
         this.editForm = result.data;
         this.editForm.options = [];
         this.editForm.prev_rank = this.editForm.rank;
+        if(this.editForm.is_margin === undefined) this.editForm.is_margin = true;
+        if(!this.editForm.bg_color) this.editForm.bg_color = '';
         this.editForm.dup_type = this.findType(this.editForm.type);
         if(this.editForm.type!='section' && this.editForm.type!='multi_grid_featured_section')
           delete this.editForm.section_grid_type;
@@ -147,10 +164,59 @@ export class HomeLayoutComponent implements OnInit {
           this.editForm.dup_grid_type = this.findGridType(this.editForm.section_grid_type);
         if(this.editForm.type=='instagram') this.gridList = this.commonService.insta_grid_list;
         else if(this.editForm.type=='blogs') this.gridList = this.commonService.blog_grid_list;
+        else if(this.editForm.type=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
+        else if(this.editForm.type=='featured_section') {
+          if(!this.editForm.featured_section_type) this.editForm.featured_section_type = 'slider';
+          if(this.editForm.btn_status===undefined) this.editForm.btn_status = false;
+          if(!this.editForm.btn_text) this.editForm.btn_text = '';
+          if(!this.editForm.btn_link_type) this.editForm.btn_link_type = 'internal';
+          if(!this.editForm.btn_link) this.editForm.btn_link = '';
+        }
+        else if(this.editForm.type=='dual_image_highlight') {
+          if(this.editForm.btn_status===undefined) this.editForm.btn_status = false;
+          if(!this.editForm.btn_text) this.editForm.btn_text = '';
+          if(!this.editForm.btn_icon_name) this.editForm.btn_icon_name = '';
+          if(!this.editForm.btn_link_type) this.editForm.btn_link_type = 'internal';
+          if(!this.editForm.btn_link) this.editForm.btn_link = '';
+        }
         else if(this.editForm.type=='scrolling_text') {
           this.editForm.text_list?.forEach(el => {
             this.editForm.options.push({ display: el.name, value: el.name });
           });
+        }
+        else if(this.editForm.type=='faq' && !this.editForm.faq_list?.length) {
+          this.editForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
+        }
+        else if(this.editForm.type=='dual_map') {
+          if(!this.editForm.map_list?.length) {
+            this.editForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+          }
+          else {
+            this.editForm.map_list = this.normalizeDualMapList(this.editForm.map_list);
+          }
+        }
+        else if(this.editForm.type=='store_locator') {
+          if(!this.editForm.store_locator_config) {
+            this.editForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
+          }
+        }
+        else if(this.editForm.type=='feature_split') {
+          this.editForm.feature_split_config = this.normalizeFeatureSplitConfig(this.editForm.feature_split_config);
+        }
+        else if(this.editForm.type=='feature_list') {
+          if(!this.editForm.feature_list?.length) {
+            this.editForm.feature_list = [this.getDefaultFeatureListItem()];
+          }
+          this.editForm.feature_list = this.normalizeFeatureListItems(this.editForm.feature_list);
+        }
+        else if(this.editForm.type=='internal_links') {
+          this.editForm.group_list = this.normalizeInternalLinkGroups(this.editForm.group_list, this.editForm.cta_list);
+          if(!this.editForm.group_list.length) this.editForm.group_list = [this.getDefaultInternalLinkGroup()];
+        }
+        else if(this.editForm.type=='icon_card_grid') {
+          if(!this.editForm.icon_card_list?.length) {
+            this.editForm.icon_card_list = [this.getDefaultIconCardItem()];
+          }
         }
 			}
 			else console.log("response", result);
@@ -160,13 +226,26 @@ export class HomeLayoutComponent implements OnInit {
   // UPDATE
 	onUpdate() {
     this.editForm.submit = true;
-    this.editForm.text_list = [];
     if(this.editForm.type=='scrolling_text') {
+      this.editForm.text_list = [];
       this.editForm.options?.forEach(el => {
         this.editForm.text_list.push({ name: el.value });
       });
     }
-		this.api.UPDATE_LAYOUT(this.editForm).subscribe(result => {
+    const updatePayload = { ...this.editForm };
+    // Content fields for internal_links are edited in segment image view only.
+    if(updatePayload.type === 'internal_links') {
+      delete updatePayload.group_list;
+      delete updatePayload.cta_list;
+      delete updatePayload.heading;
+      delete updatePayload.sub_heading;
+      delete updatePayload.description;
+    }
+    // Icon cards are edited in segment image view only.
+    if(updatePayload.type === 'icon_card_grid') {
+      delete updatePayload.icon_card_list;
+    }
+		this.api.UPDATE_LAYOUT(updatePayload).subscribe(result => {
       this.editForm.submit = false;
       if(result.status) {
         document.getElementById('closeModal').click();
@@ -236,6 +315,60 @@ export class HomeLayoutComponent implements OnInit {
     this.addForm.grid_list = []; this.gridList = [];
     delete this.addForm.section_grid_type;
     this.addForm.multitab_list = [{}];
+    if(x=='hero_cta' || x=='story_section') {
+      this.addForm.btn_status = false;
+      this.addForm.btn_text = '';
+      this.addForm.btn_style = 'primary';
+      this.addForm.btn_text_color = 'light';
+      this.addForm.btn_link_type = 'internal';
+      this.addForm.btn_link = '';
+    }
+    else if(x=='amenities') {
+      this.addForm.text_list = [{ image: '', icon_name: '', name: '', description: '' }];
+    }
+    else if(x=='icon_card_grid') {
+      this.addForm.icon_card_list = [];
+    }
+    else if(x=='featured_cards') {
+      const defaultCta = { btn_status: false, btn_text: '', btn_style: 'primary', btn_text_color: 'light', btn_link_type: 'internal', btn_link: '' };
+      this.addForm.cta_list = [{ ...defaultCta }];
+      this.addForm.featured_cards_list = [{
+        heading: '',
+        sub_heading: '',
+        description: '',
+        cover_img: '',
+        cover_img_position: 'left',
+        image_list: [],
+        features: [{ icon_name: '', name: '', detail: '' }],
+        cta_list: [{ ...defaultCta }]
+      }];
+    }
+    else if(x=='faq') {
+      this.addForm.faq_list = [{ ques: '', answer: '', rank: 1 }];
+    }
+    else if(x=='dual_map') {
+      this.addForm.map_list = [this.getDefaultDualMapItem(), this.getDefaultDualMapItem()];
+    }
+    else if(x=='store_locator') {
+      this.addForm.store_locator_config = { store_image: '', address: '', map_iframe_url: '' };
+    }
+    else if(x=='feature_split') {
+      this.addForm.feature_split_config = this.getDefaultFeatureSplitConfig();
+    }
+    else if(x=='feature_list') {
+      this.addForm.feature_list = [this.getDefaultFeatureListItem()];
+    }
+    else if(x=='internal_links') {
+      this.addForm.group_list = [this.getDefaultInternalLinkGroup()];
+    }
+    else if(x=='featured_product') {
+      this.addForm.btn_status = true;
+      this.addForm.btn_text = 'View All';
+      this.addForm.text_align = 'left';
+    }
+    else if(x=='featured_section') {
+      this.addForm.featured_section_type = 'slider';
+    }
     if(x=='section') {
       this.addForm.grid_list = this.commonService.grid_list;
       this.addForm.section_grid_type = this.addForm.grid_list[0].type;
@@ -250,10 +383,187 @@ export class HomeLayoutComponent implements OnInit {
       this.gridList = this.commonService.insta_grid_list;
     }
     else if(x=='blogs') this.gridList = this.commonService.blog_grid_list;
+    else if(x=='site_gallery') this.gridList = this.commonService.gallery_grid_list;
   }
 
   open_website() {
     window.open(this.commonService.store_details?.base_url);
+  }
+
+  getDefaultInternalLinkItem() {
+    return {
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_link_type: 'internal',
+      btn_link: ''
+    };
+  }
+
+  getDefaultInternalLinkGroup() {
+    return {
+      rank: 1,
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: [this.getDefaultInternalLinkItem()]
+    };
+  }
+
+  normalizeInternalLinkGroups(groupList: any[] = [], ctaList: any[] = []) {
+    const sourceGroups = groupList?.length ? groupList : (ctaList?.length ? [{
+      icon_name: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      link_list: ctaList
+    }] : []);
+
+    return sourceGroups.map(group => ({
+      rank: Number(group?.rank) > 0 ? Number(group.rank) : 1,
+      icon_name: group?.icon_name || '',
+      heading: group?.heading || '',
+      sub_heading: group?.sub_heading || '',
+      description: group?.description || '',
+      link_list: (group?.link_list?.length ? group.link_list : [this.getDefaultInternalLinkItem()]).map(item => ({
+        ...this.getDefaultInternalLinkItem(),
+        ...item
+      }))
+    })).sort((a, b) => a.rank - b.rank)
+      .map((group, index) => ({
+        ...group,
+        rank: index + 1
+      }));
+  }
+
+  getInternalLinksCount(segment) {
+    if(segment?.group_list?.length) {
+      return segment.group_list.reduce((count, group) => count + (group?.link_list?.length || 0), 0);
+    }
+    return segment?.cta_list?.length || 0;
+  }
+
+  getDefaultFeatureSplitItem() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  getDefaultFeatureSplitConfig() {
+    return {
+      cover_img: '',
+      img_alt: '',
+      quote_text: '',
+      quote_author: '',
+      features: [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  normalizeFeatureSplitConfig(config: any = {}) {
+    return {
+      ...this.getDefaultFeatureSplitConfig(),
+      ...config,
+      features: (Array.isArray(config?.features) && config.features.length)
+        ? config.features.map((feature) => ({ ...this.getDefaultFeatureSplitItem(), ...feature }))
+        : [this.getDefaultFeatureSplitItem()]
+    };
+  }
+
+  getFeatureSplitCount(segment) {
+    return segment?.feature_split_config?.features?.length || 0;
+  }
+
+  getDefaultFeatureCard() {
+    return { icon_name: '', name: '', detail: '' };
+  }
+
+  normalizeFeatureCards(features: any[] = []) {
+    return (Array.isArray(features) ? features : []).map(item => ({
+      ...this.getDefaultFeatureCard(),
+      ...item
+    }));
+  }
+
+  getDefaultFeatureListItem() {
+    return {
+      image: '',
+      img_badge_icon: '',
+      img_badge_text: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultFeatureCard()],
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      notes: ''
+    };
+  }
+
+  normalizeFeatureListItems(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map(item => ({
+      ...this.getDefaultFeatureListItem(),
+      ...item,
+      features: this.normalizeFeatureCards(item?.features)
+    }));
+  }
+
+  getDefaultMapFeature() {
+    return { icon_name: '', name: '' };
+  }
+
+  getDefaultIconCardItem(rank = 1) {
+    return {
+      rank,
+      icon_name: '',
+      heading: '',
+      description: '',
+      btn_status: false,
+      btn_text: '',
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_link_type: 'internal',
+      btn_link: '',
+      active_status: true
+    };
+  }
+
+  getDefaultDualMapItem() {
+    return {
+      rank: 1,
+      image: '',
+      img_alt: '',
+      heading: '',
+      sub_heading: '',
+      description: '',
+      features: [this.getDefaultMapFeature()],
+      address: '',
+      btn_link_type: 'internal',
+      btn_status: true,
+      btn_style: 'primary',
+      btn_text_color: 'light',
+      btn_text: '',
+      btn_icon_name: '',
+      btn_link: '',
+      iframe_url: ''
+    };
+  }
+
+  normalizeDualMapList(items: any[] = []) {
+    return (Array.isArray(items) ? items : []).map((item, index) => ({
+      ...this.getDefaultDualMapItem(),
+      ...item,
+      rank: item?.rank || index + 1,
+      features: (Array.isArray(item?.features) && item.features.length)
+        ? item.features.map((feature) => ({ ...this.getDefaultMapFeature(), ...feature }))
+        : [this.getDefaultMapFeature()],
+      btn_status: typeof item?.btn_status === 'boolean'
+        ? item.btn_status
+        : item?.btn_status !== 'false'
+    }));
   }
 
 }

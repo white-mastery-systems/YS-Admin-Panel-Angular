@@ -1,0 +1,84 @@
+.catalogue-mapping-alert {
+  border-radius: 12px;
+}
+
+.data-list-card-inner > .catalogue-mapping-header.data-list-card {
+  background: #f7f7f7 !important;
+  border-radius: 12px 12px 0 0;
+}
+
+.mapping-conditions-text {
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.catalogue-combobox {
+  position: relative;
+}
+
+.catalogue-combobox-field {
+  position: relative;
+
+  .form-control {
+    padding-right: 2.5rem;
+  }
+}
+
+.catalogue-combobox-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: #787878;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:hover {
+    color: #ec848b;
+  }
+}
+
+.catalogue-combobox-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+}
+
+.catalogue-combobox-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #3d3d3d;
+
+  &:hover,
+  &.active {
+    background: #fdf3f3;
+    color: #d0656e;
+  }
+}
+
+.catalogue-combobox-empty {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #787878;
+}

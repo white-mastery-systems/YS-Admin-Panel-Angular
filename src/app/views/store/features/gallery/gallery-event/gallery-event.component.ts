@@ -110,6 +110,7 @@ export class GalleryEventComponent implements OnInit {
   onOpenEditModel(detail) {
     this.imageDetails = {...detail}
     this.imageDetails.prev_rank = detail.rank
+    this.imageCount = this.galDetails.image_list?.length || 1
   }
   onUpdate() {
     this.imageDetails.submit = true;
@@ -129,7 +130,7 @@ export class GalleryEventComponent implements OnInit {
       let updatedList = [];
       imgList.forEach(imgData => {
         this.fileList.append('image_list', imgData.image);
-        updatedList.push({ name:imgData.name });
+        updatedList.push({ name:imgData.name, heading:imgData.heading });
       });
       resolve(updatedList);
     });

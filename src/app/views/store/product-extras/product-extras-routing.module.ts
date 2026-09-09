@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'measurement-sets', loadChildren: () => import('./measurements/measurements.module').then(m => m.MeasurementsModule), canActivate: [PermissionGuard], data: { name: "measurements" } },
   { path: 'size-chart', loadChildren: () => import('./size-chart/size-chart.module').then(m => m.SizeChartModule), canActivate: [PermissionGuard], data: { name: "size_chart" } },
   { path: 'product-tags', loadChildren: () => import('./product-tags/product-tags.module').then(m => m.ProductTagsModule), canActivate: [PermissionGuard], data: { name: "tags" } },
+  { path: 'catalogue-mapping', loadChildren: () => import('./catalogue-mapping/catalogue-mapping.module').then(m => m.CatalogueMappingModule), canActivate: [PermissionGuard], data: { name: "tags" } },
   { path: 'image-tags', loadChildren: () => import('./image-tags/image-tags.module').then(m => m.ImageTagsModule), canActivate: [PermissionGuard], data: { name: "image_tag" } },
   { path: 'image-gallery', loadChildren: () => import('./image-gallery/image-gallery.module').then(m => m.ImageGalleryModule), canActivate: [PermissionGuard], data: { name: "bulk_upload" } },
   { path: 'product-taxonomy', loadChildren: () => import('./product-taxonomy/product-taxonomy.module').then(m => m.ProductTaxonomyModule), canActivate: [PermissionGuard], data: { name: "product_taxonomy" } },

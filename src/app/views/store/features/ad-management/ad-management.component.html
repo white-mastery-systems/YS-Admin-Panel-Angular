@@ -81,7 +81,7 @@
             <p *ngIf="commonService.store_details?.login_type!='vendor'" class="w-40 w-sm-100 m-b-0 dark-font">
               {{x.name}}</p>
             <p class="w-30 w-sm-100 m-b-0 light-font">{{x.ad_config.name}}</p>
-            <p class="w-30 w-sm-100 m-b-0 light-font">Starts @
+            <p class="w-30 w-sm-100 m-b-0 light-font">Starts &#64;
               {{x.ad_config.normal_price | currency:commonService.store_currency?.country_code:'symbol':commonService.cFormat}}</p>
           </div>
           <div class="col-md-5 col-6">

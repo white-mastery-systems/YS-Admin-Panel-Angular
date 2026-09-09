@@ -30,7 +30,7 @@
       <div *ngIf="configData.catalog_image.indexOf(commonService.store_details?._id)!=-1" class="col-md-4" align="center">
         <div>
           <label class="fw-600">Banner Image</label>
-          <p>1440 x 150 pixels @72ppi</p>
+          <p>1440 x 150 pixels &#64;72ppi</p>
           <div class="mb-3" align="center">
             <div class="card">
               <div *ngIf="catForm.banner_image" class="py-4">
@@ -58,7 +58,7 @@
       <div [ngClass]="(configData.catalog_image.indexOf(commonService.store_details?._id)!=-1)? 'col-md-4': 'col-md-8'" align="center">
         <div>
           <label class="fw-600">Image</label>
-          <p>1440 x 150 pixels @72ppi</p>
+          <p>1440 x 150 pixels &#64;72ppi</p>
           <div class=" mb-3  " align="center">
             <div class="card">
 
@@ -99,6 +99,18 @@
               <span class="checkmark"></span>
             </label>
           </div>
+          <ng-container *ngIf="commonService.route_permission_list.indexOf('catalog_page')!=-1">
+            <div class="col-md-12 form-group mb-3">
+              <label>Linked Property / Product Page</label>
+              <select name="catalog_page_id" class="form-control select-arrow" [(ngModel)]="catForm.catalog_page_id">
+                <option [ngValue]="null">No linked page</option>
+                <option *ngFor="let page of catalogPageOptions" [ngValue]="page._id">{{page.name}}</option>
+              </select>
+              <p class="pt-2 mb-0" style="font-size:12px;opacity:0.8;">
+                Only unlinked <code>property_product</code> catalog pages are shown here.
+              </p>
+            </div>
+          </ng-container>
           <div class="col-md-12 form-group mb-3 quill-mb-5">
             <label>Description</label>
             <quill-editor class="rounded" [placeholder]="null" [(ngModel)]="catForm.description" (focusout)="onChangeDesc();" [ngModelOptions]="{standalone: true}"></quill-editor>
@@ -163,7 +175,7 @@
                 <div class="col-md-4" align="center">
                   <div>
                     <label class="fw-600">Profile Image</label>
-                    <p>300 x 300 pixels @72ppi</p>
+                    <p>300 x 300 pixels &#64;72ppi</p>
                     <div class="mb-3" align="center">
                       <div class="card">
                         <div *ngIf="catForm.profile_details?.image" class="py-4">

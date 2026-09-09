@@ -22,7 +22,13 @@ export class BlogComponent implements OnInit {
   imgBaseUrl = environment.img_baseurl;
   seoForm: any = {}; popupLoader: boolean;
   isAdvanced: boolean;
-  
+  importLoader: boolean;
+  importError: string;
+  importEditorType: string = 'basic';
+  importFile: File = null;
+  importFileName: string = '';
+  readonly blogDocMaxBytes = 10 * 1024 * 1024;
+
   constructor(
     config: NgbModalConfig, public modalService: NgbModal, private api: FeaturesApiService,
     public commonService: CommonService, private storeApi: StoreApiService, private router: Router
@@ -50,11 +56,18 @@ export class BlogComponent implements OnInit {
       if(this.isAdvanced) this.commonService.secondary_header = "Advanced Blogs";
     }
     this.pageLoader = true;
-    let catId = null, type = 'basic';
+    let catId = null, type = null;
     if(this.commonService.selected_blog_catalog?._id) catId = this.commonService.selected_blog_catalog._id;
     if(this.isAdvanced) type = 'advanced';
-    this.api.BLOG_LIST(catId, type).subscribe(result => {
-      if(result.status) this.list = result.list;
+    this.api.BLOG_LIST(catId, type, null, 'enabled').subscribe(result => {
+      if(result.status) {
+        this.list = (result.list || []).map((item) => ({
+          ...item,
+          image: this.normalizeAssetPath(item.image),
+          thumbnail: this.normalizeAssetPath(item.thumbnail),
+          coverImage: this.normalizeAssetPath(item.coverImage)
+        }));
+      }
       else console.log("response", result);
       setTimeout(() => { this.pageLoader = false; }, 500);
     });
@@ -70,7 +83,64 @@ export class BlogComponent implements OnInit {
     if(this.isAdvanced) {
       this.router.navigate(['/setting/advanced-blogs/'+x._id]);
     }
-    else this.router.navigate(['/setting/blogs/'+x._id]);
+    else this.router.navigate(['/setting/blogs/'+(x.slug || x._id)]);
+  }
+
+  // Feature A — import a .docx/.md and create a blog draft, then open it for review.
+  openImportDialog(modalName) {
+    this.importFile = null;
+    this.importFileName = '';
+    this.importError = '';
+    this.importLoader = false;
+    this.importEditorType = this.importEditorType || 'basic';
+    this.modalService.open(modalName, { centered: true });
+  }
+
+  onImportFileSelect(event) {
+    const file = event?.target?.files?.[0];
+    if(event?.target) event.target.value = '';
+    if(!file) return;
+    const lowerName = file.name.toLowerCase();
+    const allowed = ['.docx', '.md', '.markdown', '.txt'];
+    if(!allowed.some((ext) => lowerName.endsWith(ext))) {
+      this.importError = 'Please select a .docx or .md file';
+      this.importFile = null;
+      this.importFileName = '';
+      return;
+    }
+    if(file.size > this.blogDocMaxBytes) {
+      this.importError = `Document is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maximum allowed size is 10 MB.`;
+      this.importFile = null;
+      this.importFileName = '';
+      return;
+    }
+    this.importError = '';
+    this.importFile = file;
+    this.importFileName = file.name;
+  }
+
+  submitImport(modal) {
+    if(!this.importFile) { this.importError = 'Please choose a file'; return; }
+    this.importError = '';
+    this.importLoader = true;
+    const formData = new FormData();
+    formData.append('file', this.importFile);
+    formData.append('editor_type', this.importEditorType || 'basic');
+    this.api.IMPORT_BLOG_DOC(formData).subscribe(result => {
+      this.importLoader = false;
+      if(result.status) {
+        if(result.author) this.commonService.mergeBlogAuthor(result.author);
+        if(modal) modal.close();
+        this.router.navigate(['/setting/blogs/'+(result.slug || result.blog_id)]);
+      }
+      else {
+        this.importError = result.message || 'Unable to import document';
+        console.log("import", result);
+      }
+    }, () => {
+      this.importLoader = false;
+      this.importError = 'Unable to import document';
+    });
   }
 
   // UPDATE STATUS
@@ -80,7 +150,15 @@ export class BlogComponent implements OnInit {
     this.modalService.open(modalName, { centered: true });
   }
   onUpdateStatus() {
-    this.api.UPDATE_BLOG({ _id: this.blogForm._id, status: this.blogForm.change_status+"d" }).subscribe(result => {
+    // List API omits content/description — never send a full EditorJS upsert from Enable/Disable.
+    const published = this.blogForm.change_status === 'enable';
+    const reqData: any = {
+      _id: this.blogForm._id,
+      status: published ? 'enabled' : 'disabled',
+      published,
+      status_only: true
+    };
+    this.api.UPDATE_BLOG(reqData).subscribe(result => {
 			if(result.status) {
         document.getElementById('closeModal').click();
         this.ngOnInit();
@@ -94,7 +172,9 @@ export class BlogComponent implements OnInit {
 
   // DELETE
   onDelete() {
-    this.api.DELETE_BLOG(this.deleteForm).subscribe(result => {
+    let reqData = this.deleteForm;
+    if(!this.isAdvanced) reqData = { slug: this.deleteForm.slug };
+    this.api.DELETE_BLOG(reqData).subscribe(result => {
       if(result.status) {
         document.getElementById('closeModal').click();
         this.ngOnInit();
@@ -146,6 +226,31 @@ export class BlogComponent implements OnInit {
 
   ngOnDestroy() {
     delete this.commonService.selected_blog_catalog;
+  }
+
+  toAbsoluteAssetUrl(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^https?:\/\//i.test(input) || /^data:/i.test(input)) return input;
+    const base = (this.imgBaseUrl || '').replace(/\/+$/, '');
+    const path = input.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : `/${path}`;
+  }
+
+  private normalizeAssetPath(value: string) {
+    const input = (value || '').trim();
+    if(!input) return '';
+    if(/^data:/i.test(input)) return input;
+    if(/^https?:\/\//i.test(input)) {
+      const match = input.match(/\/uploads\/.+$/i);
+      return match ? match[0] : input;
+    }
+    if(input.startsWith('uploads/')) return `/${input}`;
+    return input;
+  }
+
+  private isAdvancedEditorType(editorType: string) {
+    return editorType === 'advanced' || editorType === 'editorjs';
   }
 
 }

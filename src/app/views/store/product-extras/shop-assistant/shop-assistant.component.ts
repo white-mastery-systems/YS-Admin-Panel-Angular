@@ -17,7 +17,7 @@ export class ShopAssistantComponent implements OnInit {
   params: any; errorMsg: string;
   pageLoader: boolean; btnLoader: boolean;
   imgBaseUrl = environment.img_baseurl;
-  list: any = []; totalOptions: Number;
+  list: any = []; totalOptions: number;
 
   constructor(private api: ProductExtrasApiService, private router: Router, private activeRoute: ActivatedRoute, public commonService: CommonService) { }
 

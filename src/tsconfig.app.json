@@ -6,9 +6,11 @@
   },
   "files": [
     "main.ts",
-    "polyfills.ts"
+    "polyfills.ts",
+    "app/json-typings.d.ts",
+    "app/editorjs-typings.d.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "**/*.d.ts"
   ]
 }

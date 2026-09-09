@@ -207,6 +207,44 @@ export class ProductExtrasApiService {
     return this.http.patch<any>(environment.ws_url+'/store/tax_rates', x, httpOptions);
   }
 
+  // AI CATALOGUE MAPPING
+  CATALOGUE_MAPPING_LIST() {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.get<any>(environment.ws_url+'/store/catalogue_mapping', httpOptions);
+  }
+  ADD_CATALOGUE_MAPPING_RULE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping', x, httpOptions);
+  }
+  UPDATE_CATALOGUE_MAPPING_RULE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.put<any>(environment.ws_url+'/store/catalogue_mapping', x, httpOptions);
+  }
+  DELETE_CATALOGUE_MAPPING_RULE(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.patch<any>(environment.ws_url+'/store/catalogue_mapping', x, httpOptions);
+  }
+  SEED_CATALOGUE_MAPPING_STARTERS() {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping/seed_starters', {}, httpOptions);
+  }
+  RELINK_CATALOGUE_MAPPING_STARTERS() {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping/relink_starters', {}, httpOptions);
+  }
+  DELETE_ALL_CATALOGUE_MAPPING_RULES() {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping/delete_all', {}, httpOptions);
+  }
+  IMPORT_CATALOGUE_MAPPING_RULES(formData: FormData) {
+    let httpOptions = { headers: new HttpHeaders({ 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping/import', formData, httpOptions);
+  }
+  EVALUATE_CATALOGUE_MAPPING(x) {
+    let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
+    return this.http.post<any>(environment.ws_url+'/store/catalogue_mapping/evaluate', x, httpOptions);
+  }
+
   // TAXONOMY
   TAXONOMY_LIST() {
     let httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('store_token') }) };
