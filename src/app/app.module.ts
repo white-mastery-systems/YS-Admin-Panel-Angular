@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { UserInterceptor } from './user.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -26,29 +26,23 @@ let socketOptions = {
 };
 const socketConfig: SocketIoConfig = { url: environment.socket_url, options: socketOptions };
 
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    SharedModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    SocketIoModule.forRoot(socketConfig),
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.Service_worker,
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    })
-  ],
-  providers: [
-    DatePipe, TitleCasePipe, CurrencyPipe,
-    { provide: HTTP_INTERCEPTORS, useClass: UserInterceptor, multi: true }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        SharedModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        SocketIoModule.forRoot(socketConfig),
+        ServiceWorkerModule.register('ngsw-worker.js', {
+            enabled: environment.Service_worker,
+            // Register the ServiceWorker as soon as the application is stable
+            // or after 30 seconds (whichever comes first).
+            registrationStrategy: 'registerWhenStable:30000'
+        })], providers: [
+        DatePipe, TitleCasePipe, CurrencyPipe,
+        { provide: HTTP_INTERCEPTORS, useClass: UserInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 
 export class AppModule { }
